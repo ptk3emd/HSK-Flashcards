@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Card } from '../types/card';
-import { Volume2, PenTool } from 'lucide-react';
+import { Volume2, PenTool, Layers } from 'lucide-react';
 
 interface MandarinCardViewProps {
   card: Card;
   isFlipped: boolean;
   onSpeak?: () => void;
   onOpenWriting?: () => void;
+  onOpenStrokeOrder?: () => void;
 }
 
 export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
@@ -14,6 +15,7 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
   isFlipped,
   onSpeak,
   onOpenWriting,
+  onOpenStrokeOrder,
 }) => {
   const [pinyinHidden, setPinyinHidden] = useState(true);
   const hanziRef = useRef<HTMLDivElement>(null);
@@ -67,6 +69,21 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
         {/* Main Acrylic Card (PERSISTENT DOM - ZERO FLICKER / NO REMOUNT) */}
         <div className="mandarin-card relative">
           <div className="absolute top-3.5 right-3.5 flex items-center gap-1 z-10">
+            {onOpenStrokeOrder && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenStrokeOrder();
+                }}
+                className="p-2 rounded-full opacity-60 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                title="Dica e Ordem dos Traços (O)"
+                aria-label="Ordem dos Traços do Hanzi"
+              >
+                <Layers className="w-4 h-4 text-current" />
+              </button>
+            )}
+
             {onOpenWriting && (
               <button
                 type="button"
@@ -127,6 +144,21 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
             className="ptbr"
             dangerouslySetInnerHTML={{ __html: card.ptbr || 'Significado em Português' }}
           />
+
+          {onOpenStrokeOrder && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenStrokeOrder();
+              }}
+              className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition-all cursor-pointer border border-black/10 dark:border-white/10"
+              title="Ver diagrama animado da ordem dos traços"
+            >
+              <Layers className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+              <span>Dica de Traços</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

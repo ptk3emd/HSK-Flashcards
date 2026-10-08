@@ -9,8 +9,10 @@ import {
   Check,
   X,
   Sparkles,
+  Layers,
 } from 'lucide-react';
 import { speakChinese } from '../lib/speech';
+import { StrokeOrderDiagram } from './StrokeOrderDiagram';
 
 interface HanziWritingCanvasProps {
   hanzi: string;
@@ -50,6 +52,7 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
   const currentChar = characters[selectedCharIndex] || characters[0] || '字';
 
   // Writing state
+  const [viewMode, setViewMode] = useState<'canvas' | 'strokes'>('canvas');
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   const [currentStroke, setCurrentStroke] = useState<Stroke | null>(null);
   const [showGuide, setShowGuide] = useState(true); // Faint reference outline in grid
@@ -242,6 +245,18 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
         <div className="flex items-center gap-1.5">
           <button
             type="button"
+            onClick={() => setViewMode((prev) => (prev === 'canvas' ? 'strokes' : 'canvas'))}
+            className={`p-1.5 rounded-xl transition-all cursor-pointer ${
+              viewMode === 'strokes'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'opacity-70 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10'
+            }`}
+            title={viewMode === 'strokes' ? 'Voltar para o quadro de escrita' : 'Ver ordem dos traços (animação)'}
+          >
+            <Layers className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
             onClick={handleSpeakCurrent}
             className="p-1.5 rounded-xl opacity-70 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition-all cursor-pointer"
             title="Ouvir caractere"
@@ -292,9 +307,27 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
         </div>
       )}
 
-      {/* Canvas Area with Tian/Mi Zi Ge Grid */}
-      <div
-        className="relative rounded-3xl overflow-hidden shadow-inner border border-black/10 dark:border-white/15 select-none touch-none"
+      {viewMode === 'strokes' ? (
+        <div className="w-full flex flex-col items-center animate-in fade-in duration-200">
+          <StrokeOrderDiagram
+            hanzi={currentChar}
+            theme={theme}
+            size={Math.min(canvasDimensions.width, 240)}
+            showRulesTip={true}
+          />
+          <button
+            type="button"
+            onClick={() => setViewMode('canvas')}
+            className="mt-3 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs cursor-pointer shadow-sm transition-all"
+          >
+            Praticar no Quadro de Escrita
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* Canvas Area with Tian/Mi Zi Ge Grid */}
+          <div
+            className="relative rounded-3xl overflow-hidden shadow-inner border border-black/10 dark:border-white/15 select-none touch-none"
         style={{
           width: canvasDimensions.width,
           height: canvasDimensions.height,
@@ -434,7 +467,9 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
           ? 'Trace os traços sobre a silhueta ou pratique a proporção do caractere.'
           : 'Modo Teste: escreva de memória e clique em "Guia Ativo" para comparar!'}
       </div>
-    </div>
+    </>
+  )}
+</div>
   );
 };
 

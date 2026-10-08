@@ -60,6 +60,7 @@ npm run clean
     │   ├── MandarinCardView.tsx    # Exibição do cartão de estudo (frente/verso, pinyin, áudio)
     │   ├── SettingsModal.tsx       # Configurações gerais (FSRS, retenção alvo, áudio, tema)
     │   ├── StatsView.tsx           # Painel de estatísticas, curva FSRS e projeção de revisões
+    │   ├── StrokeOrderDiagram.tsx  # Diagrama animado interativo de ordem dos traços (Bǐshùn)
     │   └── StudySession.tsx        # Fluxo de revisão de cartões com barra de progresso e atalhos
     │
     ├── data/               # Vocabulários e listas HSK

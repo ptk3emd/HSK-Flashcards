@@ -5,9 +5,10 @@ import { predictNextIntervals, scheduleCard } from '../lib/fsrs';
 import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { ArrowLeft, RotateCcw, Volume2, CheckCircle2, Moon, Sun, ChevronDown, PenTool, Settings2 } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Volume2, CheckCircle2, Moon, Sun, ChevronDown, PenTool, Settings2, Layers } from 'lucide-react';
 import { HanziWritingCanvas } from './HanziWritingCanvas';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
+import { StrokeOrderDiagram } from './StrokeOrderDiagram';
 
 interface StudySessionProps {
   cards: Card[];
@@ -41,6 +42,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const [canUndo, setCanUndo] = useState(false);
   const [isLevelDropdownOpen, setIsLevelDropdownOpen] = useState(false);
   const [showWritingPad, setShowWritingPad] = useState(false);
+  const [showStrokeOrder, setShowStrokeOrder] = useState(false);
   const [showVoiceSettingsModal, setShowVoiceSettingsModal] = useState(false);
   const [reviewedInSession, setReviewedInSession] = useState(0);
 
@@ -240,6 +242,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
         handleSpeak();
       } else if (e.key === 'w' || e.key === 'W') {
         setShowWritingPad((prev) => !prev);
+      } else if (e.key === 'o' || e.key === 'O') {
+        setShowStrokeOrder((prev) => !prev);
       }
     };
 
@@ -365,8 +369,22 @@ export const StudySession: React.FC<StudySessionProps> = ({
           )}
         </div>
 
-        {/* Audio, Writing & Theme Controls */}
+        {/* Audio, Writing, Stroke Order & Theme Controls */}
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowStrokeOrder((prev) => !prev)}
+            className={`p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer border ${
+              showStrokeOrder
+                ? 'bg-red-600 text-white border-red-500 shadow-md scale-105'
+                : isLight
+                ? 'bg-white/80 hover:bg-white text-[#111113] border-white/90 shadow-sm'
+                : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
+            }`}
+            title="Dica e Ordem dos Traços (O)"
+          >
+            <Layers className="w-4 h-4" />
+          </button>
           <button
             type="button"
             onClick={() => setShowWritingPad((prev) => !prev)}
@@ -443,6 +461,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             isFlipped={isFlipped}
             onSpeak={handleSpeak}
             onOpenWriting={() => setShowWritingPad(true)}
+            onOpenStrokeOrder={() => setShowStrokeOrder(true)}
           />
         ) : (
           <div className="mandarin-scene">
@@ -657,6 +676,30 @@ export const StudySession: React.FC<StudySessionProps> = ({
               meaning={currentCard.ptbr}
               theme={theme}
               onClose={() => setShowWritingPad(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Floating Stroke Order Diagram Overlay */}
+      {showStrokeOrder && currentCard && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setShowStrokeOrder(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`w-full max-w-sm rounded-3xl p-5 shadow-2xl border animate-in zoom-in-95 duration-200 ${
+              isLight
+                ? 'bg-white/95 border-white text-[#111113]'
+                : 'bg-neutral-900/95 border-white/15 text-white'
+            }`}
+          >
+            <StrokeOrderDiagram
+              hanzi={currentCard.hanzi}
+              theme={theme}
+              size={210}
+              onClose={() => setShowStrokeOrder(false)}
             />
           </div>
         </div>

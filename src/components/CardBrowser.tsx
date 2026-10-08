@@ -2,9 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { Search, Volume2, Eye, RotateCcw, Loader2, PenTool, X } from 'lucide-react';
+import { Search, Volume2, Eye, RotateCcw, Loader2, PenTool, X, Layers } from 'lucide-react';
 import { MandarinCardView } from './MandarinCardView';
 import { HanziWritingCanvas } from './HanziWritingCanvas';
+import { StrokeOrderDiagram } from './StrokeOrderDiagram';
 
 interface CardBrowserProps {
   cards: Card[];
@@ -31,6 +32,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
   const [isLoadingLevel, setIsLoadingLevel] = useState(false);
   const [writingCard, setWritingCard] = useState<Card | null>(null);
+  const [strokeOrderCard, setStrokeOrderCard] = useState<Card | null>(null);
 
   const isLight = theme === 'light';
 
@@ -378,11 +380,23 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                     <div className="flex items-center justify-end gap-1.5">
                       <button
                         type="button"
-                        onClick={() => setWritingCard(card)}
+                        onClick={() => setStrokeOrderCard(card)}
                         className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                           isLight
                             ? 'bg-red-50 hover:bg-red-100 text-red-600'
                             : 'bg-red-500/15 hover:bg-red-500/25 text-red-400'
+                        }`}
+                        title="Ver ordem dos traços"
+                      >
+                        <Layers className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setWritingCard(card)}
+                        className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                          isLight
+                            ? 'bg-black/5 hover:bg-black/10 text-black'
+                            : 'bg-white/10 hover:bg-white/20 text-white'
                         }`}
                         title="Praticar escrita do Hanzi"
                       >
@@ -464,12 +478,25 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 isFlipped={isPreviewFlipped}
                 onSpeak={() => handleSpeakWord(previewCard.hanzi)}
                 onOpenWriting={() => setWritingCard(previewCard)}
+                onOpenStrokeOrder={() => setStrokeOrderCard(previewCard)}
               />
             </div>
 
             <div className="w-full flex items-center justify-between pt-2 border-t border-black/10 dark:border-white/10 text-xs opacity-75">
               <span>Clique no cartão para virar (Frente / Verso)</span>
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setStrokeOrderCard(previewCard)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all border ${
+                    isLight
+                      ? 'bg-black/5 hover:bg-black/10 text-[#111113] border-black/10'
+                      : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
+                  }`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span>Ordem dos Traços</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setWritingCard(previewCard)}
@@ -488,6 +515,30 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stroke Order Diagram Modal */}
+      {strokeOrderCard && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setStrokeOrderCard(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`w-full max-w-sm rounded-3xl p-5 shadow-2xl border animate-in zoom-in-95 duration-200 ${
+              isLight
+                ? 'bg-white/95 border-white text-[#111113]'
+                : 'bg-neutral-900/95 border-white/15 text-white'
+            }`}
+          >
+            <StrokeOrderDiagram
+              hanzi={strokeOrderCard.hanzi}
+              theme={theme}
+              size={210}
+              onClose={() => setStrokeOrderCard(null)}
+            />
           </div>
         </div>
       )}
