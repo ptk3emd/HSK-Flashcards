@@ -1,0 +1,6 @@
+{
+  "name": "Hanzi Anki - FSRS Spaced Repetition",
+  "description": "App de repetição espaçada FSRS para aprender o vocabulário chinês HSK (1 a 9) com cartões acrílicos estilizados.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

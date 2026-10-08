@@ -1,0 +1,142 @@
+import { Card, DeckConfig, FSRSOptions, ReviewLog } from '../types/card';
+import { DEFAULT_FSRS_OPTIONS } from './fsrs';
+import { loadDefaultCards, loadNativeLevelCards } from '../data/defaultDecks';
+
+const CARDS_STORAGE_KEY = 'hanzi_anki_cards_v2';
+const SETTINGS_STORAGE_KEY = 'hanzi_anki_settings_v2';
+const FSRS_STORAGE_KEY = 'hanzi_anki_fsrs_v2';
+const LOGS_STORAGE_KEY = 'hanzi_anki_review_logs_v2';
+const THEME_STORAGE_KEY = 'hanzi_anki_theme_v2';
+
+export { loadNativeLevelCards };
+
+export const DEFAULT_DECK_CONFIG: DeckConfig = {
+  dailyNewLimit: 20,
+  dailyReviewLimit: 100,
+  autoPlayAudio: true,
+  speechSpeed: 0.85,
+  speechVoiceGender: 'auto',
+  speechVoiceURI: '',
+  activeLevels: ['HSK 1', 'HSK 2'],
+};
+
+export function getStoredTheme(): 'dark' | 'light' {
+  try {
+    const val = localStorage.getItem(THEME_STORAGE_KEY);
+    if (val === 'light' || val === 'dark') return val;
+  } catch (e) {
+    // fallback
+  }
+  return 'dark'; // Match Anki screenshot aesthetic by default
+}
+
+export function saveStoredTheme(theme: 'dark' | 'light'): void {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function loadCards(): Card[] {
+  try {
+    const raw = localStorage.getItem(CARDS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Card[];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load cards from storage', e);
+  }
+
+  // First time initialization: load HSK 1 and HSK 2 default sets
+  const defaults = loadDefaultCards();
+  saveCards(defaults);
+  return defaults;
+}
+
+export function saveCards(cards: Card[]): void {
+  try {
+    localStorage.setItem(CARDS_STORAGE_KEY, JSON.stringify(cards));
+  } catch (e) {
+    console.error('Failed to save cards to storage', e);
+  }
+}
+
+export function loadDeckConfig(): DeckConfig {
+  try {
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (raw) {
+      return { ...DEFAULT_DECK_CONFIG, ...JSON.parse(raw) };
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return DEFAULT_DECK_CONFIG;
+}
+
+export function saveDeckConfig(config: DeckConfig): void {
+  try {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(config));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function loadFSRSOptions(): FSRSOptions {
+  try {
+    const raw = localStorage.getItem(FSRS_STORAGE_KEY);
+    if (raw) {
+      return { ...DEFAULT_FSRS_OPTIONS, ...JSON.parse(raw) };
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return DEFAULT_FSRS_OPTIONS;
+}
+
+export function saveFSRSOptions(options: FSRSOptions): void {
+  try {
+    localStorage.setItem(FSRS_STORAGE_KEY, JSON.stringify(options));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function loadReviewLogs(): ReviewLog[] {
+  try {
+    const raw = localStorage.getItem(LOGS_STORAGE_KEY);
+    if (raw) {
+      return JSON.parse(raw);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return [];
+}
+
+export function saveReviewLogs(logs: ReviewLog[]): void {
+  try {
+    localStorage.setItem(LOGS_STORAGE_KEY, JSON.stringify(logs.slice(-500))); // keep last 500
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function pushReviewLog(log: ReviewLog): void {
+  const current = loadReviewLogs();
+  current.push(log);
+  saveReviewLogs(current);
+}
+
+export function popReviewLog(): ReviewLog | null {
+  const current = loadReviewLogs();
+  const last = current.pop();
+  if (last) {
+    saveReviewLogs(current);
+    return last;
+  }
+  return null;
+}
