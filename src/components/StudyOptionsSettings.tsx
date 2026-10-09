@@ -1,6 +1,7 @@
 import React from 'react';
 import { DeckConfig } from '../types/card';
 import { canHideSystemBar } from './useSystemBarHidden';
+import { GestureSettings } from './GestureSettings';
 
 interface StudyOptionsSettingsProps {
   deckConfig: DeckConfig;
@@ -30,7 +31,7 @@ export const StudyOptionsSettings: React.FC<StudyOptionsSettingsProps> = ({
     {
       key: 'hideAnswerButtons',
       label: 'Ocultar botões de resposta',
-      hint: 'Toque duas vezes para ver a resposta. Deslize para a direita para Bom e para a esquerda para Novamente.',
+      hint: 'Responda só com os gestos definidos abaixo.',
     },
     {
       key: 'twoButtonGrading',
@@ -61,6 +62,9 @@ export const StudyOptionsSettings: React.FC<StudyOptionsSettingsProps> = ({
           />
         </label>
       ))}
+      <div className={`pt-3 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`}>
+        <GestureSettings deckConfig={deckConfig} onUpdateDeckConfig={onUpdateDeckConfig} theme={theme} />
+      </div>
     </div>
   );
 };

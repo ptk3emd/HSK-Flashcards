@@ -207,6 +207,8 @@
   position: relative;
   width: var(--avail-card-width);
   max-width: 100%;
+  /* The hanzi scales with the card's own width, so cards in narrow places (preview, dialogs) fit too */
+  container-type: inline-size;
 
   background: var(--card-bg);
   backdrop-filter: blur(35px) saturate(190%);
@@ -335,6 +337,22 @@
 .hanzi.is-long {
   font-size: clamp(24px, 6vw, 44px) !important;
   max-width: 100%;
+}
+
+/* Where container units exist, size from the card's content width rather than the viewport.
+   100cqi is the card's width inside its padding; the vw rules above stay as the fallback. */
+@supports (width: 1cqi) {
+  .hanzi {
+    font-size: clamp(
+      var(--hanzi-min-size),
+      calc((100cqi - 8px) / var(--chars-per-line)),
+      var(--hanzi-max-size)
+    );
+  }
+
+  .hanzi.is-long {
+    font-size: clamp(24px, 7.75cqi, 44px) !important;
+  }
 }
 
 .pinying {
