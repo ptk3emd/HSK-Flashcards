@@ -42,9 +42,15 @@ export default function App() {
 
   // Load cards on initial mount
   useEffect(() => {
-    const initialCards = loadCards();
-    setCards(initialCards);
-    setIsLoaded(true);
+    let cancelled = false;
+    loadCards().then((initialCards) => {
+      if (cancelled) return;
+      setCards(initialCards);
+      setIsLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleUpdateCards = (updatedCards: Card[]) => {
@@ -89,7 +95,7 @@ export default function App() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#160608] text-white">
+      <div className="min-h-screen flex items-center justify-center bg-night text-white">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
       </div>
     );
@@ -118,8 +124,8 @@ export default function App() {
     <div
       className={`min-h-screen w-full transition-colors duration-300 font-sans ${
         isLight
-          ? 'card-theme-light text-[#111113]'
-          : 'night_mode card-theme-dark bg-[#160608] text-white'
+          ? 'card-theme-light text-ink'
+          : 'night_mode card-theme-dark bg-night text-white'
       }`}
     >
       {/* Main Content Area without Topbar */}
@@ -162,7 +168,7 @@ export default function App() {
             <div
               className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
                 isLight
-                  ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+                  ? 'bg-white/80 border-black/5 shadow-sm text-ink'
                   : 'bg-white/[0.04] border-white/10 text-white'
               }`}
             >
@@ -204,7 +210,7 @@ export default function App() {
             <div
               className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
                 isLight
-                  ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+                  ? 'bg-white/80 border-black/5 shadow-sm text-ink'
                   : 'bg-white/[0.04] border-white/10 text-white'
               }`}
             >
@@ -219,7 +225,7 @@ export default function App() {
             <div
               className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border space-y-5 transition-all ${
                 isLight
-                  ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+                  ? 'bg-white/80 border-black/5 shadow-sm text-ink'
                   : 'bg-white/[0.04] border-white/10 text-white'
               }`}
             >
@@ -241,10 +247,14 @@ export default function App() {
               {/* Limites Diários */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-black/5 dark:border-white/10">
                 <div>
-                  <label className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}>
+                  <label
+                    htmlFor="daily-new-limit"
+                    className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}
+                  >
                     Novos cartões / dia:
                   </label>
                   <input
+                    id="daily-new-limit"
                     type="number"
                     min="5"
                     max="100"
@@ -255,7 +265,7 @@ export default function App() {
                         dailyNewLimit: parseInt(e.target.value, 10) || 20,
                       })
                     }
-                    className={`w-full px-3 py-2 rounded-xl text-xs border outline-none font-semibold ${
+                    className={`w-full px-3 py-2 rounded-xl text-xs border font-semibold ${
                       isLight
                         ? 'bg-black/[0.03] border-black/15 text-black'
                         : 'bg-black/40 border-white/15 text-white'
@@ -264,10 +274,14 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}>
+                  <label
+                    htmlFor="daily-review-limit"
+                    className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}
+                  >
                     Máximo de revisões / dia:
                   </label>
                   <input
+                    id="daily-review-limit"
                     type="number"
                     min="20"
                     max="500"
@@ -278,7 +292,7 @@ export default function App() {
                         dailyReviewLimit: parseInt(e.target.value, 10) || 100,
                       })
                     }
-                    className={`w-full px-3 py-2 rounded-xl text-xs border outline-none font-semibold ${
+                    className={`w-full px-3 py-2 rounded-xl text-xs border font-semibold ${
                       isLight
                         ? 'bg-black/[0.03] border-black/15 text-black'
                         : 'bg-black/40 border-white/15 text-white'
@@ -295,14 +309,16 @@ export default function App() {
       <nav
         className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 backdrop-blur-2xl border px-2 sm:px-3 py-2 rounded-2xl shadow-xl flex items-center gap-1 sm:gap-2 transition-all ${
           isLight
-            ? 'bg-white/90 border-black/10 shadow-black/5 text-[#111113]'
-            : 'bg-[#180a0c]/90 border-white/15 shadow-black/40 text-white'
+            ? 'bg-white/90 border-black/10 shadow-black/5 text-ink'
+            : 'bg-night-panel/90 border-white/15 shadow-black/40 text-white'
         }`}
       >
         <button
           type="button"
+          aria-label="Decks"
+          aria-current={activeTab === 'decks' ? 'page' : undefined}
           onClick={() => setActiveTab('decks')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`min-h-11 sm:min-h-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'decks'
               ? 'bg-red-600 text-white shadow-sm'
               : isLight
@@ -316,8 +332,10 @@ export default function App() {
 
         <button
           type="button"
+          aria-label="Dicionário"
+          aria-current={activeTab === 'browser' ? 'page' : undefined}
           onClick={() => setActiveTab('browser')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`min-h-11 sm:min-h-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'browser'
               ? 'bg-red-600 text-white shadow-sm'
               : isLight
@@ -331,8 +349,10 @@ export default function App() {
 
         <button
           type="button"
+          aria-label="Estatísticas"
+          aria-current={activeTab === 'stats' ? 'page' : undefined}
           onClick={() => setActiveTab('stats')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`min-h-11 sm:min-h-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'stats'
               ? 'bg-red-600 text-white shadow-sm'
               : isLight
@@ -348,8 +368,10 @@ export default function App() {
 
         <button
           type="button"
+          aria-label="Configurações"
+          aria-current={activeTab === 'settings' ? 'page' : undefined}
           onClick={() => setActiveTab('settings')}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`min-h-11 sm:min-h-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'settings'
               ? 'bg-red-600 text-white shadow-sm'
               : isLight

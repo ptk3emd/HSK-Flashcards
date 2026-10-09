@@ -1,6 +1,4 @@
 import { Card } from '../types/card';
-import hsk1Data from './hsk1.json';
-import hsk2Data from './hsk2.json';
 
 export const ALL_HSK_LEVELS = [
   'HSK 1',
@@ -25,10 +23,12 @@ export const HSK_LEVEL_INFO: Record<HskLevelName, { count: number; desc: string 
 };
 
 /**
- * Returns initial default native cards (HSK 1 + HSK 2)
+ * Returns initial default native cards (HSK 1 + HSK 2). Loaded on demand so the
+ * app entry bundle does not carry the 1,272 default cards.
  */
-export function loadDefaultCards(): Card[] {
-  return [...(hsk1Data as Card[]), ...(hsk2Data as Card[])];
+export async function loadDefaultCards(): Promise<Card[]> {
+  const [hsk1, hsk2] = await Promise.all([import('./hsk1.json'), import('./hsk2.json')]);
+  return [...(hsk1.default as Card[]), ...(hsk2.default as Card[])];
 }
 
 /**

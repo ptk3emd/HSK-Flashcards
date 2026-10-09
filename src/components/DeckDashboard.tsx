@@ -234,7 +234,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                     type="button"
                     onClick={(e) => handleStudyIsolated(lvl, e)}
                     disabled={isLoading}
-                    className={`py-1.5 px-3 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 flex-shrink-0 ${
+                    className={`min-h-11 sm:min-h-0 py-1.5 px-3 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 flex-shrink-0 ${
                       isLight
                         ? 'bg-black/5 hover:bg-black/10 text-black'
                         : 'bg-white/10 hover:bg-white/20 text-white'

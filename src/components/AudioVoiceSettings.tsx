@@ -128,9 +128,9 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
             <Volume2 className="w-5 h-5" />
           </div>
           <div>
-            <h3 className={`text-sm sm:text-base font-bold ${isLight ? 'text-black' : 'text-white'}`}>
+            <h2 className={`text-sm sm:text-base font-bold ${isLight ? 'text-black' : 'text-white'}`}>
               Voz Nativa do Navegador (TTS Chinês)
-            </h3>
+            </h2>
             <p className={`text-xs ${isLight ? 'text-black/60 font-medium' : 'text-white/50'}`}>
               Configuração de gênero e velocidade para cartões, dicionário e escrita
             </p>
@@ -266,6 +266,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
           max="1.4"
           step="0.05"
           value={currentSpeed}
+          aria-label="Velocidade da voz"
           onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
           className="w-full accent-red-500 cursor-pointer h-2 rounded-lg"
         />
@@ -277,11 +278,11 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
               key={preset.value}
               type="button"
               onClick={() => handleSpeedChange(preset.value)}
-              className={`px-2.5 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+              className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                 Math.abs(currentSpeed - preset.value) < 0.02
                   ? isLight
                     ? 'bg-red-600 text-white border-red-600 shadow-xs'
-                    : 'bg-red-500 text-white border-red-500 shadow-xs'
+                    : 'bg-red-600 text-white border-red-600 shadow-xs'
                   : isLight
                   ? 'bg-white/80 hover:bg-black/5 text-black/70 border-black/10'
                   : 'bg-white/5 hover:bg-white/10 text-white/70 border-white/10'
@@ -309,7 +310,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
             <select
               value={deckConfig.speechVoiceURI || ''}
               onChange={(e) => handleVoiceURIChange(e.target.value)}
-              className={`w-full px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-medium border appearance-none transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-red-500/50 ${
+              className={`w-full px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-medium border appearance-none transition-colors cursor-pointer focus:ring-2 focus:ring-red-500/50 ${
                 isLight
                   ? 'bg-white border-black/15 text-black shadow-xs'
                   : 'bg-black/40 border-white/15 text-white'
@@ -361,7 +362,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
             value={sampleText}
             onChange={(e) => setSampleText(e.target.value)}
             placeholder="Digite qualquer frase em Hanzi..."
-            className={`w-full px-3 py-1.5 rounded-xl text-xs outline-none border transition-all ${
+            className={`w-full px-3 py-1.5 rounded-xl text-xs border transition-all ${
               isLight
                 ? 'bg-white border-black/15 text-black'
                 : 'bg-black/50 border-white/15 text-white'
@@ -397,6 +398,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
 
         <input
           type="checkbox"
+          aria-label="Tocar áudio automaticamente ao virar o cartão"
           checked={deckConfig.autoPlayAudio}
           onChange={(e) =>
             onUpdateDeckConfig({

@@ -44,7 +44,10 @@ export function saveStoredTheme(theme: 'dark' | 'light'): void {
   }
 }
 
-export function loadCards(): Card[] {
+/**
+ * The saved deck, or null when nothing usable is stored yet.
+ */
+export function loadStoredCards(): Card[] | null {
   try {
     const raw = localStorage.getItem(CARDS_STORAGE_KEY);
     if (raw) {
@@ -56,9 +59,17 @@ export function loadCards(): Card[] {
   } catch (e) {
     console.error('Failed to load cards from storage', e);
   }
+  return null;
+}
 
-  // First time initialization: load HSK 1 and HSK 2 default sets
-  const defaults = loadDefaultCards();
+/**
+ * The saved deck. On first run, loads the HSK 1 and HSK 2 defaults and saves them.
+ */
+export async function loadCards(): Promise<Card[]> {
+  const stored = loadStoredCards();
+  if (stored) return stored;
+
+  const defaults = await loadDefaultCards();
   saveCards(defaults);
   return defaults;
 }

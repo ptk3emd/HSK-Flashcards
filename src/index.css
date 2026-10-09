@@ -1,3 +1,23 @@
 @import "tailwindcss";
 @import "./styles/mandarin-card.css";
 
+/* dark: utilities follow the in-app theme (the night_mode root), not the OS colour scheme */
+@custom-variant dark (&:where(.night_mode, .night_mode *));
+
+/* Palette tokens for Tailwind utilities. Values match the literals they replace. */
+@theme {
+  --color-ink: #111113;
+  --color-night: #160608;
+  --color-night-panel: #180a0c;
+  --color-focus: #ef4444;
+}
+
+/* Keyboard focus ring and text selection come from the palette, so they match the brand red. */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(239, 68, 68, 0.35);
+}

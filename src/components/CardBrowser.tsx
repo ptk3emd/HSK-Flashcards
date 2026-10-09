@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
+import { useDialogFocus } from './useDialogFocus';
 import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
@@ -33,6 +34,14 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   const [isLoadingLevel, setIsLoadingLevel] = useState(false);
   const [writingCard, setWritingCard] = useState<Card | null>(null);
   const [mnemonicDraft, setMnemonicDraft] = useState('');
+
+  // Only the top-most dialog is active: the writing pad opened from a preview sits above it
+  const previewDialogRef = useRef<HTMLDivElement>(null);
+  const writingDialogRef = useRef<HTMLDivElement>(null);
+  const closePreview = useCallback(() => setPreviewCard(null), []);
+  const closeWriting = useCallback(() => setWritingCard(null), []);
+  useDialogFocus(previewDialogRef, previewCard !== null && writingCard === null, closePreview);
+  useDialogFocus(writingDialogRef, writingCard !== null, closeWriting);
 
   const isLight = theme === 'light';
 
@@ -145,6 +154,12 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
     }
   };
 
+  const openPreview = (card: Card) => {
+    setPreviewCard(card);
+    setMnemonicDraft(card.mnemonic ?? '');
+    setIsPreviewFlipped(false);
+  };
+
   const updatePreviewCard = (updated: Card) => {
     onUpdateCard(updated);
     setPreviewCard(updated);
@@ -182,11 +197,12 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-300">
+      <h1 className="sr-only">Dicionário de vocábulos</h1>
       {/* Search and Filters Header */}
       <div
         className={`rounded-3xl p-5 backdrop-blur-xl border transition-all ${
           isLight
-            ? 'bg-white/70 border-white/80 shadow-md text-[#111113]'
+            ? 'bg-white/70 border-white/80 shadow-md text-ink'
             : 'bg-white/5 border-white/10 text-white'
         }`}
       >
@@ -342,11 +358,78 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
       <div
         className={`rounded-3xl overflow-hidden backdrop-blur-xl border transition-all ${
           isLight
-            ? 'bg-white/70 border-white/80 shadow-md text-[#111113]'
+            ? 'bg-white/70 border-white/80 shadow-md text-ink'
             : 'bg-white/5 border-white/10 text-white'
         }`}
       >
-        <div className="max-h-[600px] overflow-y-auto">
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label="Lista de vocábulos"
+          className="max-h-[600px] overflow-y-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 focus-visible:ring-inset"
+        >
+          {/* Phones: one stacked row per card, so every column and action stays on screen */}
+          <ul className="sm:hidden divide-y divide-black/5 dark:divide-white/5">
+            {filteredCards.slice(0, 150).map((card, idx) => (
+              <li key={`${card.id}-m-${idx}`} className="p-3 flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="font-serif font-black text-xl">{card.hanzi}</span>
+                    <span className="text-xs font-semibold opacity-80">{card.pinyin}</span>
+                  </div>
+                  <div className="text-xs opacity-80 truncate" dangerouslySetInnerHTML={{ __html: card.ptbr }} />
+                  <div className="flex flex-wrap items-center gap-1 mt-1">
+                    <span className="text-[10px] font-bold opacity-60">{card.level}</span>
+                    {getStateBadge(card.state)}
+                    {isLeech(card) && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
+                        Leech
+                      </span>
+                    )}
+                    {card.suspended && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 font-bold opacity-75">
+                        Suspenso
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setWritingCard(card)}
+                    aria-label={`Praticar escrita de ${card.hanzi}`}
+                    className={`size-11 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                      isLight ? 'bg-black/5 hover:bg-black/10 text-black' : 'bg-white/10 hover:bg-white/20 text-white'
+                    }`}
+                  >
+                    <PenTool className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSpeakWord(card.hanzi)}
+                    aria-label={`Ouvir pronúncia de ${card.hanzi}`}
+                    className={`size-11 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                      isLight ? 'bg-black/5 hover:bg-black/10 text-black' : 'bg-white/10 hover:bg-white/20 text-white'
+                    }`}
+                  >
+                    <Volume2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openPreview(card)}
+                    aria-label={`Visualizar cartão de ${card.hanzi}`}
+                    className={`size-11 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                      isLight ? 'bg-black/5 hover:bg-black/10 text-black' : 'bg-white/10 hover:bg-white/20 text-white'
+                    }`}
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden sm:block">
           <table className="w-full text-left text-xs">
             <thead
               className={`font-semibold sticky top-0 backdrop-blur-md z-10 border-b ${
@@ -436,11 +519,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          setPreviewCard(card);
-                          setMnemonicDraft(card.mnemonic ?? '');
-                          setIsPreviewFlipped(false);
-                        }}
+                        onClick={() => openPreview(card)}
                         className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                           isLight
                             ? 'bg-black/5 hover:bg-black/10 text-black'
@@ -456,6 +535,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               ))}
             </tbody>
           </table>
+          </div>
           {filteredCards.length > 150 && (
             <div className="p-3 text-center text-xs opacity-60 border-t border-black/5 dark:border-white/5">
               Exibindo os primeiros 150 vocábulos. Digite na busca acima para filtrar.
@@ -468,9 +548,13 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
       {previewCard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in">
           <div
+            ref={previewDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Pré-visualização de ${previewCard.hanzi}`}
             className={`w-full max-w-xl rounded-3xl p-6 relative flex flex-col items-center gap-4 shadow-2xl border ${
               isLight
-                ? 'bg-white/95 border-white text-[#111113]'
+                ? 'bg-white/95 border-white text-ink'
                 : 'bg-neutral-900 border-white/20 text-white'
             }`}
           >
@@ -512,7 +596,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 value={mnemonicDraft}
                 onChange={(e) => setMnemonicDraft(e.target.value)}
                 placeholder="Escreva uma associação para lembrar o significado"
-                className={`w-full px-3 py-2 rounded-xl text-xs border outline-none resize-y ${
+                className={`w-full px-3 py-2 rounded-xl text-xs border resize-y ${
                   isLight ? 'bg-white border-black/15 text-black' : 'bg-black/40 border-white/15 text-white'
                 }`}
               />
@@ -537,7 +621,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                   onClick={() => handleToggleSuspend(previewCard)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all border ${
                     isLight
-                      ? 'bg-black/5 hover:bg-black/10 text-[#111113] border-black/10'
+                      ? 'bg-black/5 hover:bg-black/10 text-ink border-black/10'
                       : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
                   }`}
                 >
@@ -573,6 +657,10 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
           onClick={() => setWritingCard(null)}
         >
           <div
+            ref={writingDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Praticar escrita do Hanzi"
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md animate-in zoom-in-95 duration-200"
           >
