@@ -6,3 +6,9 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Impeccable local state: live-server connection info (holds a session token),
+# live inject journal, and per-developer config
+.impeccable/live/server.json
+.impeccable/live/inject-journal.json
+.impeccable/config.local.json
