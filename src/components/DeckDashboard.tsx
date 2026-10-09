@@ -6,7 +6,6 @@ import { Play, Check, Plus, Loader2 } from 'lucide-react';
 interface DeckDashboardProps {
   cards: Card[];
   deckConfig: DeckConfig;
-  theme: 'dark' | 'light';
   onUpdateDeckConfig: (config: DeckConfig) => void;
   onStartStudy: (isolatedLevel?: string | null) => void;
   onAddCards: (newCards: Card[]) => void;
@@ -16,7 +15,6 @@ interface DeckDashboardProps {
 export const DeckDashboard: React.FC<DeckDashboardProps> = ({
   cards,
   deckConfig,
-  theme,
   onUpdateDeckConfig,
   onStartStudy,
   onAddCards,
@@ -49,7 +47,6 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
     return activeLevelCards.filter(c => c.state === 2).length;
   }, [activeLevelCards]);
 
-  const isLight = theme === 'light';
 
   const handleToggleOrActivateLevel = async (lvl: string) => {
     const levelCards = cards.filter(c => c.level === lvl);
@@ -109,15 +106,13 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
       {/* Minimal Header & Primary Action */}
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
-            : 'bg-white/[0.04] border-white/10 text-white'
+          'bg-white/80 border-black/5 shadow-sm text-[#111113] dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
         }`}
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Decks HSK</h1>
-            <p className={`text-xs sm:text-sm mt-1 ${isLight ? 'text-black/60' : 'text-white/60'}`}>
+            <p className={`text-xs sm:text-sm mt-1 ${'text-black/60 dark:text-white/60'}`}>
               {deckConfig.activeLevels.length} {deckConfig.activeLevels.length === 1 ? 'nível ativo' : 'níveis ativos'} ({deckConfig.activeLevels.join(', ')})
             </p>
           </div>
@@ -136,19 +131,19 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
         {/* Minimal Stats Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-6 pt-5 border-t border-black/5 dark:border-white/10">
           <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-xs font-semibold ${isLight ? 'text-black/55' : 'text-white/55'}`}>Pendentes</div>
+            <div className={`text-xs font-semibold ${'text-black/55 dark:text-white/55'}`}>Pendentes</div>
             <div className="text-xl font-black mt-0.5">{dueCount}</div>
           </div>
           <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-xs font-semibold ${isLight ? 'text-blue-600' : 'text-blue-400'}`}>Novos</div>
+            <div className={`text-xs font-semibold ${'text-blue-600 dark:text-blue-400'}`}>Novos</div>
             <div className="text-xl font-black mt-0.5 text-blue-600 dark:text-blue-400">{newCount}</div>
           </div>
           <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-xs font-semibold ${isLight ? 'text-amber-600' : 'text-amber-400'}`}>Aprendendo</div>
+            <div className={`text-xs font-semibold ${'text-amber-600 dark:text-amber-400'}`}>Aprendendo</div>
             <div className="text-xl font-black mt-0.5 text-amber-600 dark:text-amber-400">{learningCount}</div>
           </div>
           <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-xs font-semibold ${isLight ? 'text-emerald-600' : 'text-emerald-400'}`}>Revisão</div>
+            <div className={`text-xs font-semibold ${'text-emerald-600 dark:text-emerald-400'}`}>Revisão</div>
             <div className="text-xl font-black mt-0.5 text-emerald-600 dark:text-emerald-400">{reviewCount}</div>
           </div>
         </div>
@@ -158,7 +153,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 px-1">
           <h2 className="text-sm font-bold tracking-tight">Níveis HSK 1 a 9</h2>
-          <span className={`text-xs ${isLight ? 'text-black/60' : 'text-white/55'}`}>
+          <span className={`text-xs ${'text-black/60 dark:text-white/55'}`}>
             Toque no card para ativar ou no botão para estudar isolado
           </span>
         </div>
@@ -179,12 +174,8 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                 key={lvl}
                 className={`relative p-4 rounded-2xl border transition-all select-none flex flex-col justify-between gap-3 has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:outline-offset-2 has-[>button:focus-visible]:outline-[var(--color-focus)] ${
                   isActive
-                    ? isLight
-                      ? 'bg-red-50/70 border-red-300 shadow-xs ring-1 ring-red-400/40'
-                      : 'bg-red-500/15 border-red-500/50 ring-1 ring-red-500/40'
-                    : isLight
-                    ? 'bg-white/80 border-black/5 hover:bg-white shadow-xs'
-                    : 'bg-white/[0.03] border-white/10 hover:bg-white/[0.06]'
+                    ? 'bg-red-50/70 border-red-300 shadow-xs ring-1 ring-red-400/40 dark:bg-red-500/15 dark:border-red-500/50 dark:ring-1 dark:ring-red-500/40 dark:shadow-none'
+                    : 'bg-white/80 border-black/5 hover:bg-white shadow-xs dark:bg-white/[0.03] dark:border-white/10 dark:hover:bg-white/[0.06] dark:shadow-none'
                 }`}
               >
                 {/* The whole card toggles the level: the button's ::after covers it */}
@@ -203,18 +194,14 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                           isActive
                             ? 'bg-red-600 text-white'
                             : isLoaded
-                            ? isLight
-                              ? 'bg-black/10 text-black/70'
-                              : 'bg-white/10 text-white/60'
-                            : isLight
-                            ? 'bg-black/5 text-black/50'
-                            : 'bg-white/5 text-white/40'
+                            ? 'bg-black/10 text-black/70 dark:bg-white/10 dark:text-white/60'
+                            : 'bg-black/5 text-black/50 dark:bg-white/5 dark:text-white/40'
                         }`}
                       >
                         {isActive ? 'Ativo' : isLoaded ? 'Inativo' : 'Disponível'}
                       </span>
                     </span>
-                    <span className={`block text-xs mt-1 ${isLight ? 'text-black/60' : 'text-white/60'}`}>
+                    <span className={`block text-xs mt-1 ${'text-black/60 dark:text-white/60'}`}>
                       {count} vocábulos {isLoaded && levelDue > 0 ? `• ${levelDue} pendentes` : ''}
                     </span>
                   </span>
@@ -234,7 +221,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
 
                 {/* Above the stretched toggle: only the Estudar button takes clicks here */}
                 <div className="relative z-10 pointer-events-none pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between gap-2">
-                  <span className={`text-xs line-clamp-2 ${isLight ? 'text-black/60' : 'text-white/55'}`}>
+                  <span className={`text-xs line-clamp-2 ${'text-black/60 dark:text-white/55'}`}>
                     {HSK_LEVEL_INFO[lvl].desc}
                   </span>
                   <button
@@ -243,9 +230,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                     disabled={isLoading}
                     aria-label={`Estudar só ${lvl}`}
                     className={`pointer-events-auto min-h-11 sm:min-h-9 py-1.5 px-3 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 flex-shrink-0 ${
-                      isLight
-                        ? 'bg-black/5 hover:bg-black/10 text-black'
-                        : 'bg-white/10 hover:bg-white/20 text-white'
+                      'bg-black/5 hover:bg-black/10 text-black dark:bg-white/10 dark:hover:bg-white/20 dark:text-white'
                     }`}
                   >
                     <Play className="w-3 h-3 fill-current" />

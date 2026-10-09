@@ -152,7 +152,6 @@ export default function App() {
           <DeckDashboard
             cards={cards}
             deckConfig={deckConfig}
-            theme={theme}
             onUpdateDeckConfig={handleUpdateDeckConfig}
             onStartStudy={handleStartStudy}
             onAddCards={handleAddCards}
@@ -177,7 +176,6 @@ export default function App() {
           <Suspense fallback={<ViewLoading />}>
             <StatsView
               cards={cards}
-              theme={theme}
               fsrsOptions={fsrsOptions}
               deckConfig={deckConfig}
             />
