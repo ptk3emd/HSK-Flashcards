@@ -9,12 +9,13 @@ import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
 import { ArrowLeft, Volume2, CheckCircle2, Moon, Sun, PenTool, Settings2, PauseCircle, Undo2, EllipsisVertical, Check } from 'lucide-react';
 import { ViewLoading } from './ViewLoading';
+import { usePrefetched } from './usePrefetched';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
 import { StudyOptionsSettings } from './StudyOptionsSettings';
 
 // The writing pad carries hanzi-writer; it loads on its own and is fetched ahead once this view mounts
-const loadWritingCanvas = () => import('./HanziWritingCanvas');
-const HanziWritingCanvas = lazy(() => loadWritingCanvas().then((m) => ({ default: m.HanziWritingCanvas })));
+const loadWritingCanvas = () => import('./HanziWritingCanvas').then((m) => m.HanziWritingCanvas);
+const HanziWritingCanvasLazy = lazy(() => loadWritingCanvas().then((c) => ({ default: c })));
 
 interface StudySessionProps {
   cards: Card[];
@@ -53,10 +54,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   const isLight = theme === 'light';
 
-  // Fetch the writing pad in the background so it opens instantly when asked for
-  useEffect(() => {
-    void loadWritingCanvas();
-  }, []);
+  // Fetched as soon as this view mounts, so the pad opens instantly when asked for
+  const HanziWritingCanvas = usePrefetched(loadWritingCanvas) ?? HanziWritingCanvasLazy;
 
   useEffect(() => {
     setReviewedInSession(0);

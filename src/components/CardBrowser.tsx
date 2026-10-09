@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useMemo, useRef, useCallback, lazy, Suspense } from 'react';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
@@ -7,11 +7,12 @@ import { Search, Volume2, Eye, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, 
 import { isLeech } from '../lib/fsrs';
 import { MandarinCardView } from './MandarinCardView';
 import { ViewLoading } from './ViewLoading';
+import { usePrefetched } from './usePrefetched';
 import { HanziDrawSearch } from './HanziDrawSearch';
 
 // The writing pad carries hanzi-writer; it loads on its own and is fetched ahead once this view mounts
-const loadWritingCanvas = () => import('./HanziWritingCanvas');
-const HanziWritingCanvas = lazy(() => loadWritingCanvas().then((m) => ({ default: m.HanziWritingCanvas })));
+const loadWritingCanvas = () => import('./HanziWritingCanvas').then((m) => m.HanziWritingCanvas);
+const HanziWritingCanvasLazy = lazy(() => loadWritingCanvas().then((c) => ({ default: c })));
 
 interface CardBrowserProps {
   cards: Card[];
@@ -51,10 +52,8 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
 
   const isLight = theme === 'light';
 
-  // Fetch the writing pad in the background so it opens instantly when asked for
-  useEffect(() => {
-    void loadWritingCanvas();
-  }, []);
+  // Fetched as soon as this view mounts, so the pad opens instantly when asked for
+  const HanziWritingCanvas = usePrefetched(loadWritingCanvas) ?? HanziWritingCanvasLazy;
 
   const handleSpeakWord = (text: string) => {
     speakChinese(text, {

@@ -22,7 +22,6 @@ import {
 
 interface StatsViewProps {
   cards: Card[];
-  theme: 'dark' | 'light';
   fsrsOptions?: FSRSOptions;
   deckConfig?: DeckConfig;
 }
@@ -31,7 +30,6 @@ type TimeRange = 'all' | '30d' | '7d' | 'today';
 
 export const StatsView: React.FC<StatsViewProps> = ({
   cards,
-  theme,
   fsrsOptions,
   deckConfig,
 }) => {
@@ -39,7 +37,6 @@ export const StatsView: React.FC<StatsViewProps> = ({
   const [retentionTab, setRetentionTab] = useState<'curve' | 'history' | 'buttons' | 'calibration'>('curve');
   const [hoveredPoint, setHoveredPoint] = useState<{ day: number; retention: number } | null>(null);
 
-  const isLight = theme === 'light';
   const targetRetention = fsrsOptions?.request_retention ?? 0.90;
 
   // Load review logs from persistent storage
@@ -326,9 +323,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       {/* Header with Title and Period Filter */}
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-            : 'bg-white/[0.04] border-white/10 text-white'
+          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
         }`}
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -338,7 +333,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black tracking-tight">Estatísticas Gerais</h1>
-              <p className={`text-xs mt-0.5 ${isLight ? 'text-black/60' : 'text-white/60'}`}>
+              <p className={`text-xs mt-0.5 ${'text-black/60 dark:text-white/60'}`}>
                 Métricas de retenção, curva de memória FSRS e ritmo de revisões
               </p>
             </div>
@@ -349,7 +344,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             role="group"
             aria-label="Período"
             className={`inline-flex p-1 rounded-2xl border ${
-              isLight ? 'bg-black/5 border-black/10' : 'bg-black/40 border-white/10'
+              'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
             }`}
           >
             {(
@@ -368,9 +363,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   timeRange === tab.id
                     ? 'bg-red-600 text-white shadow-sm'
-                    : isLight
-                    ? 'text-black/60 hover:text-black'
-                    : 'text-white/60 hover:text-white'
+                    : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
                 }`}
               >
                 {tab.label}
@@ -384,9 +377,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
           {/* 1. Taxa de Retenção Real */}
           <div
             className={`rounded-2xl p-4 border transition-all ${
-              isLight
-                ? 'bg-emerald-500/5 border-emerald-600/20 shadow-sm'
-                : 'bg-emerald-500/10 border-emerald-500/20'
+              'bg-emerald-500/5 border-emerald-600/20 shadow-sm dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:shadow-none'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -404,7 +395,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
           {/* 2. Estabilidade Média */}
           <div
             className={`rounded-2xl p-4 border transition-all ${
-              isLight ? 'bg-blue-500/5 border-blue-600/20 shadow-sm' : 'bg-blue-500/10 border-blue-500/20'
+              'bg-blue-500/5 border-blue-600/20 shadow-sm dark:bg-blue-500/10 dark:border-blue-500/20 dark:shadow-none'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -422,7 +413,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
           {/* 3. Sequência de Dias (Streak) */}
           <div
             className={`rounded-2xl p-4 border transition-all ${
-              isLight ? 'bg-amber-500/5 border-amber-600/20 shadow-sm' : 'bg-amber-500/10 border-amber-500/20'
+              'bg-amber-500/5 border-amber-600/20 shadow-sm dark:bg-amber-500/10 dark:border-amber-500/20 dark:shadow-none'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -440,9 +431,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
           {/* 4. Total de Revisões */}
           <div
             className={`rounded-2xl p-4 border transition-all ${
-              isLight
-                ? 'bg-black/[0.03] border-black/10 shadow-sm'
-                : 'bg-white/[0.04] border-white/15'
+              'bg-black/[0.03] border-black/10 shadow-sm dark:bg-white/[0.04] dark:border-white/15 dark:shadow-none'
             }`}
           >
             <div className="flex items-center justify-between">
@@ -462,9 +451,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       {/* SECTION: Gráfico de Retenção Interativo */}
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-            : 'bg-white/[0.04] border-white/10 text-white'
+          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
         }`}
       >
         {/* Navigation Tabs for Retention Section */}
@@ -474,7 +461,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               <Activity className="w-5 h-5 text-red-500" />
               <h2 className="text-lg font-bold">Gráfico de Retenção & Curva FSRS</h2>
             </div>
-            <p className={`text-xs mt-0.5 ${isLight ? 'text-black/60' : 'text-white/60'}`}>
+            <p className={`text-xs mt-0.5 ${'text-black/60 dark:text-white/60'}`}>
               Decaimento teórico da memória e taxa real de acertos
             </p>
           </div>
@@ -483,7 +470,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             role="group"
             aria-label="Visualização"
             className={`grid grid-cols-2 sm:inline-flex sm:flex-wrap gap-1 p-1 rounded-xl border text-xs ${
-              isLight ? 'bg-black/5 border-black/10' : 'bg-black/40 border-white/10'
+              'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
             }`}
           >
             <button
@@ -493,9 +480,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'curve'
                   ? 'bg-red-600 text-white shadow-sm'
-                  : isLight
-                  ? 'text-black/60 hover:text-black'
-                  : 'text-white/60 hover:text-white'
+                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
               }`}
             >
               Curva de Esquecimento
@@ -507,9 +492,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'buttons'
                   ? 'bg-red-600 text-white shadow-sm'
-                  : isLight
-                  ? 'text-black/60 hover:text-black'
-                  : 'text-white/60 hover:text-white'
+                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
               }`}
             >
               Botões de Resposta
@@ -521,9 +504,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'history'
                   ? 'bg-red-600 text-white shadow-sm'
-                  : isLight
-                  ? 'text-black/60 hover:text-black'
-                  : 'text-white/60 hover:text-white'
+                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
               }`}
             >
               Histórico Diário
@@ -535,9 +516,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'calibration'
                   ? 'bg-red-600 text-white shadow-sm'
-                  : isLight
-                  ? 'text-black/60 hover:text-black'
-                  : 'text-white/60 hover:text-white'
+                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
               }`}
             >
               Calibração
@@ -562,7 +541,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   </span>
                 </div>
               </div>
-              <div className={`text-xs font-medium ${isLight ? 'text-black/60' : 'text-white/60'}`}>
+              <div className={`text-xs font-medium ${'text-black/60 dark:text-white/60'}`}>
                 Estabilidade calculada: <strong>{avgStability} dias</strong>
               </div>
             </div>
@@ -571,7 +550,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <div
               ref={chartBoxRef}
               className={`relative rounded-2xl p-4 border ${
-                isLight ? 'bg-black/[0.02] border-black/10' : 'bg-black/30 border-white/10'
+                'bg-black/[0.02] border-black/10 dark:bg-black/30 dark:border-white/10'
               }`}
             >
               <svg
@@ -706,7 +685,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <div
                   aria-hidden="true"
                   className={`absolute top-4 right-4 px-3 py-1.5 rounded-xl border text-xs shadow-md ${
-                    isLight ? 'bg-white border-black/10 text-black' : 'bg-zinc-900 border-white/20 text-white'
+                    'bg-white border-black/10 text-black dark:bg-zinc-900 dark:border-white/20 dark:text-white'
                   }`}
                 >
                   <span className="font-bold">Dia {hoveredPoint.day}:</span>{' '}
@@ -720,7 +699,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             {/* Explanation breakdown */}
             <div
               className={`p-4 rounded-2xl border text-xs leading-relaxed ${
-                isLight ? 'bg-black/[0.02] border-black/5 text-black/70' : 'bg-black/20 border-white/5 text-white/70'
+                'bg-black/[0.02] border-black/5 text-black/70 dark:bg-black/20 dark:border-white/5 dark:text-white/70'
               }`}
             >
               A retenção estimada é calculada com base na equação oficial do algoritmo FSRS:{' '}
@@ -737,7 +716,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               {/* De novo */}
               <div
                 className={`p-4 rounded-2xl border ${
-                  isLight ? 'bg-red-500/5 border-red-500/20' : 'bg-red-500/10 border-red-500/20'
+                  'bg-red-500/5 border-red-500/20 dark:bg-red-500/10 dark:border-red-500/20'
                 }`}
               >
                 <div className="text-xs font-semibold text-red-600 dark:text-red-400">1. De novo</div>
@@ -752,7 +731,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               {/* Difícil */}
               <div
                 className={`p-4 rounded-2xl border ${
-                  isLight ? 'bg-amber-500/5 border-amber-500/20' : 'bg-amber-500/10 border-amber-500/20'
+                  'bg-amber-500/5 border-amber-500/20 dark:bg-amber-500/10 dark:border-amber-500/20'
                 }`}
               >
                 <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">2. Difícil</div>
@@ -767,7 +746,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               {/* Bom */}
               <div
                 className={`p-4 rounded-2xl border ${
-                  isLight ? 'bg-emerald-500/5 border-emerald-500/20' : 'bg-emerald-500/10 border-emerald-500/20'
+                  'bg-emerald-500/5 border-emerald-500/20 dark:bg-emerald-500/10 dark:border-emerald-500/20'
                 }`}
               >
                 <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">3. Bom</div>
@@ -782,7 +761,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               {/* Fácil */}
               <div
                 className={`p-4 rounded-2xl border ${
-                  isLight ? 'bg-blue-500/5 border-blue-500/20' : 'bg-blue-500/10 border-blue-500/20'
+                  'bg-blue-500/5 border-blue-500/20 dark:bg-blue-500/10 dark:border-blue-500/20'
                 }`}
               >
                 <div className="text-xs font-semibold text-blue-600 dark:text-blue-400">4. Fácil</div>
@@ -801,7 +780,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <div className="text-xs font-semibold mb-2 opacity-80">Proporção dos Botões de Avaliação</div>
                 <div
                   className={`w-full h-4 rounded-full overflow-hidden flex border ${
-                    isLight ? 'bg-black/5 border-black/10' : 'bg-black/40 border-white/10'
+                    'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
                   }`}
                 >
                   <div
@@ -832,7 +811,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <div
                 className={`p-4 rounded-2xl border ${
-                  isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
+                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 <span className="text-xs opacity-60 font-medium">Retenção em Cartões Jovens (&lt; 21d)</span>
@@ -844,7 +823,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
               <div
                 className={`p-4 rounded-2xl border ${
-                  isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
+                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 <span className="text-xs opacity-60 font-medium">Retenção em Cartões Maduros (&ge; 21d)</span>
@@ -863,7 +842,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             {dailyHistory.length === 0 ? (
               <div
                 className={`text-center py-10 rounded-2xl border text-xs opacity-60 ${
-                  isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
+                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 Ainda não há histórico diário de revisões gravado. Complete uma sessão de estudo para visualizar o gráfico.
@@ -878,7 +857,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                     <div
                       key={item.day}
                       className={`p-3 rounded-2xl border text-center ${
-                        isLight ? 'bg-black/[0.02] border-black/10' : 'bg-black/30 border-white/10'
+                        'bg-black/[0.02] border-black/10 dark:bg-black/30 dark:border-white/10'
                       }`}
                     >
                       <div className="text-xs opacity-50 font-semibold">{item.day}</div>
@@ -898,16 +877,14 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
         {/* Tab 4: Calibration of predicted vs real recall */}
         {retentionTab === 'calibration' && (
-          <RetentionCalibration logs={filteredLogs} theme={theme} />
+          <RetentionCalibration logs={filteredLogs} />
         )}
       </div>
 
       {/* SECTION: Estatísticas Gerais & Maturidade dos Cartões */}
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-            : 'bg-white/[0.04] border-white/10 text-white'
+          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
         }`}
       >
         <div className="flex items-center gap-2 mb-4">
@@ -920,7 +897,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
           <div className="space-y-3">
             <div
               className={`w-full h-4 rounded-full overflow-hidden flex border ${
-                isLight ? 'bg-black/5 border-black/10' : 'bg-black/40 border-white/10'
+                'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
               }`}
             >
               <div
@@ -949,7 +926,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
               <div
                 className={`p-3 rounded-2xl border ${
-                  isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
+                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -962,7 +939,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
               <div
                 className={`p-3 rounded-2xl border ${
-                  isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
+                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -975,7 +952,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
               <div
                 className={`p-3 rounded-2xl border ${
-                  isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
+                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -988,7 +965,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
               <div
                 className={`p-3 rounded-2xl border ${
-                  isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
+                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -1028,9 +1005,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       {/* SECTION: Previsão de Revisões Futuras (Forecast) */}
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-            : 'bg-white/[0.04] border-white/10 text-white'
+          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
         }`}
       >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
@@ -1038,7 +1013,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <Calendar className="w-5 h-5 text-red-500" />
             <h2 className="text-lg font-bold">Carga de Revisões Futuras</h2>
           </div>
-          <span className={`text-xs ${isLight ? 'text-black/60' : 'text-white/55'}`}>
+          <span className={`text-xs ${'text-black/60 dark:text-white/55'}`}>
             Previsão baseada no agendamento FSRS
           </span>
         </div>
@@ -1055,9 +1030,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 className={`flex flex-col items-center justify-end p-3 rounded-2xl border transition-all min-h-[140px] ${
                   item.highlight
                     ? 'bg-red-500/10 border-red-500/30'
-                    : isLight
-                    ? 'bg-black/[0.02] border-black/5'
-                    : 'bg-black/20 border-white/5'
+                    : 'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 <div className="text-xs font-black text-red-500 mb-2">{item.count}</div>
@@ -1081,9 +1054,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       {hskBreakdown.length > 0 && (
         <div
           className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-            isLight
-              ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-              : 'bg-white/[0.04] border-white/10 text-white'
+            'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
           }`}
         >
           <div className="flex items-center gap-2 mb-4">
@@ -1096,7 +1067,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               <div
                 key={lvl.level}
                 className={`p-3.5 rounded-2xl border transition-all ${
-                  isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
+                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs mb-2">
@@ -1116,7 +1087,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
                 <div
                   className={`w-full h-2.5 rounded-full overflow-hidden flex border ${
-                    isLight ? 'bg-black/5 border-black/10' : 'bg-black/40 border-white/10'
+                    'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
                   }`}
                 >
                   <div
@@ -1137,9 +1108,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       {/* Explicação da Repetição Espaçada FSRS */}
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-            : 'bg-white/[0.04] border-white/10 text-white'
+          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
         }`}
       >
         <details className="group">
@@ -1148,10 +1117,10 @@ export const StatsView: React.FC<StatsViewProps> = ({
           <h2 className="text-base font-bold">Como funciona a repetição espaçada</h2>
           <ChevronDown className="w-4 h-4 ml-auto opacity-60 transition-transform group-open:rotate-180" aria-hidden="true" />
         </summary>
-        <p className={`text-xs leading-relaxed mt-2 ${isLight ? 'text-black/70' : 'text-white/70'}`}>
+        <p className={`text-xs leading-relaxed mt-2 ${'text-black/70 dark:text-white/70'}`}>
           O agendador de repetição calcula matematicamente a curva de retenção de memória de cada ideograma chinês com base em:
         </p>
-        <ul className={`text-xs space-y-1.5 list-disc pl-5 mt-2 ${isLight ? 'text-black/80' : 'text-white/80'}`}>
+        <ul className={`text-xs space-y-1.5 list-disc pl-5 mt-2 ${'text-black/80 dark:text-white/80'}`}>
           <li><strong>Estabilidade (S):</strong> Duração estimada em dias antes de você esquecer o Hanzi.</li>
           <li><strong>Dificuldade (D):</strong> Complexidade intrínseca de cada caractere (escala de 1 a 10).</li>
           <li><strong>Recuperabilidade (R):</strong> Probabilidade de lembrança instantânea durante o teste.</li>

@@ -10,7 +10,6 @@ import {
 
 interface RetentionCalibrationProps {
   logs: ReviewLog[];
-  theme: 'dark' | 'light';
 }
 
 const MIN_SAMPLE = 5; // Cells with fewer reviews are shown without colour
@@ -22,27 +21,26 @@ const formatPercent = (value: number | null) => (value === null ? '-' : `${Math.
 
 const formatDay = (day: string) => `${day.slice(8, 10)}/${day.slice(5, 7)}`;
 
-function cellTone(cell: CalibrationCell, isLight: boolean): string {
+function cellTone(cell: CalibrationCell): string {
   const rate = cellRate(cell);
   const predicted = cellPredicted(cell);
   if (cell.count < MIN_SAMPLE || rate === null || predicted === null) {
-    return isLight ? 'bg-black/[0.03] text-black/40' : 'bg-white/[0.03] text-white/35';
+    return 'bg-black/[0.03] text-black/40 dark:bg-white/[0.03] dark:text-white/35';
   }
 
   // Positive gap: the card was remembered more often than FSRS expected
   const gap = rate - predicted;
   if (gap <= -STRONG_BAND) return 'bg-red-600/70 text-white';
-  if (gap <= -NEUTRAL_BAND) return isLight ? 'bg-red-500/25 text-red-900' : 'bg-red-500/30 text-red-100';
-  if (gap < NEUTRAL_BAND) return isLight ? 'bg-black/5 text-black' : 'bg-white/10 text-white';
-  if (gap < STRONG_BAND) return isLight ? 'bg-emerald-500/25 text-emerald-900' : 'bg-emerald-500/30 text-emerald-100';
+  if (gap <= -NEUTRAL_BAND) return 'bg-red-500/25 text-red-900 dark:bg-red-500/30 dark:text-red-100';
+  if (gap < NEUTRAL_BAND) return 'bg-black/5 text-black dark:bg-white/10 dark:text-white';
+  if (gap < STRONG_BAND) return 'bg-emerald-500/25 text-emerald-900 dark:bg-emerald-500/30 dark:text-emerald-100';
   return 'bg-emerald-600/70 text-white';
 }
 
-export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs, theme }) => {
-  const isLight = theme === 'light';
+export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs }) => {
   const data = useMemo(() => buildCalibration(logs), [logs]);
 
-  const subtleText = isLight ? 'text-black/60' : 'text-white/60';
+  const subtleText = 'text-black/60 dark:text-white/60';
   const totalRate = cellRate(data.total);
   const totalPredicted = cellPredicted(data.total);
   const gapPoints =
@@ -63,15 +61,15 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
     <div className="space-y-5">
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className={`rounded-2xl p-3 border ${isLight ? 'bg-black/[0.02] border-black/5' : 'bg-white/[0.03] border-white/10'}`}>
+        <div className={`rounded-2xl p-3 border ${'bg-black/[0.02] border-black/5 dark:bg-white/[0.03] dark:border-white/10'}`}>
           <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Real</div>
           <div className="text-lg font-black tabular-nums">{formatPercent(totalRate)}</div>
         </div>
-        <div className={`rounded-2xl p-3 border ${isLight ? 'bg-black/[0.02] border-black/5' : 'bg-white/[0.03] border-white/10'}`}>
+        <div className={`rounded-2xl p-3 border ${'bg-black/[0.02] border-black/5 dark:bg-white/[0.03] dark:border-white/10'}`}>
           <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Prevista</div>
           <div className="text-lg font-black tabular-nums">{formatPercent(totalPredicted)}</div>
         </div>
-        <div className={`rounded-2xl p-3 border ${isLight ? 'bg-black/[0.02] border-black/5' : 'bg-white/[0.03] border-white/10'}`}>
+        <div className={`rounded-2xl p-3 border ${'bg-black/[0.02] border-black/5 dark:bg-white/[0.03] dark:border-white/10'}`}>
           <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Diferença</div>
           <div
             className={`text-lg font-black tabular-nums ${
@@ -85,7 +83,7 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
             {gapPoints === null ? '-' : `${gapPoints > 0 ? '+' : ''}${gapPoints} pts`}
           </div>
         </div>
-        <div className={`rounded-2xl p-3 border ${isLight ? 'bg-black/[0.02] border-black/5' : 'bg-white/[0.03] border-white/10'}`}>
+        <div className={`rounded-2xl p-3 border ${'bg-black/[0.02] border-black/5 dark:bg-white/[0.03] dark:border-white/10'}`}>
           <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Revisões</div>
           <div className="text-lg font-black tabular-nums">{data.total.count}</div>
         </div>
@@ -117,7 +115,7 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
                 return (
                   <div
                     key={CALIBRATION_BINS[idx].label}
-                    className={`rounded-xl px-1 py-1.5 text-center tabular-nums ${cellTone(cell, isLight)}`}
+                    className={`rounded-xl px-1 py-1.5 text-center tabular-nums ${cellTone(cell)}`}
                     title={`${cell.count} revisões · real ${formatPercent(rate)} · prevista ${formatPercent(predicted)}`}
                   >
                     <div className="text-xs font-extrabold">{formatPercent(rate)}</div>
@@ -138,7 +136,7 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
           Real abaixo da prevista
         </span>
         <span className="flex items-center gap-1.5">
-          <span className={`w-3 h-3 rounded ${isLight ? 'bg-black/10' : 'bg-white/20'}`} />
+          <span className={`w-3 h-3 rounded ${'bg-black/10 dark:bg-white/20'}`} />
           Em linha (até 5 pts)
         </span>
         <span className="flex items-center gap-1.5">
@@ -146,7 +144,7 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
           Real acima da prevista
         </span>
         <span className="flex items-center gap-1.5">
-          <span className={`w-3 h-3 rounded ${isLight ? 'bg-black/[0.05]' : 'bg-white/[0.06]'}`} />
+          <span className={`w-3 h-3 rounded ${'bg-black/[0.05] dark:bg-white/[0.06]'}`} />
           Menos de {MIN_SAMPLE} revisões
         </span>
       </div>

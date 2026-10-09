@@ -22,16 +22,7 @@ import { AudioVoiceSettings } from './components/AudioVoiceSettings';
 import { FSRSSettings } from './components/FSRSSettings';
 import { StudyOptionsSettings } from './components/StudyOptionsSettings';
 import { useSystemBarHidden } from './components/useSystemBarHidden';
-
-// Views opened from the bottom bar load on first use, keeping the first screen light
-const CardBrowser = lazy(() => import('./components/CardBrowser').then((m) => ({ default: m.CardBrowser })));
-const StatsView = lazy(() => import('./components/StatsView').then((m) => ({ default: m.StatsView })));
-
-// After the first screen is up, fetch those views while the browser is idle
-function prefetchViews() {
-  void import('./components/CardBrowser');
-  void import('./components/StatsView');
-}
+import { usePrefetched } from './components/usePrefetched';
 import {
   Layers,
   Search,
@@ -41,6 +32,13 @@ import {
   Settings2,
   Sparkles,
 } from 'lucide-react';
+
+// Views opened from the bottom bar are split out, keeping the first screen light. They are
+// fetched when the browser is idle; lazy() only covers a tap that comes before that.
+const loadCardBrowser = () => import('./components/CardBrowser').then((m) => m.CardBrowser);
+const loadStatsView = () => import('./components/StatsView').then((m) => m.StatsView);
+const CardBrowserLazy = lazy(() => loadCardBrowser().then((c) => ({ default: c })));
+const StatsViewLazy = lazy(() => loadStatsView().then((c) => ({ default: c })));
 
 export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -53,12 +51,10 @@ export default function App() {
 
   useSystemBarHidden(deckConfig.hideSystemBar);
 
-  // Load cards on initial mount
-  useEffect(() => {
-    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
-    idle(prefetchViews);
-  }, []);
+  const CardBrowser = usePrefetched(loadCardBrowser, 'idle') ?? CardBrowserLazy;
+  const StatsView = usePrefetched(loadStatsView, 'idle') ?? StatsViewLazy;
 
+  // Load cards on initial mount
   useEffect(() => {
     let cancelled = false;
     loadCards().then((initialCards) => {
@@ -152,7 +148,6 @@ export default function App() {
           <DeckDashboard
             cards={cards}
             deckConfig={deckConfig}
-            theme={theme}
             onUpdateDeckConfig={handleUpdateDeckConfig}
             onStartStudy={handleStartStudy}
             onAddCards={handleAddCards}
@@ -177,7 +172,6 @@ export default function App() {
           <Suspense fallback={<ViewLoading />}>
             <StatsView
               cards={cards}
-              theme={theme}
               fsrsOptions={fsrsOptions}
               deckConfig={deckConfig}
             />
