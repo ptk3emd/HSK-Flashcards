@@ -18,6 +18,23 @@
   outline-offset: 2px;
 }
 
+/* Chart colours (statistics), one set per theme */
+:root {
+  --chart-grid: #e5e7eb;
+  --chart-tick: #9ca3af;
+  --chart-label: #4b5563;
+  --chart-curve: #ef4444;
+  --chart-target: #059669;
+  --chart-point-ring: #ffffff;
+}
+.night_mode {
+  --chart-grid: #27272a;
+  --chart-tick: #52525b;
+  --chart-label: #a1a1aa;
+  --chart-target: #10b981;
+  --chart-point-ring: #18181b;
+}
+
 ::selection {
   background: rgba(239, 68, 68, 0.35);
 }

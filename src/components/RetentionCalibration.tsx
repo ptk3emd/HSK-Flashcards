@@ -64,15 +64,15 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
       {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className={`rounded-2xl p-3 border ${isLight ? 'bg-black/[0.02] border-black/5' : 'bg-white/[0.03] border-white/10'}`}>
-          <div className={`text-[10px] uppercase font-bold tracking-wider ${subtleText}`}>Real</div>
+          <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Real</div>
           <div className="text-lg font-black tabular-nums">{formatPercent(totalRate)}</div>
         </div>
         <div className={`rounded-2xl p-3 border ${isLight ? 'bg-black/[0.02] border-black/5' : 'bg-white/[0.03] border-white/10'}`}>
-          <div className={`text-[10px] uppercase font-bold tracking-wider ${subtleText}`}>Prevista</div>
+          <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Prevista</div>
           <div className="text-lg font-black tabular-nums">{formatPercent(totalPredicted)}</div>
         </div>
         <div className={`rounded-2xl p-3 border ${isLight ? 'bg-black/[0.02] border-black/5' : 'bg-white/[0.03] border-white/10'}`}>
-          <div className={`text-[10px] uppercase font-bold tracking-wider ${subtleText}`}>Diferença</div>
+          <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Diferença</div>
           <div
             className={`text-lg font-black tabular-nums ${
               gapPoints === null || Math.abs(gapPoints) < 5
@@ -86,7 +86,7 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
           </div>
         </div>
         <div className={`rounded-2xl p-3 border ${isLight ? 'bg-black/[0.02] border-black/5' : 'bg-white/[0.03] border-white/10'}`}>
-          <div className={`text-[10px] uppercase font-bold tracking-wider ${subtleText}`}>Revisões</div>
+          <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Revisões</div>
           <div className="text-lg font-black tabular-nums">{data.total.count}</div>
         </div>
       </div>
@@ -99,7 +99,7 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
         className="overflow-x-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 rounded-xl"
       >
         <div className="min-w-[340px] space-y-1.5">
-          <div className={`grid ${GRID_COLS} gap-1.5 px-0.5 text-[10px] font-bold uppercase tracking-wider ${subtleText}`}>
+          <div className={`grid ${GRID_COLS} gap-1.5 px-0.5 text-xs font-bold uppercase tracking-wider ${subtleText}`}>
             <span>Dia</span>
             {CALIBRATION_BINS.map((bin) => (
               <span key={bin.label} className="text-center">
@@ -121,7 +121,7 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
                     title={`${cell.count} revisões · real ${formatPercent(rate)} · prevista ${formatPercent(predicted)}`}
                   >
                     <div className="text-xs font-extrabold">{formatPercent(rate)}</div>
-                    <div className="text-[10px] opacity-75">prev {formatPercent(predicted)}</div>
+                    <div className="text-xs opacity-75">prev {formatPercent(predicted)}</div>
                     <div className="text-[9px] opacity-50">n={cell.count}</div>
                   </div>
                 );
@@ -132,7 +132,7 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
       </div>
 
       {/* Legend */}
-      <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] ${subtleText}`}>
+      <div className={`flex flex-wrap items-center gap-x-4 gap-y-2 text-xs ${subtleText}`}>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded bg-red-600/70" />
           Real abaixo da prevista
