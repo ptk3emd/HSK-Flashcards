@@ -261,8 +261,8 @@
   width: var(--avail-card-width);
   max-width: 100%;
   background: var(--glass-pill);
-  backdrop-filter: blur(35px) saturate(190%);
-  -webkit-backdrop-filter: blur(35px) saturate(190%);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
   box-shadow: var(--glass-highlight);
   border-radius: 999px;
   padding: 18px var(--card-padding-x);
@@ -453,4 +453,15 @@ u {
 .mandarin-card x, .mandarin-card xu,
 .mandarin-dock x, .mandarin-dock xu {
   display: inline;
+}
+
+/* -------------------------------------------------- MOVIMENTO REDUZIDO
+   The state change still happens (front/back, pinyin reveal); only the movement is removed. */
+@media (prefers-reduced-motion: reduce) {
+  .mandarin-dock,
+  .front-scene .pinying#pinying-delayed,
+  .front-scene .pinying.hidden {
+    transition: none !important;
+    transform: none !important;
+  }
 }

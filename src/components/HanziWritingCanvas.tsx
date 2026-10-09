@@ -220,11 +220,11 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
         embedded
           ? 'p-3 rounded-3xl backdrop-blur-2xl border transition-all shadow-xl ' +
             (isLight
-              ? 'bg-white/85 border-white/95 text-[#111113]'
+              ? 'bg-white/85 border-white/95 text-ink'
               : 'bg-black/50 border-white/15 text-white')
           : 'p-4 rounded-3xl backdrop-blur-2xl border transition-all shadow-2xl ' +
             (isLight
-              ? 'bg-white/95 border-white text-[#111113]'
+              ? 'bg-white/95 border-white text-ink'
               : 'bg-neutral-900/95 border-white/15 text-white')
       }`}
     >
@@ -235,7 +235,7 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
             <PenTool className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-bold tracking-tight">Praticar Escrita Hanzi</h3>
+            <h2 className="text-xs sm:text-sm font-bold tracking-tight">Praticar Escrita Hanzi</h2>
             {meaning && (
               <p className="text-[11px] opacity-60 truncate max-w-[190px]">{meaning}</p>
             )}

@@ -43,7 +43,7 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
     setWeightsError(null);
   }, [fsrsOptions.w]);
 
-  const inputClass = `w-full px-3 py-1.5 rounded-xl text-xs border outline-none font-semibold ${
+  const inputClass = `w-full px-3 py-1.5 rounded-xl text-xs border font-semibold ${
     isLight ? 'bg-white border-black/15 text-black' : 'bg-black/40 border-white/15 text-white'
   }`;
   const hintClass = `text-[11px] leading-relaxed ${isLight ? 'text-black/60' : 'text-white/50'}`;
@@ -101,6 +101,7 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
           max={SLIDER_MAX}
           step={SLIDER_STEP}
           value={fsrsOptions.request_retention}
+          aria-label="Retenção desejada padrão"
           onChange={(e) =>
             onUpdateFSRSOptions({
               ...fsrsOptions,
@@ -116,7 +117,7 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
 
       {/* Per-level request retention */}
       <div className={sectionClass}>
-        <h4 className="text-xs font-bold">Retenção por nível</h4>
+        <h3 className="text-xs font-bold">Retenção por nível</h3>
         <div className="space-y-2.5">
           {ALL_HSK_LEVELS.map((level) => {
             const override = levelRetention[level];
@@ -169,10 +170,14 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
       {/* Maximum interval and advanced weights */}
       <div className={sectionClass}>
         <div>
-          <label className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}>
+          <label
+            htmlFor="max-interval"
+            className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}
+          >
             Intervalo máximo (dias):
           </label>
           <input
+            id="max-interval"
             type="number"
             min={1}
             max={MAX_INTERVAL_LIMIT}

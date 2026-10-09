@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useDialogFocus } from './useDialogFocus';
 import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog } from '../types/card';
 import { MandarinCardView } from './MandarinCardView';
 import { isLeech, predictNextIntervals, scheduleCard } from '../lib/fsrs';
@@ -106,6 +107,14 @@ export const StudySession: React.FC<StudySessionProps> = ({
       : 0;
 
   const currentCard = dueQueue[0] || null;
+
+  // Dialogs keep focus inside while open, close on Escape and return focus to their trigger
+  const writingDialogRef = useRef<HTMLDivElement>(null);
+  const voiceDialogRef = useRef<HTMLDivElement>(null);
+  const closeWritingPad = useCallback(() => setShowWritingPad(false), []);
+  const closeVoiceSettings = useCallback(() => setShowVoiceSettingsModal(false), []);
+  useDialogFocus(writingDialogRef, showWritingPad && currentCard !== null, closeWritingPad);
+  useDialogFocus(voiceDialogRef, showVoiceSettingsModal && !!onUpdateDeckConfig, closeVoiceSettings);
 
   useEffect(() => {
     if (currentCard && deckConfig.autoPlayAudio) {
@@ -227,7 +236,15 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
+      // Focused controls keep their native keyboard behaviour (Enter/Space activate them)
+      if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes((e.target as HTMLElement).tagName)) return;
+      // While a dialog is open, its keys belong to the dialog, not to the card underneath.
+      // W still closes the writing pad, as it toggled it before.
+      if (showWritingPad && (e.key === 'w' || e.key === 'W')) {
+        setShowWritingPad(false);
+        return;
+      }
+      if (showWritingPad || showVoiceSettingsModal) return;
 
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
@@ -255,14 +272,16 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFlipped, handleAnswer, handleUndo, handleSpeak]);
+  }, [isFlipped, handleAnswer, handleUndo, handleSpeak, showWritingPad, showVoiceSettingsModal]);
 
   return (
-    <div
+    <main
       className={`card ${
         isLight ? 'card-theme-light' : 'night_mode card-theme-dark'
       } flex flex-col justify-between select-none relative min-h-screen w-full transition-colors duration-300 overflow-x-hidden`}
     >
+      <h1 className="sr-only">Sessão de estudo</h1>
+
       {/* Barra de Progresso da Sessão no Topo */}
       <div className="w-full z-40 bg-black/[0.03] dark:bg-white/[0.04] border-b border-black/5 dark:border-white/10 sticky top-0 backdrop-blur-md">
         {/* Linha da barra de progresso */}
@@ -296,9 +315,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
         <button
           type="button"
           onClick={onExit}
-          className={`p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 text-sm font-semibold border ${
+          className={`min-h-11 px-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 text-sm font-semibold border ${
             isLight
-              ? 'bg-white/80 hover:bg-white text-[#111113] border-white/90 shadow-sm'
+              ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
               : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
           }`}
           title="Voltar aos Decks"
@@ -314,7 +333,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             onClick={() => setIsLevelDropdownOpen(!isLevelDropdownOpen)}
             className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full backdrop-blur-md border text-xs font-bold tracking-wider transition-all cursor-pointer shadow-sm ${
               isLight
-                ? 'bg-white/80 hover:bg-white border-white/90 text-[#111113]'
+                ? 'bg-white/80 hover:bg-white border-white/90 text-ink'
                 : 'bg-black/35 hover:bg-black/50 border-white/10 text-white/90'
             }`}
           >
@@ -326,7 +345,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             <div
               className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 w-52 rounded-2xl p-1.5 shadow-2xl border backdrop-blur-2xl z-50 animate-in fade-in zoom-in-95 duration-150 ${
                 isLight
-                  ? 'bg-white/95 border-white text-[#111113]'
+                  ? 'bg-white/95 border-white text-ink'
                   : 'bg-neutral-900/95 border-white/15 text-white'
               }`}
             >
@@ -362,7 +381,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                       isSelected
                         ? 'bg-red-600 text-white font-bold'
                         : isLight
-                        ? 'hover:bg-black/5 text-[#111113]'
+                        ? 'hover:bg-black/5 text-ink'
                         : 'hover:bg-white/10 text-white'
                     }`}
                   >
@@ -380,11 +399,11 @@ export const StudySession: React.FC<StudySessionProps> = ({
           <button
             type="button"
             onClick={() => setShowWritingPad((prev) => !prev)}
-            className={`p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer border ${
+            className={`size-11 flex items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer border ${
               showWritingPad
                 ? 'bg-red-600 text-white border-red-500 shadow-md scale-105'
                 : isLight
-                ? 'bg-white/80 hover:bg-white text-[#111113] border-white/90 shadow-sm'
+                ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
                 : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
             }`}
             title="Praticar Escrita do Hanzi (W)"
@@ -394,9 +413,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
           <button
             type="button"
             onClick={handleSpeak}
-            className={`p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer border ${
+            className={`size-11 flex items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer border ${
               isLight
-                ? 'bg-white/80 hover:bg-white text-[#111113] border-white/90 shadow-sm'
+                ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
                 : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
             }`}
             title="Pronunciar (R)"
@@ -407,11 +426,11 @@ export const StudySession: React.FC<StudySessionProps> = ({
             <button
               type="button"
               onClick={() => setShowVoiceSettingsModal(true)}
-              className={`p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer border ${
+              className={`size-11 flex items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer border ${
                 showVoiceSettingsModal
                   ? 'bg-red-600 text-white border-red-500 shadow-md scale-105'
                   : isLight
-                  ? 'bg-white/80 hover:bg-white text-[#111113] border-white/90 shadow-sm'
+                  ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
                   : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
               }`}
               title="Configurar Voz e Gênero (TTS)"
@@ -422,9 +441,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
           <button
             type="button"
             onClick={onToggleTheme}
-            className={`p-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer border ${
+            className={`size-11 flex items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer border ${
               isLight
-                ? 'bg-white/80 hover:bg-white text-[#111113] border-white/90 shadow-sm'
+                ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
                 : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
             }`}
             title="Alternar Modo Claro / Escuro"
@@ -435,7 +454,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
       </header>
 
       {/* Main Flashcard Scene (Zero vertical shifting on answer reveal) */}
-      <main
+      <div
         className="study-card-container w-full flex-1 flex flex-col items-center justify-center my-auto cursor-pointer py-4"
         style={{
           perspective: '1000px',
@@ -458,7 +477,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
           <div className="mandarin-scene">
             <div
               className={`mandarin-card text-center py-12 px-6 flex flex-col items-center gap-4 ${
-                isLight ? 'bg-white/85 text-[#111113]' : ''
+                isLight ? 'bg-white/85 text-ink' : ''
               }`}
             >
               <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mb-1">
@@ -498,7 +517,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             </div>
           </div>
         )}
-      </main>
+      </div>
 
       {/* Bottom Bar — Anki style with fixed layout height to prevent vertical jitter */}
       <footer className="w-full max-w-2xl mx-auto px-4 py-4 flex flex-col items-center gap-3 z-20">
@@ -514,7 +533,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               onClick={handleSuspendCurrent}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-md text-xs font-semibold cursor-pointer transition-all border shadow-sm ${
                 isLight
-                  ? 'bg-white/85 hover:bg-white text-[#111113] border-white/95'
+                  ? 'bg-white/85 hover:bg-white text-ink border-white/95'
                   : 'bg-black/35 hover:bg-black/50 text-white/90 border-white/10'
               }`}
               title="Suspender cartão até reativar no Dicionário"
@@ -530,7 +549,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
           <div
             className={`flex items-center gap-3 backdrop-blur-md px-3.5 py-1.5 rounded-full border shadow-sm ${
               isLight
-                ? 'bg-white/85 border-white/95 text-[#111113]'
+                ? 'bg-white/85 border-white/95 text-ink'
                 : 'bg-black/35 border-white/10 text-white'
             }`}
           >
@@ -545,7 +564,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               onClick={handleUndo}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-md text-xs font-semibold cursor-pointer transition-all border shadow-sm ${
                 isLight
-                  ? 'bg-white/85 hover:bg-white text-[#111113] border-white/95'
+                  ? 'bg-white/85 hover:bg-white text-ink border-white/95'
                   : 'bg-black/35 hover:bg-black/50 text-white/90 border-white/10'
               }`}
               title="Desfazer última revisão (Ctrl+Z)"
@@ -568,7 +587,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               disabled={!currentCard}
               className={`w-full h-full py-4 px-6 rounded-2xl font-bold text-base shadow-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border active:scale-[0.99] backdrop-blur-xl ${
                 isLight
-                  ? 'bg-white/85 hover:bg-white text-[#111113] border-white/95'
+                  ? 'bg-white/85 hover:bg-white text-ink border-white/95'
                   : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
               }`}
               style={{
@@ -681,6 +700,10 @@ export const StudySession: React.FC<StudySessionProps> = ({
           onClick={() => setShowWritingPad(false)}
         >
           <div
+            ref={writingDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Praticar escrita do Hanzi"
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md animate-in zoom-in-95 duration-200"
           >
@@ -702,11 +725,15 @@ export const StudySession: React.FC<StudySessionProps> = ({
           onClick={() => setShowVoiceSettingsModal(false)}
         >
           <div
+            ref={voiceDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Configurar voz"
             onClick={(e) => e.stopPropagation()}
             className={`w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-7 shadow-2xl border animate-in zoom-in-95 duration-200 ${
               isLight
-                ? 'bg-white/95 border-white text-[#111113]'
-                : 'bg-[#180a0c]/95 border-white/15 text-white'
+                ? 'bg-white/95 border-white text-ink'
+                : 'bg-night-panel/95 border-white/15 text-white'
             }`}
           >
             <AudioVoiceSettings
@@ -726,6 +753,6 @@ export const StudySession: React.FC<StudySessionProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 };

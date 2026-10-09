@@ -315,7 +315,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
           isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
             : 'bg-white/[0.04] border-white/10 text-white'
         }`}
       >
@@ -448,7 +448,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
           isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
             : 'bg-white/[0.04] border-white/10 text-white'
         }`}
       >
@@ -472,7 +472,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <button
               type="button"
               onClick={() => setRetentionTab('curve')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'curve'
                   ? 'bg-red-600 text-white shadow-sm'
                   : isLight
@@ -485,7 +485,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <button
               type="button"
               onClick={() => setRetentionTab('buttons')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'buttons'
                   ? 'bg-red-600 text-white shadow-sm'
                   : isLight
@@ -498,7 +498,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <button
               type="button"
               onClick={() => setRetentionTab('history')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'history'
                   ? 'bg-red-600 text-white shadow-sm'
                   : isLight
@@ -511,7 +511,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <button
               type="button"
               onClick={() => setRetentionTab('calibration')}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'calibration'
                   ? 'bg-red-600 text-white shadow-sm'
                   : isLight
@@ -871,7 +871,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
           isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
             : 'bg-white/[0.04] border-white/10 text-white'
         }`}
       >
@@ -994,7 +994,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
           isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
             : 'bg-white/[0.04] border-white/10 text-white'
         }`}
       >
@@ -1047,7 +1047,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
         <div
           className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
             isLight
-              ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+              ? 'bg-white/80 border-black/5 shadow-sm text-ink'
               : 'bg-white/[0.04] border-white/10 text-white'
           }`}
         >
@@ -1103,7 +1103,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
           isLight
-            ? 'bg-white/80 border-black/5 shadow-sm text-[#111113]'
+            ? 'bg-white/80 border-black/5 shadow-sm text-ink'
             : 'bg-white/[0.04] border-white/10 text-white'
         }`}
       >

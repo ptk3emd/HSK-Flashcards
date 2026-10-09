@@ -92,7 +92,12 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
       </div>
 
       {/* Heatmap: one row per day, one column per predicted-recall bin */}
-      <div className="overflow-x-auto">
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label="Grade de calibração por dia e faixa de previsão"
+        className="overflow-x-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 rounded-xl"
+      >
         <div className="min-w-[340px] space-y-1.5">
           <div className={`grid ${GRID_COLS} gap-1.5 px-0.5 text-[10px] font-bold uppercase tracking-wider ${subtleText}`}>
             <span>Dia</span>
