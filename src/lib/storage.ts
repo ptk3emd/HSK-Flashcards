@@ -7,6 +7,7 @@ import {
   isValidWeights,
 } from './fsrs';
 import { loadDefaultCards, loadNativeLevelCards } from '../data/defaultDecks';
+import { DEFAULT_GESTURES, sanitizeGestures } from './gestures';
 
 const CARDS_STORAGE_KEY = 'hanzi_anki_cards_v2';
 const SETTINGS_STORAGE_KEY = 'hanzi_anki_settings_v2';
@@ -27,6 +28,7 @@ export const DEFAULT_DECK_CONFIG: DeckConfig = {
   hideSystemBar: false,
   hideAnswerButtons: false,
   twoButtonGrading: true,
+  gestures: DEFAULT_GESTURES,
 };
 
 export function getStoredTheme(): 'dark' | 'light' {
@@ -89,7 +91,8 @@ export function loadDeckConfig(): DeckConfig {
   try {
     const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
     if (raw) {
-      return { ...DEFAULT_DECK_CONFIG, ...JSON.parse(raw) };
+      const parsed = JSON.parse(raw);
+      return { ...DEFAULT_DECK_CONFIG, ...parsed, gestures: sanitizeGestures(parsed?.gestures) };
     }
   } catch (e) {
     console.error(e);

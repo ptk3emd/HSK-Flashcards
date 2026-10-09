@@ -60,6 +60,34 @@ export interface DeckConfig {
   speechVoiceURI?: string;
   activeLevels: string[];
   hideSystemBar: boolean; // Fullscreen: hides the browser and system bars where supported
-  hideAnswerButtons: boolean; // Answer with gestures only (double tap, swipe)
+  hideAnswerButtons: boolean; // Answer with gestures only
   twoButtonGrading: boolean; // Only "Novamente" and "Bom"; "Difícil" and "Fácil" are off
+  gestures: GestureMap; // What each gesture on the study card does
 }
+
+/** Gestures recognised on the card in the study session */
+export type StudyGesture =
+  | 'tap'
+  | 'doubleTap'
+  | 'longPress'
+  | 'swipeRight'
+  | 'swipeLeft'
+  | 'swipeUp'
+  | 'swipeDown';
+
+/** Study-screen actions a gesture can trigger */
+export type StudyAction =
+  | 'none'
+  | 'reveal'
+  | 'revealOrGood'
+  | 'again'
+  | 'hard'
+  | 'good'
+  | 'easy'
+  | 'undo'
+  | 'speak'
+  | 'writing'
+  | 'suspend'
+  | 'menu';
+
+export type GestureMap = Record<StudyGesture, StudyAction>;

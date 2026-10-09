@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDialogFocus } from './useDialogFocus';
-import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog } from '../types/card';
+import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGesture } from '../types/card';
+import { GESTURES, GRADE_ACTIONS, effectiveActionLabel, isActionAvailable } from '../lib/gestures';
 import { MandarinCardView } from './MandarinCardView';
 import { isLeech, predictNextIntervals, scheduleCard } from '../lib/fsrs';
 import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { ArrowLeft, Volume2, CheckCircle2, Moon, Sun, PenTool, Settings2, PauseCircle, ArrowRight, Undo2, EllipsisVertical, Check } from 'lucide-react';
+import { ArrowLeft, Volume2, CheckCircle2, Moon, Sun, PenTool, Settings2, PauseCircle, Undo2, EllipsisVertical, Check } from 'lucide-react';
 import { HanziWritingCanvas } from './HanziWritingCanvas';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
 import { StudyOptionsSettings } from './StudyOptionsSettings';
@@ -214,20 +215,101 @@ export const StudySession: React.FC<StudySessionProps> = ({
     onUpdateCards(nextCards);
   }, [currentCard, sessionCards, onUpdateCards]);
 
-  // Gestures on the card: double tap shows the answer; with the answer shown,
-  // swipe right answers "Bom" and swipe left answers "Novamente".
+  // Gestures on the card. Each one runs the action chosen in the settings; by default
+  // double tap shows the answer, swipe right answers Bom and swipe left Novamente.
   const SWIPE_PX = 70;
   const TAP_SLOP_PX = 10;
   const DOUBLE_TAP_MS = 320;
+  const LONG_PRESS_MS = 500;
+  const gestureMap = deckConfig.gestures;
+  const gestureCtx = { isFlipped, twoButtonGrading: deckConfig.twoButtonGrading, canUndo };
   const gestureRef = useRef<{ id: number; x: number; y: number } | null>(null);
   const lastTapRef = useRef(0);
-  const [dragX, setDragX] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  const tapTimerRef = useRef<number | undefined>(undefined);
+  const longPressTimerRef = useRef<number | undefined>(undefined);
+  const longPressFiredRef = useRef(false);
+  const [drag, setDrag] = useState<{ x: number; y: number; gesture: StudyGesture } | null>(null);
+
+  // A touch that ends a gesture is followed by the browser's synthetic click. When the
+  // gesture opens the menu or the writing pad, that click would land on the new backdrop
+  // and close it again, so it is swallowed. Only for a click that follows right away.
+  const swallowGhostClick = () => {
+    const until = performance.now() + 500;
+    const handler = (ev: MouseEvent) => {
+      window.removeEventListener('click', handler, true);
+      if (performance.now() < until) {
+        ev.stopPropagation();
+        ev.preventDefault();
+      }
+    };
+    window.addEventListener('click', handler, true);
+    window.setTimeout(() => window.removeEventListener('click', handler, true), 500);
+  };
+
+  const runGestureAction = (action: StudyAction, fromPointer = true) => {
+    if (!currentCard || !isActionAvailable(action, gestureCtx)) return;
+    if (fromPointer && (action === 'menu' || action === 'writing')) swallowGhostClick();
+    switch (action) {
+      case 'reveal':
+        setIsFlipped(true);
+        break;
+      case 'revealOrGood':
+        if (isFlipped) handleAnswer(3);
+        else setIsFlipped(true);
+        break;
+      case 'again':
+        handleAnswer(1);
+        break;
+      case 'hard':
+        handleAnswer(2);
+        break;
+      case 'good':
+        handleAnswer(3);
+        break;
+      case 'easy':
+        handleAnswer(4);
+        break;
+      case 'undo':
+        handleUndo();
+        break;
+      case 'speak':
+        handleSpeak();
+        break;
+      case 'writing':
+        setShowWritingPad(true);
+        break;
+      case 'suspend':
+        handleSuspendCurrent();
+        break;
+      case 'menu':
+        setIsMenuOpen(true);
+        break;
+    }
+  };
+  // Timers fire after later renders, so they call the latest version (current card, side)
+  const runGestureActionRef = useRef(runGestureAction);
+  runGestureActionRef.current = runGestureAction;
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(tapTimerRef.current);
+      window.clearTimeout(longPressTimerRef.current);
+    },
+    []
+  );
+  // A pending single tap belongs to the card it was made on
+  useEffect(() => {
+    window.clearTimeout(tapTimerRef.current);
+    lastTapRef.current = 0;
+  }, [currentCard?.id]);
+
+  const swipeGestureFor = (dx: number, dy: number): StudyGesture =>
+    Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'swipeRight' : 'swipeLeft') : dy > 0 ? 'swipeDown' : 'swipeUp';
 
   const resetDrag = () => {
     gestureRef.current = null;
-    setIsDragging(false);
-    setDragX(0);
+    window.clearTimeout(longPressTimerRef.current);
+    setDrag(null);
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -235,17 +317,57 @@ export const StudySession: React.FC<StudySessionProps> = ({
     if ((e.target as HTMLElement).closest('button')) return; // card buttons keep their own taps
     gestureRef.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
     e.currentTarget.setPointerCapture(e.pointerId);
+    longPressFiredRef.current = false;
+    const longPressAction = gestureMap.longPress;
+    if (isActionAvailable(longPressAction, gestureCtx)) {
+      longPressTimerRef.current = window.setTimeout(() => {
+        if (!gestureRef.current) return;
+        longPressFiredRef.current = true;
+        navigator.vibrate?.(15);
+        // The finger is still down; its click is swallowed on release instead
+        runGestureActionRef.current(longPressAction, false);
+      }, LONG_PRESS_MS);
+    }
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const g = gestureRef.current;
-    if (!g || g.id !== e.pointerId || !isFlipped) return;
+    if (!g || g.id !== e.pointerId) return;
     const dx = e.clientX - g.x;
     const dy = e.clientY - g.y;
-    if (Math.abs(dx) > TAP_SLOP_PX && Math.abs(dx) > Math.abs(dy)) {
-      setIsDragging(true);
-      setDragX(dx);
+    if (Math.max(Math.abs(dx), Math.abs(dy)) <= TAP_SLOP_PX) return;
+    window.clearTimeout(longPressTimerRef.current); // moving is not a long press
+    if (longPressFiredRef.current) return;
+    const gesture = swipeGestureFor(dx, dy);
+    // The card only follows the finger toward a gesture that does something here
+    if (!isActionAvailable(gestureMap[gesture], gestureCtx)) {
+      if (drag) setDrag(null);
+      return;
     }
+    const horizontal = gesture === 'swipeLeft' || gesture === 'swipeRight';
+    setDrag({ x: horizontal ? dx : 0, y: horizontal ? 0 : dy, gesture });
+  };
+
+  const handleTap = () => {
+    const now = performance.now();
+    const doubleTapActive = isActionAvailable(gestureMap.doubleTap, gestureCtx);
+    if (doubleTapActive && now - lastTapRef.current < DOUBLE_TAP_MS) {
+      lastTapRef.current = 0;
+      window.clearTimeout(tapTimerRef.current);
+      runGestureAction(gestureMap.doubleTap);
+      return;
+    }
+    lastTapRef.current = now;
+    const tapAction = gestureMap.tap;
+    if (tapAction === 'none') return;
+    if (!doubleTapActive) {
+      runGestureAction(tapAction);
+      return;
+    }
+    // Wait to see whether a second tap makes this a double tap
+    window.clearTimeout(tapTimerRef.current);
+    // By the time it fires, the tap's own click has already happened
+    tapTimerRef.current = window.setTimeout(() => runGestureActionRef.current(tapAction, false), DOUBLE_TAP_MS);
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -253,22 +375,22 @@ export const StudySession: React.FC<StudySessionProps> = ({
     if (!g || g.id !== e.pointerId) return;
     const dx = e.clientX - g.x;
     const dy = e.clientY - g.y;
+    const longPressFired = longPressFiredRef.current;
     resetDrag();
-
-    if (isFlipped && Math.abs(dx) >= SWIPE_PX && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    if (longPressFired) {
       lastTapRef.current = 0;
-      handleAnswer(dx > 0 ? 3 : 1);
+      if (gestureMap.longPress === 'menu' || gestureMap.longPress === 'writing') swallowGhostClick();
       return;
     }
-    if (Math.abs(dx) < TAP_SLOP_PX && Math.abs(dy) < TAP_SLOP_PX) {
-      const now = performance.now();
-      if (now - lastTapRef.current < DOUBLE_TAP_MS) {
-        lastTapRef.current = 0;
-        if (!isFlipped) setIsFlipped(true);
-      } else {
-        lastTapRef.current = now;
-      }
+
+    const major = Math.max(Math.abs(dx), Math.abs(dy));
+    const minor = Math.min(Math.abs(dx), Math.abs(dy));
+    if (major >= SWIPE_PX && major > minor * 1.5) {
+      lastTapRef.current = 0;
+      runGestureAction(gestureMap[swipeGestureFor(dx, dy)]);
+      return;
     }
+    if (major < TAP_SLOP_PX) handleTap();
   };
 
   // Cancelled or interrupted gestures (system scroll, lost capture) never leave the card offset
@@ -281,7 +403,31 @@ export const StudySession: React.FC<StudySessionProps> = ({
   // instead of revealing or grading the card. Keyboard focus is unaffected.
   const keepCardFocus = (e: React.MouseEvent) => e.preventDefault();
 
-  const swipeHint = isDragging && Math.abs(dragX) > 30 ? (dragX > 0 ? 'Bom' : 'Novamente') : null;
+  const dragAction = drag ? gestureMap[drag.gesture] : null;
+  const dragLabel =
+    drag && dragAction && Math.abs(drag.x) + Math.abs(drag.y) > 30 ? effectiveActionLabel(dragAction, isFlipped) : null;
+  const dragTone =
+    dragAction === 'again'
+      ? 'bg-red-600 text-white'
+      : dragAction === 'good' || (dragAction === 'revealOrGood' && isFlipped)
+      ? 'bg-emerald-600 text-white'
+      : dragAction === 'hard'
+      ? 'bg-amber-600 text-white'
+      : dragAction === 'easy'
+      ? 'bg-blue-600 text-white'
+      : isLight
+      ? 'bg-black/80 text-white'
+      : 'bg-white/90 text-black';
+  const dragDistance = drag ? Math.abs(drag.x) + Math.abs(drag.y) : 0;
+  // Vertical swipes need the page to stop scrolling under the finger
+  const usesVerticalSwipes = gestureMap.swipeUp !== 'none' || gestureMap.swipeDown !== 'none';
+
+  // Gesture hint for answering without buttons: what reveals on the front, what grades on the back
+  const gestureHints = GESTURES.filter(({ id }) => {
+    const action = gestureMap[id];
+    if (!isActionAvailable(action, gestureCtx)) return false;
+    return isFlipped ? GRADE_ACTIONS.includes(action) || action === 'revealOrGood' : action === 'reveal' || action === 'revealOrGood';
+  }).map(({ id, label }) => `${label}: ${effectiveActionLabel(gestureMap[id], isFlipped)}`);
 
   // Handle switching level right inside study session
   const handleSwitchLevel = async (lvl: string | null) => {
@@ -378,25 +524,23 @@ export const StudySession: React.FC<StudySessionProps> = ({
           WebkitPerspective: '1000px',
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden',
-          touchAction: 'pan-y',
+          touchAction: usesVerticalSwipes ? 'none' : 'pan-y',
+          WebkitTouchCallout: 'none',
         }}
+        onContextMenu={gestureMap.longPress !== 'none' ? (e) => e.preventDefault() : undefined}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
         onLostPointerCapture={handlePointerCancel}
       >
-        {swipeHint && (
+        {dragLabel && (
           <div
             aria-hidden="true"
-            className={`absolute top-2 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-              swipeHint === 'Bom'
-                ? 'bg-emerald-600 text-white'
-                : 'bg-red-600 text-white'
-            }`}
-            style={{ opacity: Math.min(1, (Math.abs(dragX) - 30) / 60) }}
+            className={`absolute top-2 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${dragTone}`}
+            style={{ opacity: Math.min(1, (dragDistance - 30) / 60) }}
           >
-            {swipeHint}
+            {dragLabel}
           </div>
         )}
         {currentCard ? (
@@ -404,8 +548,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
             key={currentCard.id}
             className="w-full"
             style={{
-              transform: `translate3d(${dragX}px, 0, 0) rotate(${dragX / 40}deg)`,
-              transition: isDragging ? 'none' : 'transform 0.36s cubic-bezier(0.16, 1, 0.3, 1)',
+              transform: `translate3d(${drag?.x ?? 0}px, ${drag?.y ?? 0}px, 0) rotate(${(drag?.x ?? 0) / 40}deg)`,
+              transition: drag ? 'none' : 'transform 0.36s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
             <MandarinCardView
@@ -465,17 +609,15 @@ export const StudySession: React.FC<StudySessionProps> = ({
         <div className="w-full min-h-[68px] flex items-stretch">
           {deckConfig.hideAnswerButtons ? (
             <p className={`w-full flex items-center justify-center gap-2 text-xs ${isLight ? 'text-black/60' : 'text-white/60'}`}>
-              {!currentCard || reviewedInSession > 0 ? null : !isFlipped ? (
-                'Toque duas vezes para ver a resposta'
-              ) : (
-                <>
-                  <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Novamente</span>
-                  <span className="opacity-40" aria-hidden="true">|</span>
-                  <span>Bom</span>
-                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                </>
-              )}
+              {!currentCard
+                ? null
+                : gestureHints.length === 0
+                ? isFlipped
+                  ? 'Nenhum gesto avalia o cartão. Ajuste os gestos nas configurações.'
+                  : 'Nenhum gesto mostra a resposta. Ajuste os gestos nas configurações.'
+                : reviewedInSession > 0
+                ? null
+                : gestureHints.join(' · ')}
             </p>
           ) : !isFlipped ? (
             <button
