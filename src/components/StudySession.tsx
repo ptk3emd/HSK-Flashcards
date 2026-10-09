@@ -331,7 +331,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
           <button
             type="button"
             onClick={() => setIsLevelDropdownOpen(!isLevelDropdownOpen)}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full backdrop-blur-md border text-xs font-bold tracking-wider transition-all cursor-pointer shadow-sm ${
+            className={`min-h-11 whitespace-nowrap flex items-center gap-1 px-3 py-1.5 rounded-full backdrop-blur-md border text-xs font-bold tracking-wide transition-all cursor-pointer shadow-sm ${
               isLight
                 ? 'bg-white/80 hover:bg-white border-white/90 text-ink'
                 : 'bg-black/35 hover:bg-black/50 border-white/10 text-white/90'
@@ -395,7 +395,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
         </div>
 
         {/* Audio, Writing, Stroke Order & Theme Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={() => setShowWritingPad((prev) => !prev)}

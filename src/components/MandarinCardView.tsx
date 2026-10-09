@@ -18,6 +18,7 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
 }) => {
   const [pinyinHidden, setPinyinHidden] = useState(true);
   const hanziRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   // Clean characters for length calculation
   const cleanHanzi = (card.hanzi || '').replace(/\s+/g, '');
@@ -27,6 +28,22 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
   const charsPerLine = Math.max(cleanHanzi.length, 3);
 
   const leech = isLeech(card);
+
+  // Each new card settles in with a short fade and rise. Runs on the same DOM node,
+  // so nothing remounts, and it is skipped when the OS asks for reduced motion.
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || typeof el.animate !== 'function') return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const animation = el.animate(
+      [
+        { opacity: 0, transform: 'translate3d(0, 12px, 0) scale(0.985)' },
+        { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' },
+      ],
+      { duration: 420, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+    );
+    return () => animation.cancel();
+  }, [card.id]);
 
   // When card.id changes, reset front delayed reveal
   useEffect(() => {
@@ -68,7 +85,7 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
         }}
       >
         {/* Main Acrylic Card (PERSISTENT DOM - ZERO FLICKER / NO REMOUNT) */}
-        <div className="mandarin-card relative">
+        <div ref={cardRef} className="mandarin-card relative">
           {leech && (
             <span
               className="absolute top-3.5 left-3.5 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-700 dark:text-amber-300"
@@ -87,7 +104,7 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
                   e.stopPropagation();
                   onOpenWriting();
                 }}
-                className="p-2 rounded-full opacity-60 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                className="p-2 rounded-full opacity-40 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
                 title="Praticar escrita do Hanzi (W)"
                 aria-label="Praticar escrita do Hanzi"
               >
@@ -102,7 +119,7 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
                   e.stopPropagation();
                   onSpeak();
                 }}
-                className="p-2 rounded-full opacity-60 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
+                className="p-2 rounded-full opacity-40 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
                 title="Ouvir pronúncia em Mandarim"
                 aria-label="Ouvir pronúncia em Mandarim"
               >
@@ -110,8 +127,6 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
               </button>
             )}
           </div>
-
-          <div className="card-label">Hanzi</div>
 
           <div
             id="hanzi-text"
@@ -146,15 +161,15 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
         {card.mnemonic && (
           <div
             aria-hidden={!isFlipped}
-            className={`flex items-start gap-2.5 px-5 py-3.5 rounded-3xl text-left text-sm whitespace-pre-line transition-opacity duration-300 ${
-              isFlipped ? 'opacity-90' : 'opacity-0 invisible'
+            className={`mnemonic-hint flex items-start justify-center gap-2 px-5 text-left text-sm leading-relaxed whitespace-pre-line ${
+              isFlipped ? 'opacity-80 translate-y-0' : 'opacity-0 invisible translate-y-2.5'
             }`}
             style={{
               width: 'var(--avail-card-width)',
               maxWidth: '100%',
               boxSizing: 'border-box',
-              background: 'var(--glass-pill)',
-              boxShadow: 'var(--glass-highlight)',
+              transition: 'opacity var(--anim-time) var(--anim-curve), transform var(--anim-time) var(--anim-curve)',
+              color: 'var(--ptbr-color)',
             }}
           >
             <Lightbulb className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />

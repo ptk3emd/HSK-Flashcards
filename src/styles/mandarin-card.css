@@ -7,25 +7,25 @@
   /* 1. LARGURA DO CARD E DISTÂNCIA DA BORDA DA TELA */
   --screen-padding: 12px;       /* Distância entre o card e a lateral da tela do celular */
   --card-max-width: 680px;      /* Largura máxima do card em telas grandes/tablets */
-  --card-padding-y: 32px;       /* Espaço interno em cima e embaixo dentro do card */
+  --card-padding-y: 40px;       /* Espaço interno em cima e embaixo dentro do card */
   --card-padding-x: 20px;       /* Espaço interno nas laterais dentro do card */
   --card-radius: 28px;
   --card-text-align: center;
 
   /* 2. AGRUPAMENTO E ESCALA AUTOMÁTICA DO TEXTO */
   --chars-per-line: 7;          /* Máximo de caracteres por linha (mude para 5, 7, 10, 12...) */
-  --hanzi-max-size: 80px;       /* Tamanho máximo (para palavras curtas de 1 a 3 letras) */
+  --hanzi-max-size: 88px;       /* Tamanho máximo (para palavras curtas de 1 a 3 letras) */
   --hanzi-min-size: 26px;       /* Tamanho mínimo de segurança para frases muito longas */
 
   /* Pinyin e Tradução crescem automaticamente conforme a largura da tela */
-  --pinying-size: clamp(22px, 5.5vw, 28px);
-  --ptbr-size: clamp(20px, 5vw, 26px);
+  --pinying-size: clamp(17px, 4.4vw, 21px);
+  --ptbr-size: clamp(19px, 4.8vw, 23px);
 
   /* 3. ANIMAÇÃO DO PINYIN (FRENTE) */
-  --pinying-reveal-time: 0.95s;
-  --pinying-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --pinying-reveal-time: 0.6s;
+  --pinying-reveal-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --pinying-open-maxheight: 10em;
-  --pinying-gap-open: 16px;
+  --pinying-gap-open: 10px;
 
   /* 4. IMAGENS */
   --img-width: 75%;
@@ -37,7 +37,7 @@
      ======================================================================== */
   --line-chars: var(--chars-per-line);
   --avail-card-width: min(calc(100% - (var(--screen-padding) * 2)), var(--card-max-width));
-  --avail-text-width: calc(var(--avail-card-width) - (var(--card-padding-x) * 2) - 8px);
+  --avail-text-width: calc(min(calc(100vw - (var(--screen-padding) * 2)), var(--card-max-width)) - (var(--card-padding-x) * 2) - 8px);
 
   --font-hanzi: "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong", "Yu Mincho", serif;
   --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
@@ -46,8 +46,8 @@
   --line-height: 1.45;
   --block-gap: 16px;
 
-  --anim-curve: cubic-bezier(0.22, 1, 0.36, 1);
-  --anim-time: 0.24s;
+  --anim-curve: cubic-bezier(0.16, 1, 0.3, 1);
+  --anim-time: 0.36s;
 
   /* Paleta do Sistema e Materiais Translúcidos (Modo Claro) */
   --text: #141416;
@@ -61,11 +61,8 @@
   /* Camadas de acrílico fosco e reflexo especular nas bordas (Modo Claro Revisto) */
   --glass-surface: rgba(255, 252, 251, 0.78);
   --glass-pill: rgba(255, 252, 251, 0.94);
-  --glass-highlight: inset 0 2px 1.5px rgba(255, 255, 255, 0.98),
-                     inset 0 -1.5px 1.5px rgba(255, 255, 255, 0.45),
-                     inset 1.5px 0 1.5px rgba(255, 255, 255, 0.55),
-                     inset -1.5px 0 1.5px rgba(255, 255, 255, 0.55),
-                     0 16px 36px rgba(170, 50, 60, 0.16);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.85),
+                     0 12px 32px rgba(170, 50, 60, 0.12);
 }
 
 /* -------------------------------------------------- CORES BASE (modo claro revisado e aperfeiçoado) */
@@ -122,11 +119,8 @@
 
   --glass-surface: rgba(36, 18, 20, 0.65);
   --glass-pill: rgba(48, 24, 26, 0.82);
-  --glass-highlight: inset 0 1.5px 1px rgba(255, 255, 255, 0.28),
-                     inset 0 -1px 1px rgba(255, 255, 255, 0.08),
-                     inset 1px 0 1px rgba(255, 255, 255, 0.15),
-                     inset -1px 0 1px rgba(255, 255, 255, 0.15),
-                     0 16px 40px rgba(0, 0, 0, 0.5);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                     0 12px 32px rgba(0, 0, 0, 0.35);
 
   background-color: #160608;
   background-image:
@@ -260,17 +254,14 @@
 .mandarin-dock {
   width: var(--avail-card-width);
   max-width: 100%;
-  background: var(--glass-pill);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  box-shadow: var(--glass-highlight);
-  border-radius: 999px;
-  padding: 18px var(--card-padding-x);
+  background: transparent;
+  border-radius: 0;
+  padding: 4px var(--card-padding-x);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 64px;
+  min-height: 48px;
   text-align: center;
 
   /* HARDWARE ACCELERATION & ZERO FLICKER DOCK */
@@ -278,16 +269,15 @@
   -webkit-transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  will-change: transform, opacity;
-  transition: opacity 0.22s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity var(--anim-time) var(--anim-curve),
+              transform var(--anim-time) var(--anim-curve);
 }
 
 .mandarin-dock.dock-hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translate3d(0, 6px, 0);
+  transform: translate3d(0, 10px, 0);
 }
 
 .mandarin-dock.dock-visible {
@@ -318,7 +308,7 @@
   font-family: var(--font-hanzi);
   font-size: clamp(
     var(--hanzi-min-size),
-    calc(var(--avail-text-width) / var(--line-chars)),
+    calc(var(--avail-text-width) / var(--chars-per-line)),
     var(--hanzi-max-size)
   );
   line-height: 1.25;
@@ -351,7 +341,8 @@
   font-family: var(--font-display);
   font-size: var(--pinying-size);
   color: var(--pinying-color);
-  font-weight: 500;
+  font-weight: 400;
+  letter-spacing: 0.01em;
 
   overflow: hidden;
   max-height: var(--pinying-open-maxheight);
@@ -369,8 +360,8 @@
 /* Aplica transição suave no front com aceleração por hardware */
 .front-scene .pinying#pinying-delayed {
   transition:
-    opacity calc(var(--pinying-reveal-time) * 0.85) cubic-bezier(0.22, 1, 0.36, 1),
-    transform calc(var(--pinying-reveal-time) * 0.85) cubic-bezier(0.22, 1, 0.36, 1),
+    opacity calc(var(--pinying-reveal-time) * 0.85) var(--pinying-reveal-ease),
+    transform calc(var(--pinying-reveal-time) * 0.85) var(--pinying-reveal-ease),
     max-height var(--pinying-reveal-time) var(--pinying-reveal-ease),
     margin-top var(--pinying-reveal-time) var(--pinying-reveal-ease);
   will-change: transform, opacity;
@@ -459,6 +450,7 @@ u {
    The state change still happens (front/back, pinyin reveal); only the movement is removed. */
 @media (prefers-reduced-motion: reduce) {
   .mandarin-dock,
+  .mnemonic-hint,
   .front-scene .pinying#pinying-delayed,
   .front-scene .pinying.hidden {
     transition: none !important;
