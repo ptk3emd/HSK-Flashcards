@@ -7,6 +7,7 @@ import { Search, Volume2, Eye, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, 
 import { isLeech } from '../lib/fsrs';
 import { MandarinCardView } from './MandarinCardView';
 import { HanziWritingCanvas } from './HanziWritingCanvas';
+import { HanziDrawSearch } from './HanziDrawSearch';
 
 interface CardBrowserProps {
   cards: Card[];
@@ -34,6 +35,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   const [isLoadingLevel, setIsLoadingLevel] = useState(false);
   const [writingCard, setWritingCard] = useState<Card | null>(null);
   const [mnemonicDraft, setMnemonicDraft] = useState('');
+  const [isDrawSearchOpen, setIsDrawSearchOpen] = useState(false);
 
   // Only the top-most dialog is active: the writing pad opened from a preview sits above it
   const previewDialogRef = useRef<HTMLDivElement>(null);
@@ -207,6 +209,18 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
         }`}
       >
         <div className="flex flex-col gap-3">
+          {isDrawSearchOpen && (
+            <HanziDrawSearch
+              cards={cards}
+              theme={theme}
+              onPick={(hanzi) => {
+                setSearch(hanzi);
+                setSearchTarget('hanzi');
+                setIsDrawSearchOpen(false);
+              }}
+              onClose={() => setIsDrawSearchOpen(false)}
+            />
+          )}
           <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
             {/* Search Input */}
             <div className="relative flex-1">
@@ -241,6 +255,23 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 </button>
               )}
             </div>
+
+            <button
+              type="button"
+              onClick={() => setIsDrawSearchOpen((open) => !open)}
+              aria-expanded={isDrawSearchOpen}
+              aria-label="Pesquisar desenhando o caractere"
+              className={`min-h-11 px-3 flex items-center justify-center gap-1.5 rounded-2xl border text-xs font-semibold cursor-pointer transition-all ${
+                isDrawSearchOpen
+                  ? 'bg-red-600 border-red-600 text-white shadow-sm'
+                  : isLight
+                  ? 'bg-white/90 border-black/10 text-black/75 hover:bg-white'
+                  : 'bg-black/30 border-white/10 text-white/80 hover:bg-white/10'
+              }`}
+            >
+              <PenTool className="w-4 h-4" />
+              <span>Desenhar</span>
+            </button>
 
             {/* Target Filter Select / Badges */}
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -613,13 +644,13 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               </div>
             </div>
 
-            <div className="w-full flex items-center justify-between pt-2 border-t border-black/10 dark:border-white/10 text-xs opacity-75">
-              <span>Clique no cartão para virar (Frente / Verso)</span>
-              <div className="flex items-center gap-2">
+            <div className="w-full flex flex-col items-center gap-3 pt-3 border-t border-black/10 dark:border-white/10">
+              <span className="text-[11px] opacity-60">Toque no cartão para virar</span>
+              <div className="w-full flex flex-wrap items-center justify-center gap-2">
                 <button
                   type="button"
                   onClick={() => handleToggleSuspend(previewCard)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all border ${
+                  className={`min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
                     isLight
                       ? 'bg-black/5 hover:bg-black/10 text-ink border-black/10'
                       : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
@@ -631,7 +662,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 <button
                   type="button"
                   onClick={() => setWritingCard(previewCard)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer transition-all shadow-sm"
+                  className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer transition-all shadow-sm"
                 >
                   <PenTool className="w-3.5 h-3.5" />
                   <span>Praticar Escrita</span>
@@ -639,7 +670,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 <button
                   type="button"
                   onClick={() => handleResetCard(previewCard)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 font-bold cursor-pointer transition-all"
+                  className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-bold cursor-pointer transition-all"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Resetar Progresso</span>
