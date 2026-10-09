@@ -21,3 +21,22 @@
 ::selection {
   background: rgba(239, 68, 68, 0.35);
 }
+
+/* Writing pad: the expected stroke keeps tracing from start to end until it is drawn right */
+.stroke-hint-trace {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: stroke-hint-trace 1.4s ease-in-out infinite;
+}
+
+@keyframes stroke-hint-trace {
+  0% { stroke-dashoffset: 1; }
+  70%, 100% { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stroke-hint-trace {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
