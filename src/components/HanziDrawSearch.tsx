@@ -182,7 +182,14 @@ export const HanziDrawSearch: React.FC<HanziDrawSearchProps> = ({ cards, theme, 
           {announcement}
         </p>
         <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-          {matches.length === 0 ? (
+          {!glyphIndex && !loadFailed ? (
+            // Result rows take shape while the recogniser loads
+            <div aria-hidden="true" className="flex flex-col gap-1.5">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="skeleton h-11 rounded-xl" />
+              ))}
+            </div>
+          ) : matches.length === 0 ? (
             <p className="text-xs opacity-60 py-2">{status}</p>
           ) : (
             matches.map((m, i) => {

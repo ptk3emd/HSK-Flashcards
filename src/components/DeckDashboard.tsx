@@ -159,7 +159,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {ALL_HSK_LEVELS.map((lvl) => {
+          {ALL_HSK_LEVELS.map((lvl, idx) => {
             const levelCards = cards.filter(c => c.level === lvl);
             const isLoaded = levelCards.length > 0;
             const count = isLoaded ? levelCards.length : HSK_LEVEL_INFO[lvl].count;
@@ -172,7 +172,9 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
             return (
               <div
                 key={lvl}
-                className={`relative p-4 rounded-2xl border transition-all select-none flex flex-col justify-between gap-3 has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:outline-offset-2 has-[>button:focus-visible]:outline-[var(--color-focus)] ${
+                // The levels arrive as a list: a short stagger, 30 ms apart, capped at 240 ms
+                style={{ '--enter-delay': `${Math.min(idx, 8) * 30}ms` } as React.CSSProperties}
+                className={`animate-in fade-in enter-rise duration-300 relative p-4 rounded-2xl border transition-[background-color,border-color,box-shadow] select-none flex flex-col justify-between gap-3 has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:outline-offset-2 has-[>button:focus-visible]:outline-[var(--color-focus)] ${
                   isActive
                     ? 'bg-red-50/70 border-red-300 shadow-xs ring-1 ring-red-400/40 dark:bg-red-500/15 dark:border-red-500/50 dark:ring-1 dark:ring-red-500/40 dark:shadow-none'
                     : 'bg-white/80 border-black/5 hover:bg-white shadow-xs dark:bg-white/[0.03] dark:border-white/10 dark:hover:bg-white/[0.06] dark:shadow-none'

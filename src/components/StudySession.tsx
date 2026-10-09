@@ -31,6 +31,9 @@ interface StudySessionProps {
   onExit: () => void;
 }
 
+/** Exit direction per grade (x, y): matches the swipe gestures' layout */
+const GRADE_EXIT: Record<Rating, [number, number]> = { 1: [-1, 0], 2: [0, 1], 3: [1, 0], 4: [0, -1] };
+
 export const StudySession: React.FC<StudySessionProps> = ({
   cards,
   deckConfig,
@@ -199,7 +202,42 @@ export const StudySession: React.FC<StudySessionProps> = ({
     [currentCard, fsrsOptions, sessionCards, onUpdateCards]
   );
 
+  // The answered card leaves in the direction of its grade, the same directions the swipe
+  // gestures use: Novamente left, Bom right, Fácil up, Difícil down. It starts from wherever
+  // the card is (mid-swipe included), takes 180 ms, then the grade is applied and the next
+  // card makes its entrance. Input is held during the exit so a grade cannot land twice.
+  const cardWrapperRef = useRef<HTMLDivElement>(null);
+  const exitingRef = useRef(false);
+  const gradeCard = useCallback(
+    (rating: Rating) => {
+      if (exitingRef.current) return;
+      const el = cardWrapperRef.current;
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      if (!el || typeof el.animate !== 'function' || reduceMotion) {
+        handleAnswer(rating);
+        return;
+      }
+      exitingRef.current = true;
+      const [dx, dy] = GRADE_EXIT[rating];
+      const from = getComputedStyle(el).transform;
+      const exit = el.animate(
+        [
+          { transform: from === 'none' ? 'translate3d(0, 0, 0)' : from, opacity: 1 },
+          { transform: `translate3d(${dx * 140}px, ${dy * 70}px, 0) rotate(${dx * 6}deg)`, opacity: 0 },
+        ],
+        { duration: 180, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }
+      );
+      const finish = () => {
+        exitingRef.current = false;
+        handleAnswer(rating);
+      };
+      exit.finished.then(finish, finish);
+    },
+    [handleAnswer]
+  );
+
   const handleUndo = useCallback(() => {
+    if (exitingRef.current) return; // the grade leaving now has not been applied yet
     const lastLog = popReviewLog();
     if (!lastLog) {
       setCanUndo(false);
@@ -262,20 +300,20 @@ export const StudySession: React.FC<StudySessionProps> = ({
         setIsFlipped(true);
         break;
       case 'revealOrGood':
-        if (isFlipped) handleAnswer(3);
+        if (isFlipped) gradeCard(3);
         else setIsFlipped(true);
         break;
       case 'again':
-        handleAnswer(1);
+        gradeCard(1);
         break;
       case 'hard':
-        handleAnswer(2);
+        gradeCard(2);
         break;
       case 'good':
-        handleAnswer(3);
+        gradeCard(3);
         break;
       case 'easy':
-        handleAnswer(4);
+        gradeCard(4);
         break;
       case 'undo':
         handleUndo();
@@ -321,7 +359,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!currentCard || gestureRef.current) return; // a second finger never takes over the first
+    if (!currentCard || gestureRef.current || exitingRef.current) return; // a second finger never takes over the first
     if ((e.target as HTMLElement).closest('button')) return; // card buttons keep their own taps
     gestureRef.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -463,6 +501,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (exitingRef.current) return; // a grade is on its way out
       // W closes the writing pad. Checked first: the pad moves focus to its own buttons.
       if (showWritingPad && (e.key === 'w' || e.key === 'W')) {
         setShowWritingPad(false);
@@ -478,16 +517,16 @@ export const StudySession: React.FC<StudySessionProps> = ({
         if (!isFlipped) {
           setIsFlipped(true);
         } else {
-          handleAnswer(3); // Good
+          gradeCard(3); // Good
         }
       } else if (e.key === '1' && isFlipped) {
-        handleAnswer(1);
+        gradeCard(1);
       } else if (e.key === '2' && isFlipped && !deckConfig.twoButtonGrading) {
-        handleAnswer(2);
+        gradeCard(2);
       } else if (e.key === '3' && isFlipped) {
-        handleAnswer(3);
+        gradeCard(3);
       } else if (e.key === '4' && isFlipped && !deckConfig.twoButtonGrading) {
-        handleAnswer(4);
+        gradeCard(4);
       } else if ((e.key === 'z' || e.key === 'Z') && (e.ctrlKey || e.metaKey || !isFlipped)) {
         handleUndo();
       } else if (e.key === 'r' || e.key === 'R') {
@@ -499,7 +538,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFlipped, handleAnswer, handleUndo, handleSpeak, showWritingPad, showVoiceSettingsModal, isMenuOpen, deckConfig.twoButtonGrading]);
+  }, [isFlipped, gradeCard, handleUndo, handleSpeak, showWritingPad, showVoiceSettingsModal, isMenuOpen, deckConfig.twoButtonGrading]);
 
   return (
     <main
@@ -554,6 +593,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
         {currentCard ? (
           <div
             key={currentCard.id}
+            ref={cardWrapperRef}
             className="w-full"
             style={{
               transform: `translate3d(${drag?.x ?? 0}px, ${drag?.y ?? 0}px, 0) rotate(${(drag?.x ?? 0) / 40}deg)`,
@@ -664,7 +704,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleAnswer(1);
+                  gradeCard(1);
                 }}
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
                   isLight
@@ -685,7 +725,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleAnswer(2);
+                  gradeCard(2);
                 }}
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
                   isLight
@@ -706,7 +746,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleAnswer(3);
+                  gradeCard(3);
                 }}
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ring-1 ${
                   isLight
@@ -727,7 +767,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleAnswer(4);
+                  gradeCard(4);
                 }}
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
                   isLight
@@ -818,7 +858,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               role="dialog"
               aria-modal="true"
               aria-label="Mais opções"
-              className={`absolute right-2 bottom-full mb-2 z-50 w-64 max-h-[70vh] overflow-y-auto rounded-2xl p-1.5 shadow-2xl border ${
+              className={`animate-in fade-in zoom-in-95 duration-150 origin-bottom-right absolute right-2 bottom-full mb-2 z-50 w-64 max-h-[70vh] overflow-y-auto rounded-2xl p-1.5 shadow-2xl border ${
                 isLight ? 'bg-white border-black/10 text-ink' : 'bg-neutral-900 border-white/10 text-white'
               }`}
             >
@@ -885,7 +925,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md animate-in zoom-in-95 duration-200"
           >
-            <Suspense fallback={<ViewLoading />}>
+            <Suspense fallback={<ViewLoading variant="pad" />}>
               <HanziWritingCanvas
                 hanzi={currentCard.hanzi}
                 pinyin={currentCard.pinyin}

@@ -57,3 +57,76 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* ==========================================================================
+   MOTION
+   Entrances for overlays and views. The classes were already in the markup
+   (animate-in, fade-in, zoom-in-95); this gives them their definition.
+   Routine changes stay at 150–200 ms; exits are left instant or faster.
+   ========================================================================== */
+.animate-in {
+  animation: enter var(--tw-duration, 200ms) cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+.fade-in { --enter-opacity: 0; }
+.zoom-in-95 { --enter-scale: 0.95; }
+.enter-rise { --enter-y: 8px; }
+
+@keyframes enter {
+  from {
+    opacity: var(--enter-opacity, 1);
+    transform: translate3d(0, var(--enter-y, 0), 0) scale(var(--enter-scale, 1));
+  }
+}
+
+/* ==========================================================================
+   SKELETONS
+   Loading placeholders on the glass: a soft highlight sweeps across, like the
+   specular edge of the cards. Shown only while something loads.
+   ========================================================================== */
+/* In the components layer so utilities on the element (absolute, rounded-*, sizes) win */
+@layer components {
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.06);
+  }
+  .night_mode .skeleton {
+    background: rgba(255, 255, 255, 0.07);
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.45) 50%,
+      transparent 80%
+    );
+    animation: skeleton-sweep 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  .night_mode .skeleton::after {
+    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.09) 50%, transparent 80%);
+  }
+}
+
+@keyframes skeleton-sweep {
+  to { transform: translateX(100%); }
+}
+
+/* Reduced motion: entrances keep their fade but lose the movement; skeletons hold still */
+@media (prefers-reduced-motion: reduce) {
+  .animate-in {
+    --enter-scale: 1;
+    --enter-y: 0;
+    animation-duration: 120ms;
+  }
+  .skeleton::after {
+    animation: none;
+    transform: none;
+    opacity: 0;
+  }
+}

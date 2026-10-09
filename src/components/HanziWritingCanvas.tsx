@@ -168,7 +168,11 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
     else writer.hideOutline();
   };
 
+  // Stroke data comes from the CDN; until it lands the board shows a placeholder
+  const isLoadingStrokes = totalStrokes === null && feedback.kind !== 'error';
+
   const statusText = (() => {
+    if (isLoadingStrokes) return 'Carregando traços...';
     switch (feedback.kind) {
       case 'correct':
         return 'Correto';
@@ -302,11 +306,18 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
             style={{ width: size, height: size, backgroundColor: isLight ? '#fcfbf8' : '#14080a' }}
           >
             <CalligraphyGrid size={size} style={gridStyle} isLight={isLight} />
+            {isLoadingStrokes && (
+              <div className="absolute inset-[18%] skeleton rounded-2xl pointer-events-none" aria-hidden="true" />
+            )}
+            {/* The character's outline fades in once its strokes arrive */}
             <div
               ref={writerHostRef}
-              className="absolute inset-0 cursor-crosshair touch-none"
+              className={`absolute inset-0 cursor-crosshair touch-none transition-opacity duration-300 ${
+                isLoadingStrokes ? 'opacity-0' : 'opacity-100'
+              }`}
               role="img"
               aria-label={`Quadro de escrita de ${currentChar}`}
+              aria-busy={isLoadingStrokes}
             />
             {hintStroke !== null && medians[hintStroke] && (
               <StrokeHint key={`${currentChar}-${hintStroke}`} median={medians[hintStroke]} size={size} />
