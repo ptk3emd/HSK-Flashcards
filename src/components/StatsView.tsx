@@ -295,6 +295,38 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
   const targetLineY = padTop + (1 - targetRetention) * graphH;
 
+  // The marked points on the curve. The whole chart picks among them: tap or drag anywhere
+  // selects the nearest one, and as a slider the arrow keys step through them.
+  const keyPoints = useMemo(
+    () =>
+      forgettingCurvePoints.points.filter(
+        (_, idx) => idx % Math.max(1, Math.floor(forgettingCurvePoints.points.length / 8)) === 0
+      ),
+    [forgettingCurvePoints]
+  );
+
+  const pointNearest = (e: React.PointerEvent<SVGSVGElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * chartWidth;
+    let best = keyPoints[0];
+    for (const p of keyPoints) {
+      if (Math.abs(getSvgCoordinates(p.day, p.retention).x - x) < Math.abs(getSvgCoordinates(best.day, best.retention).x - x)) best = p;
+    }
+    return best;
+  };
+
+  const handleChartKeyDown = (e: React.KeyboardEvent<SVGSVGElement>) => {
+    const idx = hoveredPoint ? keyPoints.findIndex((p) => p.day === hoveredPoint.day) : -1;
+    let next = idx;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = Math.min(keyPoints.length - 1, idx + 1);
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = Math.max(0, idx - 1);
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = keyPoints.length - 1;
+    else return;
+    e.preventDefault();
+    setHoveredPoint(keyPoints[Math.max(0, next)]);
+  };
+
   // Daily retention trend (last 14 active days)
   const dailyHistory = useMemo(() => {
     const dayMap = new Map<string, { total: number; positive: number }>();
@@ -553,14 +585,39 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 'bg-black/[0.02] border-black/10 dark:bg-black/30 dark:border-white/10'
               }`}
             >
-              <svg
-                viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-                className="w-full h-auto overflow-visible"
-                role="group"
-                aria-label={`Curva de retenção estimada para estabilidade de ${avgStability} dias: ${forgettingCurvePoints.points
+              <p id="retention-curve-summary" className="sr-only">
+                {`Curva de retenção estimada para estabilidade de ${avgStability} dias: ${forgettingCurvePoints.points
                   .filter((_, i, arr) => i === 0 || i === arr.length - 1 || i === Math.floor(arr.length / 2))
                   .map(p => `${Math.round(p.retention * 100)}% no dia ${p.day}`)
-                  .join(', ')}. Alvo de ${Math.round(targetRetention * 100)}%.`}
+                  .join(', ')}. Alvo de ${Math.round(targetRetention * 100)}%. Use as setas para percorrer os dias.`}
+              </p>
+              <svg
+                viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+                className="w-full h-auto overflow-visible cursor-crosshair rounded-lg"
+                style={{ touchAction: 'pan-y' }}
+                role="slider"
+                tabIndex={0}
+                aria-label="Curva de retenção"
+                aria-describedby="retention-curve-summary"
+                aria-valuemin={0}
+                aria-valuemax={forgettingCurvePoints.maxDay}
+                aria-valuenow={hoveredPoint?.day ?? 0}
+                aria-valuetext={
+                  hoveredPoint
+                    ? `Dia ${hoveredPoint.day}: ${Math.round(hoveredPoint.retention * 100)}% de retenção`
+                    : 'Nenhum dia selecionado'
+                }
+                onKeyDown={handleChartKeyDown}
+                onFocus={() => setHoveredPoint((p) => p ?? keyPoints[0] ?? null)}
+                onBlur={() => setHoveredPoint(null)}
+                onPointerDown={(e) => setHoveredPoint(pointNearest(e))}
+                onPointerMove={(e) => {
+                  // Mouse: follow the cursor. Touch and pen: follow while pressed (a horizontal drag)
+                  if (e.pointerType === 'mouse' || e.buttons !== 0) setHoveredPoint(pointNearest(e));
+                }}
+                onPointerLeave={(e) => {
+                  if (e.pointerType === 'mouse') setHoveredPoint(null);
+                }}
               >
                 {/* Horizontal Grid lines */}
                 {[1.0, 0.9, 0.75, 0.5, 0.25].map(ret => {
@@ -646,27 +703,23 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   );
                 })}
 
-                {/* Key interactive points on the curve */}
-                {forgettingCurvePoints.points
-                  .filter((_, idx) => idx % Math.max(1, Math.floor(forgettingCurvePoints.points.length / 8)) === 0)
-                  .map(p => {
+                {/* Marked points on the curve; the chart itself handles selection */}
+                {keyPoints.map(p => {
                     const coords = getSvgCoordinates(p.day, p.retention);
                     const isHovered = hoveredPoint?.day === p.day;
                     return (
-                      <g
-                        key={p.day}
-                        className="cursor-pointer focus:outline-none"
-                        tabIndex={0}
-                        role="button"
-                        aria-label={`Dia ${p.day}: ${Math.round(p.retention * 100)}% de retenção`}
-                        onMouseEnter={() => setHoveredPoint(p)}
-                        onMouseLeave={() => setHoveredPoint(null)}
-                        onFocus={() => setHoveredPoint(p)}
-                        onBlur={() => setHoveredPoint(null)}
-                        onClick={() => setHoveredPoint(p)}
-                      >
-                        {/* Invisible 24px hit area: the dot itself is too small to tap */}
-                        <circle cx={coords.x} cy={coords.y} r={12} fill="transparent" />
+                      <g key={p.day} aria-hidden="true">
+                        {isHovered && (
+                          <line
+                            x1={coords.x}
+                            y1={padTop}
+                            x2={coords.x}
+                            y2={padTop + graphH}
+                            style={{ stroke: 'var(--chart-tick)' }}
+                            strokeWidth="1"
+                            strokeDasharray="3 3"
+                          />
+                        )}
                         <circle
                           cx={coords.x}
                           cy={coords.y}
