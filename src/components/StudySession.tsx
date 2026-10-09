@@ -6,7 +6,7 @@ import { isLeech, predictNextIntervals, scheduleCard } from '../lib/fsrs';
 import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { ArrowLeft, RotateCcw, Volume2, CheckCircle2, Moon, Sun, ChevronDown, PenTool, Settings2, AlertTriangle, PauseCircle, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Volume2, CheckCircle2, Moon, Sun, PenTool, Settings2, PauseCircle, ArrowRight, Undo2, EllipsisVertical, Check } from 'lucide-react';
 import { HanziWritingCanvas } from './HanziWritingCanvas';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
 import { StudyOptionsSettings } from './StudyOptionsSettings';
@@ -41,7 +41,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const [isFlipped, setIsFlipped] = useState(false);
   const [sessionCards, setSessionCards] = useState<Card[]>(cards);
   const [canUndo, setCanUndo] = useState(false);
-  const [isLevelDropdownOpen, setIsLevelDropdownOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showWritingPad, setShowWritingPad] = useState(false);
   const [showVoiceSettingsModal, setShowVoiceSettingsModal] = useState(false);
   const [reviewedInSession, setReviewedInSession] = useState(0);
@@ -116,6 +116,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const closeVoiceSettings = useCallback(() => setShowVoiceSettingsModal(false), []);
   useDialogFocus(writingDialogRef, showWritingPad && currentCard !== null, closeWritingPad);
   useDialogFocus(voiceDialogRef, showVoiceSettingsModal && !!onUpdateDeckConfig, closeVoiceSettings);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+  useDialogFocus(menuRef, isMenuOpen, closeMenu);
 
   useEffect(() => {
     if (currentCard && deckConfig.autoPlayAudio) {
@@ -277,7 +280,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   // Handle switching level right inside study session
   const handleSwitchLevel = async (lvl: string | null) => {
-    setIsLevelDropdownOpen(false);
+    setIsMenuOpen(false);
     setReviewedInSession(0);
     if (!lvl) {
       onSelectIsolatedLevel(null);
@@ -309,7 +312,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
         setShowWritingPad(false);
         return;
       }
-      if (showWritingPad || showVoiceSettingsModal) return;
+      if (showWritingPad || showVoiceSettingsModal || isMenuOpen) return;
 
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
@@ -337,7 +340,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFlipped, handleAnswer, handleUndo, handleSpeak, showWritingPad, showVoiceSettingsModal, deckConfig.twoButtonGrading]);
+  }, [isFlipped, handleAnswer, handleUndo, handleSpeak, showWritingPad, showVoiceSettingsModal, isMenuOpen, deckConfig.twoButtonGrading]);
 
   return (
     <main
@@ -347,176 +350,20 @@ export const StudySession: React.FC<StudySessionProps> = ({
     >
       <h1 className="sr-only">Sessão de estudo</h1>
 
-      {/* Barra de Progresso da Sessão no Topo */}
-      <div className="w-full z-40 bg-black/[0.03] dark:bg-white/[0.04] border-b border-black/5 dark:border-white/10 sticky top-0 backdrop-blur-md">
-        {/* Linha da barra de progresso */}
-        <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 overflow-hidden">
-          <div
-            className="h-full bg-red-600 dark:bg-red-500 transition-all duration-300 ease-out"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-
-        {/* Indicador de cartões restantes da sessão atual */}
-        <div className="w-full max-w-2xl mx-auto px-4 py-1.5 flex items-center justify-between text-xs font-medium">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-neutral-800 dark:text-neutral-200">
-              {remainingCount} {remainingCount === 1 ? 'cartão restante' : 'cartões restantes'}
-            </span>
-            {reviewedInSession > 0 && (
-              <span className="opacity-50 text-[11px]">
-                ({reviewedInSession} {reviewedInSession === 1 ? 'concluído' : 'concluídos'})
-              </span>
-            )}
-          </div>
-          <span className="font-bold text-[11px] tabular-nums text-red-600 dark:text-red-400">
-            {progressPercent}%
-          </span>
-        </div>
+      {/* Session progress: a hairline, no text */}
+      <div
+        className={`fixed top-0 inset-x-0 z-40 h-0.5 ${isLight ? 'bg-black/5' : 'bg-white/5'}`}
+        role="progressbar"
+        aria-label="Progresso da sessão"
+        aria-valuenow={progressPercent}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <div
+          className="h-full bg-red-600/80 transition-[width] duration-500 ease-out"
+          style={{ width: `${progressPercent}%` }}
+        />
       </div>
-
-      {/* Top Header Bar with Level Filter Dropdown */}
-      <header className="w-full max-w-2xl mx-auto px-4 py-3 flex items-center justify-between z-30 relative">
-        <button
-          type="button"
-          onClick={onExit}
-          className={`min-h-11 px-2.5 rounded-full backdrop-blur-md transition-all cursor-pointer flex items-center gap-1.5 text-sm font-semibold border ${
-            isLight
-              ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
-              : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
-          }`}
-          title="Voltar aos Decks"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Decks</span>
-        </button>
-
-        {/* Level Selector Dropdown Pill */}
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setIsLevelDropdownOpen(!isLevelDropdownOpen)}
-            className={`min-h-11 whitespace-nowrap flex items-center gap-1 px-3 py-1.5 rounded-full backdrop-blur-md border text-xs font-bold tracking-wide transition-all cursor-pointer shadow-sm ${
-              isLight
-                ? 'bg-white/80 hover:bg-white border-white/90 text-ink'
-                : 'bg-black/35 hover:bg-black/50 border-white/10 text-white/90'
-            }`}
-          >
-            <span>{isolatedLevel ? `${isolatedLevel} (Isolado)` : 'Todos Ativos'}</span>
-            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-          </button>
-
-          {isLevelDropdownOpen && (
-            <div
-              className={`absolute top-full mt-2 left-1/2 -translate-x-1/2 w-52 rounded-2xl p-1.5 shadow-2xl border backdrop-blur-2xl z-50 animate-in fade-in zoom-in-95 duration-150 ${
-                isLight
-                  ? 'bg-white/95 border-white text-ink'
-                  : 'bg-neutral-900/95 border-white/15 text-white'
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => handleSwitchLevel(null)}
-                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-between ${
-                  !isolatedLevel
-                    ? 'bg-red-600 text-white'
-                    : isLight
-                    ? 'hover:bg-black/5'
-                    : 'hover:bg-white/10'
-                }`}
-              >
-                <span>Todos Selecionados</span>
-                {!isolatedLevel && <CheckCircle2 className="w-3.5 h-3.5" />}
-              </button>
-
-              <div className="my-1 border-t border-black/5 dark:border-white/10" />
-
-              <div className="text-[10px] uppercase font-bold tracking-wider px-3 py-1 opacity-50">
-                Estudar Isolado:
-              </div>
-
-              {ALL_HSK_LEVELS.map((lvl) => {
-                const isSelected = isolatedLevel === lvl;
-                return (
-                  <button
-                    key={lvl}
-                    type="button"
-                    onClick={() => handleSwitchLevel(lvl)}
-                    className={`w-full text-left px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-between ${
-                      isSelected
-                        ? 'bg-red-600 text-white font-bold'
-                        : isLight
-                        ? 'hover:bg-black/5 text-ink'
-                        : 'hover:bg-white/10 text-white'
-                    }`}
-                  >
-                    <span>{lvl}</span>
-                    {isSelected && <CheckCircle2 className="w-3.5 h-3.5" />}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Audio, Writing, Stroke Order & Theme Controls */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <button
-            type="button"
-            onClick={() => setShowWritingPad((prev) => !prev)}
-            className={`size-11 flex items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer border ${
-              showWritingPad
-                ? 'bg-red-600 text-white border-red-500 shadow-md scale-105'
-                : isLight
-                ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
-                : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
-            }`}
-            title="Praticar Escrita do Hanzi (W)"
-          >
-            <PenTool className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={handleSpeak}
-            className={`size-11 flex items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer border ${
-              isLight
-                ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
-                : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
-            }`}
-            title="Pronunciar (R)"
-          >
-            <Volume2 className="w-4 h-4" />
-          </button>
-          {onUpdateDeckConfig && (
-            <button
-              type="button"
-              onClick={() => setShowVoiceSettingsModal(true)}
-              className={`size-11 flex items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer border ${
-                showVoiceSettingsModal
-                  ? 'bg-red-600 text-white border-red-500 shadow-md scale-105'
-                  : isLight
-                  ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
-                  : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
-              }`}
-              title="Configurações da sessão"
-            >
-              <Settings2 className="w-4 h-4" />
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={onToggleTheme}
-            className={`size-11 flex items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer border ${
-              isLight
-                ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
-                : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
-            }`}
-            title="Alternar Modo Claro / Escuro"
-          >
-            {isLight ? <Moon className="w-4 h-4 text-slate-800" /> : <Sun className="w-4 h-4 text-amber-300" />}
-          </button>
-        </div>
-      </header>
 
       {/* Main Flashcard Scene (Zero vertical shifting on answer reveal) */}
       <div
@@ -558,8 +405,6 @@ export const StudySession: React.FC<StudySessionProps> = ({
             <MandarinCardView
               card={currentCard}
               isFlipped={isFlipped}
-              onSpeak={handleSpeak}
-              onOpenWriting={() => setShowWritingPad(true)}
             />
           </div>
         ) : (
@@ -610,65 +455,11 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
       {/* Bottom Bar — Anki style with fixed layout height to prevent vertical jitter */}
       <footer className="w-full max-w-2xl mx-auto px-4 py-4 flex flex-col items-center gap-3 z-20">
-        {/* Leech warning with the option to suspend the current card */}
-        {currentCard && isLeech(currentCard) && (
-          <div className="flex items-center justify-between w-full px-2 text-xs">
-            <span className="flex items-center gap-1.5 font-semibold text-amber-700 dark:text-amber-300">
-              <AlertTriangle className="w-3.5 h-3.5" />
-              Leech: {currentCard.lapses} erros
-            </span>
-            <button
-              type="button"
-              onClick={handleSuspendCurrent}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-md text-xs font-semibold cursor-pointer transition-all border shadow-sm ${
-                isLight
-                  ? 'bg-white/85 hover:bg-white text-ink border-white/95'
-                  : 'bg-black/35 hover:bg-black/50 text-white/90 border-white/10'
-              }`}
-              title="Suspender cartão até reativar no Dicionário"
-            >
-              <PauseCircle className="w-3.5 h-3.5" />
-              <span>Suspender</span>
-            </button>
-          </div>
-        )}
-
-        {/* Anki Counts (New, Learning, Review) */}
-        <div className="flex items-center justify-between w-full px-2 text-sm font-semibold">
-          <div
-            className={`flex items-center gap-3 backdrop-blur-md px-3.5 py-1.5 rounded-full border shadow-sm ${
-              isLight
-                ? 'bg-white/85 border-white/95 text-ink'
-                : 'bg-black/35 border-white/10 text-white'
-            }`}
-          >
-            <span className="text-blue-600 dark:text-blue-400 font-black" title="Novos">{newCount}</span>
-            <span className="text-red-600 dark:text-red-400 font-black" title="Aprendendo">{learningCount}</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-black" title="Revisão">{reviewCount}</span>
-          </div>
-
-          {canUndo && (
-            <button
-              type="button"
-              onClick={handleUndo}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-md text-xs font-semibold cursor-pointer transition-all border shadow-sm ${
-                isLight
-                  ? 'bg-white/85 hover:bg-white text-ink border-white/95'
-                  : 'bg-black/35 hover:bg-black/50 text-white/90 border-white/10'
-              }`}
-              title="Desfazer última revisão (Ctrl+Z)"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Desfazer</span>
-            </button>
-          )}
-        </div>
-
         {/* Action Controls with fixed min-height to guarantee zero layout flicker */}
         <div className="w-full min-h-[68px] flex items-stretch">
           {deckConfig.hideAnswerButtons ? (
             <p className={`w-full flex items-center justify-center gap-2 text-xs ${isLight ? 'text-black/60' : 'text-white/60'}`}>
-              {!currentCard ? null : !isFlipped ? (
+              {!currentCard || reviewedInSession > 0 ? null : !isFlipped ? (
                 'Toque duas vezes para ver a resposta'
               ) : (
                 <>
@@ -799,6 +590,127 @@ export const StudySession: React.FC<StudySessionProps> = ({
           )}
         </div>
       </footer>
+
+      {/* Bottom bar: back, queue counts, undo and the session menu */}
+      <nav
+        aria-label="Sessão"
+        className={`relative z-30 w-full border-t ${
+          isLight ? 'bg-white/90 border-black/5 text-ink' : 'bg-black/85 border-white/5 text-white'
+        }`}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      >
+        <div className="max-w-2xl mx-auto px-2 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={onExit}
+              aria-label="Voltar aos Decks"
+              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
+                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+              }`}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 px-2 text-base font-semibold tabular-nums" aria-label="Novos, aprendendo e revisão">
+              <span className={`text-blue-600 dark:text-blue-400 ${currentCard?.state === 0 ? 'underline underline-offset-4' : ''}`} title="Novos">{newCount}</span>
+              <span className={`text-red-600 dark:text-red-400 ${currentCard && (currentCard.state === 1 || currentCard.state === 3) ? 'underline underline-offset-4' : ''}`} title="Aprendendo">{learningCount}</span>
+              <span className={`text-emerald-600 dark:text-emerald-400 ${currentCard?.state === 2 ? 'underline underline-offset-4' : ''}`} title="Revisão">{reviewCount}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={handleUndo}
+              disabled={!canUndo}
+              aria-label="Desfazer última revisão"
+              title="Desfazer (Ctrl+Z)"
+              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default ${
+                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+              }`}
+            >
+              <Undo2 className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              aria-label="Mais opções"
+              aria-expanded={isMenuOpen}
+              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
+                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+              }`}
+            >
+              <EllipsisVertical className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {isMenuOpen && (
+          <>
+            <button
+              type="button"
+              aria-label="Fechar menu"
+              tabIndex={-1}
+              className="fixed inset-0 z-40 cursor-default"
+              onClick={closeMenu}
+            />
+            <div
+              ref={menuRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mais opções"
+              className={`absolute right-2 bottom-full mb-2 z-50 w-64 max-h-[70vh] overflow-y-auto rounded-2xl p-1.5 shadow-2xl border ${
+                isLight ? 'bg-white border-black/10 text-ink' : 'bg-neutral-900 border-white/10 text-white'
+              }`}
+            >
+              {[
+                { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
+                { icon: Volume2, label: 'Ouvir pronúncia', hint: 'R', onClick: handleSpeak, show: !!currentCard },
+                { icon: PauseCircle, label: 'Suspender cartão', hint: '', onClick: handleSuspendCurrent, show: !!currentCard },
+                { icon: Settings2, label: 'Configurações da sessão', hint: '', onClick: () => setShowVoiceSettingsModal(true), show: !!onUpdateDeckConfig },
+                { icon: isLight ? Moon : Sun, label: isLight ? 'Tema escuro' : 'Tema claro', hint: '', onClick: onToggleTheme, show: true },
+              ]
+                .filter((item) => item.show)
+                .map(({ icon: Icon, label, hint, onClick }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => {
+                      closeMenu();
+                      onClick();
+                    }}
+                    className={`w-full min-h-11 flex items-center gap-3 px-3 rounded-xl text-sm transition-colors cursor-pointer ${
+                      isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 opacity-70" />
+                    <span className="flex-1 text-left">{label}</span>
+                    {hint && <span className="text-xs opacity-40">{hint}</span>}
+                  </button>
+                ))}
+
+              <div className={`my-1.5 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`} />
+              <div className="px-3 py-1 text-xs font-semibold opacity-50">Nível</div>
+              {[null, ...ALL_HSK_LEVELS].map((lvl) => {
+                const isSelected = isolatedLevel === lvl;
+                return (
+                  <button
+                    key={lvl ?? 'all'}
+                    type="button"
+                    onClick={() => handleSwitchLevel(lvl)}
+                    className={`w-full min-h-10 flex items-center justify-between px-3 rounded-xl text-sm transition-colors cursor-pointer ${
+                      isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+                    }`}
+                  >
+                    <span>{lvl ?? 'Todos os ativos'}</span>
+                    {isSelected && <Check className="w-4 h-4 text-red-500" />}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </nav>
 
       {/* Floating Hanzi Writing Canvas Overlay */}
       {showWritingPad && currentCard && (
