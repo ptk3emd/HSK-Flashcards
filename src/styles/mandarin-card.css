@@ -396,6 +396,20 @@
   -webkit-transform: translate3d(0, 0, 0);
 }
 
+/* Resposta em cartão de vidro, com a mesma superfície do cartão do hanzi */
+.mandarin-dock .ptbr {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 22px var(--card-padding-x);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  backdrop-filter: blur(35px) saturate(190%);
+  -webkit-backdrop-filter: blur(35px) saturate(190%);
+  box-shadow: var(--glass-highlight);
+  line-height: var(--line-height);
+  overflow-wrap: anywhere;
+}
+
 /* -------------------------------------------------- DIVIDER */
 #answer {
   display: none;
