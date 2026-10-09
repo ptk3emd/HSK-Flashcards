@@ -21,6 +21,8 @@ import { CardBrowser } from './components/CardBrowser';
 import { StatsView } from './components/StatsView';
 import { AudioVoiceSettings } from './components/AudioVoiceSettings';
 import { FSRSSettings } from './components/FSRSSettings';
+import { StudyOptionsSettings } from './components/StudyOptionsSettings';
+import { useSystemBarHidden } from './components/useSystemBarHidden';
 import {
   Layers,
   Search,
@@ -39,6 +41,8 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'study' | 'decks' | 'browser' | 'stats' | 'settings'>('decks');
   const [isolatedStudyLevel, setIsolatedStudyLevel] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  useSystemBarHidden(deckConfig.hideSystemBar);
 
   // Load cards on initial mount
   useEffect(() => {
@@ -215,6 +219,22 @@ export default function App() {
               }`}
             >
               <AudioVoiceSettings
+                deckConfig={deckConfig}
+                onUpdateDeckConfig={handleUpdateDeckConfig}
+                theme={theme}
+              />
+            </div>
+
+            {/* Sessão de estudo: tela cheia, gestos e botões de resposta */}
+            <div
+              className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border space-y-4 transition-all ${
+                isLight
+                  ? 'bg-white/80 border-black/5 shadow-sm text-ink'
+                  : 'bg-white/[0.04] border-white/10 text-white'
+              }`}
+            >
+              <h2 className="text-base font-bold">Sessão de estudo</h2>
+              <StudyOptionsSettings
                 deckConfig={deckConfig}
                 onUpdateDeckConfig={handleUpdateDeckConfig}
                 theme={theme}

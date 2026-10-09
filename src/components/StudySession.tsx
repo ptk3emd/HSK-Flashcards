@@ -6,9 +6,10 @@ import { isLeech, predictNextIntervals, scheduleCard } from '../lib/fsrs';
 import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { ArrowLeft, RotateCcw, Volume2, CheckCircle2, Moon, Sun, ChevronDown, PenTool, Settings2, AlertTriangle, PauseCircle } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Volume2, CheckCircle2, Moon, Sun, ChevronDown, PenTool, Settings2, AlertTriangle, PauseCircle, ArrowRight } from 'lucide-react';
 import { HanziWritingCanvas } from './HanziWritingCanvas';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
+import { StudyOptionsSettings } from './StudyOptionsSettings';
 
 interface StudySessionProps {
   cards: Card[];
@@ -210,6 +211,70 @@ export const StudySession: React.FC<StudySessionProps> = ({
     onUpdateCards(nextCards);
   }, [currentCard, sessionCards, onUpdateCards]);
 
+  // Gestures on the card: double tap shows the answer; with the answer shown,
+  // swipe right answers "Bom" and swipe left answers "Novamente".
+  const SWIPE_PX = 70;
+  const TAP_SLOP_PX = 10;
+  const DOUBLE_TAP_MS = 320;
+  const gestureRef = useRef<{ id: number; x: number; y: number } | null>(null);
+  const lastTapRef = useRef(0);
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const resetDrag = () => {
+    gestureRef.current = null;
+    setIsDragging(false);
+    setDragX(0);
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!currentCard || gestureRef.current) return; // a second finger never takes over the first
+    if ((e.target as HTMLElement).closest('button')) return; // card buttons keep their own taps
+    gestureRef.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const g = gestureRef.current;
+    if (!g || g.id !== e.pointerId || !isFlipped) return;
+    const dx = e.clientX - g.x;
+    const dy = e.clientY - g.y;
+    if (Math.abs(dx) > TAP_SLOP_PX && Math.abs(dx) > Math.abs(dy)) {
+      setIsDragging(true);
+      setDragX(dx);
+    }
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const g = gestureRef.current;
+    if (!g || g.id !== e.pointerId) return;
+    const dx = e.clientX - g.x;
+    const dy = e.clientY - g.y;
+    resetDrag();
+
+    if (isFlipped && Math.abs(dx) >= SWIPE_PX && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      lastTapRef.current = 0;
+      handleAnswer(dx > 0 ? 3 : 1);
+      return;
+    }
+    if (Math.abs(dx) < TAP_SLOP_PX && Math.abs(dy) < TAP_SLOP_PX) {
+      const now = performance.now();
+      if (now - lastTapRef.current < DOUBLE_TAP_MS) {
+        lastTapRef.current = 0;
+        if (!isFlipped) setIsFlipped(true);
+      } else {
+        lastTapRef.current = now;
+      }
+    }
+  };
+
+  // Cancelled or interrupted gestures (system scroll, lost capture) never leave the card offset
+  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (gestureRef.current?.id === e.pointerId) resetDrag();
+  };
+
+  const swipeHint = isDragging && Math.abs(dragX) > 30 ? (dragX > 0 ? 'Bom' : 'Novamente') : null;
+
   // Handle switching level right inside study session
   const handleSwitchLevel = async (lvl: string | null) => {
     setIsLevelDropdownOpen(false);
@@ -255,11 +320,11 @@ export const StudySession: React.FC<StudySessionProps> = ({
         }
       } else if (e.key === '1' && isFlipped) {
         handleAnswer(1);
-      } else if (e.key === '2' && isFlipped) {
+      } else if (e.key === '2' && isFlipped && !deckConfig.twoButtonGrading) {
         handleAnswer(2);
       } else if (e.key === '3' && isFlipped) {
         handleAnswer(3);
-      } else if (e.key === '4' && isFlipped) {
+      } else if (e.key === '4' && isFlipped && !deckConfig.twoButtonGrading) {
         handleAnswer(4);
       } else if ((e.key === 'z' || e.key === 'Z') && (e.ctrlKey || e.metaKey || !isFlipped)) {
         handleUndo();
@@ -272,7 +337,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFlipped, handleAnswer, handleUndo, handleSpeak, showWritingPad, showVoiceSettingsModal]);
+  }, [isFlipped, handleAnswer, handleUndo, handleSpeak, showWritingPad, showVoiceSettingsModal, deckConfig.twoButtonGrading]);
 
   return (
     <main
@@ -433,7 +498,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   ? 'bg-white/80 hover:bg-white text-ink border-white/90 shadow-sm'
                   : 'bg-black/35 hover:bg-black/50 text-white/90 hover:text-white border-white/10'
               }`}
-              title="Configurar Voz e Gênero (TTS)"
+              title="Configurações da sessão"
             >
               <Settings2 className="w-4 h-4" />
             </button>
@@ -455,24 +520,48 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
       {/* Main Flashcard Scene (Zero vertical shifting on answer reveal) */}
       <div
-        className="study-card-container w-full flex-1 flex flex-col items-center justify-center my-auto cursor-pointer py-4"
+        className="study-card-container relative w-full flex-1 flex flex-col items-center justify-center my-auto py-4"
         style={{
           perspective: '1000px',
           WebkitPerspective: '1000px',
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden',
+          touchAction: 'pan-y',
         }}
-        onClick={() => {
-          if (!isFlipped && currentCard) setIsFlipped(true);
-        }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+        onLostPointerCapture={handlePointerCancel}
       >
+        {swipeHint && (
+          <div
+            aria-hidden="true"
+            className={`absolute top-2 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+              swipeHint === 'Bom'
+                ? 'bg-emerald-600 text-white'
+                : 'bg-red-600 text-white'
+            }`}
+            style={{ opacity: Math.min(1, (Math.abs(dragX) - 30) / 60) }}
+          >
+            {swipeHint}
+          </div>
+        )}
         {currentCard ? (
-          <MandarinCardView
-            card={currentCard}
-            isFlipped={isFlipped}
-            onSpeak={handleSpeak}
-            onOpenWriting={() => setShowWritingPad(true)}
-          />
+          <div
+            className="w-full"
+            style={{
+              transform: `translate3d(${dragX}px, 0, 0) rotate(${dragX / 40}deg)`,
+              transition: isDragging ? 'none' : 'transform 0.36s cubic-bezier(0.16, 1, 0.3, 1)',
+            }}
+          >
+            <MandarinCardView
+              card={currentCard}
+              isFlipped={isFlipped}
+              onSpeak={handleSpeak}
+              onOpenWriting={() => setShowWritingPad(true)}
+            />
+          </div>
         ) : (
           <div className="mandarin-scene">
             <div
@@ -577,7 +666,21 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
         {/* Action Controls with fixed min-height to guarantee zero layout flicker */}
         <div className="w-full min-h-[68px] flex items-stretch">
-          {!isFlipped ? (
+          {deckConfig.hideAnswerButtons ? (
+            <p className={`w-full flex items-center justify-center gap-2 text-xs ${isLight ? 'text-black/60' : 'text-white/60'}`}>
+              {!currentCard ? null : !isFlipped ? (
+                'Toque duas vezes para ver a resposta'
+              ) : (
+                <>
+                  <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>Novamente</span>
+                  <span className="opacity-40" aria-hidden="true">|</span>
+                  <span>Bom</span>
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                </>
+              )}
+            </p>
+          ) : !isFlipped ? (
             <button
               type="button"
               onClick={(e) => {
@@ -601,7 +704,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             </button>
           ) : (
             <div
-              className="grid grid-cols-4 gap-2 w-full h-full"
+              className={`grid ${deckConfig.twoButtonGrading ? 'grid-cols-2' : 'grid-cols-4'} gap-2 w-full h-full`}
               style={{
                 transform: 'translate3d(0, 0, 0)',
                 WebkitTransform: 'translate3d(0, 0, 0)',
@@ -622,7 +725,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                     : 'bg-red-600/35 hover:bg-red-600/50 text-white border-red-500/40'
                 }`}
               >
-                <span className="text-[11px] font-extrabold text-red-700 dark:text-red-200 uppercase tracking-wider">Outra vez</span>
+                <span className="text-[11px] font-extrabold text-red-700 dark:text-red-200 uppercase tracking-wider">Novamente</span>
                 <span className="text-sm font-black mt-0.5 text-current">
                   {predictions ? predictions[1].text : '< 10m'}
                 </span>
@@ -630,6 +733,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               </button>
 
               {/* Rating 2: Hard */}
+              {!deckConfig.twoButtonGrading && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -648,6 +752,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 </span>
                 <span className="text-[10px] opacity-60 mt-0.5">2</span>
               </button>
+              )}
 
               {/* Rating 3: Good */}
               <button
@@ -670,6 +775,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               </button>
 
               {/* Rating 4: Easy */}
+              {!deckConfig.twoButtonGrading && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -688,6 +794,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 </span>
                 <span className="text-[10px] opacity-60 mt-0.5">4</span>
               </button>
+              )}
             </div>
           )}
         </div>
@@ -728,7 +835,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             ref={voiceDialogRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Configurar voz"
+            aria-label="Configurações da sessão"
             onClick={(e) => e.stopPropagation()}
             className={`w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-7 shadow-2xl border animate-in zoom-in-95 duration-200 ${
               isLight
@@ -741,6 +848,14 @@ export const StudySession: React.FC<StudySessionProps> = ({
               onUpdateDeckConfig={onUpdateDeckConfig}
               theme={theme}
             />
+            <div className={`mt-6 pt-5 border-t space-y-4 ${isLight ? 'border-black/10' : 'border-white/10'}`}>
+              <h2 className="text-sm font-bold">Sessão de estudo</h2>
+              <StudyOptionsSettings
+                deckConfig={deckConfig}
+                onUpdateDeckConfig={onUpdateDeckConfig}
+                theme={theme}
+              />
+            </div>
             <div className="mt-6 pt-4 border-t border-black/10 dark:border-white/10 flex justify-end">
               <button
                 type="button"
