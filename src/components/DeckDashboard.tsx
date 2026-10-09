@@ -136,19 +136,19 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
         {/* Minimal Stats Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-6 pt-5 border-t border-black/5 dark:border-white/10">
           <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-[11px] font-semibold ${isLight ? 'text-black/55' : 'text-white/55'}`}>Pendentes</div>
+            <div className={`text-xs font-semibold ${isLight ? 'text-black/55' : 'text-white/55'}`}>Pendentes</div>
             <div className="text-xl font-black mt-0.5">{dueCount}</div>
           </div>
           <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-[11px] font-semibold ${isLight ? 'text-blue-600' : 'text-blue-400'}`}>Novos</div>
+            <div className={`text-xs font-semibold ${isLight ? 'text-blue-600' : 'text-blue-400'}`}>Novos</div>
             <div className="text-xl font-black mt-0.5 text-blue-600 dark:text-blue-400">{newCount}</div>
           </div>
           <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-[11px] font-semibold ${isLight ? 'text-amber-600' : 'text-amber-400'}`}>Aprendizado</div>
+            <div className={`text-xs font-semibold ${isLight ? 'text-amber-600' : 'text-amber-400'}`}>Aprendendo</div>
             <div className="text-xl font-black mt-0.5 text-amber-600 dark:text-amber-400">{learningCount}</div>
           </div>
           <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-[11px] font-semibold ${isLight ? 'text-emerald-600' : 'text-emerald-400'}`}>Revisão</div>
+            <div className={`text-xs font-semibold ${isLight ? 'text-emerald-600' : 'text-emerald-400'}`}>Revisão</div>
             <div className="text-xl font-black mt-0.5 text-emerald-600 dark:text-emerald-400">{reviewCount}</div>
           </div>
         </div>
@@ -156,9 +156,9 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
 
       {/* Minimal Levels List */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 px-1">
           <h2 className="text-sm font-bold tracking-tight">Níveis HSK 1 a 9</h2>
-          <span className={`text-xs ${isLight ? 'text-black/50' : 'text-white/50'}`}>
+          <span className={`text-xs ${isLight ? 'text-black/60' : 'text-white/55'}`}>
             Toque no card para ativar ou no botão para estudar isolado
           </span>
         </div>
@@ -177,8 +177,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
             return (
               <div
                 key={lvl}
-                onClick={() => !isLoading && handleToggleOrActivateLevel(lvl)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer select-none flex flex-col justify-between gap-3 ${
+                className={`relative p-4 rounded-2xl border transition-all select-none flex flex-col justify-between gap-3 has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:outline-offset-2 has-[>button:focus-visible]:outline-[var(--color-focus)] ${
                   isActive
                     ? isLight
                       ? 'bg-red-50/70 border-red-300 shadow-xs ring-1 ring-red-400/40'
@@ -188,12 +187,19 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                     : 'bg-white/[0.03] border-white/10 hover:bg-white/[0.06]'
                 }`}
               >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
+                {/* The whole card toggles the level: the button's ::after covers it */}
+                <button
+                  type="button"
+                  onClick={() => handleToggleOrActivateLevel(lvl)}
+                  disabled={isLoading}
+                  aria-pressed={isActive}
+                  className="flex items-start justify-between w-full text-left cursor-pointer focus-visible:outline-none after:absolute after:inset-0 after:rounded-2xl disabled:cursor-wait"
+                >
+                  <span className="block">
+                    <span className="flex items-center gap-2">
                       <span className="font-extrabold text-base">{lvl}</span>
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                           isActive
                             ? 'bg-red-600 text-white'
                             : isLoaded
@@ -207,34 +213,36 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                       >
                         {isActive ? 'Ativo' : isLoaded ? 'Inativo' : 'Disponível'}
                       </span>
-                    </div>
-                    <p className={`text-xs mt-1 ${isLight ? 'text-black/60' : 'text-white/60'}`}>
+                    </span>
+                    <span className={`block text-xs mt-1 ${isLight ? 'text-black/60' : 'text-white/60'}`}>
                       {count} vocábulos {isLoaded && levelDue > 0 ? `• ${levelDue} pendentes` : ''}
-                    </p>
-                  </div>
+                    </span>
+                  </span>
 
                   {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-red-500" />
+                    <Loader2 className="w-4 h-4 animate-spin text-red-500" aria-hidden="true" />
                   ) : isActive ? (
-                    <div className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center">
+                    <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center" aria-hidden="true">
                       <Check className="w-3 h-3 stroke-[3]" />
-                    </div>
+                    </span>
                   ) : (
-                    <div className="w-5 h-5 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-xs font-bold opacity-60">
+                    <span className="w-5 h-5 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-xs font-bold opacity-60" aria-hidden="true">
                       <Plus className="w-3.5 h-3.5" />
-                    </div>
+                    </span>
                   )}
-                </div>
+                </button>
 
-                <div className="pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between gap-2">
-                  <span className={`text-[11px] truncate ${isLight ? 'text-black/50' : 'text-white/40'}`}>
+                {/* Above the stretched toggle: only the Estudar button takes clicks here */}
+                <div className="relative z-10 pointer-events-none pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between gap-2">
+                  <span className={`text-xs line-clamp-2 ${isLight ? 'text-black/60' : 'text-white/55'}`}>
                     {HSK_LEVEL_INFO[lvl].desc}
                   </span>
                   <button
                     type="button"
                     onClick={(e) => handleStudyIsolated(lvl, e)}
                     disabled={isLoading}
-                    className={`min-h-11 sm:min-h-0 py-1.5 px-3 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 flex-shrink-0 ${
+                    aria-label={`Estudar só ${lvl}`}
+                    className={`pointer-events-auto min-h-11 sm:min-h-9 py-1.5 px-3 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 flex-shrink-0 ${
                       isLight
                         ? 'bg-black/5 hover:bg-black/10 text-black'
                         : 'bg-white/10 hover:bg-white/20 text-white'

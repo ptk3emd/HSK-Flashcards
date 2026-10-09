@@ -128,6 +128,7 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
             )}
           </div>
 
+          <div className="card-label">Hanzi</div>
           <div
             id="hanzi-text"
             ref={hanziRef}

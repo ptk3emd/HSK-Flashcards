@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Card, FSRSOptions, DeckConfig, ReviewLog } from '../types/card';
 import { loadReviewLogs } from '../lib/storage';
+import { calculateRetrievability } from '../lib/fsrs';
 import { RetentionCalibration } from './RetentionCalibration';
 import {
   BarChart3,
@@ -16,6 +17,7 @@ import {
   Clock,
   RotateCcw,
   Sparkles,
+  ChevronDown,
 } from 'lucide-react';
 
 interface StatsViewProps {
@@ -238,23 +240,33 @@ export const StatsView: React.FC<StatsViewProps> = ({
       }));
   }, [cards]);
 
-  // FSRS Forgetting Curve Points Calculation: R(t) = (1 + (19/81) * (t / S))^(-0.5)
+  // FSRS forgetting curve, from the same function the scheduler uses
   const curveStability = Math.max(1, avgStabilityNum || 5);
   const forgettingCurvePoints = useMemo(() => {
-    const factor = 19 / 81;
-    const decay = 0.5;
     const maxDay = Math.min(60, Math.max(30, Math.round(curveStability * 2.5)));
     const points: { day: number; retention: number }[] = [];
 
     for (let d = 0; d <= maxDay; d += Math.max(1, Math.floor(maxDay / 30))) {
-      const r = Math.pow(1 + factor * (d / curveStability), -decay);
+      const r = calculateRetrievability(d, curveStability);
       points.push({ day: d, retention: Math.max(0, Math.min(1, r)) });
     }
     return { maxDay, points };
   }, [curveStability]);
 
-  // SVG Chart Dimensions
-  const chartWidth = 560;
+  // SVG chart drawn at the container's real width: one unit is one pixel, so axis
+  // labels keep their size on a phone instead of shrinking with the drawing
+  const chartBoxRef = useRef<HTMLDivElement>(null);
+  const [chartWidth, setChartWidth] = useState(560);
+  useEffect(() => {
+    const el = chartBoxRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => {
+      const width = Math.round(entry.contentRect.width);
+      if (width > 0) setChartWidth(Math.max(280, width));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [retentionTab]);
   const chartHeight = 200;
   const padLeft = 40;
   const padRight = 20;
@@ -274,7 +286,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
     const pts = forgettingCurvePoints.points.map(p => getSvgCoordinates(p.day, p.retention));
     if (pts.length === 0) return '';
     return pts.reduce((acc, p, i) => (i === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`), '');
-  }, [forgettingCurvePoints]);
+  }, [forgettingCurvePoints, chartWidth]);
 
   const curveSvgArea = useMemo(() => {
     if (!curveSvgPath) return '';
@@ -282,7 +294,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
     const firstPt = getSvgCoordinates(0, 1);
     const bottomY = padTop + graphH;
     return `${curveSvgPath} L ${lastPt.x} ${bottomY} L ${firstPt.x} ${bottomY} Z`;
-  }, [curveSvgPath, forgettingCurvePoints]);
+  }, [curveSvgPath, forgettingCurvePoints, chartWidth]);
 
   const targetLineY = padTop + (1 - targetRetention) * graphH;
 
@@ -334,6 +346,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
           {/* Time range selector tabs */}
           <div
+            role="group"
+            aria-label="Período"
             className={`inline-flex p-1 rounded-2xl border ${
               isLight ? 'bg-black/5 border-black/10' : 'bg-black/40 border-white/10'
             }`}
@@ -350,7 +364,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 key={tab.id}
                 type="button"
                 onClick={() => setTimeRange(tab.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                aria-pressed={timeRange === tab.id}
+                className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   timeRange === tab.id
                     ? 'bg-red-600 text-white shadow-sm'
                     : isLight
@@ -381,7 +396,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <div className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
               {trueRetentionRate}%
             </div>
-            <div className="text-[10px] opacity-60 mt-1 font-medium">
+            <div className="text-xs opacity-60 mt-1 font-medium">
               Alvo: {Math.round(targetRetention * 100)}% ({positiveReviews}/{totalReviews || 0} acertos)
             </div>
           </div>
@@ -399,7 +414,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <div className="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">
               {avgStability} <span className="text-xs font-bold opacity-60">dias</span>
             </div>
-            <div className="text-[10px] opacity-60 mt-1 font-medium">
+            <div className="text-xs opacity-60 mt-1 font-medium">
               Máx: {maxStability} dias (retenção 90%)
             </div>
           </div>
@@ -417,7 +432,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <div className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">
               {currentStreak} <span className="text-xs font-bold opacity-60">dias</span>
             </div>
-            <div className="text-[10px] opacity-60 mt-1 font-medium">
+            <div className="text-xs opacity-60 mt-1 font-medium">
               Recorde: {maxStreak} dias consecutivos
             </div>
           </div>
@@ -426,18 +441,18 @@ export const StatsView: React.FC<StatsViewProps> = ({
           <div
             className={`rounded-2xl p-4 border transition-all ${
               isLight
-                ? 'bg-purple-500/5 border-purple-600/20 shadow-sm'
-                : 'bg-purple-500/10 border-purple-500/20'
+                ? 'bg-black/[0.03] border-black/10 shadow-sm'
+                : 'bg-white/[0.04] border-white/15'
             }`}
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold opacity-70">Total de Revisões</span>
-              <RotateCcw className="w-3.5 h-3.5 text-purple-500" />
+              <RotateCcw className="w-3.5 h-3.5 opacity-60" />
             </div>
-            <div className="text-2xl sm:text-3xl font-black text-purple-600 dark:text-purple-400 mt-1">
+            <div className="text-2xl sm:text-3xl font-black mt-1">
               {totalReviews}
             </div>
-            <div className="text-[10px] opacity-60 mt-1 font-medium">
+            <div className="text-xs opacity-60 mt-1 font-medium">
               {daysStudiedCount} dias estudados no total
             </div>
           </div>
@@ -465,14 +480,17 @@ export const StatsView: React.FC<StatsViewProps> = ({
           </div>
 
           <div
-            className={`inline-flex flex-wrap p-1 rounded-xl border text-xs ${
+            role="group"
+            aria-label="Visualização"
+            className={`grid grid-cols-2 sm:inline-flex sm:flex-wrap gap-1 p-1 rounded-xl border text-xs ${
               isLight ? 'bg-black/5 border-black/10' : 'bg-black/40 border-white/10'
             }`}
           >
             <button
               type="button"
               onClick={() => setRetentionTab('curve')}
-              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              aria-pressed={retentionTab === 'curve'}
+              className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'curve'
                   ? 'bg-red-600 text-white shadow-sm'
                   : isLight
@@ -485,7 +503,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <button
               type="button"
               onClick={() => setRetentionTab('buttons')}
-              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              aria-pressed={retentionTab === 'buttons'}
+              className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'buttons'
                   ? 'bg-red-600 text-white shadow-sm'
                   : isLight
@@ -498,7 +517,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <button
               type="button"
               onClick={() => setRetentionTab('history')}
-              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              aria-pressed={retentionTab === 'history'}
+              className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'history'
                   ? 'bg-red-600 text-white shadow-sm'
                   : isLight
@@ -511,7 +531,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
             <button
               type="button"
               onClick={() => setRetentionTab('calibration')}
-              className={`min-h-11 sm:min-h-0 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+              aria-pressed={retentionTab === 'calibration'}
+              className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 retentionTab === 'calibration'
                   ? 'bg-red-600 text-white shadow-sm'
                   : isLight
@@ -541,20 +562,26 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   </span>
                 </div>
               </div>
-              <div className={`text-[11px] font-medium ${isLight ? 'text-black/60' : 'text-white/60'}`}>
+              <div className={`text-xs font-medium ${isLight ? 'text-black/60' : 'text-white/60'}`}>
                 Estabilidade calculada: <strong>{avgStability} dias</strong>
               </div>
             </div>
 
             {/* SVG Interactive Chart */}
             <div
-              className={`relative rounded-2xl p-4 border overflow-x-auto ${
+              ref={chartBoxRef}
+              className={`relative rounded-2xl p-4 border ${
                 isLight ? 'bg-black/[0.02] border-black/10' : 'bg-black/30 border-white/10'
               }`}
             >
               <svg
                 viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-                className="w-full h-auto max-h-64 overflow-visible"
+                className="w-full h-auto overflow-visible"
+                role="group"
+                aria-label={`Curva de retenção estimada para estabilidade de ${avgStability} dias: ${forgettingCurvePoints.points
+                  .filter((_, i, arr) => i === 0 || i === arr.length - 1 || i === Math.floor(arr.length / 2))
+                  .map(p => `${Math.round(p.retention * 100)}% no dia ${p.day}`)
+                  .join(', ')}. Alvo de ${Math.round(targetRetention * 100)}%.`}
               >
                 {/* Horizontal Grid lines */}
                 {[1.0, 0.9, 0.75, 0.5, 0.25].map(ret => {
@@ -566,15 +593,15 @@ export const StatsView: React.FC<StatsViewProps> = ({
                         y1={y}
                         x2={chartWidth - padRight}
                         y2={y}
-                        stroke={isLight ? '#e5e7eb' : '#27272a'}
+                        style={{ stroke: 'var(--chart-grid)' }}
                         strokeWidth="1"
                       />
                       <text
                         x={padLeft - 6}
                         y={y + 3}
                         textAnchor="end"
-                        fontSize="9"
-                        fill={isLight ? '#6b7280' : '#a1a1aa'}
+                        fontSize="12"
+                        style={{ fill: 'var(--chart-label)' }}
                         fontWeight="600"
                       >
                         {Math.round(ret * 100)}%
@@ -589,7 +616,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   y1={targetLineY}
                   x2={chartWidth - padRight}
                   y2={targetLineY}
-                  stroke="#10b981"
+                  style={{ stroke: 'var(--chart-target)' }}
                   strokeWidth="1.5"
                   strokeDasharray="4 4"
                 />
@@ -597,8 +624,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 {/* Area Gradient under curve */}
                 <defs>
                   <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#ef4444" stopOpacity="0.0" />
+                    <stop offset="0%" style={{ stopColor: 'var(--chart-curve)', stopOpacity: 0.3 }} />
+                    <stop offset="100%" style={{ stopColor: 'var(--chart-curve)', stopOpacity: 0 }} />
                   </linearGradient>
                 </defs>
                 <path d={curveSvgArea} fill="url(#curveGradient)" />
@@ -607,13 +634,13 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <path
                   d={curveSvgPath}
                   fill="none"
-                  stroke="#ef4444"
+                  style={{ stroke: 'var(--chart-curve)' }}
                   strokeWidth="2.5"
                   strokeLinecap="round"
                 />
 
                 {/* Vertical Day Grid Labels */}
-                {[0, 7, 14, 21, 30, forgettingCurvePoints.maxDay].map(day => {
+                {[...new Set([0, 7, 14, 21, 30, forgettingCurvePoints.maxDay])].map(day => {
                   if (day > forgettingCurvePoints.maxDay) return null;
                   const x = padLeft + (day / forgettingCurvePoints.maxDay) * graphW;
                   return (
@@ -623,15 +650,15 @@ export const StatsView: React.FC<StatsViewProps> = ({
                         y1={padTop + graphH}
                         x2={x}
                         y2={padTop + graphH + 4}
-                        stroke={isLight ? '#9ca3af' : '#52525b'}
+                        style={{ stroke: 'var(--chart-tick)' }}
                         strokeWidth="1"
                       />
                       <text
                         x={x}
                         y={padTop + graphH + 16}
                         textAnchor="middle"
-                        fontSize="9"
-                        fill={isLight ? '#6b7280' : '#a1a1aa'}
+                        fontSize="12"
+                        style={{ fill: 'var(--chart-label)' }}
                         fontWeight="600"
                       >
                         {day}d
@@ -649,16 +676,23 @@ export const StatsView: React.FC<StatsViewProps> = ({
                     return (
                       <g
                         key={p.day}
-                        className="cursor-pointer"
+                        className="cursor-pointer focus:outline-none"
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`Dia ${p.day}: ${Math.round(p.retention * 100)}% de retenção`}
                         onMouseEnter={() => setHoveredPoint(p)}
                         onMouseLeave={() => setHoveredPoint(null)}
+                        onFocus={() => setHoveredPoint(p)}
+                        onBlur={() => setHoveredPoint(null)}
+                        onClick={() => setHoveredPoint(p)}
                       >
+                        {/* Invisible 24px hit area: the dot itself is too small to tap */}
+                        <circle cx={coords.x} cy={coords.y} r={12} fill="transparent" />
                         <circle
                           cx={coords.x}
                           cy={coords.y}
                           r={isHovered ? 6 : 3.5}
-                          fill="#ef4444"
-                          stroke={isLight ? '#ffffff' : '#18181b'}
+                          style={{ fill: 'var(--chart-curve)', stroke: isHovered ? 'var(--color-focus)' : 'var(--chart-point-ring)' }}
                           strokeWidth="2"
                           className="transition-all"
                         />
@@ -670,6 +704,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               {/* Tooltip on Hover */}
               {hoveredPoint && (
                 <div
+                  aria-hidden="true"
                   className={`absolute top-4 right-4 px-3 py-1.5 rounded-xl border text-xs shadow-md ${
                     isLight ? 'bg-white border-black/10 text-black' : 'bg-zinc-900 border-white/20 text-white'
                   }`}
@@ -690,7 +725,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
             >
               A retenção estimada é calculada com base na equação oficial do algoritmo FSRS:{' '}
               <code className="font-mono text-red-500 font-bold">R(t) = (1 + 19/81 * t/S)^(-0.5)</code>.
-              Ela prediz a probabilidade exata de você reconhecer o ideograma chinês antes da próxima repetição.
+              Ela estima a probabilidade de você reconhecer o ideograma antes da próxima revisão.
             </div>
           </div>
         )}
@@ -709,7 +744,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <div className="text-2xl font-black text-red-600 dark:text-red-400 mt-1">
                   {buttonCounts[1]}
                 </div>
-                <div className="text-[11px] opacity-60 mt-0.5">
+                <div className="text-xs opacity-60 mt-0.5">
                   {totalReviews > 0 ? Math.round((buttonCounts[1] / totalReviews) * 100) : 0}% das respostas
                 </div>
               </div>
@@ -724,7 +759,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <div className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">
                   {buttonCounts[2]}
                 </div>
-                <div className="text-[11px] opacity-60 mt-0.5">
+                <div className="text-xs opacity-60 mt-0.5">
                   {totalReviews > 0 ? Math.round((buttonCounts[2] / totalReviews) * 100) : 0}% das respostas
                 </div>
               </div>
@@ -739,7 +774,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
                   {buttonCounts[3]}
                 </div>
-                <div className="text-[11px] opacity-60 mt-0.5">
+                <div className="text-xs opacity-60 mt-0.5">
                   {totalReviews > 0 ? Math.round((buttonCounts[3] / totalReviews) * 100) : 0}% das respostas
                 </div>
               </div>
@@ -754,7 +789,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <div className="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">
                   {buttonCounts[4]}
                 </div>
-                <div className="text-[11px] opacity-60 mt-0.5">
+                <div className="text-xs opacity-60 mt-0.5">
                   {totalReviews > 0 ? Math.round((buttonCounts[4] / totalReviews) * 100) : 0}% das respostas
                 </div>
               </div>
@@ -804,7 +839,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <div className="text-xl font-bold mt-1">
                   {youngRetention !== null ? `${youngRetention}%` : 'Sem dados'}
                 </div>
-                <p className="text-[10px] opacity-50 mt-0.5">Fase inicial de consolidação na memória</p>
+                <p className="text-xs opacity-50 mt-0.5">Fase inicial de consolidação na memória</p>
               </div>
 
               <div
@@ -816,7 +851,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                 <div className="text-xl font-bold mt-1">
                   {matureRetention !== null ? `${matureRetention}%` : 'Sem dados'}
                 </div>
-                <p className="text-[10px] opacity-50 mt-0.5">Memória de longo prazo consolidada</p>
+                <p className="text-xs opacity-50 mt-0.5">Memória de longo prazo consolidada</p>
               </div>
             </div>
           </div>
@@ -846,11 +881,11 @@ export const StatsView: React.FC<StatsViewProps> = ({
                         isLight ? 'bg-black/[0.02] border-black/10' : 'bg-black/30 border-white/10'
                       }`}
                     >
-                      <div className="text-[10px] opacity-50 font-semibold">{item.day}</div>
+                      <div className="text-xs opacity-50 font-semibold">{item.day}</div>
                       <div className="text-base font-black text-emerald-600 dark:text-emerald-400 mt-1">
                         {item.rate}%
                       </div>
-                      <div className="text-[10px] opacity-50 mt-0.5">
+                      <div className="text-xs opacity-50 mt-0.5">
                         {item.positive}/{item.total} rev.
                       </div>
                     </div>
@@ -922,7 +957,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   <span className="opacity-70 font-medium">Novos</span>
                 </div>
                 <div className="text-lg font-black mt-1">{newCount}</div>
-                <div className="text-[10px] opacity-40">Não iniciados</div>
+                <div className="text-xs opacity-40">Não iniciados</div>
               </div>
 
               <div
@@ -935,7 +970,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   <span className="opacity-70 font-medium">Aprendendo</span>
                 </div>
                 <div className="text-lg font-black mt-1">{learningCount}</div>
-                <div className="text-[10px] opacity-40">Em assimilação</div>
+                <div className="text-xs opacity-40">Em assimilação</div>
               </div>
 
               <div
@@ -948,7 +983,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   <span className="opacity-70 font-medium">Jovens</span>
                 </div>
                 <div className="text-lg font-black mt-1">{youngCount}</div>
-                <div className="text-[10px] opacity-40">&lt; 21 dias de intervalo</div>
+                <div className="text-xs opacity-40">&lt; 21 dias de intervalo</div>
               </div>
 
               <div
@@ -961,7 +996,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   <span className="opacity-70 font-medium">Maduros</span>
                 </div>
                 <div className="text-lg font-black mt-1">{matureCount}</div>
-                <div className="text-[10px] opacity-40">&ge; 21 dias ({matureRate}%)</div>
+                <div className="text-xs opacity-40">&ge; 21 dias ({matureRate}%)</div>
               </div>
             </div>
           </div>
@@ -970,19 +1005,19 @@ export const StatsView: React.FC<StatsViewProps> = ({
         {/* Secondary General Stats Row */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-black/5 dark:border-white/10">
           <div>
-            <div className="text-[11px] opacity-60 font-semibold">Total no Baralho</div>
+            <div className="text-xs opacity-60 font-semibold">Total no Baralho</div>
             <div className="text-xl font-bold mt-0.5">{totalCards} palavras</div>
           </div>
           <div>
-            <div className="text-[11px] opacity-60 font-semibold">Total Estudadas</div>
+            <div className="text-xs opacity-60 font-semibold">Total Estudadas</div>
             <div className="text-xl font-bold mt-0.5">{totalStudied} palavras</div>
           </div>
           <div>
-            <div className="text-[11px] opacity-60 font-semibold">Dificuldade Média</div>
+            <div className="text-xs opacity-60 font-semibold">Dificuldade Média</div>
             <div className="text-xl font-bold mt-0.5">{avgDifficulty} / 10</div>
           </div>
           <div>
-            <div className="text-[11px] opacity-60 font-semibold">Taxa de Maturidade</div>
+            <div className="text-xs opacity-60 font-semibold">Taxa de Maturidade</div>
             <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
               {matureRate}%
             </div>
@@ -998,12 +1033,12 @@ export const StatsView: React.FC<StatsViewProps> = ({
             : 'bg-white/[0.04] border-white/10 text-white'
         }`}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
           <div className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-red-500" />
             <h2 className="text-lg font-bold">Carga de Revisões Futuras</h2>
           </div>
-          <span className={`text-xs ${isLight ? 'text-black/50' : 'text-white/50'}`}>
+          <span className={`text-xs ${isLight ? 'text-black/60' : 'text-white/55'}`}>
             Previsão baseada no agendamento FSRS
           </span>
         </div>
@@ -1035,7 +1070,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
                     }`}
                   />
                 </div>
-                <div className="text-[11px] font-bold opacity-70 mt-2 text-center">{item.label}</div>
+                <div className="text-xs font-bold opacity-70 mt-2 text-center">{item.label}</div>
               </div>
             );
           })}
@@ -1064,10 +1099,10 @@ export const StatsView: React.FC<StatsViewProps> = ({
                   isLight ? 'bg-black/[0.02] border-black/5' : 'bg-black/20 border-white/5'
                 }`}
               >
-                <div className="flex items-center justify-between text-xs mb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-sm">{lvl.level}</span>
-                    <span className="opacity-50">
+                    <span className="font-extrabold text-sm whitespace-nowrap">{lvl.level}</span>
+                    <span className="opacity-60">
                       ({lvl.studied} de {lvl.total} estudadas)
                     </span>
                   </div>
@@ -1107,11 +1142,13 @@ export const StatsView: React.FC<StatsViewProps> = ({
             : 'bg-white/[0.04] border-white/10 text-white'
         }`}
       >
-        <div className="flex items-center gap-2 font-bold mb-2">
-          <Brain className="w-5 h-5 text-red-500" />
-          <h3 className="text-base font-bold">Como Funciona a Repetição Espaçada?</h3>
-        </div>
-        <p className={`text-xs leading-relaxed ${isLight ? 'text-black/70' : 'text-white/70'}`}>
+        <details className="group">
+        <summary className="flex items-center gap-2 font-bold cursor-pointer list-none min-h-11 [&::-webkit-details-marker]:hidden">
+          <Brain className="w-5 h-5 text-red-500" aria-hidden="true" />
+          <h2 className="text-base font-bold">Como funciona a repetição espaçada</h2>
+          <ChevronDown className="w-4 h-4 ml-auto opacity-60 transition-transform group-open:rotate-180" aria-hidden="true" />
+        </summary>
+        <p className={`text-xs leading-relaxed mt-2 ${isLight ? 'text-black/70' : 'text-white/70'}`}>
           O agendador de repetição calcula matematicamente a curva de retenção de memória de cada ideograma chinês com base em:
         </p>
         <ul className={`text-xs space-y-1.5 list-disc pl-5 mt-2 ${isLight ? 'text-black/80' : 'text-white/80'}`}>
@@ -1119,6 +1156,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
           <li><strong>Dificuldade (D):</strong> Complexidade intrínseca de cada caractere (escala de 1 a 10).</li>
           <li><strong>Recuperabilidade (R):</strong> Probabilidade de lembrança instantânea durante o teste.</li>
         </ul>
+        </details>
       </div>
     </div>
   );

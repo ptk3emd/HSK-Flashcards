@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Card, DeckConfig, FSRSOptions } from './types/card';
 import {
   loadCards,
@@ -17,12 +17,21 @@ import {
 } from './lib/storage';
 import { StudySession } from './components/StudySession';
 import { DeckDashboard } from './components/DeckDashboard';
-import { CardBrowser } from './components/CardBrowser';
-import { StatsView } from './components/StatsView';
+import { ViewLoading } from './components/ViewLoading';
 import { AudioVoiceSettings } from './components/AudioVoiceSettings';
 import { FSRSSettings } from './components/FSRSSettings';
 import { StudyOptionsSettings } from './components/StudyOptionsSettings';
 import { useSystemBarHidden } from './components/useSystemBarHidden';
+
+// Views opened from the bottom bar load on first use, keeping the first screen light
+const CardBrowser = lazy(() => import('./components/CardBrowser').then((m) => ({ default: m.CardBrowser })));
+const StatsView = lazy(() => import('./components/StatsView').then((m) => ({ default: m.StatsView })));
+
+// After the first screen is up, fetch those views while the browser is idle
+function prefetchViews() {
+  void import('./components/CardBrowser');
+  void import('./components/StatsView');
+}
 import {
   Layers,
   Search,
@@ -45,6 +54,11 @@ export default function App() {
   useSystemBarHidden(deckConfig.hideSystemBar);
 
   // Load cards on initial mount
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
+    idle(prefetchViews);
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     loadCards().then((initialCards) => {
@@ -147,23 +161,27 @@ export default function App() {
         )}
 
         {activeTab === 'browser' && (
-          <CardBrowser
-            cards={cards}
-            theme={theme}
-            deckConfig={deckConfig}
-            speechSpeed={deckConfig.speechSpeed}
-            onUpdateCard={handleUpdateSingleCard}
-            onAddCards={handleAddCards}
-          />
+          <Suspense fallback={<ViewLoading />}>
+            <CardBrowser
+              cards={cards}
+              theme={theme}
+              deckConfig={deckConfig}
+              speechSpeed={deckConfig.speechSpeed}
+              onUpdateCard={handleUpdateSingleCard}
+              onAddCards={handleAddCards}
+            />
+          </Suspense>
         )}
 
         {activeTab === 'stats' && (
-          <StatsView
-            cards={cards}
-            theme={theme}
-            fsrsOptions={fsrsOptions}
-            deckConfig={deckConfig}
-          />
+          <Suspense fallback={<ViewLoading />}>
+            <StatsView
+              cards={cards}
+              theme={theme}
+              fsrsOptions={fsrsOptions}
+              deckConfig={deckConfig}
+            />
+          </Suspense>
         )}
 
         {activeTab === 'settings' && (
@@ -338,7 +356,7 @@ export default function App() {
           aria-label="Decks"
           aria-current={activeTab === 'decks' ? 'page' : undefined}
           onClick={() => setActiveTab('decks')}
-          className={`min-h-11 sm:min-h-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`min-h-11 min-w-11 sm:min-h-9 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'decks'
               ? 'bg-red-600 text-white shadow-sm'
               : isLight
@@ -355,7 +373,7 @@ export default function App() {
           aria-label="Dicionário"
           aria-current={activeTab === 'browser' ? 'page' : undefined}
           onClick={() => setActiveTab('browser')}
-          className={`min-h-11 sm:min-h-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`min-h-11 min-w-11 sm:min-h-9 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'browser'
               ? 'bg-red-600 text-white shadow-sm'
               : isLight
@@ -372,7 +390,7 @@ export default function App() {
           aria-label="Estatísticas"
           aria-current={activeTab === 'stats' ? 'page' : undefined}
           onClick={() => setActiveTab('stats')}
-          className={`min-h-11 sm:min-h-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`min-h-11 min-w-11 sm:min-h-9 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'stats'
               ? 'bg-red-600 text-white shadow-sm'
               : isLight
@@ -391,7 +409,7 @@ export default function App() {
           aria-label="Configurações"
           aria-current={activeTab === 'settings' ? 'page' : undefined}
           onClick={() => setActiveTab('settings')}
-          className={`min-h-11 sm:min-h-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+          className={`min-h-11 min-w-11 sm:min-h-9 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'settings'
               ? 'bg-red-600 text-white shadow-sm'
               : isLight

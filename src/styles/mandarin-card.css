@@ -1,4 +1,6 @@
-/* Glassmorphism Acrílico — Mandarim (Largura Responsiva + Texto Elástico + Anti-Flicker) */
+/* Glassmorphism Acrílico — Mandarim (Largura Responsiva + Texto Elástico + Anti-Flicker)
+   Port of the Anki note-type CSS. Global rules from the template (.card, a, img, table)
+   are scoped to the card so they do not restyle the rest of the app. */
 
 /* ==========================================================================
    MENU DE CONTROLE RÁPIDO (EDITE AQUI QUANDO QUISER)
@@ -7,25 +9,25 @@
   /* 1. LARGURA DO CARD E DISTÂNCIA DA BORDA DA TELA */
   --screen-padding: 12px;       /* Distância entre o card e a lateral da tela do celular */
   --card-max-width: 680px;      /* Largura máxima do card em telas grandes/tablets */
-  --card-padding-y: 40px;       /* Espaço interno em cima e embaixo dentro do card */
+  --card-padding-y: 32px;       /* Espaço interno em cima e embaixo dentro do card */
   --card-padding-x: 20px;       /* Espaço interno nas laterais dentro do card */
   --card-radius: 28px;
   --card-text-align: center;
 
   /* 2. AGRUPAMENTO E ESCALA AUTOMÁTICA DO TEXTO */
-  --chars-per-line: 7;          /* Máximo de caracteres por linha (mude para 5, 7, 10, 12...) */
-  --hanzi-max-size: 88px;       /* Tamanho máximo (para palavras curtas de 1 a 3 letras) */
+  --chars-per-line: 7;          /* Máximo de caracteres por linha (o app ajusta por cartão) */
+  --hanzi-max-size: 80px;       /* Tamanho máximo (para palavras curtas de 1 a 3 letras) */
   --hanzi-min-size: 26px;       /* Tamanho mínimo de segurança para frases muito longas */
 
   /* Pinyin e Tradução crescem automaticamente conforme a largura da tela */
-  --pinying-size: clamp(17px, 4.4vw, 21px);
-  --ptbr-size: clamp(19px, 4.8vw, 23px);
+  --pinying-size: clamp(22px, 5.5vw, 28px);
+  --ptbr-size: clamp(20px, 5vw, 26px);
 
   /* 3. ANIMAÇÃO DO PINYIN (FRENTE) */
-  --pinying-reveal-time: 0.6s;
-  --pinying-reveal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --pinying-reveal-time: 0.95s;
+  --pinying-reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --pinying-open-maxheight: 10em;
-  --pinying-gap-open: 10px;
+  --pinying-gap-open: 16px;
 
   /* 4. IMAGENS */
   --img-width: 75%;
@@ -36,69 +38,72 @@
      VARIÁVEIS DO SISTEMA (TIPOGRAFIA, CORES E ACRÍLICO)
      ======================================================================== */
   --line-chars: var(--chars-per-line);
-  --avail-card-width: min(calc(100% - (var(--screen-padding) * 2)), var(--card-max-width));
-  --avail-text-width: calc(min(calc(100vw - (var(--screen-padding) * 2)), var(--card-max-width)) - (var(--card-padding-x) * 2) - 8px);
+  --avail-card-width: min(calc(100vw - (var(--screen-padding) * 2)), var(--card-max-width));
+  --avail-text-width: calc(var(--avail-card-width) - (var(--card-padding-x) * 2) - 8px);
 
-  --font-hanzi: "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong", "Yu Mincho", serif;
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
-  --font-text: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  /* Template stack first; the bundled Noto Serif SC covers Android and Windows, which have no Songti */
+  --font-hanzi: "Songti SC", "STSong", "Noto Serif CJK SC", "Noto Serif SC", "Yu Mincho", "Mincho", serif;
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-text: "SF Pro Text", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-mono: "SF Mono", "Menlo", monospace;
   --line-height: 1.45;
   --block-gap: 16px;
 
-  --anim-curve: cubic-bezier(0.16, 1, 0.3, 1);
-  --anim-time: 0.36s;
+  --anim-curve: cubic-bezier(0.22, 1, 0.36, 1);
+  --anim-time: 0.28s;
 
   /* Paleta do Sistema e Materiais Translúcidos (Modo Claro) */
-  --text: #141416;
-  --text-secondary: rgba(45, 45, 52, 0.86);
-  --text-tertiary: rgba(60, 60, 67, 0.65);
+  --text: #1d1d1f;
+  --text-secondary: rgba(60, 60, 67, 0.78);
+  --text-tertiary: rgba(60, 60, 67, 0.55);
   --separator: rgba(60, 60, 67, 0.18);
 
   /* Cor de destaque única da superfície (System Red) */
   --system-red: #ff3b30;
 
-  /* Camadas de acrílico fosco e reflexo especular nas bordas (Modo Claro Revisto) */
-  --glass-surface: rgba(255, 252, 251, 0.78);
-  --glass-pill: rgba(255, 252, 251, 0.94);
-  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.85),
-                     0 12px 32px rgba(170, 50, 60, 0.12);
+  /* Camadas de acrílico fosco e reflexo especular nas bordas */
+  --glass-surface: rgba(255, 248, 246, 0.46);
+  --glass-pill: rgba(255, 248, 246, 0.56);
+  --glass-highlight: inset 0 1.5px 1px rgba(255, 255, 255, 0.88),
+                     inset 0 -1px 1px rgba(255, 255, 255, 0.38),
+                     inset 1px 0 1px rgba(255, 255, 255, 0.48),
+                     inset -1px 0 1px rgba(255, 255, 255, 0.48);
 }
 
-/* -------------------------------------------------- CORES BASE (modo claro revisado e aperfeiçoado) */
+/* -------------------------------------------------- CORES BASE (modo claro) */
 .card-theme-light {
   background-color: #d87679;
   background-image:
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.08) 0px,
-      rgba(255, 255, 255, 0.08) 18px,
+      rgba(255, 255, 255, 0.075) 0px,
+      rgba(255, 255, 255, 0.075) 18px,
       rgba(0, 0, 0, 0.02) 18px,
       rgba(0, 0, 0, 0.02) 36px
     ),
     radial-gradient(circle at 50% 12%, #fae6d4 0%, #e08285 55%, #c25258 100%);
 
-  --text-fg: #111113;
-  --text-fg-faint: #505058;
+  --text-fg: var(--text);
+  --text-fg-faint: var(--text-tertiary);
   --text-bg-selected: rgba(255, 59, 48, 0.18);
 
   --card-bg: var(--glass-surface);
   --divider: var(--separator);
 
-  --hanzi-color: #111113;
-  --pinying-color: #2c2c30;
-  --ptbr-color: #111113;
+  --hanzi-color: var(--text);
+  --pinying-color: var(--text-secondary);
+  --ptbr-color: var(--text);
 
   --cloze-fg: var(--system-red);
   --cloze-bg: transparent;
 
   --link-fg: var(--system-red);
-  --link-fg-active: #111113;
+  --link-fg-active: var(--text);
 
-  --bold-fg: #111113;
-  --italic-fg: #2c2c30;
-  --bold-italic-fg: #111113;
-  --underline-fg: #111113;
+  --bold-fg: var(--text);
+  --italic-fg: var(--text-secondary);
+  --bold-italic-fg: var(--text);
+  --underline-fg: var(--text);
 
   --table-border: var(--separator);
   --table-row-alt: rgba(60, 60, 67, 0.05);
@@ -113,14 +118,16 @@
 .card.night_mode,
 .card.nightMode {
   --text: #ffffff;
-  --text-secondary: rgba(235, 235, 245, 0.85);
-  --text-tertiary: rgba(235, 235, 245, 0.60);
+  --text-secondary: rgba(235, 235, 245, 0.78);
+  --text-tertiary: rgba(235, 235, 245, 0.55);
   --separator: rgba(84, 84, 88, 0.65);
 
-  --glass-surface: rgba(36, 18, 20, 0.65);
-  --glass-pill: rgba(48, 24, 26, 0.82);
-  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.12),
-                     0 12px 32px rgba(0, 0, 0, 0.35);
+  --glass-surface: rgba(36, 18, 20, 0.58);
+  --glass-pill: rgba(48, 24, 26, 0.68);
+  --glass-highlight: inset 0 1.5px 1px rgba(255, 255, 255, 0.28),
+                     inset 0 -1px 1px rgba(255, 255, 255, 0.08),
+                     inset 1px 0 1px rgba(255, 255, 255, 0.15),
+                     inset -1px 0 1px rgba(255, 255, 255, 0.15);
 
   background-color: #160608;
   background-image:
@@ -144,42 +151,30 @@
   --pinying-color: var(--text-secondary);
   --ptbr-color: var(--text);
 
+  /* The light rules sit on .card-theme-light only, so dark repeats what it shares */
+  --cloze-fg: var(--system-red);
+  --cloze-bg: transparent;
+  --link-fg: var(--system-red);
+  --link-fg-active: var(--text);
+  --bold-fg: var(--text);
+  --italic-fg: var(--text-secondary);
+  --bold-italic-fg: var(--text);
+  --underline-fg: var(--text);
+  --underline-decoration: rgba(255, 59, 48, 0.45);
+  --x-color: var(--system-red);
+  --xu-color: var(--system-red);
+
   --table-border: var(--separator);
   --table-row-alt: rgba(255, 255, 255, 0.04);
 }
 
-/* -------------------------------------------------- BACKGROUND E CONTENTOR CENTRAL */
-.study-card-container,
-.card-container {
+/* -------------------------------------------------- CONTENTOR CENTRAL */
+.study-card-container {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  perspective: 1000px;
-  -webkit-perspective: 1000px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-}
-
-.card-canvas {
-  cursor: default;
-  padding: 24px var(--screen-padding);
-  margin: 0;
-  min-height: 100%;
-  box-sizing: border-box;
-  font-optical-sizing: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  perspective: 1000px;
-  -webkit-perspective: 1000px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 .mandarin-scene {
@@ -190,16 +185,6 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-
-  /* HARDWARE ACCELERATION & COMPOSITOR PROMOTION */
-  perspective: 1000px;
-  -webkit-perspective: 1000px;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
 }
 
 /* -------------------------------------------------- CARTÃO PRINCIPAL (Acrílico Largo e Responsivo) */
@@ -207,22 +192,18 @@
   position: relative;
   width: var(--avail-card-width);
   max-width: 100%;
-  /* The hanzi scales with the card's own width, so cards in narrow places (preview, dialogs) fit too */
+  /* The hanzi scales with the card's own width, so cards in narrow places (preview) fit too */
   container-type: inline-size;
 
   background: var(--card-bg);
-  backdrop-filter: blur(35px) saturate(190%);
-  -webkit-backdrop-filter: blur(35px) saturate(190%);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
   box-shadow: var(--glass-highlight);
   border-radius: var(--card-radius);
   border: none;
-
-  /* HARDWARE ACCELERATION */
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
+  transform: translateZ(0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  will-change: transform;
 
   padding: var(--card-padding-y) var(--card-padding-x);
   margin: 0 auto;
@@ -245,48 +226,58 @@
 .card-label {
   font-family: var(--font-text);
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--text-fg-faint);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
   margin-bottom: 12px;
-  text-transform: uppercase;
 }
 
 /* -------------------------------------------------- BARRA INFERIOR FLUTUANTE (Dock do Verso) */
 .mandarin-dock {
   width: var(--avail-card-width);
   max-width: 100%;
-  background: transparent;
-  border-radius: 0;
-  padding: 4px var(--card-padding-x);
+  background: var(--glass-pill);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: var(--glass-highlight);
+  border-radius: 999px;
+  padding: 18px var(--card-padding-x);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
+  min-height: 64px;
   text-align: center;
 
-  /* HARDWARE ACCELERATION & ZERO FLICKER DOCK */
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
+  transform: translateZ(0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transition: opacity var(--anim-time) var(--anim-curve),
               transform var(--anim-time) var(--anim-curve);
 }
 
+/* The dock stays mounted on the front (so the card never shifts) and fades in on the back */
 .mandarin-dock.dock-hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translate3d(0, 10px, 0);
+  transform: translate3d(0, 4px, 0);
 }
 
 .mandarin-dock.dock-visible {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: translate3d(0, 0, 0);
+  transform: translateZ(0);
+}
+
+/* Caso use o HTML antigo sem .mandarin-dock */
+.mandarin-card > .ptbr {
+  margin-top: 20px;
+  padding: 14px 20px;
+  background: var(--glass-pill);
+  box-shadow: var(--glass-highlight);
+  border-radius: 999px;
 }
 
 /* -------------------------------------------------- TIPOGRAFIA E ESCALA ÓPTICA */
@@ -305,9 +296,21 @@
   white-space: pre-wrap;
 }
 
+.mandarin-card p,
+.mandarin-card span,
+.mandarin-card li,
+.mandarin-card ul,
+.mandarin-card ol,
+.mandarin-card blockquote,
+.mandarin-card pre {
+  margin: 0;
+  padding: 0;
+}
+
 /* -------------------------------------------------- CAMPOS MANDARIM (TEXTO ELÁSTICO RESPONSIVO) */
 .hanzi {
   font-family: var(--font-hanzi);
+  /* Cresce automaticamente para preencher a largura do card conforme o nº de caracteres */
   font-size: clamp(
     var(--hanzi-min-size),
     calc(var(--avail-text-width) / var(--chars-per-line)),
@@ -315,23 +318,14 @@
   );
   line-height: 1.25;
   color: var(--hanzi-color);
-  font-weight: 600;
+  font-weight: 500;
 
+  /* Agrupa exatamente na quantidade definida em --chars-per-line */
   max-width: calc(var(--chars-per-line) * 1em);
   margin-left: auto;
   margin-right: auto;
   word-break: break-all;
   line-break: anywhere;
-  user-select: text;
-
-  /* HARDWARE ACCELERATION & SUBPIXEL STABILITY */
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 .hanzi.is-long {
@@ -339,8 +333,8 @@
   max-width: 100%;
 }
 
-/* Where container units exist, size from the card's content width rather than the viewport.
-   100cqi is the card's width inside its padding; the vw rules above stay as the fallback. */
+/* Where container units exist, size from the card's content width rather than the viewport,
+   so the same scale holds in the narrower preview card. 100cqi is the width inside the padding. */
 @supports (width: 1cqi) {
   .hanzi {
     font-size: clamp(
@@ -359,30 +353,23 @@
   font-family: var(--font-display);
   font-size: var(--pinying-size);
   color: var(--pinying-color);
-  font-weight: 400;
-  letter-spacing: 0.01em;
+  font-weight: 500;
 
   overflow: hidden;
   max-height: var(--pinying-open-maxheight);
   margin-top: var(--pinying-gap-open);
 
   opacity: 1;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  transform: translateY(0);
 }
 
-/* Aplica transição suave no front com aceleração por hardware */
+/* Aplica transição apenas na frente para evitar piscar na troca para o verso */
 .front-scene .pinying#pinying-delayed {
   transition:
-    opacity calc(var(--pinying-reveal-time) * 0.85) var(--pinying-reveal-ease),
-    transform calc(var(--pinying-reveal-time) * 0.85) var(--pinying-reveal-ease),
     max-height var(--pinying-reveal-time) var(--pinying-reveal-ease),
-    margin-top var(--pinying-reveal-time) var(--pinying-reveal-ease);
-  will-change: transform, opacity;
+    margin-top var(--pinying-reveal-time) var(--pinying-reveal-ease),
+    opacity calc(var(--pinying-reveal-time) * 0.85) ease,
+    transform calc(var(--pinying-reveal-time) * 0.85) var(--pinying-reveal-ease);
 }
 
 /* Frente: escondido até o JS remover .hidden */
@@ -390,17 +377,13 @@
   max-height: 0;
   margin-top: 0;
   opacity: 0;
-  transform: translate3d(0, -4px, 0);
+  transform: translateY(-2px);
   pointer-events: none;
 }
 
-/* Verso: visível imediatamente e sem delay ou animação que possa piscar */
+/* Verso: visível imediatamente, sem animação que possa piscar */
 .back-scene .pinying {
-  transition: none !important;
-  opacity: 1 !important;
-  transform: translate3d(0, 0, 0) !important;
-  max-height: var(--pinying-open-maxheight) !important;
-  margin-top: var(--pinying-gap-open) !important;
+  transition: none;
 }
 
 .ptbr {
@@ -408,24 +391,11 @@
   font-size: var(--ptbr-size);
   font-weight: 500;
   color: var(--ptbr-color);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
 }
 
-/* Resposta em cartão de vidro, com a mesma superfície do cartão do hanzi */
-.mandarin-dock .ptbr {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 22px var(--card-padding-x);
-  border-radius: var(--card-radius);
-  background: var(--card-bg);
-  backdrop-filter: blur(35px) saturate(190%);
-  -webkit-backdrop-filter: blur(35px) saturate(190%);
-  box-shadow: var(--glass-highlight);
-  line-height: var(--line-height);
-  overflow-wrap: anywhere;
+/* The meaning rises in as the dock appears, like the template's textReveal on the back */
+.mandarin-dock.dock-visible .ptbr {
+  animation: textReveal var(--anim-time) var(--anim-curve) both;
 }
 
 /* -------------------------------------------------- DIVIDER */
@@ -434,28 +404,129 @@
 }
 
 /* -------------------------------------------------- CLOZE, LINKS E FORMATAÇÃO */
-.cloze {
+.mandarin-card .cloze,
+.mandarin-dock .cloze {
   background-color: var(--cloze-bg);
   color: var(--cloze-fg);
   font-weight: 700;
 }
 
-b, strong {
+.mandarin-card a, .mandarin-card a:visited,
+.mandarin-dock a, .mandarin-dock a:visited {
+  text-decoration: none;
+  color: var(--link-fg);
+  border-bottom: 1px solid var(--separator);
+}
+.mandarin-card a:hover, .mandarin-card a:active,
+.mandarin-dock a:hover, .mandarin-dock a:active {
+  color: var(--link-fg-active);
+  border-bottom: 1px solid currentColor;
+}
+
+.mandarin-card b, .mandarin-card strong,
+.mandarin-dock b, .mandarin-dock strong {
   color: var(--bold-fg);
   font-weight: 700;
 }
-i, em {
+.mandarin-card i, .mandarin-card em,
+.mandarin-dock i, .mandarin-dock em {
   color: var(--italic-fg);
 }
-b > i, i > b, strong > em, em > strong {
+.mandarin-card b > i, .mandarin-card i > b, .mandarin-card strong > em, .mandarin-card em > strong,
+.mandarin-dock b > i, .mandarin-dock i > b, .mandarin-dock strong > em, .mandarin-dock em > strong {
   color: var(--bold-italic-fg);
 }
 
-u {
+.mandarin-card u,
+.mandarin-dock u {
   color: var(--underline-fg);
   text-decoration-thickness: .12em;
   text-underline-offset: .14em;
   text-decoration-color: var(--underline-decoration);
+}
+
+/* -------------------------------------------------- MATH, LISTAS, IMAGENS E TABELAS */
+.mandarin-card sup.custom-math, .mandarin-card sub.custom-math {
+  font-size: 13px;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+  font-weight: 700;
+}
+.mandarin-card sup.custom-math { top: -0.5em; }
+.mandarin-card sub.custom-math { bottom: -0.25em; }
+
+.mandarin-card .custom-math-inline {
+  color: inherit;
+  font-weight: 600;
+}
+
+.mandarin-card ul,
+.mandarin-card ol {
+  margin-top: var(--block-gap);
+  padding-left: 20px;
+  text-align: left;
+}
+.mandarin-card li + li {
+  margin-top: 8px;
+}
+
+.mandarin-card img {
+  border-radius: 14px;
+  display: block;
+  margin: 16px auto 0;
+  max-width: var(--img-width) !important;
+  height: auto;
+  transition: max-width .25s ease, opacity .25s ease, filter .1s ease;
+}
+.night_mode .mandarin-card img {
+  filter: var(--img-filter);
+  opacity: var(--img-brightness);
+}
+.mandarin-card img:hover {
+  cursor: zoom-in;
+  filter: none;
+  max-width: 100% !important;
+  opacity: 1;
+}
+.mandarin-card img + br {
+  display: none;
+}
+
+.mandarin-card table {
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px auto 0;
+  max-width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: left;
+}
+.mandarin-card table th, .mandarin-card table td {
+  border-bottom: 1px solid var(--table-border);
+  padding: 8px 12px;
+  vertical-align: top;
+}
+.mandarin-card table tr:nth-of-type(even) {
+  background-color: var(--table-row-alt);
+}
+
+.mandarin-card pre, .mandarin-card code {
+  font-family: var(--font-mono) !important;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* -------------------------------------------------- ANIMAÇÃO SUAVE */
+@keyframes textReveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* -------------------------------------------------- TAGS CUSTOM (<x> e <xu>) */
@@ -488,12 +559,14 @@ u {
     transition: none !important;
     transform: none !important;
   }
+  .mandarin-dock.dock-visible .ptbr {
+    animation: none;
+  }
 }
 
 /* -------------------------------------------------- SESSÃO DE ESTUDO: TOQUES SÃO GESTOS
-   On the study card a tap or double tap is a gesture, never a text selection. Without this,
-   a double tap selects the hanzi and Android opens "Tap to search" and the copy menu.
-   Placed last so it wins over `.hanzi { user-select: text }`; the browser preview keeps it. */
+   On the card a tap or double tap is a gesture, never a text selection. Without this,
+   a double tap selects the hanzi and Android opens "Tap to search" and the copy menu. */
 .study-card-container,
 .study-card-container * {
   -webkit-user-select: none;

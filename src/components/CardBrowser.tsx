@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback, lazy, Suspense } from 'react';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
@@ -6,8 +6,12 @@ import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
 import { Search, Volume2, Eye, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, Save, Lightbulb } from 'lucide-react';
 import { isLeech } from '../lib/fsrs';
 import { MandarinCardView } from './MandarinCardView';
-import { HanziWritingCanvas } from './HanziWritingCanvas';
+import { ViewLoading } from './ViewLoading';
 import { HanziDrawSearch } from './HanziDrawSearch';
+
+// The writing pad carries hanzi-writer; it loads on its own and is fetched ahead once this view mounts
+const loadWritingCanvas = () => import('./HanziWritingCanvas');
+const HanziWritingCanvas = lazy(() => loadWritingCanvas().then((m) => ({ default: m.HanziWritingCanvas })));
 
 interface CardBrowserProps {
   cards: Card[];
@@ -46,6 +50,11 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   useDialogFocus(writingDialogRef, writingCard !== null, closeWriting);
 
   const isLight = theme === 'light';
+
+  // Fetch the writing pad in the background so it opens instantly when asked for
+  useEffect(() => {
+    void loadWritingCanvas();
+  }, []);
 
   const handleSpeakWord = (text: string) => {
     speakChinese(text, {
@@ -695,13 +704,15 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md animate-in zoom-in-95 duration-200"
           >
-            <HanziWritingCanvas
-              hanzi={writingCard.hanzi}
-              pinyin={writingCard.pinyin}
-              meaning={writingCard.ptbr}
-              theme={theme}
-              onClose={() => setWritingCard(null)}
-            />
+            <Suspense fallback={<ViewLoading />}>
+              <HanziWritingCanvas
+                hanzi={writingCard.hanzi}
+                pinyin={writingCard.pinyin}
+                meaning={writingCard.ptbr}
+                theme={theme}
+                onClose={() => setWritingCard(null)}
+              />
+            </Suspense>
           </div>
         </div>
       )}
