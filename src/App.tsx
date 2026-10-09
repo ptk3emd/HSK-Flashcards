@@ -17,7 +17,7 @@ import {
 } from './lib/storage';
 import { StudySession } from './components/StudySession';
 import { DeckDashboard } from './components/DeckDashboard';
-import { ViewLoading } from './components/ViewLoading';
+import { ViewLoading, DecksSkeleton } from './components/ViewLoading';
 import { AudioVoiceSettings } from './components/AudioVoiceSettings';
 import { FSRSSettings } from './components/FSRSSettings';
 import { StudyOptionsSettings } from './components/StudyOptionsSettings';
@@ -107,10 +107,13 @@ export default function App() {
 
   const isLight = theme === 'light';
 
+  // First paint while the deck loads: the dashboard's shape in the saved theme
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-night text-white">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500" />
+      <div className={`min-h-screen w-full font-sans ${isLight ? 'card-theme-light text-ink' : 'night_mode card-theme-dark bg-night text-white'}`}>
+        <main className="max-w-5xl mx-auto px-4 pt-6 pb-28">
+          <DecksSkeleton />
+        </main>
       </div>
     );
   }
@@ -156,7 +159,7 @@ export default function App() {
         )}
 
         {activeTab === 'browser' && (
-          <Suspense fallback={<ViewLoading />}>
+          <Suspense fallback={<ViewLoading variant="browser" />}>
             <CardBrowser
               cards={cards}
               theme={theme}
@@ -169,7 +172,7 @@ export default function App() {
         )}
 
         {activeTab === 'stats' && (
-          <Suspense fallback={<ViewLoading />}>
+          <Suspense fallback={<ViewLoading variant="stats" />}>
             <StatsView
               cards={cards}
               fsrsOptions={fsrsOptions}

@@ -351,7 +351,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
   }, [allLogs]);
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-7 animate-in fade-in duration-300">
+    <div className="w-full max-w-4xl mx-auto space-y-7 animate-in fade-in duration-200">
       {/* Header with Title and Period Filter */}
       <div
         className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${

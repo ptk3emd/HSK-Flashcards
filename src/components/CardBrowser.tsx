@@ -206,7 +206,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-300">
+    <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-200">
       <h1 className="sr-only">Dicionário de vocábulos</h1>
       {/* Search and Filters Header */}
       <div
@@ -703,7 +703,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-md animate-in zoom-in-95 duration-200"
           >
-            <Suspense fallback={<ViewLoading />}>
+            <Suspense fallback={<ViewLoading variant="pad" />}>
               <HanziWritingCanvas
                 hanzi={writingCard.hanzi}
                 pinyin={writingCard.pinyin}
