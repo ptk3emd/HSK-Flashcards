@@ -489,3 +489,15 @@ u {
     transform: none !important;
   }
 }
+
+/* -------------------------------------------------- SESSÃO DE ESTUDO: TOQUES SÃO GESTOS
+   On the study card a tap or double tap is a gesture, never a text selection. Without this,
+   a double tap selects the hanzi and Android opens "Tap to search" and the copy menu.
+   Placed last so it wins over `.hanzi { user-select: text }`; the browser preview keeps it. */
+.study-card-container,
+.study-card-container * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
