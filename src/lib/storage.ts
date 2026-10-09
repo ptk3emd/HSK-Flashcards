@@ -24,6 +24,9 @@ export const DEFAULT_DECK_CONFIG: DeckConfig = {
   speechVoiceGender: 'auto',
   speechVoiceURI: '',
   activeLevels: ['HSK 1', 'HSK 2'],
+  hideSystemBar: false,
+  hideAnswerButtons: false,
+  twoButtonGrading: true,
 };
 
 export function getStoredTheme(): 'dark' | 'light' {

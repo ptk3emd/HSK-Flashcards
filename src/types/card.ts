@@ -59,4 +59,7 @@ export interface DeckConfig {
   speechVoiceGender: VoiceGenderPreference; // 'female' | 'male' | 'auto'
   speechVoiceURI?: string;
   activeLevels: string[];
+  hideSystemBar: boolean; // Fullscreen: hides the browser and system bars where supported
+  hideAnswerButtons: boolean; // Answer with gestures only (double tap, swipe)
+  twoButtonGrading: boolean; // Only "Novamente" and "Bom"; "Difícil" and "Fácil" are off
 }
