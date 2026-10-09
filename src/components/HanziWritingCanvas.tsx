@@ -251,7 +251,7 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
                 ? 'bg-red-600 text-white shadow-sm'
                 : 'opacity-70 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10'
             }`}
-            title={viewMode === 'strokes' ? 'Voltar para o quadro de escrita' : 'Ver ordem dos traços (animação)'}
+            title={viewMode === 'strokes' ? 'Voltar para o quadro de escrita' : 'Dica de traços (animação)'}
           >
             <Layers className="w-4 h-4" />
           </button>

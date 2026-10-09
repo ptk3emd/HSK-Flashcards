@@ -23,8 +23,9 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
 }) => {
   const [loadingLevel, setLoadingLevel] = useState<string | null>(null);
 
+  // Suspended cards are not pending work, so they stay out of the study counts
   const activeLevelCards = useMemo(() => {
-    return cards.filter(c => deckConfig.activeLevels.includes(c.level));
+    return cards.filter(c => deckConfig.activeLevels.includes(c.level) && !c.suspended);
   }, [cards, deckConfig.activeLevels]);
 
   const now = new Date();
@@ -168,7 +169,9 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
             const isLoaded = levelCards.length > 0;
             const count = isLoaded ? levelCards.length : HSK_LEVEL_INFO[lvl].count;
             const isActive = isLoaded && deckConfig.activeLevels.includes(lvl);
-            const levelDue = levelCards.filter(c => c.state === 0 || new Date(c.due) <= now).length;
+            const levelDue = levelCards.filter(
+              c => !c.suspended && (c.state === 0 || new Date(c.due) <= now)
+            ).length;
             const isLoading = loadingLevel === lvl;
 
             return (

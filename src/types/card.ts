@@ -21,6 +21,10 @@ export interface Card {
   reps: number;
   lapses: number;
   last_review?: string; // ISO date string
+
+  // Study management
+  suspended?: boolean; // Removed from study queues until reactivated
+  mnemonic?: string; // User-written memory hint shown on the card back
 }
 
 export interface ReviewLog {
@@ -42,6 +46,7 @@ export interface FSRSOptions {
   maximum_interval: number; // default 36500
   w: number[]; // 19 weights
   enable_fuzz: boolean;
+  retention_by_level?: Record<string, number>; // Per-HSK-level override of request_retention
 }
 
 export type VoiceGenderPreference = 'female' | 'male' | 'auto';

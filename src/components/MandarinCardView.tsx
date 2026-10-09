@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Card } from '../types/card';
-import { Volume2, PenTool, Layers } from 'lucide-react';
+import { Volume2, PenTool, AlertTriangle, Lightbulb } from 'lucide-react';
+import { isLeech } from '../lib/fsrs';
 
 interface MandarinCardViewProps {
   card: Card;
   isFlipped: boolean;
   onSpeak?: () => void;
   onOpenWriting?: () => void;
-  onOpenStrokeOrder?: () => void;
 }
 
 export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
@@ -15,7 +15,6 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
   isFlipped,
   onSpeak,
   onOpenWriting,
-  onOpenStrokeOrder,
 }) => {
   const [pinyinHidden, setPinyinHidden] = useState(true);
   const hanziRef = useRef<HTMLDivElement>(null);
@@ -26,6 +25,8 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
 
   // Compute dynamic characters per line to prevent awkward wrapping
   const charsPerLine = Math.max(cleanHanzi.length, 3);
+
+  const leech = isLeech(card);
 
   // When card.id changes, reset front delayed reveal
   useEffect(() => {
@@ -68,22 +69,17 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
       >
         {/* Main Acrylic Card (PERSISTENT DOM - ZERO FLICKER / NO REMOUNT) */}
         <div className="mandarin-card relative">
-          <div className="absolute top-3.5 right-3.5 flex items-center gap-1 z-10">
-            {onOpenStrokeOrder && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenStrokeOrder();
-                }}
-                className="p-2 rounded-full opacity-60 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
-                title="Dica e Ordem dos Traços (O)"
-                aria-label="Ordem dos Traços do Hanzi"
-              >
-                <Layers className="w-4 h-4 text-current" />
-              </button>
-            )}
+          {leech && (
+            <span
+              className="absolute top-3.5 left-3.5 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-700 dark:text-amber-300"
+              title={`Leech: ${card.lapses} erros`}
+            >
+              <AlertTriangle className="w-3 h-3" />
+              <span>Leech</span>
+            </span>
+          )}
 
+          <div className="absolute top-3.5 right-3.5 flex items-center gap-1 z-10">
             {onOpenWriting && (
               <button
                 type="button"
@@ -144,22 +140,27 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
             className="ptbr"
             dangerouslySetInnerHTML={{ __html: card.ptbr || 'Significado em Português' }}
           />
-
-          {onOpenStrokeOrder && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenStrokeOrder();
-              }}
-              className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition-all cursor-pointer border border-black/10 dark:border-white/10"
-              title="Ver diagrama animado da ordem dos traços"
-            >
-              <Layers className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
-              <span>Dica de Traços</span>
-            </button>
-          )}
         </div>
+
+        {/* Mnemonic hint sits below the meaning pill. It keeps its space on the front so the card does not shift on flip */}
+        {card.mnemonic && (
+          <div
+            aria-hidden={!isFlipped}
+            className={`flex items-start gap-2.5 px-5 py-3.5 rounded-3xl text-left text-sm whitespace-pre-line transition-opacity duration-300 ${
+              isFlipped ? 'opacity-90' : 'opacity-0 invisible'
+            }`}
+            style={{
+              width: 'var(--avail-card-width)',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
+              background: 'var(--glass-pill)',
+              boxShadow: 'var(--glass-highlight)',
+            }}
+          >
+            <Lightbulb className="w-4 h-4 mt-0.5 shrink-0 text-amber-500" />
+            <span>{card.mnemonic}</span>
+          </div>
+        )}
       </div>
     </div>
   );
