@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Settings2, Sliders, Brain, Volume2 } from 'lucide-react';
 import { DeckConfig, FSRSOptions } from '../types/card';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
+import { FSRSSettings } from './FSRSSettings';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -112,30 +113,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          <div className="space-y-2 pt-2">
-            <div className="flex justify-between text-xs font-semibold">
-              <span>Retenção desejada:</span>
-              <span className="text-red-500 font-bold">
-                {Math.round(fsrsOptions.request_retention * 100)}%
-              </span>
-            </div>
-            <input
-              type="range"
-              min="0.80"
-              max="0.97"
-              step="0.01"
-              value={fsrsOptions.request_retention}
-              onChange={(e) =>
-                onUpdateFSRSOptions({
-                  ...fsrsOptions,
-                  request_retention: parseFloat(e.target.value),
-                })
-              }
-              className="w-full accent-red-500 cursor-pointer"
+          <div className="pt-2">
+            <FSRSSettings
+              fsrsOptions={fsrsOptions}
+              onUpdateFSRSOptions={onUpdateFSRSOptions}
+              theme={theme}
             />
-            <p className={`text-[11px] leading-relaxed ${isLight ? 'text-black/60' : 'text-white/50'}`}>
-              90% é o valor ótimo padrão. Quanto maior, mais frequentes serão as repetições para garantir fixação máxima.
-            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-black/5 dark:border-white/10">

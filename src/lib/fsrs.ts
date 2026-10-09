@@ -13,11 +13,60 @@ export const DEFAULT_FSRS_OPTIONS: FSRSOptions = {
   enable_fuzz: false,
 };
 
+export const WEIGHTS_COUNT = DEFAULT_FSRS_WEIGHTS.length;
+export const RETENTION_MIN = 0.7;
+export const RETENTION_MAX = 0.99;
+export const MAX_INTERVAL_LIMIT = 36500;
+
+// Anki's default: a card that lapses this many times is flagged as a leech.
+export const LEECH_THRESHOLD = 8;
+
 const FACTOR = 19 / 81;
 const DECAY = 0.5;
+const DAY_MS = 1000 * 60 * 60 * 24;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
+}
+
+/**
+ * Whole days elapsed between the last review and `now`, as used by the scheduler.
+ */
+export function elapsedDaysSince(lastReview: string, now: Date): number {
+  const diffTime = Math.max(0, now.getTime() - new Date(lastReview).getTime());
+  return Math.max(0, Math.floor(diffTime / DAY_MS));
+}
+
+/**
+ * Request retention for a card: its HSK level override if set, otherwise the global value.
+ */
+export function retentionForCard(card: Card, options: FSRSOptions): number {
+  return options.retention_by_level?.[card.level] ?? options.request_retention;
+}
+
+/**
+ * Leech flag derived from the FSRS lapse counter; not stored on the card.
+ */
+export function isLeech(card: Card): boolean {
+  return card.lapses >= LEECH_THRESHOLD;
+}
+
+/**
+ * A weight set is usable when it has WEIGHTS_COUNT finite numbers and the first four
+ * (initial stabilities per rating) are positive; otherwise scheduling produces NaN.
+ */
+export function isValidWeights(values: unknown): values is number[] {
+  if (!Array.isArray(values) || values.length !== WEIGHTS_COUNT) return false;
+  return values.every((v, i) => typeof v === 'number' && Number.isFinite(v) && (i >= 4 || v > 0));
+}
+
+/**
+ * Parses a user-entered list of FSRS weights (comma, space or newline separated).
+ * Returns null when the text is not a valid weight set.
+ */
+export function parseWeights(text: string): number[] | null {
+  const values = text.split(/[\s,;]+/).filter(Boolean).map(Number);
+  return isValidWeights(values) ? values : null;
 }
 
 /**
@@ -120,7 +169,8 @@ export function scheduleCard(
   now: Date = new Date(),
   options: FSRSOptions = DEFAULT_FSRS_OPTIONS
 ): Card {
-  const { w, request_retention, maximum_interval } = options;
+  const { w, maximum_interval } = options;
+  const request_retention = retentionForCard(card, options);
   const isNew = card.state === 0;
 
   let newD = card.difficulty;
@@ -130,9 +180,7 @@ export function scheduleCard(
   let elapsedDays = 0;
 
   if (card.last_review) {
-    const lastDate = new Date(card.last_review);
-    const diffTime = Math.max(0, now.getTime() - lastDate.getTime());
-    elapsedDays = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
+    elapsedDays = elapsedDaysSince(card.last_review, now);
   }
 
   const retrievability = isNew ? 1 : calculateRetrievability(elapsedDays, card.stability);

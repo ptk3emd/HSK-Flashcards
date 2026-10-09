@@ -20,6 +20,7 @@ import { DeckDashboard } from './components/DeckDashboard';
 import { CardBrowser } from './components/CardBrowser';
 import { StatsView } from './components/StatsView';
 import { AudioVoiceSettings } from './components/AudioVoiceSettings';
+import { FSRSSettings } from './components/FSRSSettings';
 import {
   Layers,
   Search,
@@ -231,32 +232,11 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Slider de Retenção */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-semibold">
-                  <span>Retenção desejada:</span>
-                  <span className="text-red-500 font-bold">
-                    {Math.round(fsrsOptions.request_retention * 100)}%
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="0.80"
-                  max="0.97"
-                  step="0.01"
-                  value={fsrsOptions.request_retention}
-                  onChange={(e) =>
-                    handleUpdateFSRSOptions({
-                      ...fsrsOptions,
-                      request_retention: parseFloat(e.target.value),
-                    })
-                  }
-                  className="w-full accent-red-500 cursor-pointer"
-                />
-                <p className={`text-[11px] ${isLight ? 'text-black/50' : 'text-white/50'}`}>
-                  Padrão 90%. Controla a probabilidade desejada de lembrar a palavra no momento da revisão.
-                </p>
-              </div>
+              <FSRSSettings
+                fsrsOptions={fsrsOptions}
+                onUpdateFSRSOptions={handleUpdateFSRSOptions}
+                theme={theme}
+              />
 
               {/* Limites Diários */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-black/5 dark:border-white/10">

@@ -1,5 +1,11 @@
 import { Card, DeckConfig, FSRSOptions, ReviewLog } from '../types/card';
-import { DEFAULT_FSRS_OPTIONS } from './fsrs';
+import {
+  DEFAULT_FSRS_OPTIONS,
+  MAX_INTERVAL_LIMIT,
+  RETENTION_MAX,
+  RETENTION_MIN,
+  isValidWeights,
+} from './fsrs';
 import { loadDefaultCards, loadNativeLevelCards } from '../data/defaultDecks';
 
 const CARDS_STORAGE_KEY = 'hanzi_anki_cards_v2';
@@ -85,16 +91,57 @@ export function saveDeckConfig(config: DeckConfig): void {
   }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isRetention(value: unknown): value is number {
+  return typeof value === 'number' && value >= RETENTION_MIN && value <= RETENTION_MAX;
+}
+
+/**
+ * Coerces untrusted stored options into a valid FSRSOptions, falling back to the
+ * default for each field that is missing or out of range.
+ */
+export function sanitizeFSRSOptions(raw: unknown): FSRSOptions {
+  const base = DEFAULT_FSRS_OPTIONS;
+  const source = isRecord(raw) ? raw : {};
+
+  const maxInterval = source.maximum_interval;
+  const validMaxInterval =
+    typeof maxInterval === 'number' &&
+    Number.isFinite(maxInterval) &&
+    maxInterval >= 1 &&
+    maxInterval <= MAX_INTERVAL_LIMIT;
+
+  const retentionByLevel: Record<string, number> = {};
+  if (isRecord(source.retention_by_level)) {
+    for (const [level, value] of Object.entries(source.retention_by_level)) {
+      if (isRetention(value)) retentionByLevel[level] = value;
+    }
+  }
+
+  return {
+    request_retention: isRetention(source.request_retention)
+      ? source.request_retention
+      : base.request_retention,
+    maximum_interval: validMaxInterval ? Math.round(maxInterval as number) : base.maximum_interval,
+    w: isValidWeights(source.w) ? [...source.w] : [...base.w],
+    enable_fuzz: base.enable_fuzz,
+    retention_by_level: retentionByLevel,
+  };
+}
+
 export function loadFSRSOptions(): FSRSOptions {
   try {
     const raw = localStorage.getItem(FSRS_STORAGE_KEY);
     if (raw) {
-      return { ...DEFAULT_FSRS_OPTIONS, ...JSON.parse(raw) };
+      return sanitizeFSRSOptions(JSON.parse(raw));
     }
   } catch (e) {
     console.error(e);
   }
-  return DEFAULT_FSRS_OPTIONS;
+  return sanitizeFSRSOptions(null);
 }
 
 export function saveFSRSOptions(options: FSRSOptions): void {

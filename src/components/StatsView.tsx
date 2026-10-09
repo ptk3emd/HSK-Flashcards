@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Card, FSRSOptions, DeckConfig, ReviewLog } from '../types/card';
 import { loadReviewLogs } from '../lib/storage';
+import { RetentionCalibration } from './RetentionCalibration';
 import {
   BarChart3,
   TrendingUp,
@@ -33,7 +34,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
   deckConfig,
 }) => {
   const [timeRange, setTimeRange] = useState<TimeRange>('all');
-  const [retentionTab, setRetentionTab] = useState<'curve' | 'history' | 'buttons'>('curve');
+  const [retentionTab, setRetentionTab] = useState<'curve' | 'history' | 'buttons' | 'calibration'>('curve');
   const [hoveredPoint, setHoveredPoint] = useState<{ day: number; retention: number } | null>(null);
 
   const isLight = theme === 'light';
@@ -189,7 +190,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
     let due30plus = 0;
 
     cards.forEach(c => {
-      if (c.state === 0) return; // Unstarted cards
+      if (c.state === 0 || c.suspended) return; // Unstarted and suspended cards
       const dueTime = new Date(c.due).getTime();
       if (dueTime <= todayEnd) {
         dueToday++;
@@ -464,7 +465,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
           </div>
 
           <div
-            className={`inline-flex p-1 rounded-xl border text-xs ${
+            className={`inline-flex flex-wrap p-1 rounded-xl border text-xs ${
               isLight ? 'bg-black/5 border-black/10' : 'bg-black/40 border-white/10'
             }`}
           >
@@ -506,6 +507,19 @@ export const StatsView: React.FC<StatsViewProps> = ({
               }`}
             >
               Histórico Diário
+            </button>
+            <button
+              type="button"
+              onClick={() => setRetentionTab('calibration')}
+              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
+                retentionTab === 'calibration'
+                  ? 'bg-red-600 text-white shadow-sm'
+                  : isLight
+                  ? 'text-black/60 hover:text-black'
+                  : 'text-white/60 hover:text-white'
+              }`}
+            >
+              Calibração
             </button>
           </div>
         </div>
@@ -845,6 +859,11 @@ export const StatsView: React.FC<StatsViewProps> = ({
               </div>
             )}
           </div>
+        )}
+
+        {/* Tab 4: Calibration of predicted vs real recall */}
+        {retentionTab === 'calibration' && (
+          <RetentionCalibration logs={filteredLogs} theme={theme} />
         )}
       </div>
 

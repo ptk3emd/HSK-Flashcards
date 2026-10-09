@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { Search, Volume2, Eye, RotateCcw, Loader2, PenTool, X, Layers } from 'lucide-react';
+import { Search, Volume2, Eye, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, Save, Lightbulb } from 'lucide-react';
+import { isLeech } from '../lib/fsrs';
 import { MandarinCardView } from './MandarinCardView';
 import { HanziWritingCanvas } from './HanziWritingCanvas';
-import { StrokeOrderDiagram } from './StrokeOrderDiagram';
 
 interface CardBrowserProps {
   cards: Card[];
@@ -32,7 +32,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
   const [isLoadingLevel, setIsLoadingLevel] = useState(false);
   const [writingCard, setWritingCard] = useState<Card | null>(null);
-  const [strokeOrderCard, setStrokeOrderCard] = useState<Card | null>(null);
+  const [mnemonicDraft, setMnemonicDraft] = useState('');
 
   const isLight = theme === 'light';
 
@@ -82,7 +82,11 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
       if (selectedLevel !== 'all' && card.level !== selectedLevel) {
         return false;
       }
-      if (selectedState !== 'all') {
+      if (selectedState === 'leech') {
+        if (!isLeech(card)) return false;
+      } else if (selectedState === 'suspended') {
+        if (!card.suspended) return false;
+      } else if (selectedState !== 'all') {
         const stateNum = parseInt(selectedState, 10);
         if (card.state !== stateNum) return false;
       }
@@ -139,6 +143,22 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
           </span>
         );
     }
+  };
+
+  const updatePreviewCard = (updated: Card) => {
+    onUpdateCard(updated);
+    setPreviewCard(updated);
+  };
+
+  const handleToggleSuspend = (card: Card) => {
+    updatePreviewCard({ ...card, suspended: !card.suspended });
+  };
+
+  const handleSaveMnemonic = () => {
+    if (!previewCard) return;
+    const trimmed = mnemonicDraft.trim();
+    updatePreviewCard({ ...previewCard, mnemonic: trimmed || undefined });
+    setMnemonicDraft(trimmed);
   };
 
   const handleResetCard = (card: Card) => {
@@ -277,6 +297,8 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 <option value="1" className="bg-white dark:bg-neutral-900">Aprendendo (1)</option>
                 <option value="2" className="bg-white dark:bg-neutral-900">Revisão (2)</option>
                 <option value="3" className="bg-white dark:bg-neutral-900">Reaprendendo (3)</option>
+                <option value="leech" className="bg-white dark:bg-neutral-900">Leech</option>
+                <option value="suspended" className="bg-white dark:bg-neutral-900">Suspensos</option>
               </select>
             </div>
 
@@ -369,6 +391,16 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                   <td className="p-3 text-center">
                     <div className="flex flex-col items-center gap-0.5">
                       {getStateBadge(card.state)}
+                      {isLeech(card) && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
+                          Leech
+                        </span>
+                      )}
+                      {card.suspended && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 font-bold opacity-75">
+                          Suspenso
+                        </span>
+                      )}
                       {card.state > 0 && (
                         <span className="text-[10px] opacity-50">
                           S:{card.stability.toFixed(1)} D:{card.difficulty.toFixed(1)}
@@ -378,18 +410,6 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                   </td>
                   <td className="p-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => setStrokeOrderCard(card)}
-                        className={`p-1.5 rounded-lg transition-all cursor-pointer ${
-                          isLight
-                            ? 'bg-red-50 hover:bg-red-100 text-red-600'
-                            : 'bg-red-500/15 hover:bg-red-500/25 text-red-400'
-                        }`}
-                        title="Ver ordem dos traços"
-                      >
-                        <Layers className="w-3.5 h-3.5" />
-                      </button>
                       <button
                         type="button"
                         onClick={() => setWritingCard(card)}
@@ -418,6 +438,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                         type="button"
                         onClick={() => {
                           setPreviewCard(card);
+                          setMnemonicDraft(card.mnemonic ?? '');
                           setIsPreviewFlipped(false);
                         }}
                         className={`p-1.5 rounded-lg transition-all cursor-pointer ${
@@ -478,8 +499,34 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 isFlipped={isPreviewFlipped}
                 onSpeak={() => handleSpeakWord(previewCard.hanzi)}
                 onOpenWriting={() => setWritingCard(previewCard)}
-                onOpenStrokeOrder={() => setStrokeOrderCard(previewCard)}
               />
+            </div>
+
+            <div className="w-full space-y-2">
+              <label className="flex items-center gap-1.5 text-xs font-semibold opacity-80">
+                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                Dica mnemônica
+              </label>
+              <textarea
+                rows={2}
+                value={mnemonicDraft}
+                onChange={(e) => setMnemonicDraft(e.target.value)}
+                placeholder="Escreva uma associação para lembrar o significado"
+                className={`w-full px-3 py-2 rounded-xl text-xs border outline-none resize-y ${
+                  isLight ? 'bg-white border-black/15 text-black' : 'bg-black/40 border-white/15 text-white'
+                }`}
+              />
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSaveMnemonic}
+                  disabled={mnemonicDraft.trim() === (previewCard.mnemonic ?? '')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  <span>Salvar dica</span>
+                </button>
+              </div>
             </div>
 
             <div className="w-full flex items-center justify-between pt-2 border-t border-black/10 dark:border-white/10 text-xs opacity-75">
@@ -487,15 +534,15 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setStrokeOrderCard(previewCard)}
+                  onClick={() => handleToggleSuspend(previewCard)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all border ${
                     isLight
                       ? 'bg-black/5 hover:bg-black/10 text-[#111113] border-black/10'
                       : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
                   }`}
                 >
-                  <Layers className="w-3.5 h-3.5" />
-                  <span>Ordem dos Traços</span>
+                  {previewCard.suspended ? <PlayCircle className="w-3.5 h-3.5" /> : <Ban className="w-3.5 h-3.5" />}
+                  <span>{previewCard.suspended ? 'Reativar' : 'Suspender'}</span>
                 </button>
                 <button
                   type="button"
@@ -515,30 +562,6 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Stroke Order Diagram Modal */}
-      {strokeOrderCard && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-in fade-in duration-200"
-          onClick={() => setStrokeOrderCard(null)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={`w-full max-w-sm rounded-3xl p-5 shadow-2xl border animate-in zoom-in-95 duration-200 ${
-              isLight
-                ? 'bg-white/95 border-white text-[#111113]'
-                : 'bg-neutral-900/95 border-white/15 text-white'
-            }`}
-          >
-            <StrokeOrderDiagram
-              hanzi={strokeOrderCard.hanzi}
-              theme={theme}
-              size={210}
-              onClose={() => setStrokeOrderCard(null)}
-            />
           </div>
         </div>
       )}
