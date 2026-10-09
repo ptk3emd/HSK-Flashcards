@@ -87,13 +87,14 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
         {/* Main Acrylic Card (PERSISTENT DOM - ZERO FLICKER / NO REMOUNT) */}
         <div ref={cardRef} className="mandarin-card relative">
           {leech && (
-            <span
-              className="absolute top-3.5 left-3.5 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-700 dark:text-amber-300"
+            // A div, not a span: the template resets padding on spans inside the card
+            <div
+              className="absolute top-3.5 left-3.5 z-10 flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-700 dark:text-amber-300"
               title={`Leech: ${card.lapses} erros`}
             >
-              <AlertTriangle className="w-3 h-3" />
-              <span>Leech</span>
-            </span>
+              <AlertTriangle className="w-3 h-3" aria-hidden="true" />
+              Leech
+            </div>
           )}
 
           <div className="absolute top-3.5 right-3.5 flex items-center gap-1 z-10">
