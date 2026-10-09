@@ -129,16 +129,35 @@ export interface Match {
   score: number;
 }
 
+/** A stored bitmap decoded once, with its one-cell neighbourhood and ink count. */
+export interface PreparedGlyph {
+  hanzi: string;
+  cells: Uint8Array;
+  near: Uint8Array;
+  ink: number;
+}
+
 /**
- * Ranks the stored characters against a drawing. Score is the harmonic mean of the
+ * Decodes the index for matching. Do this once per index: decoding and dilating
+ * every bitmap is most of the cost, and repeating it on each stroke stalls a phone.
+ */
+export function prepareGlyphs(index: Record<string, string>): PreparedGlyph[] {
+  const glyphs: PreparedGlyph[] = [];
+  for (const [hanzi, hex] of Object.entries(index)) {
+    const cells = unpackCells(hex);
+    let ink = 0;
+    for (const v of cells) ink += v;
+    if (ink > 0) glyphs.push({ hanzi, cells, near: dilate(cells), ink });
+  }
+  return glyphs;
+}
+
+/**
+ * Ranks the prepared characters against a drawing. Score is the harmonic mean of the
  * share of drawn ink that lies near the template and the share of template ink that
  * lies near the drawing, so both missing strokes and extra strokes are penalised.
  */
-export function recognize(
-  drawing: Polyline[],
-  index: Record<string, string>,
-  limit = 5
-): Match[] {
+export function recognize(drawing: Polyline[], glyphs: PreparedGlyph[], limit = 5): Match[] {
   const user = normalizeStrokes(drawing);
   if (user.length === 0) return [];
   const userCells = rasterize(user);
@@ -148,22 +167,15 @@ export function recognize(
   if (userInk === 0) return [];
 
   const matches: Match[] = [];
-  for (const [hanzi, hex] of Object.entries(index)) {
-    const tpl = unpackCells(hex);
-    const tplNear = dilate(tpl);
-    let tplInk = 0;
+  for (const { hanzi, cells, near, ink } of glyphs) {
     let userHit = 0;
     let tplHit = 0;
-    for (let i = 0; i < tpl.length; i++) {
-      if (tpl[i]) {
-        tplInk++;
-        if (userNear[i]) tplHit++;
-      }
-      if (userCells[i] && tplNear[i]) userHit++;
+    for (let i = 0; i < cells.length; i++) {
+      if (cells[i] && userNear[i]) tplHit++;
+      if (userCells[i] && near[i]) userHit++;
     }
-    if (tplInk === 0) continue;
     const precision = userHit / userInk;
-    const recall = tplHit / tplInk;
+    const recall = tplHit / ink;
     const score = precision + recall === 0 ? 0 : (2 * precision * recall) / (precision + recall);
     matches.push({ hanzi, score });
   }

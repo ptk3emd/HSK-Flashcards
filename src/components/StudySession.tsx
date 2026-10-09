@@ -276,6 +276,11 @@ export const StudySession: React.FC<StudySessionProps> = ({
     if (gestureRef.current?.id === e.pointerId) resetDrag();
   };
 
+  // Bar buttons pressed with a finger or mouse do not keep focus. Otherwise the next
+  // Space or Enter would press that button again (undo twice, reopen the menu)
+  // instead of revealing or grading the card. Keyboard focus is unaffected.
+  const keepCardFocus = (e: React.MouseEvent) => e.preventDefault();
+
   const swipeHint = isDragging && Math.abs(dragX) > 30 ? (dragX > 0 ? 'Bom' : 'Novamente') : null;
 
   // Handle switching level right inside study session
@@ -304,14 +309,14 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Focused controls keep their native keyboard behaviour (Enter/Space activate them)
-      if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes((e.target as HTMLElement).tagName)) return;
-      // While a dialog is open, its keys belong to the dialog, not to the card underneath.
-      // W still closes the writing pad, as it toggled it before.
+      // W closes the writing pad. Checked first: the pad moves focus to its own buttons.
       if (showWritingPad && (e.key === 'w' || e.key === 'W')) {
         setShowWritingPad(false);
         return;
       }
+      // Focused controls keep their native keyboard behaviour (Enter/Space activate them)
+      if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes((e.target as HTMLElement).tagName)) return;
+      // While a dialog is open, its keys belong to the dialog, not to the card underneath
       if (showWritingPad || showVoiceSettingsModal || isMenuOpen) return;
 
       if (e.code === 'Space' || e.code === 'Enter') {
@@ -396,6 +401,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
         )}
         {currentCard ? (
           <div
+            key={currentCard.id}
             className="w-full"
             style={{
               transform: `translate3d(${dragX}px, 0, 0) rotate(${dragX / 40}deg)`,
@@ -604,6 +610,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             <button
               type="button"
               onClick={onExit}
+              onMouseDown={keepCardFocus}
               aria-label="Voltar aos Decks"
               className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
                 isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
@@ -622,6 +629,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             <button
               type="button"
               onClick={handleUndo}
+              onMouseDown={keepCardFocus}
               disabled={!canUndo}
               aria-label="Desfazer última revisão"
               title="Desfazer (Ctrl+Z)"
@@ -634,6 +642,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             <button
               type="button"
               onClick={() => setIsMenuOpen((prev) => !prev)}
+              onMouseDown={keepCardFocus}
               aria-label="Mais opções"
               aria-expanded={isMenuOpen}
               className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${

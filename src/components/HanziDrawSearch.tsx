@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Trash2, X } from 'lucide-react';
 import { Card } from '../types/card';
-import { Match, Polyline, recognize } from '../lib/handwriting';
+import { Match, Point, Polyline, prepareGlyphs, recognize } from '../lib/handwriting';
 
 interface HanziDrawSearchProps {
   cards: Card[];
@@ -18,6 +18,10 @@ export const HanziDrawSearch: React.FC<HanziDrawSearchProps> = ({ cards, theme, 
   const svgRef = useRef<SVGSVGElement>(null);
   const [strokes, setStrokes] = useState<Polyline[]>([]);
   const [current, setCurrent] = useState<Polyline | null>(null);
+  // The stroke in progress lives in a ref so pointerup sees every point, including
+  // moves React has not rendered yet. Only the first finger down draws.
+  const strokeRef = useRef<Point[] | null>(null);
+  const pointerRef = useRef<number | null>(null);
   const [glyphIndex, setGlyphIndex] = useState<Record<string, string> | null>(null);
   const [loadFailed, setLoadFailed] = useState(false);
   const isLight = theme === 'light';
@@ -46,15 +50,21 @@ export const HanziDrawSearch: React.FC<HanziDrawSearchProps> = ({ cards, theme, 
     return map;
   }, [cards]);
 
-  const matches: Match[] = useMemo(() => {
-    if (!glyphIndex || strokes.length === 0) return [];
+  // Decoded once per deck, not on every stroke
+  const glyphs = useMemo(() => {
+    if (!glyphIndex) return null;
     const subset: Record<string, string> = {};
     for (const hanzi of cardByHanzi.keys()) {
       const bitmap = glyphIndex[hanzi];
       if (bitmap) subset[hanzi] = bitmap;
     }
-    return recognize(strokes, subset, 5);
-  }, [glyphIndex, strokes, cardByHanzi]);
+    return prepareGlyphs(subset);
+  }, [glyphIndex, cardByHanzi]);
+
+  const matches: Match[] = useMemo(
+    () => (glyphs && strokes.length > 0 ? recognize(strokes, glyphs, 5) : []),
+    [glyphs, strokes]
+  );
 
   const toBoard = (e: React.PointerEvent<SVGSVGElement>) => {
     const rect = svgRef.current!.getBoundingClientRect();
@@ -65,24 +75,31 @@ export const HanziDrawSearch: React.FC<HanziDrawSearchProps> = ({ cards, theme, 
   };
 
   const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (pointerRef.current !== null) return;
+    pointerRef.current = e.pointerId;
     e.currentTarget.setPointerCapture(e.pointerId);
-    setCurrent([toBoard(e)]);
+    strokeRef.current = [toBoard(e)];
+    setCurrent(strokeRef.current);
   };
 
   const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (!current) return;
-    const p = toBoard(e);
-    setCurrent((prev) => (prev ? [...prev, p] : prev));
+    if (e.pointerId !== pointerRef.current || !strokeRef.current) return;
+    strokeRef.current = [...strokeRef.current, toBoard(e)];
+    setCurrent(strokeRef.current);
   };
 
-  const finishStroke = () => {
-    if (current && current.length > 0) {
-      setStrokes((prev) => [...prev, current]);
-    }
+  const finishStroke = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (e.pointerId !== pointerRef.current) return;
+    const stroke = strokeRef.current;
+    pointerRef.current = null;
+    strokeRef.current = null;
+    if (stroke && stroke.length > 0) setStrokes((prev) => [...prev, stroke]);
     setCurrent(null);
   };
 
   const clear = () => {
+    pointerRef.current = null;
+    strokeRef.current = null;
     setStrokes([]);
     setCurrent(null);
   };
@@ -96,6 +113,7 @@ export const HanziDrawSearch: React.FC<HanziDrawSearchProps> = ({ cards, theme, 
   else if (!glyphIndex) status = 'Carregando reconhecimento...';
   else if (strokes.length === 0) status = 'Desenhe o caractere no quadro.';
   else if (matches.length === 0) status = 'Nenhum caractere do baralho corresponde.';
+  const announcement = status || `${matches.length} ${matches.length === 1 ? 'resultado' : 'resultados'}. Mais provável: ${matches[0].hanzi}`;
 
   return (
     <div
@@ -159,7 +177,11 @@ export const HanziDrawSearch: React.FC<HanziDrawSearchProps> = ({ cards, theme, 
           ))}
         </svg>
 
-        <div className="flex-1 min-w-0 flex flex-col gap-1.5" role="status" aria-live="polite">
+        {/* Announced separately so screen readers hear a short summary, not every result */}
+        <p className="sr-only" role="status" aria-live="polite">
+          {announcement}
+        </p>
+        <div className="flex-1 min-w-0 flex flex-col gap-1.5">
           {matches.length === 0 ? (
             <p className="text-xs opacity-60 py-2">{status}</p>
           ) : (
