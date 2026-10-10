@@ -23,19 +23,34 @@ export const LEVEL_NUMERALS: Record<string, string> = {
 
 export type HskLevelName = typeof ALL_HSK_LEVELS[number];
 
-export const HSK_LEVEL_INFO: Record<HskLevelName, { count: number; desc: string }> = {
-  'HSK 1': { count: 500, desc: 'Iniciante / Vocabulário Fundamental' },
-  'HSK 2': { count: 772, desc: 'Básico / Situações Cotidianas' },
-  'HSK 3': { count: 973, desc: 'Intermediário I / Conversação Fluida' },
-  'HSK 4': { count: 1000, desc: 'Intermediário II / Temas Diversificados' },
-  'HSK 5': { count: 1071, desc: 'Avançado I / Artigos, Notícias e Cultura' },
-  'HSK 6': { count: 1140, desc: 'Avançado II / Expressão Escrita e Oral Plena' },
-  'HSK 7-9': { count: 5636, desc: 'Superior / Fluência Acadêmica e Especializada' },
+/**
+ * Words each level adds, from the official HSK vocabulary syllabus (新版HSK考试大纲,
+ * 词汇大纲, chinesetest.cn). The exam for a level covers its words and every level below.
+ */
+export const HSK_LEVEL_INFO: Record<HskLevelName, { count: number; total: number }> = {
+  'HSK 1': { count: 300, total: 300 },
+  'HSK 2': { count: 200, total: 500 },
+  'HSK 3': { count: 500, total: 1000 },
+  'HSK 4': { count: 1000, total: 2000 },
+  'HSK 5': { count: 1600, total: 3600 },
+  'HSK 6': { count: 1800, total: 5400 },
+  'HSK 7-9': { count: 5600, total: 11000 },
 };
 
 /**
+ * Native card ids are the syllabus serial numbers (S-00001 to S-11000), which run level by
+ * level, so a card's level follows from its id.
+ */
+export function levelOfNativeId(id: string): HskLevelName | null {
+  const match = /^S-(\d{5})$/.exec(id);
+  if (!match) return null;
+  const serial = Number(match[1]);
+  return ALL_HSK_LEVELS.find((level) => serial <= HSK_LEVEL_INFO[level].total) ?? null;
+}
+
+/**
  * Returns initial default native cards (HSK 1 + HSK 2). Loaded on demand so the
- * app entry bundle does not carry the 1,272 default cards.
+ * app entry bundle does not carry the 500 default cards.
  */
 export async function loadDefaultCards(): Promise<Card[]> {
   const [hsk1, hsk2] = await Promise.all([import('./hsk1.json'), import('./hsk2.json')]);

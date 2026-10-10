@@ -64,6 +64,8 @@ export default function App() {
     loadCards().then((initialCards) => {
       if (cancelled) return;
       setCards(initialCards);
+      // A vocabulary migration can activate the levels its studied words moved to
+      setDeckConfig(loadDeckConfig());
       setIsLoaded(true);
     });
     return () => {

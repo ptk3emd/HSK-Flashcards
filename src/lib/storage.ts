@@ -6,7 +6,7 @@ import {
   RETENTION_MIN,
   isValidWeights,
 } from './fsrs';
-import { loadDefaultCards, loadNativeLevelCards } from '../data/defaultDecks';
+import { loadDefaultCards, loadNativeLevelCards, levelOfNativeId } from '../data/defaultDecks';
 import { DEFAULT_GESTURES, sanitizeGestures } from './gestures';
 
 const CARDS_STORAGE_KEY = 'hanzi_anki_cards_v2';
@@ -20,8 +20,9 @@ const CONTENT_VERSION_KEY = 'hanzi_anki_content_version';
  * Bump when the bundled vocabulary text changes. Saved native cards then pick up the new
  * hanzi, pinyin and translation once, keeping their study history and mnemonics.
  * 2: Portuguese translations reviewed for every level; pinyin spaced per syllable.
+ * 3: vocabulary replaced by the official HSK syllabus list (11,000 words, new levels and ids).
  */
-const CONTENT_VERSION = 2;
+const CONTENT_VERSION = 3;
 
 export { loadNativeLevelCards };
 
@@ -96,7 +97,7 @@ function saveContentVersion(): void {
   }
 }
 
-/** Updates the text of saved native cards to the bundled vocabulary, once per content version. */
+/** Brings saved native cards up to the bundled vocabulary, once per content version. */
 async function refreshNativeContent(stored: Card[]): Promise<Card[]> {
   let version = 0;
   try {
@@ -107,24 +108,8 @@ async function refreshNativeContent(stored: Card[]): Promise<Card[]> {
   if (version >= CONTENT_VERSION) return stored;
 
   try {
-    const levels = Array.from(new Set(stored.map((c) => c.level)));
-    const bundled = new Map<string, Card>();
-    for (const level of levels) {
-      const native = await loadNativeLevelCards(level).catch(() => [] as Card[]);
-      native.forEach((c) => bundled.set(c.id, c));
-    }
-    const refreshed = stored.map((card) => {
-      const source = bundled.get(card.id);
-      if (!source || source.level !== card.level) return card;
-      return {
-        ...card,
-        hanzi: source.hanzi,
-        traditional: source.traditional,
-        pinyin: source.pinyin,
-        ptbr: source.ptbr,
-        pos: source.pos,
-      };
-    });
+    const migrated = stored.some((c) => LEGACY_ID.test(c.id)) ? await migrateToSyllabus(stored) : stored;
+    const refreshed = await refreshText(migrated);
     saveCards(refreshed);
     saveContentVersion();
     return refreshed;
@@ -132,6 +117,113 @@ async function refreshNativeContent(stored: Card[]): Promise<Card[]> {
     console.error('Failed to refresh card content', e);
     return stored;
   }
+}
+
+/** Card ids of the 2021 word list (L1-0001 ... L7-5636). */
+const LEGACY_ID = /^L\d-\d{4}$/;
+
+const hasHistory = (card: Card) =>
+  card.reps > 0 || card.state !== 0 || !!card.suspended || !!card.mnemonic;
+
+const SCHEDULING_KEYS = [
+  'state', 'due', 'stability', 'difficulty', 'elapsed_days', 'scheduled_days',
+  'reps', 'lapses', 'last_review', 'suspended', 'mnemonic',
+] as const;
+
+/**
+ * Moves a deck built on the 2021 list to the official syllabus list. Each studied word keeps
+ * its schedule and mnemonic under its new id and level; levels the student had downloaded, and
+ * levels that now hold a studied word, are downloaded in full, and any level holding a studied
+ * word becomes active so its reviews keep coming. Unstudied words that left the list or moved
+ * to a level the student never downloaded are dropped; studied words that left the list stay.
+ */
+async function migrateToSyllabus(stored: Card[]): Promise<Card[]> {
+  const legacyIds = (await import('../data/legacyIds.json')).default as Record<string, string>;
+  const downloaded = new Set(stored.map((c) => c.level));
+
+  const carried = new Map<string, Card>();
+  const kept: Card[] = [];
+  const idMap = new Map<string, string>();
+  const levelsToLoad = new Set<string>(downloaded);
+  const studiedLevels = new Set<string>();
+
+  for (const card of stored) {
+    if (!LEGACY_ID.test(card.id)) {
+      kept.push(card);
+      continue;
+    }
+    const newId = legacyIds[card.id];
+    const newLevel = newId ? levelOfNativeId(newId) : null;
+    if (!newId || !newLevel) {
+      if (hasHistory(card)) kept.push(card);
+      continue;
+    }
+    if (!downloaded.has(newLevel) && !hasHistory(card)) continue;
+    idMap.set(card.id, newId);
+    carried.set(newId, card);
+    levelsToLoad.add(newLevel);
+    if (card.state !== 0) studiedLevels.add(newLevel);
+  }
+
+  const fresh: Card[] = [];
+  for (const level of levelsToLoad) {
+    const native = await loadNativeLevelCards(level).catch(() => [] as Card[]);
+    for (const source of native) {
+      const old = carried.get(source.id);
+      if (!old) {
+        fresh.push(source);
+        continue;
+      }
+      const merged: Card = { ...source };
+      for (const key of SCHEDULING_KEYS) {
+        if (old[key] !== undefined) (merged as unknown as Record<string, unknown>)[key] = old[key];
+      }
+      fresh.push(merged);
+    }
+  }
+  // Native cards in syllabus order (lower levels first), then anything else the deck held
+  const nativeIds = new Set(fresh.map((c) => c.id));
+  const result = [...fresh, ...kept.filter((c) => !nativeIds.has(c.id))];
+
+  const config = loadDeckConfig();
+  const activeLevels = Array.from(new Set([...config.activeLevels, ...studiedLevels]));
+  if (activeLevels.length !== config.activeLevels.length) saveDeckConfig({ ...config, activeLevels });
+
+  const logs = loadReviewLogs();
+  if (logs.length > 0) {
+    saveReviewLogs(
+      logs.map((log) => {
+        const newId = idMap.get(log.cardId);
+        if (!newId) return log;
+        const level = levelOfNativeId(newId) ?? log.previousCardSnapshot.level;
+        return { ...log, cardId: newId, previousCardSnapshot: { ...log.previousCardSnapshot, id: newId, level } };
+      })
+    );
+  }
+  return result;
+}
+
+/** Updates the text of saved native cards to the bundled vocabulary. */
+async function refreshText(cards: Card[]): Promise<Card[]> {
+  const levels = Array.from(new Set(cards.map((c) => c.level)));
+  const bundled = new Map<string, Card>();
+  for (const level of levels) {
+    const native = await loadNativeLevelCards(level).catch(() => [] as Card[]);
+    native.forEach((c) => bundled.set(c.id, c));
+  }
+  return cards.map((card) => {
+    const source = bundled.get(card.id);
+    if (!source || source.level !== card.level) return card;
+    return {
+      ...card,
+      hanzi: source.hanzi,
+      traditional: source.traditional,
+      pinyin: source.pinyin,
+      ptbr: source.ptbr,
+      pos: source.pos,
+      tags: source.tags,
+    };
+  });
 }
 
 export function saveCards(cards: Card[]): void {

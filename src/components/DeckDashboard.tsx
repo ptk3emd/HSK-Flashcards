@@ -139,7 +139,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
           {ALL_HSK_LEVELS.map((lvl, idx) => {
             const levelCards = cards.filter(c => c.level === lvl);
             const isLoaded = levelCards.length > 0;
-            const count = isLoaded ? levelCards.length : HSK_LEVEL_INFO[lvl].count;
+            const { count, total } = HSK_LEVEL_INFO[lvl];
             const isActive = isLoaded && deckConfig.activeLevels.includes(lvl);
             const levelDue = levelCards.filter(
               c => !c.suspended && (c.state === 0 || new Date(c.due) <= now)
@@ -173,9 +173,13 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                     {LEVEL_NUMERALS[lvl]}
                   </span>
                   <span className="flex-1 min-w-0">
-                    <span className="block font-semibold">{lvl}</span>
+                    <span className="flex items-baseline gap-2 min-w-0">
+                      <span className="font-semibold whitespace-nowrap">{lvl}</span>
+                      <span className="text-xs tabular ink-tertiary truncate">{formatCount(total)} no total</span>
+                    </span>
                     <span className="block text-xs tabular ink-secondary truncate">
-                      {count}{isActive && !isLoading ? ' palavras' : ` · ${stateLabel.toLowerCase()}`}
+                      +{formatCount(count)}
+                      {isActive && !isLoading ? ' novas' : ` · ${stateLabel.toLowerCase()}`}
                     </span>
                     {isLoaded && (
                       <span className="mt-2 block h-0.5 rounded-full bg-black/10 dark:bg-white/10" aria-hidden="true">
@@ -216,3 +220,4 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
 
 /** Hanzi numerals for the level column; the advanced band reads 七–九 */
 
+const formatCount = (n: number) => n.toLocaleString('pt-BR');
