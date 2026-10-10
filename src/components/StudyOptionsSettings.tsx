@@ -16,7 +16,6 @@ export const StudyOptionsSettings: React.FC<StudyOptionsSettingsProps> = ({
   onUpdateDeckConfig,
   theme,
 }) => {
-  const isLight = theme === 'light';
   const fullscreenSupported = canHideSystemBar();
 
   const options: { key: ToggleKey; label: string; hint: string; disabled?: boolean }[] = [
@@ -24,45 +23,45 @@ export const StudyOptionsSettings: React.FC<StudyOptionsSettingsProps> = ({
       key: 'hideSystemBar',
       label: 'Ocultar barra do sistema',
       hint: fullscreenSupported
-        ? 'Tela cheia: esconde as barras do navegador e do sistema.'
-        : 'Este navegador não permite tela cheia (iPhone).',
+        ? 'Tela cheia no estudo'
+        : 'Indisponível neste navegador',
       disabled: !fullscreenSupported,
     },
     {
       key: 'hideAnswerButtons',
       label: 'Ocultar botões de resposta',
-      hint: 'Responda só com os gestos definidos abaixo.',
+      hint: 'Responder só com gestos',
     },
     {
       key: 'twoButtonGrading',
       label: 'Só Novamente e Bom',
-      hint: 'Desativa Difícil e Fácil.',
+      hint: 'Sem Difícil e Fácil',
     },
   ];
 
   return (
-    <div className="space-y-3">
-      {options.map(({ key, label, hint, disabled }) => (
-        <label
-          key={key}
-          className={`flex items-start justify-between gap-4 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-        >
-          <span>
-            <span className="block text-xs font-semibold">{label}</span>
-            <span className={`block text-[11px] mt-0.5 leading-relaxed ${isLight ? 'text-black/60' : 'text-white/55'}`}>
-              {hint}
+    <div>
+      <div className="ledger border-t border-[var(--separator)]">
+        {options.map(({ key, label, hint, disabled }) => (
+          <label
+            key={key}
+            className={`flex items-center justify-between gap-4 py-3 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+          >
+            <span className="min-w-0">
+              <span className="block text-sm">{label}</span>
+              <span className="block text-xs ink-tertiary">{hint}</span>
             </span>
-          </span>
-          <input
-            type="checkbox"
-            checked={deckConfig[key] && !disabled}
-            disabled={disabled}
-            onChange={(e) => onUpdateDeckConfig({ ...deckConfig, [key]: e.target.checked })}
-            className="mt-0.5 w-5 h-5 shrink-0 accent-red-500 cursor-pointer disabled:cursor-not-allowed"
-          />
-        </label>
-      ))}
-      <div className={`pt-3 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`}>
+            <input
+              type="checkbox"
+              checked={deckConfig[key] && !disabled}
+              disabled={disabled}
+              onChange={(e) => onUpdateDeckConfig({ ...deckConfig, [key]: e.target.checked })}
+              className="w-5 h-5 shrink-0 accent-red-600 cursor-pointer disabled:cursor-not-allowed"
+            />
+          </label>
+        ))}
+      </div>
+      <div className="pt-4 border-t border-[var(--separator)]">
         <GestureSettings deckConfig={deckConfig} onUpdateDeckConfig={onUpdateDeckConfig} theme={theme} />
       </div>
     </div>

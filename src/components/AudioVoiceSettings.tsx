@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, Play, Check, Sparkles, User, UserCheck, RefreshCw } from 'lucide-react';
+import { Volume2, Play } from 'lucide-react';
 import { DeckConfig, VoiceGenderPreference } from '../types/card';
 import {
   speakChinese,
@@ -16,11 +16,11 @@ interface AudioVoiceSettingsProps {
 }
 
 const SPEED_PRESETS = [
-  { label: '0.6x Lento', value: 0.6 },
-  { label: '0.75x Suave', value: 0.75 },
-  { label: '0.85x Ideal', value: 0.85 },
-  { label: '1.0x Normal', value: 1.0 },
-  { label: '1.2x Nativo', value: 1.2 },
+  { label: '0,6', value: 0.6 },
+  { label: '0,75', value: 0.75 },
+  { label: '0,85', value: 0.85 },
+  { label: '1,0', value: 1.0 },
+  { label: '1,2', value: 1.2 },
 ];
 
 export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
@@ -29,7 +29,6 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
   theme = 'dark',
   compact = false,
 }) => {
-  const isLight = theme === 'light';
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [isPlayingTest, setIsPlayingTest] = useState(false);
   const [sampleText, setSampleText] = useState('你好！很高兴认识你。');
@@ -115,299 +114,139 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
   const activeGender = deckConfig.speechVoiceGender || 'auto';
   const currentSpeed = deckConfig.speechSpeed || 0.85;
 
-  return (
-    <div className="space-y-6">
-      {/* Header Info */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div
-            className={`w-9 h-9 rounded-2xl flex items-center justify-center ${
-              isLight ? 'bg-red-500/10 text-red-600' : 'bg-red-500/20 text-red-400'
-            }`}
-          >
-            <Volume2 className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className={`text-sm sm:text-base font-bold ${isLight ? 'text-black' : 'text-white'}`}>
-              Voz Nativa do Navegador (TTS Chinês)
-            </h2>
-            <p className={`text-xs ${isLight ? 'text-black/60 font-medium' : 'text-white/50'}`}>
-              Configuração de gênero e velocidade para cartões, dicionário e escrita
-            </p>
-          </div>
-        </div>
+  const segmentGroup = 'flex gap-0.5 p-0.5 rounded-xl bg-black/[0.05] dark:bg-white/[0.07]';
+  const segment = (active: boolean) =>
+    `min-h-10 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
+      active
+        ? 'bg-white text-ink shadow-sm dark:bg-white/20 dark:text-white'
+        : 'ink-secondary hover:text-[var(--text-fg)]'
+    }`;
 
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-4 pb-3">
+        <h2 className="text-base font-semibold">Voz</h2>
         <button
           type="button"
           onClick={handleTestAudio}
           disabled={isPlayingTest}
-          className={`px-3.5 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-sm active:scale-95 ${
-            isLight
-              ? 'bg-red-600 hover:bg-red-700 text-white'
-              : 'bg-red-600 hover:bg-red-500 text-white'
-          } disabled:opacity-50`}
+          className="min-h-10 px-3.5 rounded-xl text-sm font-medium flex items-center gap-1.5 cursor-pointer transition-colors bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14] disabled:opacity-50"
         >
-          <Play className={`w-3.5 h-3.5 fill-current ${isPlayingTest ? 'animate-pulse' : ''}`} />
-          <span>{isPlayingTest ? 'Ouvindo...' : 'Testar Voz'}</span>
+          <Play aria-hidden="true" className={`w-3.5 h-3.5 fill-current ${isPlayingTest ? 'animate-pulse' : ''}`} />
+          <span>{isPlayingTest ? 'Tocando' : 'Testar'}</span>
         </button>
       </div>
 
-      {/* 1. Escolha de Gênero da Voz */}
-      <div className="space-y-2.5">
-        <label className={`text-xs font-bold flex items-center justify-between ${isLight ? 'text-black/80' : 'text-white/80'}`}>
-          <span>Gênero da Voz:</span>
-          <span className="text-[11px] font-normal opacity-70">
-            {activeGender === 'female'
-              ? 'Feminino selecionado'
-              : activeGender === 'male'
-              ? 'Masculino selecionado'
-              : 'Automático / Padrão'}
-          </span>
-        </label>
-
-        <div className="grid grid-cols-3 gap-2.5">
-          {/* Feminino */}
-          <button
-            type="button"
-            onClick={() => handleGenderChange('female')}
-            className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              activeGender === 'female'
-                ? isLight
-                  ? 'bg-rose-50 border-rose-500 text-rose-700 shadow-sm ring-1 ring-rose-500'
-                  : 'bg-rose-500/20 border-rose-400 text-rose-300 shadow-sm ring-1 ring-rose-400'
-                : isLight
-                ? 'bg-white/80 border-black/10 hover:border-black/25 text-black/75'
-                : 'bg-white/5 border-white/10 hover:border-white/20 text-white/70'
-            }`}
-          >
-            <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm">
-              <User className="w-4 h-4 text-rose-500" />
-              <span>Feminino</span>
-            </div>
-            <span className="text-[10px] opacity-70">Voz feminina / Aguda</span>
-          </button>
-
-          {/* Masculino */}
-          <button
-            type="button"
-            onClick={() => handleGenderChange('male')}
-            className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              activeGender === 'male'
-                ? isLight
-                  ? 'bg-blue-50 border-blue-500 text-blue-700 shadow-sm ring-1 ring-blue-500'
-                  : 'bg-blue-500/20 border-blue-400 text-blue-300 shadow-sm ring-1 ring-blue-400'
-                : isLight
-                ? 'bg-white/80 border-black/10 hover:border-black/25 text-black/75'
-                : 'bg-white/5 border-white/10 hover:border-white/20 text-white/70'
-            }`}
-          >
-            <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm">
-              <User className="w-4 h-4 text-blue-500" />
-              <span>Masculino</span>
-            </div>
-            <span className="text-[10px] opacity-70">Voz masculina / Grave</span>
-          </button>
-
-          {/* Automático / Sistema */}
-          <button
-            type="button"
-            onClick={() => handleGenderChange('auto')}
-            className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              activeGender === 'auto'
-                ? isLight
-                  ? 'bg-amber-50 border-amber-500 text-amber-800 shadow-sm ring-1 ring-amber-500'
-                  : 'bg-amber-500/20 border-amber-400 text-amber-200 shadow-sm ring-1 ring-amber-400'
-                : isLight
-                ? 'bg-white/80 border-black/10 hover:border-black/25 text-black/75'
-                : 'bg-white/5 border-white/10 hover:border-white/20 text-white/70'
-            }`}
-          >
-            <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm">
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              <span>Automático</span>
-            </div>
-            <span className="text-[10px] opacity-70">Padrão do navegador</span>
-          </button>
-        </div>
-      </div>
-
-      {/* 2. Escolha de Velocidade da Voz */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <label className={`text-xs font-bold ${isLight ? 'text-black/80' : 'text-white/80'}`}>
-            Velocidade de Reprodução:
-          </label>
-          <div className="flex items-center gap-2">
-            <span
-              className={`text-xs px-2 py-0.5 rounded-lg font-mono font-bold ${
-                isLight ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-red-500/20 text-red-300 border border-red-500/30'
-              }`}
-            >
-              {currentSpeed.toFixed(2)}x
-            </span>
-            <span className={`text-[11px] ${isLight ? 'text-black/60' : 'text-white/50'}`}>
-              {currentSpeed <= 0.65
-                ? '(Muito Lento)'
-                : currentSpeed <= 0.8
-                ? '(Suave)'
-                : currentSpeed <= 0.95
-                ? '(Recomendado)'
-                : currentSpeed <= 1.1
-                ? '(Normal)'
-                : '(Rápido)'}
-            </span>
+      <div className="ledger border-t border-[var(--separator)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3">
+          <span id="voice-gender" className="text-sm">Timbre</span>
+          <div role="group" aria-labelledby="voice-gender" className={segmentGroup}>
+            {(
+              [
+                { id: 'female', label: 'Feminino' },
+                { id: 'male', label: 'Masculino' },
+                { id: 'auto', label: 'Automático' },
+              ] as const
+            ).map((g) => (
+              <button
+                key={g.id}
+                type="button"
+                onClick={() => handleGenderChange(g.id)}
+                aria-pressed={activeGender === g.id}
+                className={segment(activeGender === g.id)}
+              >
+                {g.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Slider */}
-        <input
-          type="range"
-          min="0.5"
-          max="1.4"
-          step="0.05"
-          value={currentSpeed}
-          aria-label="Velocidade da voz"
-          onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
-          className="w-full accent-red-500 cursor-pointer h-2 rounded-lg"
-        />
-
-        {/* Presets rápidos */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          {SPEED_PRESETS.map((preset) => (
-            <button
-              key={preset.value}
-              type="button"
-              onClick={() => handleSpeedChange(preset.value)}
-              className={`min-h-11 sm:min-h-0 px-2.5 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
-                Math.abs(currentSpeed - preset.value) < 0.02
-                  ? isLight
-                    ? 'bg-red-600 text-white border-red-600 shadow-xs'
-                    : 'bg-red-600 text-white border-red-600 shadow-xs'
-                  : isLight
-                  ? 'bg-white/80 hover:bg-black/5 text-black/70 border-black/10'
-                  : 'bg-white/5 hover:bg-white/10 text-white/70 border-white/10'
-              }`}
-            >
-              {preset.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 3. Seletor de Voz Específica do Sistema */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <label className={`text-xs font-bold ${isLight ? 'text-black/80' : 'text-white/80'}`}>
-            Voz Específica Instalada no Navegador:
-          </label>
-          <span className={`text-[11px] ${isLight ? 'text-black/50' : 'text-white/40'}`}>
-            {voices.length > 0 ? `${voices.length} vozes em Mandarim encontradas` : 'Síntese nativa do sistema'}
-          </span>
+        <div className="py-3 space-y-2">
+          <div className="flex items-center justify-between gap-4">
+            <label htmlFor="voice-speed" className="text-sm">Velocidade</label>
+            <span className="tabular text-sm font-semibold">{currentSpeed.toFixed(2).replace('.', ',')}×</span>
+          </div>
+          <input
+            id="voice-speed"
+            type="range"
+            min="0.5"
+            max="1.4"
+            step="0.05"
+            value={currentSpeed}
+            onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
+            className="w-full accent-red-600 cursor-pointer"
+          />
+          <div role="group" aria-label="Velocidades predefinidas" className="flex flex-wrap gap-1">
+            {SPEED_PRESETS.map((preset) => (
+              <button
+                key={preset.value}
+                type="button"
+                onClick={() => handleSpeedChange(preset.value)}
+                aria-pressed={Math.abs(currentSpeed - preset.value) < 0.02}
+                className={segment(Math.abs(currentSpeed - preset.value) < 0.02)}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {voices.length > 0 ? (
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3">
+          <label htmlFor="voice-uri" className="text-sm shrink-0">Voz do sistema</label>
+          {voices.length > 0 ? (
             <select
+              id="voice-uri"
               value={deckConfig.speechVoiceURI || ''}
               onChange={(e) => handleVoiceURIChange(e.target.value)}
-              className={`w-full px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-medium border appearance-none transition-colors cursor-pointer focus:ring-2 focus:ring-red-500/50 ${
-                isLight
-                  ? 'bg-white border-black/15 text-black shadow-xs'
-                  : 'bg-black/40 border-white/15 text-white'
-              }`}
+              className="sm:max-w-xs w-full min-h-11 px-3 rounded-xl text-sm border cursor-pointer bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
             >
-              <option value="">
-                Seleção Inteligente Automática (baseada no gênero: {activeGender === 'female' ? 'Feminino' : activeGender === 'male' ? 'Masculino' : 'Padrão'})
-              </option>
+              <option value="">Automática</option>
               {voices.map((v, idx) => {
                 const label = getVoiceDisplayLabel(v);
                 const voiceVal = v.voiceURI || v.name;
-                const uniqueKey = `voice-opt-${voiceVal}-${v.lang || ''}-${idx}`;
                 return (
-                  <option key={uniqueKey} value={voiceVal}>
-                    {label.genderBadge} • {label.title} [{label.langTag}]
+                  <option key={`voice-opt-${voiceVal}-${v.lang || ''}-${idx}`} value={voiceVal}>
+                    {label.title} [{label.langTag}]
                   </option>
                 );
               })}
             </select>
-          </div>
-        ) : (
-          <div
-            className={`p-3 rounded-2xl border text-xs leading-relaxed ${
-              isLight
-                ? 'bg-amber-50/70 border-amber-200/80 text-amber-900'
-                : 'bg-amber-500/10 border-amber-500/20 text-amber-200'
-            }`}
-          >
-            <p>
-              O navegador está usando o sintetizador nativo de fala do sistema operacional. O Hanzi Anki modula dinamicamente a entonação (pitch/formante) para reproduzir o timbre <strong>feminino</strong> ou <strong>masculino</strong> escolhido.
-            </p>
-          </div>
-        )}
-      </div>
+          ) : (
+            <span id="voice-uri" className="text-sm ink-tertiary">Síntese nativa</span>
+          )}
+        </div>
 
-      {/* 4. Caixa de Teste Interativa */}
-      <div
-        className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row items-stretch sm:items-center gap-3 ${
-          isLight ? 'bg-black/5 border-black/10' : 'bg-white/5 border-white/10'
-        }`}
-      >
-        <div className="flex-1 space-y-1">
-          <div className="flex items-center justify-between text-[11px] font-bold opacity-75">
-            <span>Texto de Amostra para Testar:</span>
-            <span>Nǐ hǎo! Hěn gāoxìng rènshí nǐ.</span>
-          </div>
+        <div className="flex items-center gap-2 py-3">
+          <label htmlFor="voice-sample" className="sr-only">Frase de teste</label>
           <input
+            id="voice-sample"
             type="text"
+            lang="zh-CN"
             value={sampleText}
             onChange={(e) => setSampleText(e.target.value)}
-            placeholder="Digite qualquer frase em Hanzi..."
-            className={`w-full px-3 py-1.5 rounded-xl text-xs border transition-all ${
-              isLight
-                ? 'bg-white border-black/15 text-black'
-                : 'bg-black/50 border-white/15 text-white'
-            }`}
+            placeholder="你好！很高兴认识你。"
+            className="flex-1 min-w-0 min-h-11 px-3 rounded-xl text-sm border bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
           />
+          <button
+            type="button"
+            onClick={handleTestAudio}
+            disabled={isPlayingTest}
+            aria-label="Ouvir frase"
+            className="size-11 shrink-0 rounded-xl flex items-center justify-center cursor-pointer transition-colors bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14] disabled:opacity-50"
+          >
+            <Volume2 aria-hidden="true" className="w-[18px] h-[18px]" />
+          </button>
         </div>
 
-        <button
-          type="button"
-          onClick={handleTestAudio}
-          disabled={isPlayingTest}
-          className="self-end sm:self-center px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-all cursor-pointer flex items-center justify-center gap-2 shadow-sm active:scale-95 disabled:opacity-50"
-        >
-          <Volume2 className="w-4 h-4" />
-          <span>{isPlayingTest ? 'Reproduzindo...' : 'Ouvir Agora'}</span>
-        </button>
-      </div>
-
-      {/* 5. Opção de Áudio Automático nos Cartões */}
-      <div
-        className={`pt-3 border-t flex items-center justify-between ${
-          isLight ? 'border-black/10' : 'border-white/10'
-        }`}
-      >
-        <div>
-          <div className={`text-xs font-bold ${isLight ? 'text-black' : 'text-white'}`}>
-            Pronúncia Automática ao Revelar
-          </div>
-          <div className={`text-[11px] ${isLight ? 'text-black/60 font-medium' : 'text-white/50'}`}>
-            Tocar áudio automaticamente ao virar para o verso do cartão
-          </div>
-        </div>
-
-        <input
-          type="checkbox"
-          aria-label="Tocar áudio automaticamente ao virar o cartão"
-          checked={deckConfig.autoPlayAudio}
-          onChange={(e) =>
-            onUpdateDeckConfig({
-              ...deckConfig,
-              autoPlayAudio: e.target.checked,
-            })
-          }
-          className="w-5 h-5 accent-red-500 rounded-md cursor-pointer"
-        />
+        <label className="flex items-center justify-between gap-4 py-3 cursor-pointer">
+          <span className="text-sm">Tocar ao revelar</span>
+          <input
+            type="checkbox"
+            checked={deckConfig.autoPlayAudio}
+            onChange={(e) => onUpdateDeckConfig({ ...deckConfig, autoPlayAudio: e.target.checked })}
+            className="w-5 h-5 accent-red-600 cursor-pointer"
+          />
+        </label>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { useDialogFocus } from './useDialogFocus';
 import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { Search, Volume2, Eye, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, Save, Lightbulb } from 'lucide-react';
+import { Search, Volume2, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, Save, Lightbulb } from 'lucide-react';
 import { isLeech } from '../lib/fsrs';
 import { MandarinCardView } from './MandarinCardView';
 import { ViewLoading } from './ViewLoading';
@@ -11,6 +11,8 @@ import { usePrefetched } from './usePrefetched';
 import { HanziDrawSearch } from './HanziDrawSearch';
 
 // The writing pad carries hanzi-writer; it loads on its own and is fetched ahead once this view mounts
+const STATE_LABELS: Record<CardState, string> = { 0: 'Novo', 1: 'Aprendendo', 2: 'Revisão', 3: 'Reaprendendo' };
+
 const loadWritingCanvas = () => import('./HanziWritingCanvas').then((m) => m.HanziWritingCanvas);
 const HanziWritingCanvasLazy = lazy(() => loadWritingCanvas().then((c) => ({ default: c })));
 
@@ -117,7 +119,9 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
 
       const pinyinMatch =
         card.pinyin.toLowerCase().includes(q) ||
-        normalizeText(card.pinyin).includes(normalizedQ);
+        normalizeText(card.pinyin).includes(normalizedQ) ||
+        // Syllables are spaced (nǐ hǎo), so "nihao" still matches
+        normalizeText(card.pinyin).replace(/[\s'-]+/g, '').includes(normalizedQ.replace(/[\s'-]+/g, ''));
 
       const meaningMatch = card.ptbr.toLowerCase().includes(q);
 
@@ -206,382 +210,214 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 animate-in fade-in duration-200">
-      <h1 className="sr-only">Dicionário de vocábulos</h1>
-      {/* Search and Filters Header */}
-      <div
-        className={`rounded-3xl p-5 backdrop-blur-xl border transition-all ${
-          isLight
-            ? 'bg-white/70 border-white/80 shadow-md text-ink'
-            : 'bg-white/5 border-white/10 text-white'
-        }`}
-      >
-        <div className="flex flex-col gap-3">
-          {isDrawSearchOpen && (
-            <HanziDrawSearch
-              cards={cards}
-              theme={theme}
-              onPick={(hanzi) => {
-                setSearch(hanzi);
-                setSearchTarget('hanzi');
-                setIsDrawSearchOpen(false);
-              }}
-              onClose={() => setIsDrawSearchOpen(false)}
+    <div className="w-full max-w-3xl mx-auto space-y-4 animate-in fade-in duration-200">
+      <h1 className="font-semibold text-2xl px-1">Dicionário</h1>
+
+      <section aria-label="Busca" className="sheet p-4 sm:p-5 space-y-3">
+        {isDrawSearchOpen && (
+          <HanziDrawSearch
+            cards={cards}
+            theme={theme}
+            onPick={(hanzi) => {
+              setSearch(hanzi);
+              setSearchTarget('hanzi');
+              setIsDrawSearchOpen(false);
+            }}
+            onClose={() => setIsDrawSearchOpen(false)}
+          />
+        )}
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search aria-hidden="true" className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 ink-tertiary pointer-events-none" />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label="Pesquisar"
+              placeholder={
+                searchTarget === 'hanzi'
+                  ? '你好, 水'
+                  : searchTarget === 'pinyin'
+                  ? 'nihao, nǐ hǎo'
+                  : searchTarget === 'meaning'
+                  ? 'olá, água'
+                  : 'Hanzi, pinyin ou tradução'
+              }
+              className="w-full min-h-11 pl-10 pr-10 rounded-xl text-sm bg-black/[0.04] dark:bg-white/[0.06] placeholder:text-[var(--text-tertiary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 [&::-webkit-search-cancel-button]:hidden"
             />
-          )}
-          <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center">
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 opacity-50 pointer-events-none" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={
-                  searchTarget === 'hanzi'
-                    ? 'Pesquisar caractere chinês (ex: 你好, 水)...'
-                    : searchTarget === 'pinyin'
-                    ? 'Pesquisar pinyin (ex: nihao, nǐ hǎo)...'
-                    : searchTarget === 'meaning'
-                    ? 'Pesquisar tradução (ex: olá, água)...'
-                    : 'Pesquisar chinês, pinyin ou tradução...'
-                }
-                className={`w-full pl-10 pr-9 py-2.5 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-red-400/50 border transition-all ${
-                  isLight
-                    ? 'bg-white/90 border-black/10 text-black placeholder-black/40'
-                    : 'bg-black/30 border-white/10 text-white placeholder-white/40'
-                }`}
-              />
-              {search && (
-                <button
-                  type="button"
-                  onClick={() => setSearch('')}
-                  aria-label="Limpar busca"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60 hover:opacity-100 transition-all cursor-pointer"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setIsDrawSearchOpen((open) => !open)}
-              aria-expanded={isDrawSearchOpen}
-              aria-label="Pesquisar desenhando o caractere"
-              className={`min-h-11 px-3 flex items-center justify-center gap-1.5 rounded-2xl border text-xs font-semibold cursor-pointer transition-all ${
-                isDrawSearchOpen
-                  ? 'bg-red-600 border-red-600 text-white shadow-sm'
-                  : isLight
-                  ? 'bg-white/90 border-black/10 text-black/75 hover:bg-white'
-                  : 'bg-black/30 border-white/10 text-white/80 hover:bg-white/10'
-              }`}
-            >
-              <PenTool className="w-4 h-4" />
-              <span>Desenhar</span>
-            </button>
-
-            {/* Target Filter Select / Badges */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] opacity-60 font-semibold mr-1 hidden md:inline">
-                Filtrar por:
-              </span>
-              {(
-                [
-                  { id: 'all', label: 'Tudo' },
-                  { id: 'hanzi', label: 'Caractere' },
-                  { id: 'pinyin', label: 'Pinyin' },
-                  { id: 'meaning', label: 'Tradução' },
-                ] as const
-              ).map((tab) => {
-                const isActive = searchTarget === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setSearchTarget(tab.id)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      isActive
-                        ? isLight
-                          ? 'bg-black text-white shadow-sm'
-                          : 'bg-white text-black shadow-sm'
-                        : isLight
-                        ? 'bg-black/5 hover:bg-black/10 text-black/70'
-                        : 'bg-white/5 hover:bg-white/10 text-white/70'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                aria-label="Limpar busca"
+                className="absolute right-1 top-1/2 -translate-y-1/2 size-9 rounded-lg flex items-center justify-center ink-tertiary hover:text-[var(--text-fg)] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
+          <button
+            type="button"
+            onClick={() => setIsDrawSearchOpen((open) => !open)}
+            aria-expanded={isDrawSearchOpen}
+            aria-label="Pesquisar desenhando o caractere"
+            className={`min-h-11 px-3.5 flex items-center gap-1.5 rounded-xl text-sm font-medium cursor-pointer transition-colors ${
+              isDrawSearchOpen
+                ? 'bg-red-600 text-white'
+                : 'bg-black/[0.04] dark:bg-white/[0.06] hover:bg-black/[0.08] dark:hover:bg-white/10'
+            }`}
+          >
+            <PenTool aria-hidden="true" className="w-4 h-4" />
+            <span className="hidden sm:inline">Desenhar</span>
+          </button>
+        </div>
 
-          <div className="flex items-center justify-between gap-2 flex-wrap pt-1 border-t border-black/5 dark:border-white/5">
-            <div className="flex items-center gap-2">
-              <select
-                value={selectedLevel}
-                onChange={(e) => setSelectedLevel(e.target.value)}
-                aria-label="Filtrar por nível HSK"
-                className={`px-3 py-2 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-red-400/50 border cursor-pointer ${
-                  isLight
-                    ? 'bg-white/90 border-black/10 text-black'
-                    : 'bg-black/30 border-white/10 text-white'
-                }`}
-              >
-                <option value="all" className="bg-white dark:bg-neutral-900">Todos os Níveis</option>
-                {ALL_HSK_LEVELS.map((lvl) => (
-                  <option key={lvl} value={lvl} className="bg-white dark:bg-neutral-900">
-                    {lvl}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={selectedState}
-                onChange={(e) => setSelectedState(e.target.value)}
-                aria-label="Filtrar por estado FSRS"
-                className={`px-3 py-2 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-red-400/50 border cursor-pointer ${
-                  isLight
-                    ? 'bg-white/90 border-black/10 text-black'
-                    : 'bg-black/30 border-white/10 text-white'
-                }`}
-              >
-                <option value="all" className="bg-white dark:bg-neutral-900">Todos os Estados</option>
-                <option value="0" className="bg-white dark:bg-neutral-900">Novos (0)</option>
-                <option value="1" className="bg-white dark:bg-neutral-900">Aprendendo (1)</option>
-                <option value="2" className="bg-white dark:bg-neutral-900">Revisão (2)</option>
-                <option value="3" className="bg-white dark:bg-neutral-900">Reaprendendo (3)</option>
-                <option value="leech" className="bg-white dark:bg-neutral-900">Leech</option>
-                <option value="suspended" className="bg-white dark:bg-neutral-900">Suspensos</option>
-              </select>
-            </div>
-
-            <div className="text-xs opacity-60">
-              {search && (
-                <span>
-                  Filtro: {searchTarget === 'hanzi' ? 'Caractere chinês' : searchTarget === 'pinyin' ? 'Pinyin' : searchTarget === 'meaning' ? 'Tradução' : 'Geral'} ({filteredCards.length} {filteredCards.length === 1 ? 'resultado' : 'resultados'})
-                </span>
-              )}
-            </div>
+        <div className="flex items-center gap-x-4 gap-y-2 flex-wrap text-sm">
+          <div role="group" aria-label="Campo da busca" className="flex items-center gap-1">
+            {(
+              [
+                { id: 'all', label: 'Tudo' },
+                { id: 'hanzi', label: 'Hanzi' },
+                { id: 'pinyin', label: 'Pinyin' },
+                { id: 'meaning', label: 'Tradução' },
+              ] as const
+            ).map((tab) => {
+              const isActive = searchTarget === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setSearchTarget(tab.id)}
+                  aria-pressed={isActive}
+                  className={`min-h-9 px-2.5 rounded-lg font-medium cursor-pointer transition-colors ${
+                    isActive
+                      ? 'bg-black/[0.07] dark:bg-white/[0.12] text-[var(--text-fg)]'
+                      : 'ink-secondary hover:text-[var(--text-fg)]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-2 ml-auto">
+            <select
+              value={selectedLevel}
+              onChange={(e) => setSelectedLevel(e.target.value)}
+              aria-label="Filtrar por nível HSK"
+              className="min-h-9 px-2 rounded-lg bg-transparent ink-secondary font-medium cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+            >
+              <option value="all" className="bg-white dark:bg-neutral-900">Todos os níveis</option>
+              {ALL_HSK_LEVELS.map((lvl) => (
+                <option key={lvl} value={lvl} className="bg-white dark:bg-neutral-900">
+                  {lvl}
+                </option>
+              ))}
+            </select>
+            <select
+              value={selectedState}
+              onChange={(e) => setSelectedState(e.target.value)}
+              aria-label="Filtrar por estado"
+              className="min-h-9 px-2 rounded-lg bg-transparent ink-secondary font-medium cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+            >
+              <option value="all" className="bg-white dark:bg-neutral-900">Todos os estados</option>
+              <option value="0" className="bg-white dark:bg-neutral-900">Novos</option>
+              <option value="1" className="bg-white dark:bg-neutral-900">Aprendendo</option>
+              <option value="2" className="bg-white dark:bg-neutral-900">Revisão</option>
+              <option value="3" className="bg-white dark:bg-neutral-900">Reaprendendo</option>
+              <option value="leech" className="bg-white dark:bg-neutral-900">Leech</option>
+              <option value="suspended" className="bg-white dark:bg-neutral-900">Suspensos</option>
+            </select>
           </div>
         </div>
 
-        {/* Load level banner if level not yet active in memory */}
         {!isLevelLoaded && (
-          <div className="mt-3 p-3 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-between text-xs">
-            <span className="font-semibold text-amber-800 dark:text-amber-200">
-              O nível {selectedLevel} está disponível nativamente no app mas ainda não foi carregado.
-            </span>
+          <div className="flex items-center justify-between gap-3 pt-3 border-t border-[var(--separator)] text-sm">
+            <span className="ink-secondary">{selectedLevel} não baixado</span>
             <button
               type="button"
               onClick={handleLoadSelectedLevel}
               disabled={isLoadingLevel}
-              className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold cursor-pointer transition-all flex items-center gap-1.5"
+              className="min-h-10 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium cursor-pointer flex items-center gap-1.5 disabled:opacity-60"
             >
-              {isLoadingLevel ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : null}
-              <span>Carregar {selectedLevel} Nativo</span>
+              {isLoadingLevel && <Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" />}
+              <span>Baixar</span>
             </button>
           </div>
         )}
+      </section>
 
-        <div className="text-xs opacity-60 flex items-center justify-between mt-3 pt-2 border-t border-black/5 dark:border-white/5">
-          <span>Mostrando {filteredCards.length} de {cards.length} vocábulos</span>
-          <span>Dicionário Nativo HSK 1 a 9</span>
+      <section aria-label="Vocábulos" className="sheet overflow-hidden">
+        <div className="flex items-baseline justify-between px-5 pt-4 pb-2 text-xs ink-tertiary">
+          <span>Vocábulos</span>
+          <span className="tabular" aria-live="polite">
+            {filteredCards.length} de {cards.length}
+          </span>
         </div>
-      </div>
-
-      {/* Cards Table */}
-      <div
-        className={`rounded-3xl overflow-hidden backdrop-blur-xl border transition-all ${
-          isLight
-            ? 'bg-white/70 border-white/80 shadow-md text-ink'
-            : 'bg-white/5 border-white/10 text-white'
-        }`}
-      >
         <div
           tabIndex={0}
           role="region"
           aria-label="Lista de vocábulos"
-          className="max-h-[600px] overflow-y-auto focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 focus-visible:ring-inset"
+          className="max-h-[65vh] overflow-y-auto overscroll-contain focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 focus-visible:ring-inset"
         >
-          {/* Phones: one stacked row per card, so every column and action stays on screen */}
-          <ul className="sm:hidden divide-y divide-black/5 dark:divide-white/5">
-            {filteredCards.slice(0, 150).map((card, idx) => (
-              <li key={`${card.id}-m-${idx}`} className="p-3 flex items-center gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span className="font-serif font-black text-xl">{card.hanzi}</span>
-                    <span className="text-xs font-semibold opacity-80">{card.pinyin}</span>
-                  </div>
-                  <div className="text-xs opacity-80 truncate" dangerouslySetInnerHTML={{ __html: card.ptbr }} />
-                  <div className="flex flex-wrap items-center gap-1 mt-1">
-                    <span className="text-[10px] font-bold opacity-60">{card.level}</span>
-                    {getStateBadge(card.state)}
-                    {isLeech(card) && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
-                        Leech
-                      </span>
-                    )}
-                    {card.suspended && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 font-bold opacity-75">
-                        Suspenso
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setWritingCard(card)}
-                    aria-label={`Praticar escrita de ${card.hanzi}`}
-                    className={`size-11 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                      isLight ? 'bg-black/5 hover:bg-black/10 text-black' : 'bg-white/10 hover:bg-white/20 text-white'
-                    }`}
+          {filteredCards.length === 0 ? (
+            <p className="px-5 py-10 text-center text-sm ink-secondary">Nenhum vocábulo encontrado</p>
+          ) : (
+            <ul className="ledger border-t border-[var(--separator)]">
+              {filteredCards.slice(0, 150).map((card, idx) => {
+                const leech = isLeech(card);
+                return (
+                  <li
+                    key={`${card.id}-${idx}`}
+                    className="relative flex items-center gap-4 pl-5 pr-2 py-2.5 hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors has-[>button:focus-visible]:outline has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:-outline-offset-2 has-[>button:focus-visible]:outline-red-500"
                   >
-                    <PenTool className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSpeakWord(card.hanzi)}
-                    aria-label={`Ouvir pronúncia de ${card.hanzi}`}
-                    className={`size-11 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                      isLight ? 'bg-black/5 hover:bg-black/10 text-black' : 'bg-white/10 hover:bg-white/20 text-white'
-                    }`}
-                  >
-                    <Volume2 className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openPreview(card)}
-                    aria-label={`Visualizar cartão de ${card.hanzi}`}
-                    className={`size-11 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
-                      isLight ? 'bg-black/5 hover:bg-black/10 text-black' : 'bg-white/10 hover:bg-white/20 text-white'
-                    }`}
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <div className="hidden sm:block">
-          <table className="w-full text-left text-xs">
-            <thead
-              className={`font-semibold sticky top-0 backdrop-blur-md z-10 border-b ${
-                isLight
-                  ? 'bg-white/90 text-black/70 border-black/10'
-                  : 'bg-white/10 text-white/70 border-white/10'
-              }`}
-            >
-              <tr>
-                <th className="p-3 w-16">Nível</th>
-                <th className="p-3">Hanzi</th>
-                <th className="p-3">Pinyin</th>
-                <th className="p-3">Significado</th>
-                <th className="p-3 text-center">Estado</th>
-                <th className="p-3 text-right">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-black/5 dark:divide-white/5">
-              {filteredCards.slice(0, 150).map((card, idx) => (
-                <tr
-                  key={`${card.id}-${idx}`}
-                  className={`transition-colors ${
-                    isLight ? 'hover:bg-black/5' : 'hover:bg-white/5'
-                  }`}
-                >
-                  <td className="p-3 font-bold opacity-75">{card.level}</td>
-                  <td className="p-3">
-                    <span className="font-serif font-black text-lg">
+                    <button
+                      type="button"
+                      onClick={() => openPreview(card)}
+                      aria-label={`Abrir ${card.hanzi}, ${card.pinyin}`}
+                      className="absolute inset-0 cursor-pointer focus:outline-none"
+                    />
+                    <span lang="zh-CN" className="hanzi-index text-[1.75rem] min-w-[3.5rem] shrink-0 pointer-events-none">
                       {card.hanzi}
                     </span>
-                    {card.traditional && card.traditional !== card.hanzi && (
-                      <span className="ml-1 text-[11px] opacity-40">
-                        ({card.traditional})
+                    <div className="min-w-0 flex-1 pointer-events-none">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-sm font-medium truncate">{card.pinyin}</span>
+                        {card.traditional && card.traditional !== card.hanzi && (
+                          <span lang="zh-TW" className="text-xs ink-tertiary shrink-0">{card.traditional}</span>
+                        )}
+                      </div>
+                      <div className="text-sm ink-secondary truncate" dangerouslySetInnerHTML={{ __html: card.ptbr }} />
+                    </div>
+                    <div className="hidden sm:flex flex-col items-end text-xs ink-tertiary shrink-0 pointer-events-none">
+                      <span>{card.level}</span>
+                      <span>{STATE_LABELS[card.state]}</span>
+                    </div>
+                    {(leech || card.suspended) && (
+                      <span className="text-xs font-medium shrink-0 pointer-events-none text-amber-700 dark:text-amber-300">
+                        {card.suspended ? 'Suspenso' : 'Leech'}
                       </span>
                     )}
-                  </td>
-                  <td className="p-3 font-semibold opacity-90">{card.pinyin}</td>
-                  <td
-                    className="p-3 max-w-xs truncate opacity-90"
-                    dangerouslySetInnerHTML={{ __html: card.ptbr }}
-                  />
-                  <td className="p-3 text-center">
-                    <div className="flex flex-col items-center gap-0.5">
-                      {getStateBadge(card.state)}
-                      {isLeech(card) && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
-                          Leech
-                        </span>
-                      )}
-                      {card.suspended && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 font-bold opacity-75">
-                          Suspenso
-                        </span>
-                      )}
-                      {card.state > 0 && (
-                        <span className="text-[10px] opacity-50">
-                          S:{card.stability.toFixed(1)} D:{card.difficulty.toFixed(1)}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-3 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => setWritingCard(card)}
-                        className={`p-1.5 rounded-lg transition-all cursor-pointer ${
-                          isLight
-                            ? 'bg-black/5 hover:bg-black/10 text-black'
-                            : 'bg-white/10 hover:bg-white/20 text-white'
-                        }`}
-                        title="Praticar escrita do Hanzi"
-                      >
-                        <PenTool className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSpeakWord(card.hanzi)}
-                        className={`p-1.5 rounded-lg transition-all cursor-pointer ${
-                          isLight
-                            ? 'bg-black/5 hover:bg-black/10 text-black'
-                            : 'bg-white/10 hover:bg-white/20 text-white'
-                        }`}
-                        title="Ouvir pronúncia"
-                      >
-                        <Volume2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => openPreview(card)}
-                        className={`p-1.5 rounded-lg transition-all cursor-pointer ${
-                          isLight
-                            ? 'bg-black/5 hover:bg-black/10 text-black'
-                            : 'bg-white/10 hover:bg-white/20 text-white'
-                        }`}
-                        title="Visualizar Cartão Acrílico"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
+                    <button
+                      type="button"
+                      onClick={() => handleSpeakWord(card.hanzi)}
+                      aria-label={`Ouvir ${card.hanzi}`}
+                      className="relative size-11 shrink-0 rounded-xl flex items-center justify-center ink-secondary hover:text-[var(--text-fg)] hover:bg-black/[0.05] dark:hover:bg-white/[0.08] cursor-pointer transition-colors"
+                    >
+                      <Volume2 aria-hidden="true" className="w-[18px] h-[18px]" />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           {filteredCards.length > 150 && (
-            <div className="p-3 text-center text-xs opacity-60 border-t border-black/5 dark:border-white/5">
-              Exibindo os primeiros 150 vocábulos. Digite na busca acima para filtrar.
-            </div>
+            <p className="px-5 py-3 text-center text-xs ink-tertiary border-t border-[var(--separator)]">
+              Primeiros 150. Refine a busca.
+            </p>
           )}
         </div>
-      </div>
+      </section>
 
       {/* Card Preview Modal */}
       {previewCard && (

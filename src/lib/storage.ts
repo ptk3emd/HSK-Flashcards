@@ -14,6 +14,14 @@ const SETTINGS_STORAGE_KEY = 'hanzi_anki_settings_v2';
 const FSRS_STORAGE_KEY = 'hanzi_anki_fsrs_v2';
 const LOGS_STORAGE_KEY = 'hanzi_anki_review_logs_v2';
 const THEME_STORAGE_KEY = 'hanzi_anki_theme_v2';
+const CONTENT_VERSION_KEY = 'hanzi_anki_content_version';
+
+/**
+ * Bump when the bundled vocabulary text changes. Saved native cards then pick up the new
+ * hanzi, pinyin and translation once, keeping their study history and mnemonics.
+ * 2: Portuguese translations reviewed for every level; pinyin spaced per syllable.
+ */
+const CONTENT_VERSION = 2;
 
 export { loadNativeLevelCards };
 
@@ -72,11 +80,58 @@ export function loadStoredCards(): Card[] | null {
  */
 export async function loadCards(): Promise<Card[]> {
   const stored = loadStoredCards();
-  if (stored) return stored;
+  if (stored) return refreshNativeContent(stored);
 
   const defaults = await loadDefaultCards();
   saveCards(defaults);
+  saveContentVersion();
   return defaults;
+}
+
+function saveContentVersion(): void {
+  try {
+    localStorage.setItem(CONTENT_VERSION_KEY, String(CONTENT_VERSION));
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+/** Updates the text of saved native cards to the bundled vocabulary, once per content version. */
+async function refreshNativeContent(stored: Card[]): Promise<Card[]> {
+  let version = 0;
+  try {
+    version = Number(localStorage.getItem(CONTENT_VERSION_KEY)) || 0;
+  } catch {
+    return stored;
+  }
+  if (version >= CONTENT_VERSION) return stored;
+
+  try {
+    const levels = Array.from(new Set(stored.map((c) => c.level)));
+    const bundled = new Map<string, Card>();
+    for (const level of levels) {
+      const native = await loadNativeLevelCards(level).catch(() => [] as Card[]);
+      native.forEach((c) => bundled.set(c.id, c));
+    }
+    const refreshed = stored.map((card) => {
+      const source = bundled.get(card.id);
+      if (!source || source.level !== card.level) return card;
+      return {
+        ...card,
+        hanzi: source.hanzi,
+        traditional: source.traditional,
+        pinyin: source.pinyin,
+        ptbr: source.ptbr,
+        pos: source.pos,
+      };
+    });
+    saveCards(refreshed);
+    saveContentVersion();
+    return refreshed;
+  } catch (e) {
+    console.error('Failed to refresh card content', e);
+    return stored;
+  }
 }
 
 export function saveCards(cards: Card[]): void {
