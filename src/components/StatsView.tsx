@@ -2,23 +2,9 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Card, FSRSOptions, DeckConfig, ReviewLog } from '../types/card';
 import { loadReviewLogs } from '../lib/storage';
 import { calculateRetrievability } from '../lib/fsrs';
+import { LEVEL_NUMERALS } from '../data/defaultDecks';
 import { RetentionCalibration } from './RetentionCalibration';
-import {
-  BarChart3,
-  TrendingUp,
-  Brain,
-  Calendar,
-  Zap,
-  Award,
-  Layers,
-  PieChart,
-  Activity,
-  CheckCircle2,
-  Clock,
-  RotateCcw,
-  Sparkles,
-  ChevronDown,
-} from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 interface StatsViewProps {
   cards: Card[];
@@ -350,53 +336,84 @@ export const StatsView: React.FC<StatsViewProps> = ({
     }));
   }, [allLogs]);
 
-  return (
-    <div className="w-full max-w-4xl mx-auto space-y-7 animate-in fade-in duration-200">
-      {/* Header with Title and Period Filter */}
-      <div
-        className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
-        }`}
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3.5">
-            <div className="p-3 rounded-2xl bg-red-600/10 text-red-600 dark:bg-red-500/20 dark:text-red-400">
-              <BarChart3 className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight">Estatísticas Gerais</h1>
-              <p className={`text-xs mt-0.5 ${'text-black/60 dark:text-white/60'}`}>
-                Métricas de retenção, curva de memória FSRS e ritmo de revisões
-              </p>
-            </div>
-          </div>
+  const tabButton = (active: boolean) =>
+    `min-h-11 sm:min-h-9 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+      active
+        ? 'bg-black/[0.07] dark:bg-white/[0.12] text-[var(--text-fg)]'
+        : 'ink-secondary hover:text-[var(--text-fg)]'
+    }`;
+  const decimal = (value: string | number) => String(value).replace('.', ',');
 
-          {/* Time range selector tabs */}
-          <div
-            role="group"
-            aria-label="Período"
-            className={`inline-flex p-1 rounded-2xl border ${
-              'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
-            }`}
-          >
+  const summaryRows = [
+    {
+      label: 'Retenção real',
+      detail: `alvo ${Math.round(targetRetention * 100)}% · ${positiveReviews} de ${totalReviews} acertos`,
+      value: `${trueRetentionRate}%`,
+    },
+    { label: 'Estabilidade média', detail: `máx. ${decimal(maxStability)} d`, value: `${decimal(avgStability)} d` },
+    { label: 'Sequência', detail: `recorde ${maxStreak} d`, value: `${currentStreak} d` },
+    { label: 'Revisões', detail: `${daysStudiedCount} dias de estudo`, value: String(totalReviews) },
+  ];
+
+  return (
+    <div className="w-full max-w-3xl mx-auto space-y-4 animate-in fade-in duration-200">
+      <div className="flex flex-wrap items-end justify-between gap-3 px-1">
+        <h1 className="font-semibold text-2xl">Estatísticas</h1>
+        <div role="group" aria-label="Período" className="sheet !rounded-xl p-1 flex gap-0.5">
+          {(
+            [
+              { id: 'all', label: 'Tudo' },
+              { id: '30d', label: '30 d' },
+              { id: '7d', label: '7 d' },
+              { id: 'today', label: 'Hoje' },
+            ] as const
+          ).map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setTimeRange(tab.id)}
+              aria-pressed={timeRange === tab.id}
+              className={tabButton(timeRange === tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <section aria-labelledby="stats-summary" className="sheet overflow-hidden">
+        <h2 id="stats-summary" className="sr-only">Resumo</h2>
+        <ul className="ledger">
+          {summaryRows.map(row => (
+            <li key={row.label} className="flex items-center gap-4 px-5 py-3.5">
+              <span className="flex-1 min-w-0">
+                <span className="block font-medium">{row.label}</span>
+                <span className="block text-xs ink-tertiary tabular truncate">{row.detail}</span>
+              </span>
+              <span className="tabular text-2xl font-semibold">{row.value}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="stats-retention" className="sheet p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+          <h2 id="stats-retention" className="text-base font-semibold">Retenção</h2>
+          <div role="group" aria-label="Visualização" className="grid grid-cols-4 sm:flex gap-0.5 -mx-1 sm:mx-0">
             {(
               [
-                { id: 'all', label: 'Tudo' },
-                { id: '30d', label: '30 dias' },
-                { id: '7d', label: '7 dias' },
-                { id: 'today', label: 'Hoje' },
+                { id: 'curve', label: 'Curva' },
+                { id: 'buttons', label: 'Botões' },
+                { id: 'history', label: 'Histórico' },
+                { id: 'calibration', label: 'Calibração' },
               ] as const
             ).map(tab => (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setTimeRange(tab.id)}
-                aria-pressed={timeRange === tab.id}
-                className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  timeRange === tab.id
-                    ? 'bg-red-600 text-white shadow-sm'
-                    : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
-                }`}
+                onClick={() => setRetentionTab(tab.id)}
+                aria-pressed={retentionTab === tab.id}
+                className={`${tabButton(retentionTab === tab.id)} !px-2 sm:!px-3`}
               >
                 {tab.label}
               </button>
@@ -404,186 +421,25 @@ export const StatsView: React.FC<StatsViewProps> = ({
           </div>
         </div>
 
-        {/* Top Key Metrics Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-6">
-          {/* 1. Taxa de Retenção Real */}
-          <div
-            className={`rounded-2xl p-4 border transition-all ${
-              'bg-emerald-500/5 border-emerald-600/20 shadow-sm dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:shadow-none'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold opacity-70">Taxa de Retenção</span>
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
-              {trueRetentionRate}%
-            </div>
-            <div className="text-xs opacity-60 mt-1 font-medium">
-              Alvo: {Math.round(targetRetention * 100)}% ({positiveReviews}/{totalReviews || 0} acertos)
-            </div>
-          </div>
-
-          {/* 2. Estabilidade Média */}
-          <div
-            className={`rounded-2xl p-4 border transition-all ${
-              'bg-blue-500/5 border-blue-600/20 shadow-sm dark:bg-blue-500/10 dark:border-blue-500/20 dark:shadow-none'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold opacity-70">Estabilidade (S)</span>
-              <Clock className="w-3.5 h-3.5 text-blue-500" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400 mt-1">
-              {avgStability} <span className="text-xs font-bold opacity-60">dias</span>
-            </div>
-            <div className="text-xs opacity-60 mt-1 font-medium">
-              Máx: {maxStability} dias (retenção 90%)
-            </div>
-          </div>
-
-          {/* 3. Sequência de Dias (Streak) */}
-          <div
-            className={`rounded-2xl p-4 border transition-all ${
-              'bg-amber-500/5 border-amber-600/20 shadow-sm dark:bg-amber-500/10 dark:border-amber-500/20 dark:shadow-none'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold opacity-70">Sequência Ativa</span>
-              <Zap className="w-3.5 h-3.5 text-amber-500" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-black text-amber-600 dark:text-amber-400 mt-1">
-              {currentStreak} <span className="text-xs font-bold opacity-60">dias</span>
-            </div>
-            <div className="text-xs opacity-60 mt-1 font-medium">
-              Recorde: {maxStreak} dias consecutivos
-            </div>
-          </div>
-
-          {/* 4. Total de Revisões */}
-          <div
-            className={`rounded-2xl p-4 border transition-all ${
-              'bg-black/[0.03] border-black/10 shadow-sm dark:bg-white/[0.04] dark:border-white/15 dark:shadow-none'
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold opacity-70">Total de Revisões</span>
-              <RotateCcw className="w-3.5 h-3.5 opacity-60" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-black mt-1">
-              {totalReviews}
-            </div>
-            <div className="text-xs opacity-60 mt-1 font-medium">
-              {daysStudiedCount} dias estudados no total
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* SECTION: Gráfico de Retenção Interativo */}
-      <div
-        className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
-        }`}
-      >
-        {/* Navigation Tabs for Retention Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-          <div>
-            <div className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-red-500" />
-              <h2 className="text-lg font-bold">Gráfico de Retenção & Curva FSRS</h2>
-            </div>
-            <p className={`text-xs mt-0.5 ${'text-black/60 dark:text-white/60'}`}>
-              Decaimento teórico da memória e taxa real de acertos
-            </p>
-          </div>
-
-          <div
-            role="group"
-            aria-label="Visualização"
-            className={`grid grid-cols-2 sm:inline-flex sm:flex-wrap gap-1 p-1 rounded-xl border text-xs ${
-              'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
-            }`}
-          >
-            <button
-              type="button"
-              onClick={() => setRetentionTab('curve')}
-              aria-pressed={retentionTab === 'curve'}
-              className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                retentionTab === 'curve'
-                  ? 'bg-red-600 text-white shadow-sm'
-                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
-              }`}
-            >
-              Curva de Esquecimento
-            </button>
-            <button
-              type="button"
-              onClick={() => setRetentionTab('buttons')}
-              aria-pressed={retentionTab === 'buttons'}
-              className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                retentionTab === 'buttons'
-                  ? 'bg-red-600 text-white shadow-sm'
-                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
-              }`}
-            >
-              Botões de Resposta
-            </button>
-            <button
-              type="button"
-              onClick={() => setRetentionTab('history')}
-              aria-pressed={retentionTab === 'history'}
-              className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                retentionTab === 'history'
-                  ? 'bg-red-600 text-white shadow-sm'
-                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
-              }`}
-            >
-              Histórico Diário
-            </button>
-            <button
-              type="button"
-              onClick={() => setRetentionTab('calibration')}
-              aria-pressed={retentionTab === 'calibration'}
-              className={`min-h-11 sm:min-h-9 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                retentionTab === 'calibration'
-                  ? 'bg-red-600 text-white shadow-sm'
-                  : 'text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white'
-              }`}
-            >
-              Calibração
-            </button>
-          </div>
-        </div>
-
         {/* Tab 1: FSRS Forgetting Curve */}
         {retentionTab === 'curve' && (
           <div className="space-y-5">
-            {/* Legend & Summary Info */}
-            <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-1 bg-red-500 rounded-full" />
-                  <span className="font-semibold">Curva de Retenção R(t)</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-3 h-0.5 border-t border-dashed border-emerald-500" />
-                  <span className="font-semibold opacity-80">
-                    Alvo FSRS ({Math.round(targetRetention * 100)}%)
-                  </span>
-                </div>
-              </div>
-              <div className={`text-xs font-medium ${'text-black/60 dark:text-white/60'}`}>
-                Estabilidade calculada: <strong>{avgStability} dias</strong>
-              </div>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ink-secondary">
+              <span className="flex items-center gap-1.5">
+                <span className="w-3 h-0.5 bg-red-500 rounded-full" aria-hidden="true" />
+                R(t)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-3 border-t border-dashed border-emerald-500" aria-hidden="true" />
+                alvo {Math.round(targetRetention * 100)}%
+              </span>
+              <span className="ml-auto tabular">S = {decimal(avgStability)} d</span>
             </div>
 
             {/* SVG Interactive Chart */}
             <div
               ref={chartBoxRef}
-              className={`relative rounded-2xl p-4 border ${
-                'bg-black/[0.02] border-black/10 dark:bg-black/30 dark:border-white/10'
-              }`}
+              className="relative"
             >
               <p id="retention-curve-summary" className="sr-only">
                 {`Curva de retenção estimada para estabilidade de ${avgStability} dias: ${forgettingCurvePoints.points
@@ -737,449 +593,200 @@ export const StatsView: React.FC<StatsViewProps> = ({
               {hoveredPoint && (
                 <div
                   aria-hidden="true"
-                  className={`absolute top-4 right-4 px-3 py-1.5 rounded-xl border text-xs shadow-md ${
-                    'bg-white border-black/10 text-black dark:bg-zinc-900 dark:border-white/20 dark:text-white'
-                  }`}
+                  className="absolute top-0 right-0 px-2.5 py-1 rounded-lg text-xs tabular bg-white dark:bg-zinc-900 shadow-sm"
                 >
-                  <span className="font-bold">Dia {hoveredPoint.day}:</span>{' '}
-                  <span className="text-red-500 font-extrabold">
-                    {Math.round(hoveredPoint.retention * 100)}% de retenção
+                  <span className="ink-secondary">Dia {hoveredPoint.day}</span>{' '}
+                  <span className="font-semibold text-red-700 dark:text-red-300">
+                    {Math.round(hoveredPoint.retention * 100)}%
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Explanation breakdown */}
-            <div
-              className={`p-4 rounded-2xl border text-xs leading-relaxed ${
-                'bg-black/[0.02] border-black/5 text-black/70 dark:bg-black/20 dark:border-white/5 dark:text-white/70'
-              }`}
-            >
-              A retenção estimada é calculada com base na equação oficial do algoritmo FSRS:{' '}
-              <code className="font-mono text-red-500 font-bold">R(t) = (1 + 19/81 * t/S)^(-0.5)</code>.
-              Ela estima a probabilidade de você reconhecer o ideograma antes da próxima revisão.
-            </div>
+            <p className="text-xs ink-tertiary">
+              <code className="font-mono">R(t) = (1 + 19/81 · t/S)^−0.5</code>
+            </p>
           </div>
         )}
 
         {/* Tab 2: Answer Buttons Distribution */}
         {retentionTab === 'buttons' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {/* De novo */}
-              <div
-                className={`p-4 rounded-2xl border ${
-                  'bg-red-500/5 border-red-500/20 dark:bg-red-500/10 dark:border-red-500/20'
-                }`}
-              >
-                <div className="text-xs font-semibold text-red-600 dark:text-red-400">1. De novo</div>
-                <div className="text-2xl font-black text-red-600 dark:text-red-400 mt-1">
-                  {buttonCounts[1]}
-                </div>
-                <div className="text-xs opacity-60 mt-0.5">
-                  {totalReviews > 0 ? Math.round((buttonCounts[1] / totalReviews) * 100) : 0}% das respostas
-                </div>
-              </div>
-
-              {/* Difícil */}
-              <div
-                className={`p-4 rounded-2xl border ${
-                  'bg-amber-500/5 border-amber-500/20 dark:bg-amber-500/10 dark:border-amber-500/20'
-                }`}
-              >
-                <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">2. Difícil</div>
-                <div className="text-2xl font-black text-amber-600 dark:text-amber-400 mt-1">
-                  {buttonCounts[2]}
-                </div>
-                <div className="text-xs opacity-60 mt-0.5">
-                  {totalReviews > 0 ? Math.round((buttonCounts[2] / totalReviews) * 100) : 0}% das respostas
-                </div>
-              </div>
-
-              {/* Bom */}
-              <div
-                className={`p-4 rounded-2xl border ${
-                  'bg-emerald-500/5 border-emerald-500/20 dark:bg-emerald-500/10 dark:border-emerald-500/20'
-                }`}
-              >
-                <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">3. Bom</div>
-                <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
-                  {buttonCounts[3]}
-                </div>
-                <div className="text-xs opacity-60 mt-0.5">
-                  {totalReviews > 0 ? Math.round((buttonCounts[3] / totalReviews) * 100) : 0}% das respostas
-                </div>
-              </div>
-
-              {/* Fácil */}
-              <div
-                className={`p-4 rounded-2xl border ${
-                  'bg-blue-500/5 border-blue-500/20 dark:bg-blue-500/10 dark:border-blue-500/20'
-                }`}
-              >
-                <div className="text-xs font-semibold text-blue-600 dark:text-blue-400">4. Fácil</div>
-                <div className="text-2xl font-black text-blue-600 dark:text-blue-400 mt-1">
-                  {buttonCounts[4]}
-                </div>
-                <div className="text-xs opacity-60 mt-0.5">
-                  {totalReviews > 0 ? Math.round((buttonCounts[4] / totalReviews) * 100) : 0}% das respostas
-                </div>
-              </div>
-            </div>
-
-            {/* Stacked Proportional Bar */}
+          <div className="space-y-4">
             {totalReviews > 0 && (
-              <div>
-                <div className="text-xs font-semibold mb-2 opacity-80">Proporção dos Botões de Avaliação</div>
-                <div
-                  className={`w-full h-4 rounded-full overflow-hidden flex border ${
-                    'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
-                  }`}
-                >
-                  <div
-                    style={{ width: `${(buttonCounts[1] / totalReviews) * 100}%` }}
-                    className="bg-red-500 h-full transition-all"
-                    title={`De novo: ${buttonCounts[1]}`}
-                  />
-                  <div
-                    style={{ width: `${(buttonCounts[2] / totalReviews) * 100}%` }}
-                    className="bg-amber-500 h-full transition-all"
-                    title={`Difícil: ${buttonCounts[2]}`}
-                  />
-                  <div
-                    style={{ width: `${(buttonCounts[3] / totalReviews) * 100}%` }}
-                    className="bg-emerald-500 h-full transition-all"
-                    title={`Bom: ${buttonCounts[3]}`}
-                  />
-                  <div
-                    style={{ width: `${(buttonCounts[4] / totalReviews) * 100}%` }}
-                    className="bg-blue-500 h-full transition-all"
-                    title={`Fácil: ${buttonCounts[4]}`}
-                  />
-                </div>
+              <div className="w-full h-1.5 rounded-full overflow-hidden flex bg-black/[0.06] dark:bg-white/10" aria-hidden="true">
+                <div style={{ width: `${(buttonCounts[1] / totalReviews) * 100}%` }} className="bg-red-500 h-full" />
+                <div style={{ width: `${(buttonCounts[2] / totalReviews) * 100}%` }} className="bg-amber-500 h-full" />
+                <div style={{ width: `${(buttonCounts[3] / totalReviews) * 100}%` }} className="bg-emerald-500 h-full" />
+                <div style={{ width: `${(buttonCounts[4] / totalReviews) * 100}%` }} className="bg-blue-500 h-full" />
               </div>
             )}
-
-            {/* Retention segmented by maturity */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <div
-                className={`p-4 rounded-2xl border ${
-                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                <span className="text-xs opacity-60 font-medium">Retenção em Cartões Jovens (&lt; 21d)</span>
-                <div className="text-xl font-bold mt-1">
-                  {youngRetention !== null ? `${youngRetention}%` : 'Sem dados'}
-                </div>
-                <p className="text-xs opacity-50 mt-0.5">Fase inicial de consolidação na memória</p>
-              </div>
-
-              <div
-                className={`p-4 rounded-2xl border ${
-                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                <span className="text-xs opacity-60 font-medium">Retenção em Cartões Maduros (&ge; 21d)</span>
-                <div className="text-xl font-bold mt-1">
-                  {matureRetention !== null ? `${matureRetention}%` : 'Sem dados'}
-                </div>
-                <p className="text-xs opacity-50 mt-0.5">Memória de longo prazo consolidada</p>
-              </div>
-            </div>
+            <ul className="ledger -mx-5 sm:-mx-6 border-y border-[var(--separator)]">
+              {(
+                [
+                  { grade: 1, label: 'De novo', tone: 'text-red-700 dark:text-red-300' },
+                  { grade: 2, label: 'Difícil', tone: 'text-amber-700 dark:text-amber-300' },
+                  { grade: 3, label: 'Bom', tone: 'text-emerald-700 dark:text-emerald-300' },
+                  { grade: 4, label: 'Fácil', tone: 'text-blue-700 dark:text-blue-300' },
+                ] as const
+              ).map(row => (
+                <li key={row.grade} className="flex items-center gap-4 px-5 sm:px-6 py-3">
+                  <span className="tabular w-4 ink-tertiary text-sm">{row.grade}</span>
+                  <span className="flex-1 font-medium">{row.label}</span>
+                  <span className="tabular text-sm ink-tertiary w-12 text-right">
+                    {totalReviews > 0 ? Math.round((buttonCounts[row.grade] / totalReviews) * 100) : 0}%
+                  </span>
+                  <span className={`tabular text-lg font-semibold w-14 text-right ${row.tone}`}>
+                    {buttonCounts[row.grade]}
+                  </span>
+                </li>
+              ))}
+              <li className="flex items-center gap-4 px-5 sm:px-6 py-3">
+                <span className="flex-1 min-w-0">
+                  <span className="block font-medium">Retenção em jovens</span>
+                  <span className="block text-xs ink-tertiary">intervalo &lt; 21 d</span>
+                </span>
+                <span className="tabular text-lg font-semibold">{youngRetention !== null ? `${youngRetention}%` : '—'}</span>
+              </li>
+              <li className="flex items-center gap-4 px-5 sm:px-6 py-3">
+                <span className="flex-1 min-w-0">
+                  <span className="block font-medium">Retenção em maduros</span>
+                  <span className="block text-xs ink-tertiary">intervalo ≥ 21 d</span>
+                </span>
+                <span className="tabular text-lg font-semibold">{matureRetention !== null ? `${matureRetention}%` : '—'}</span>
+              </li>
+            </ul>
           </div>
         )}
 
         {/* Tab 3: Daily Retention History */}
         {retentionTab === 'history' && (
-          <div className="space-y-4">
-            {dailyHistory.length === 0 ? (
-              <div
-                className={`text-center py-10 rounded-2xl border text-xs opacity-60 ${
-                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                Ainda não há histórico diário de revisões gravado. Complete uma sessão de estudo para visualizar o gráfico.
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className="text-xs font-semibold opacity-80">
-                  Taxa de Acertos nos Últimos Dias Estudados
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-7 gap-2">
-                  {dailyHistory.map(item => (
-                    <div
-                      key={item.day}
-                      className={`p-3 rounded-2xl border text-center ${
-                        'bg-black/[0.02] border-black/10 dark:bg-black/30 dark:border-white/10'
-                      }`}
-                    >
-                      <div className="text-xs opacity-50 font-semibold">{item.day}</div>
-                      <div className="text-base font-black text-emerald-600 dark:text-emerald-400 mt-1">
-                        {item.rate}%
-                      </div>
-                      <div className="text-xs opacity-50 mt-0.5">
-                        {item.positive}/{item.total} rev.
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          dailyHistory.length === 0 ? (
+            <p className="py-10 text-center text-sm ink-secondary">Sem revisões registradas</p>
+          ) : (
+            <ul className="ledger -mx-5 sm:-mx-6 border-y border-[var(--separator)]">
+              {dailyHistory.map(item => (
+                <li key={item.day} className="flex items-center gap-4 px-5 sm:px-6 py-2.5 text-sm">
+                  <span className="w-20 shrink-0 ink-secondary tabular">{item.day}</span>
+                  <span className="flex-1 h-1.5 rounded-full bg-black/[0.06] dark:bg-white/10" aria-hidden="true">
+                    <span style={{ width: `${item.rate}%` }} className="block h-full rounded-full bg-emerald-500" />
+                  </span>
+                  <span className="tabular text-xs ink-tertiary w-14 text-right">{item.positive}/{item.total}</span>
+                  <span className="tabular font-semibold w-12 text-right text-emerald-700 dark:text-emerald-300">{item.rate}%</span>
+                </li>
+              ))}
+            </ul>
+          )
         )}
 
         {/* Tab 4: Calibration of predicted vs real recall */}
         {retentionTab === 'calibration' && (
           <RetentionCalibration logs={filteredLogs} />
         )}
-      </div>
+      </section>
 
-      {/* SECTION: Estatísticas Gerais & Maturidade dos Cartões */}
-      <div
-        className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
-        }`}
-      >
-        <div className="flex items-center gap-2 mb-4">
-          <Layers className="w-5 h-5 text-red-500" />
-          <h2 className="text-lg font-bold">Distribuição & Maturidade do Baralho</h2>
-        </div>
-
-        {/* Maturity Progress Bar */}
-        {totalCards > 0 && (
-          <div className="space-y-3">
-            <div
-              className={`w-full h-4 rounded-full overflow-hidden flex border ${
-                'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
-              }`}
-            >
-              <div
-                style={{ width: `${(newCount / totalCards) * 100}%` }}
-                className="bg-blue-500 h-full transition-all"
-                title={`Novos: ${newCount}`}
-              />
-              <div
-                style={{ width: `${(learningCount / totalCards) * 100}%` }}
-                className="bg-red-500 h-full transition-all"
-                title={`Aprendendo: ${learningCount}`}
-              />
-              <div
-                style={{ width: `${(youngCount / totalCards) * 100}%` }}
-                className="bg-amber-500 h-full transition-all"
-                title={`Jovens: ${youngCount}`}
-              />
-              <div
-                style={{ width: `${(matureCount / totalCards) * 100}%` }}
-                className="bg-emerald-500 h-full transition-all"
-                title={`Maduros: ${matureCount}`}
-              />
+      <section aria-labelledby="stats-maturity" className="sheet overflow-hidden">
+        <div className="px-5 pt-5 pb-4">
+          <h2 id="stats-maturity" className="text-base font-semibold">Maturidade</h2>
+          {totalCards > 0 && (
+            <div className="mt-4 w-full h-1.5 rounded-full overflow-hidden flex bg-black/[0.06] dark:bg-white/10" aria-hidden="true">
+              <div style={{ width: `${(newCount / totalCards) * 100}%` }} className="bg-blue-500 h-full" />
+              <div style={{ width: `${(learningCount / totalCards) * 100}%` }} className="bg-red-500 h-full" />
+              <div style={{ width: `${(youngCount / totalCards) * 100}%` }} className="bg-amber-500 h-full" />
+              <div style={{ width: `${(matureCount / totalCards) * 100}%` }} className="bg-emerald-500 h-full" />
             </div>
-
-            {/* Counts Legend */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
-              <div
-                className={`p-3 rounded-2xl border ${
-                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-                  <span className="opacity-70 font-medium">Novos</span>
-                </div>
-                <div className="text-lg font-black mt-1">{newCount}</div>
-                <div className="text-xs opacity-40">Não iniciados</div>
-              </div>
-
-              <div
-                className={`p-3 rounded-2xl border ${
-                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                  <span className="opacity-70 font-medium">Aprendendo</span>
-                </div>
-                <div className="text-lg font-black mt-1">{learningCount}</div>
-                <div className="text-xs opacity-40">Em assimilação</div>
-              </div>
-
-              <div
-                className={`p-3 rounded-2xl border ${
-                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                  <span className="opacity-70 font-medium">Jovens</span>
-                </div>
-                <div className="text-lg font-black mt-1">{youngCount}</div>
-                <div className="text-xs opacity-40">&lt; 21 dias de intervalo</div>
-              </div>
-
-              <div
-                className={`p-3 rounded-2xl border ${
-                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                  <span className="opacity-70 font-medium">Maduros</span>
-                </div>
-                <div className="text-lg font-black mt-1">{matureCount}</div>
-                <div className="text-xs opacity-40">&ge; 21 dias ({matureRate}%)</div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Secondary General Stats Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-black/5 dark:border-white/10">
-          <div>
-            <div className="text-xs opacity-60 font-semibold">Total no Baralho</div>
-            <div className="text-xl font-bold mt-0.5">{totalCards} palavras</div>
-          </div>
-          <div>
-            <div className="text-xs opacity-60 font-semibold">Total Estudadas</div>
-            <div className="text-xl font-bold mt-0.5">{totalStudied} palavras</div>
-          </div>
-          <div>
-            <div className="text-xs opacity-60 font-semibold">Dificuldade Média</div>
-            <div className="text-xl font-bold mt-0.5">{avgDifficulty} / 10</div>
-          </div>
-          <div>
-            <div className="text-xs opacity-60 font-semibold">Taxa de Maturidade</div>
-            <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-              {matureRate}%
-            </div>
-          </div>
+          )}
         </div>
-      </div>
+        <ul className="ledger border-t border-[var(--separator)]">
+          {[
+            { label: 'Novos', detail: 'não iniciados', value: newCount, tone: 'text-blue-700 dark:text-blue-300' },
+            { label: 'Aprendendo', detail: 'em assimilação', value: learningCount, tone: 'text-red-700 dark:text-red-300' },
+            { label: 'Jovens', detail: 'intervalo < 21 d', value: youngCount, tone: 'text-amber-700 dark:text-amber-300' },
+            { label: 'Maduros', detail: `intervalo ≥ 21 d · ${matureRate}%`, value: matureCount, tone: 'text-emerald-700 dark:text-emerald-300' },
+            { label: 'Estudadas', detail: `de ${totalCards} palavras`, value: totalStudied, tone: '' },
+            { label: 'Dificuldade média', detail: 'escala de 1 a 10', value: decimal(avgDifficulty), tone: '' },
+          ].map(row => (
+            <li key={row.label} className="flex items-center gap-4 px-5 py-3">
+              <span className="flex-1 min-w-0">
+                <span className="block font-medium">{row.label}</span>
+                <span className="block text-xs ink-tertiary">{row.detail}</span>
+              </span>
+              <span className={`tabular text-lg font-semibold ${row.tone}`}>{row.value}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      {/* SECTION: Previsão de Revisões Futuras (Forecast) */}
-      <div
-        className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
-        }`}
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-4">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-red-500" />
-            <h2 className="text-lg font-bold">Carga de Revisões Futuras</h2>
-          </div>
-          <span className={`text-xs ${'text-black/60 dark:text-white/55'}`}>
-            Previsão baseada no agendamento FSRS
-          </span>
-        </div>
-
-        {/* Forecast Column Chart */}
-        <div className="grid grid-cols-3 sm:grid-cols-7 gap-2.5">
+      <section aria-labelledby="stats-forecast" className="sheet overflow-hidden">
+        <h2 id="stats-forecast" className="px-5 pt-5 pb-3 text-base font-semibold">Próximas revisões</h2>
+        <ul className="ledger border-t border-[var(--separator)]">
           {forecast.map(item => {
             const maxForecast = Math.max(...forecast.map(f => f.count), 1);
-            const heightPercent = Math.max(12, Math.round((item.count / maxForecast) * 100));
-
             return (
-              <div
-                key={item.label}
-                className={`flex flex-col items-center justify-end p-3 rounded-2xl border transition-all min-h-[140px] ${
-                  item.highlight
-                    ? 'bg-red-500/10 border-red-500/30'
-                    : 'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                <div className="text-xs font-black text-red-500 mb-2">{item.count}</div>
-                {/* Visual bar */}
-                <div className="w-full bg-black/5 dark:bg-white/5 rounded-lg flex items-end h-16 p-1">
-                  <div
-                    style={{ height: `${heightPercent}%` }}
-                    className={`w-full rounded-md transition-all ${
-                      item.highlight ? 'bg-red-600' : 'bg-red-500/50 dark:bg-red-500/40'
-                    }`}
+              <li key={item.label} className="flex items-center gap-4 px-5 py-2.5 text-sm">
+                <span className={`w-16 shrink-0 ${item.highlight ? 'font-semibold' : 'ink-secondary'}`}>{item.label}</span>
+                <span className="flex-1 h-1.5 rounded-full bg-black/[0.06] dark:bg-white/10" aria-hidden="true">
+                  <span
+                    style={{ width: `${(item.count / maxForecast) * 100}%` }}
+                    className={`block h-full rounded-full ${item.highlight ? 'bg-red-600 dark:bg-red-500' : 'bg-red-600/40 dark:bg-red-400/50'}`}
                   />
-                </div>
-                <div className="text-xs font-bold opacity-70 mt-2 text-center">{item.label}</div>
-              </div>
+                </span>
+                <span className={`tabular w-12 text-right font-semibold ${item.highlight ? 'text-red-700 dark:text-red-300' : ''}`}>
+                  {item.count}
+                </span>
+              </li>
             );
           })}
-        </div>
-      </div>
+        </ul>
+      </section>
 
-      {/* SECTION: Domínio por Nível HSK */}
       {hskBreakdown.length > 0 && (
-        <div
-          className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-            'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
-          }`}
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <Award className="w-5 h-5 text-red-500" />
-            <h2 className="text-lg font-bold">Domínio de Vocabulário por Nível HSK</h2>
-          </div>
-
-          <div className="space-y-3">
+        <section aria-labelledby="stats-levels" className="sheet overflow-hidden">
+          <h2 id="stats-levels" className="px-5 pt-5 pb-3 text-base font-semibold">Domínio por nível</h2>
+          <ul className="ledger border-t border-[var(--separator)]">
             {hskBreakdown.map(lvl => (
-              <div
-                key={lvl.level}
-                className={`p-3.5 rounded-2xl border transition-all ${
-                  'bg-black/[0.02] border-black/5 dark:bg-black/20 dark:border-white/5'
-                }`}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-sm whitespace-nowrap">{lvl.level}</span>
-                    <span className="opacity-60">
-                      ({lvl.studied} de {lvl.total} estudadas)
+              <li key={lvl.level} className="flex items-center gap-4 px-5 py-3">
+                <span lang="zh-CN" aria-hidden="true" className="hanzi-index text-2xl w-10 text-center shrink-0 ink-tertiary">
+                  {LEVEL_NUMERALS[lvl.level] ?? '·'}
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="flex items-baseline justify-between gap-2">
+                    <span className="font-medium">{lvl.level}</span>
+                    <span className="text-xs ink-tertiary tabular">
+                      {lvl.studied} de {lvl.total} · {lvl.mature} maduras
                     </span>
-                  </div>
-                  <div className="flex items-center gap-3 font-semibold">
-                    <span className="opacity-60">Maduras: {lvl.mature}</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                      {lvl.masteryRate}% consolidado
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  className={`w-full h-2.5 rounded-full overflow-hidden flex border ${
-                    'bg-black/5 border-black/10 dark:bg-black/40 dark:border-white/10'
-                  }`}
-                >
-                  <div
-                    style={{ width: `${lvl.masteryRate}%` }}
-                    className="bg-emerald-500 h-full transition-all"
-                  />
-                  <div
-                    style={{ width: `${Math.max(0, lvl.studiedRate - lvl.masteryRate)}%` }}
-                    className="bg-amber-500 h-full transition-all"
-                  />
-                </div>
-              </div>
+                  </span>
+                  <span className="mt-2 flex h-1 rounded-full overflow-hidden bg-black/[0.06] dark:bg-white/10" aria-hidden="true">
+                    <span style={{ width: `${lvl.masteryRate}%` }} className="bg-emerald-500 h-full" />
+                    <span style={{ width: `${Math.max(0, lvl.studiedRate - lvl.masteryRate)}%` }} className="bg-amber-500 h-full" />
+                  </span>
+                </span>
+                <span className="tabular w-12 text-right font-semibold text-emerald-700 dark:text-emerald-300">
+                  {lvl.masteryRate}%
+                </span>
+              </li>
             ))}
-          </div>
-        </div>
+          </ul>
+        </section>
       )}
 
-      {/* Explicação da Repetição Espaçada FSRS */}
-      <div
-        className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          'bg-white/80 border-black/5 shadow-sm text-ink dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
-        }`}
-      >
-        <details className="group">
-        <summary className="flex items-center gap-2 font-bold cursor-pointer list-none min-h-11 [&::-webkit-details-marker]:hidden">
-          <Brain className="w-5 h-5 text-red-500" aria-hidden="true" />
-          <h2 className="text-base font-bold">Como funciona a repetição espaçada</h2>
-          <ChevronDown className="w-4 h-4 ml-auto opacity-60 transition-transform group-open:rotate-180" aria-hidden="true" />
+      <details className="sheet group px-5 py-1">
+        <summary className="flex items-center gap-2 font-medium cursor-pointer list-none min-h-12 [&::-webkit-details-marker]:hidden">
+          <h2 className="text-base font-semibold">Como o FSRS agenda</h2>
+          <ChevronDown className="w-4 h-4 ml-auto ink-tertiary transition-transform group-open:rotate-180" aria-hidden="true" />
         </summary>
-        <p className={`text-xs leading-relaxed mt-2 ${'text-black/70 dark:text-white/70'}`}>
-          O agendador de repetição calcula matematicamente a curva de retenção de memória de cada ideograma chinês com base em:
-        </p>
-        <ul className={`text-xs space-y-1.5 list-disc pl-5 mt-2 ${'text-black/80 dark:text-white/80'}`}>
-          <li><strong>Estabilidade (S):</strong> Duração estimada em dias antes de você esquecer o Hanzi.</li>
-          <li><strong>Dificuldade (D):</strong> Complexidade intrínseca de cada caractere (escala de 1 a 10).</li>
-          <li><strong>Recuperabilidade (R):</strong> Probabilidade de lembrança instantânea durante o teste.</li>
-        </ul>
-        </details>
-      </div>
+        <dl className="ledger text-sm pb-3">
+          {[
+            ['Estabilidade (S)', 'dias até a lembrança cair para 90%'],
+            ['Dificuldade (D)', 'complexidade da palavra, de 1 a 10'],
+            ['Recuperabilidade (R)', 'chance de lembrar agora'],
+          ].map(([term, def]) => (
+            <div key={term} className="py-2.5">
+              <dt className="font-medium">{term}</dt>
+              <dd className="ink-secondary">{def}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
     </div>
   );
 };

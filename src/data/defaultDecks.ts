@@ -10,6 +10,17 @@ export const ALL_HSK_LEVELS = [
   'HSK 7-9',
 ] as const;
 
+/** Chinese numeral used as the ledger index for each level. */
+export const LEVEL_NUMERALS: Record<string, string> = {
+  'HSK 1': '一',
+  'HSK 2': '二',
+  'HSK 3': '三',
+  'HSK 4': '四',
+  'HSK 5': '五',
+  'HSK 6': '六',
+  'HSK 7-9': '七–九',
+};
+
 export type HskLevelName = typeof ALL_HSK_LEVELS[number];
 
 export const HSK_LEVEL_INFO: Record<HskLevelName, { count: number; desc: string }> = {

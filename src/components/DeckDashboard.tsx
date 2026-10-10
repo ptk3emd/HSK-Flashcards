@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Card, DeckConfig } from '../types/card';
-import { ALL_HSK_LEVELS, HSK_LEVEL_INFO, loadNativeLevelCards } from '../data/defaultDecks';
-import { Play, Check, Plus, Loader2 } from 'lucide-react';
+import { ALL_HSK_LEVELS, HSK_LEVEL_INFO, LEVEL_NUMERALS, loadNativeLevelCards } from '../data/defaultDecks';
+import { Play, Loader2 } from 'lucide-react';
 
 interface DeckDashboardProps {
   cards: Card[];
@@ -102,63 +102,40 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6 animate-in fade-in duration-200">
-      {/* Minimal Header & Primary Action */}
-      <div
-        className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-          'bg-white/80 border-black/5 shadow-sm text-[#111113] dark:bg-white/[0.04] dark:border-white/10 dark:text-white dark:shadow-none'
-        }`}
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Decks HSK</h1>
-            <p className={`text-xs sm:text-sm mt-1 ${'text-black/60 dark:text-white/60'}`}>
-              {deckConfig.activeLevels.length} {deckConfig.activeLevels.length === 1 ? 'nível ativo' : 'níveis ativos'} ({deckConfig.activeLevels.join(', ')})
-            </p>
-          </div>
+    <div className="w-full max-w-2xl mx-auto space-y-4 animate-in fade-in duration-200">
+      {/* Today: the count and the one action that matters */}
+      <section className="sheet px-6 pt-6 pb-6 sm:px-8 sm:pt-8" aria-labelledby="today-heading">
+        <h1 id="today-heading" className="text-sm font-medium ink-secondary">
+          Hoje
+        </h1>
+        <p className="mt-2 flex items-baseline gap-2">
+          <span className="hanzi-index tabular text-6xl sm:text-7xl">{dueCount}</span>
+          <span className="text-base ink-secondary">{dueCount === 1 ? 'cartão' : 'cartões'}</span>
+        </p>
+        <p className="mt-3 text-sm tabular ink-secondary">
+          <span className="font-semibold text-blue-700 dark:text-blue-300">{newCount}</span> novos
+          <span aria-hidden="true"> · </span>
+          <span className="font-semibold text-red-700 dark:text-red-300">{learningCount}</span> aprendendo
+          <span aria-hidden="true"> · </span>
+          <span className="font-semibold text-emerald-700 dark:text-emerald-300">{reviewCount}</span> revisão
+        </p>
+        <button
+          type="button"
+          onClick={() => onStartStudy(null)}
+          disabled={dueCount === 0}
+          className="mt-6 w-full min-h-14 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-semibold text-base flex items-center justify-center gap-2 cursor-pointer transition-colors active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <Play className="w-4 h-4 fill-current" aria-hidden="true" />
+          {dueCount === 0 ? 'Nada para hoje' : 'Estudar'}
+        </button>
+      </section>
 
-          <button
-            type="button"
-            onClick={() => onStartStudy(null)}
-            disabled={dueCount === 0}
-            className="px-6 py-3 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            <Play className="w-4 h-4 fill-current" />
-            <span>Estudar ({dueCount})</span>
-          </button>
-        </div>
-
-        {/* Minimal Stats Strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-6 pt-5 border-t border-black/5 dark:border-white/10">
-          <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-xs font-semibold ${'text-black/55 dark:text-white/55'}`}>Pendentes</div>
-            <div className="text-xl font-black mt-0.5">{dueCount}</div>
-          </div>
-          <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-xs font-semibold ${'text-blue-600 dark:text-blue-400'}`}>Novos</div>
-            <div className="text-xl font-black mt-0.5 text-blue-600 dark:text-blue-400">{newCount}</div>
-          </div>
-          <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-xs font-semibold ${'text-amber-600 dark:text-amber-400'}`}>Aprendendo</div>
-            <div className="text-xl font-black mt-0.5 text-amber-600 dark:text-amber-400">{learningCount}</div>
-          </div>
-          <div className="p-3 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03]">
-            <div className={`text-xs font-semibold ${'text-emerald-600 dark:text-emerald-400'}`}>Revisão</div>
-            <div className="text-xl font-black mt-0.5 text-emerald-600 dark:text-emerald-400">{reviewCount}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Minimal Levels List */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 px-1">
-          <h2 className="text-sm font-bold tracking-tight">Níveis HSK 1 a 9</h2>
-          <span className={`text-xs ${'text-black/60 dark:text-white/55'}`}>
-            Toque no card para ativar ou no botão para estudar isolado
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {/* Levels as a ledger: hanzi numeral, state, count, a hairline of progress */}
+      <section className="sheet overflow-hidden" aria-labelledby="levels-heading">
+        <h2 id="levels-heading" className="px-6 sm:px-8 pt-5 pb-2 text-sm font-medium ink-secondary">
+          Níveis
+        </h2>
+        <ul className="ledger">
           {ALL_HSK_LEVELS.map((lvl, idx) => {
             const levelCards = cards.filter(c => c.level === lvl);
             const isLoaded = levelCards.length > 0;
@@ -167,83 +144,75 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
             const levelDue = levelCards.filter(
               c => !c.suspended && (c.state === 0 || new Date(c.due) <= now)
             ).length;
+            const studied = levelCards.filter(c => c.reps > 0).length;
+            const progress = isLoaded ? studied / levelCards.length : 0;
             const isLoading = loadingLevel === lvl;
+            const stateLabel = isLoading ? 'Baixando' : isActive ? 'Ativo' : isLoaded ? 'Inativo' : 'Não baixado';
 
             return (
-              <div
+              <li
                 key={lvl}
                 // The levels arrive as a list: a short stagger, 30 ms apart, capped at 240 ms
                 style={{ '--enter-delay': `${Math.min(idx, 8) * 30}ms` } as React.CSSProperties}
-                className={`animate-in fade-in enter-rise duration-300 relative p-4 rounded-2xl border transition-[background-color,border-color,box-shadow] select-none flex flex-col justify-between gap-3 has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:outline-offset-2 has-[>button:focus-visible]:outline-[var(--color-focus)] ${
-                  isActive
-                    ? 'bg-red-50/70 border-red-300 shadow-xs ring-1 ring-red-400/40 dark:bg-red-500/15 dark:border-red-500/50 dark:ring-1 dark:ring-red-500/40 dark:shadow-none'
-                    : 'bg-white/80 border-black/5 hover:bg-white shadow-xs dark:bg-white/[0.03] dark:border-white/10 dark:hover:bg-white/[0.06] dark:shadow-none'
-                }`}
+                className="animate-in fade-in enter-rise duration-300 relative flex items-center gap-4 px-6 sm:px-8 py-3 has-[>button:focus-visible]:outline-2 has-[>button:focus-visible]:-outline-offset-2 has-[>button:focus-visible]:outline-[var(--color-focus)] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors"
               >
-                {/* The whole card toggles the level: the button's ::after covers it */}
+                {/* The row toggles the level; the button's ::after covers the whole row */}
                 <button
                   type="button"
                   onClick={() => handleToggleOrActivateLevel(lvl)}
                   disabled={isLoading}
                   aria-pressed={isActive}
-                  className="flex items-start justify-between w-full text-left cursor-pointer focus-visible:outline-none after:absolute after:inset-0 after:rounded-2xl disabled:cursor-wait"
+                  className="flex-1 min-w-0 min-h-12 flex items-center gap-4 text-left cursor-pointer focus-visible:outline-none after:absolute after:inset-0 disabled:cursor-wait"
                 >
-                  <span className="block">
-                    <span className="flex items-center gap-2">
-                      <span className="font-extrabold text-base">{lvl}</span>
-                      <span
-                        className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                          isActive
-                            ? 'bg-red-600 text-white'
-                            : isLoaded
-                            ? 'bg-black/10 text-black/70 dark:bg-white/10 dark:text-white/60'
-                            : 'bg-black/5 text-black/50 dark:bg-white/5 dark:text-white/40'
-                        }`}
-                      >
-                        {isActive ? 'Ativo' : isLoaded ? 'Inativo' : 'Disponível'}
-                      </span>
-                    </span>
-                    <span className={`block text-xs mt-1 ${'text-black/60 dark:text-white/60'}`}>
-                      {count} vocábulos {isLoaded && levelDue > 0 ? `• ${levelDue} pendentes` : ''}
-                    </span>
+                  <span
+                    aria-hidden="true"
+                    className={`hanzi-index w-9 shrink-0 text-center transition-colors ${
+                      lvl === 'HSK 7-9' ? 'text-lg' : 'text-[28px]'
+                    } ${isActive ? 'text-red-600 dark:text-red-400' : 'ink-tertiary'}`}
+                  >
+                    {LEVEL_NUMERALS[lvl]}
                   </span>
-
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-red-500" aria-hidden="true" />
-                  ) : isActive ? (
-                    <span className="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center" aria-hidden="true">
-                      <Check className="w-3 h-3 stroke-[3]" />
+                  <span className="flex-1 min-w-0">
+                    <span className="block font-semibold">{lvl}</span>
+                    <span className="block text-xs tabular ink-secondary truncate">
+                      {count}{isActive && !isLoading ? ' palavras' : ` · ${stateLabel.toLowerCase()}`}
                     </span>
-                  ) : (
-                    <span className="w-5 h-5 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-xs font-bold opacity-60" aria-hidden="true">
-                      <Plus className="w-3.5 h-3.5" />
-                    </span>
-                  )}
+                    {isLoaded && (
+                      <span className="mt-2 block h-0.5 rounded-full bg-black/10 dark:bg-white/10" aria-hidden="true">
+                        <span
+                          className="block h-full rounded-full bg-red-600/70 dark:bg-red-400/70"
+                          style={{ width: `${Math.round(progress * 100)}%` }}
+                        />
+                      </span>
+                    )}
+                  </span>
                 </button>
 
-                {/* Above the stretched toggle: only the Estudar button takes clicks here */}
-                <div className="relative z-10 pointer-events-none pt-2 border-t border-black/5 dark:border-white/10 flex items-center justify-between gap-2">
-                  <span className={`text-xs line-clamp-2 ${'text-black/60 dark:text-white/55'}`}>
-                    {HSK_LEVEL_INFO[lvl].desc}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={(e) => handleStudyIsolated(lvl, e)}
-                    disabled={isLoading}
-                    aria-label={`Estudar só ${lvl}`}
-                    className={`pointer-events-auto min-h-11 sm:min-h-9 py-1.5 px-3 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 active:scale-95 flex-shrink-0 ${
-                      'bg-black/5 hover:bg-black/10 text-black dark:bg-white/10 dark:hover:bg-white/20 dark:text-white'
-                    }`}
-                  >
-                    <Play className="w-3 h-3 fill-current" />
-                    <span>Estudar</span>
-                  </button>
-                </div>
-              </div>
+                <span className="relative z-10 pointer-events-none w-10 text-right text-sm font-semibold tabular">
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 ml-auto animate-spin motion-reduce:animate-none text-red-500" aria-hidden="true" />
+                  ) : levelDue > 0 ? (
+                    <span aria-label={`${levelDue} pendentes`}>{levelDue}</span>
+                  ) : null}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={(e) => handleStudyIsolated(lvl, e)}
+                  disabled={isLoading}
+                  aria-label={`Estudar só ${lvl}`}
+                  className="relative z-10 size-11 shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40"
+                >
+                  <Play className="w-4 h-4 fill-current" aria-hidden="true" />
+                </button>
+              </li>
             );
           })}
-        </div>
-      </div>
+        </ul>
+      </section>
     </div>
   );
 };
+
+/** Hanzi numerals for the level column; the advanced band reads 七–九 */
+

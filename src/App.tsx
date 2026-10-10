@@ -27,10 +27,7 @@ import {
   Layers,
   Search,
   BarChart3,
-  Moon,
-  Sun,
   Settings2,
-  Sparkles,
 } from 'lucide-react';
 
 // Views opened from the bottom bar are split out, keeping the first screen light. They are
@@ -39,6 +36,13 @@ const loadCardBrowser = () => import('./components/CardBrowser').then((m) => m.C
 const loadStatsView = () => import('./components/StatsView').then((m) => m.StatsView);
 const CardBrowserLazy = lazy(() => loadCardBrowser().then((c) => ({ default: c })));
 const StatsViewLazy = lazy(() => loadStatsView().then((c) => ({ default: c })));
+
+const NAV_ITEMS = [
+  { tab: 'decks', label: 'Decks', Icon: Layers },
+  { tab: 'browser', label: 'Dicionário', Icon: Search },
+  { tab: 'stats', label: 'Estatísticas', Icon: BarChart3 },
+  { tab: 'settings', label: 'Configurações', Icon: Settings2 },
+] as const;
 
 export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -139,7 +143,7 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen w-full transition-colors duration-300 font-sans ${
+      className={`app-ground min-h-screen w-full transition-colors duration-300 font-sans ${
         isLight
           ? 'card-theme-light text-ink'
           : 'night_mode card-theme-dark bg-night text-white'
@@ -182,96 +186,28 @@ export default function App() {
         )}
 
         {activeTab === 'settings' && (
-          <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in duration-200">
-            {/* Header */}
-            <div
-              className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-                isLight
-                  ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-                  : 'bg-white/[0.04] border-white/10 text-white'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-2xl font-extrabold tracking-tight">Configurações</h1>
-                  <p className={`text-xs mt-1 ${isLight ? 'text-black/60' : 'text-white/60'}`}>
-                    Voz, repetição espaçada e aparência
-                  </p>
-                </div>
+          <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in duration-200">
+            <h1 className="px-2 pt-2 pb-1 text-2xl font-semibold tracking-tight">Configurações</h1>
 
-                {/* Theme Toggle Button in Settings */}
-                <button
-                  type="button"
-                  onClick={handleToggleTheme}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl border text-xs font-bold transition-all cursor-pointer ${
-                    isLight
-                      ? 'bg-black/5 hover:bg-black/10 border-black/10 text-black'
-                      : 'bg-white/10 hover:bg-white/15 border-white/10 text-white'
-                  }`}
-                  title="Alternar tema"
-                >
-                  {isLight ? (
-                    <>
-                      <Moon className="w-4 h-4 text-slate-800" />
-                      <span>Modo Escuro</span>
-                    </>
-                  ) : (
-                    <>
-                      <Sun className="w-4 h-4 text-amber-300" />
-                      <span>Modo Claro</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* 1. Voz Nativa do Navegador */}
-            <div
-              className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border transition-all ${
-                isLight
-                  ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-                  : 'bg-white/[0.04] border-white/10 text-white'
-              }`}
-            >
+            <section className="sheet px-5 sm:px-7 pt-5 pb-2">
               <AudioVoiceSettings
                 deckConfig={deckConfig}
                 onUpdateDeckConfig={handleUpdateDeckConfig}
                 theme={theme}
               />
-            </div>
+            </section>
 
-            {/* Sessão de estudo: tela cheia, gestos e botões de resposta */}
-            <div
-              className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border space-y-4 transition-all ${
-                isLight
-                  ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-                  : 'bg-white/[0.04] border-white/10 text-white'
-              }`}
-            >
-              <h2 className="text-base font-bold">Sessão de estudo</h2>
+            <section className="sheet px-5 sm:px-7 pt-5 pb-3" aria-labelledby="settings-session">
+              <h2 id="settings-session" className="pb-3 text-base font-semibold">Sessão de estudo</h2>
               <StudyOptionsSettings
                 deckConfig={deckConfig}
                 onUpdateDeckConfig={handleUpdateDeckConfig}
                 theme={theme}
               />
-            </div>
+            </section>
 
-            {/* 2. Repetição Espaçada */}
-            <div
-              className={`rounded-3xl p-6 sm:p-7 backdrop-blur-xl border space-y-5 transition-all ${
-                isLight
-                  ? 'bg-white/80 border-black/5 shadow-sm text-ink'
-                  : 'bg-white/[0.04] border-white/10 text-white'
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-base font-bold">Repetição Espaçada</h2>
-                  <p className={`text-xs mt-0.5 ${isLight ? 'text-black/60' : 'text-white/60'}`}>
-                    Intervalos de revisão e metas diárias
-                  </p>
-                </div>
-              </div>
+            <section className="sheet px-5 sm:px-7 pt-5 pb-2" aria-labelledby="settings-fsrs">
+              <h2 id="settings-fsrs" className="pb-3 text-base font-semibold">Repetição espaçada</h2>
 
               <FSRSSettings
                 fsrsOptions={fsrsOptions}
@@ -279,144 +215,82 @@ export default function App() {
                 theme={theme}
               />
 
-              {/* Limites Diários */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-black/5 dark:border-white/10">
-                <div>
-                  <label
-                    htmlFor="daily-new-limit"
-                    className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}
-                  >
-                    Novos cartões / dia:
-                  </label>
-                  <input
-                    id="daily-new-limit"
-                    type="number"
-                    min="5"
-                    max="100"
-                    value={deckConfig.dailyNewLimit}
-                    onChange={(e) =>
-                      handleUpdateDeckConfig({
-                        ...deckConfig,
-                        dailyNewLimit: parseInt(e.target.value, 10) || 20,
-                      })
-                    }
-                    className={`w-full px-3 py-2 rounded-xl text-xs border font-semibold ${
-                      isLight
-                        ? 'bg-black/[0.03] border-black/15 text-black'
-                        : 'bg-black/40 border-white/15 text-white'
-                    }`}
-                  />
-                </div>
+              {/* Daily limits as ledger rows */}
+              <div className="ledger border-t border-[var(--separator)]">
+                {(
+                  [
+                    { id: 'daily-new-limit', label: 'Novos cartões por dia', key: 'dailyNewLimit', min: 5, max: 100, fallback: 20 },
+                    { id: 'daily-review-limit', label: 'Revisões por dia', key: 'dailyReviewLimit', min: 20, max: 500, fallback: 100 },
+                  ] as const
+                ).map(({ id, label, key, min, max, fallback }) => (
+                  <div key={id} className="flex items-center justify-between gap-4 py-3">
+                    <label htmlFor={id} className="text-sm">
+                      {label}
+                    </label>
+                    <input
+                      id={id}
+                      type="number"
+                      inputMode="numeric"
+                      min={min}
+                      max={max}
+                      value={deckConfig[key]}
+                      onChange={(e) =>
+                        handleUpdateDeckConfig({ ...deckConfig, [key]: parseInt(e.target.value, 10) || fallback })
+                      }
+                      className="w-24 min-h-11 px-3 rounded-xl text-right text-sm font-semibold tabular border bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
 
-                <div>
-                  <label
-                    htmlFor="daily-review-limit"
-                    className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}
-                  >
-                    Máximo de revisões / dia:
-                  </label>
-                  <input
-                    id="daily-review-limit"
-                    type="number"
-                    min="20"
-                    max="500"
-                    value={deckConfig.dailyReviewLimit}
-                    onChange={(e) =>
-                      handleUpdateDeckConfig({
-                        ...deckConfig,
-                        dailyReviewLimit: parseInt(e.target.value, 10) || 100,
-                      })
-                    }
-                    className={`w-full px-3 py-2 rounded-xl text-xs border font-semibold ${
-                      isLight
-                        ? 'bg-black/[0.03] border-black/15 text-black'
-                        : 'bg-black/40 border-white/15 text-white'
-                    }`}
-                  />
+            <section className="sheet px-5 sm:px-7 py-3" aria-labelledby="settings-look">
+              <div className="flex items-center justify-between gap-4">
+                <h2 id="settings-look" className="text-base font-semibold">Tema</h2>
+                <div role="group" aria-label="Tema" className="flex p-1 rounded-xl bg-black/5 dark:bg-white/10">
+                  {(['light', 'dark'] as const).map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      aria-pressed={theme === t}
+                      onClick={() => theme !== t && handleToggleTheme()}
+                      className={`min-h-10 px-4 rounded-lg text-sm font-semibold cursor-pointer transition-colors ${
+                        theme === t ? 'bg-white text-ink shadow-sm' : 'ink-secondary hover:text-[var(--text-fg)]'
+                      }`}
+                    >
+                      {t === 'light' ? 'Claro' : 'Escuro'}
+                    </button>
+                  ))}
                 </div>
               </div>
-            </div>
+            </section>
           </div>
         )}
       </main>
 
-      {/* Minimalist Floating Navigation Dock */}
+      {/* Floating bottom bar, in the cards' glass */}
       <nav
-        className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-40 backdrop-blur-2xl border px-2 sm:px-3 py-2 rounded-2xl shadow-xl flex items-center gap-1 sm:gap-2 transition-all ${
-          isLight
-            ? 'bg-white/90 border-black/10 shadow-black/5 text-ink'
-            : 'bg-night-panel/90 border-white/15 shadow-black/40 text-white'
-        }`}
+        aria-label="Principal"
+        className="sheet sheet-float rounded-2xl fixed bottom-4 left-1/2 -translate-x-1/2 z-40 px-2 py-2 flex items-center gap-1"
       >
-        <button
-          type="button"
-          aria-label="Decks"
-          aria-current={activeTab === 'decks' ? 'page' : undefined}
-          onClick={() => setActiveTab('decks')}
-          className={`min-h-11 min-w-11 sm:min-h-9 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeTab === 'decks'
-              ? 'bg-red-600 text-white shadow-sm'
-              : isLight
-              ? 'text-black/70 hover:text-black hover:bg-black/5'
-              : 'text-white/70 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          <span className="hidden sm:inline">Decks</span>
-        </button>
-
-        <button
-          type="button"
-          aria-label="Dicionário"
-          aria-current={activeTab === 'browser' ? 'page' : undefined}
-          onClick={() => setActiveTab('browser')}
-          className={`min-h-11 min-w-11 sm:min-h-9 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeTab === 'browser'
-              ? 'bg-red-600 text-white shadow-sm'
-              : isLight
-              ? 'text-black/70 hover:text-black hover:bg-black/5'
-              : 'text-white/70 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Search className="w-4 h-4" />
-          <span className="hidden sm:inline">Dicionário</span>
-        </button>
-
-        <button
-          type="button"
-          aria-label="Estatísticas"
-          aria-current={activeTab === 'stats' ? 'page' : undefined}
-          onClick={() => setActiveTab('stats')}
-          className={`min-h-11 min-w-11 sm:min-h-9 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeTab === 'stats'
-              ? 'bg-red-600 text-white shadow-sm'
-              : isLight
-              ? 'text-black/70 hover:text-black hover:bg-black/5'
-              : 'text-white/70 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <BarChart3 className="w-4 h-4" />
-          <span className="hidden sm:inline">Estatísticas</span>
-        </button>
-
-        <div className="w-[1px] h-4 bg-black/10 dark:bg-white/10 mx-0.5" />
-
-        <button
-          type="button"
-          aria-label="Configurações"
-          aria-current={activeTab === 'settings' ? 'page' : undefined}
-          onClick={() => setActiveTab('settings')}
-          className={`min-h-11 min-w-11 sm:min-h-9 flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeTab === 'settings'
-              ? 'bg-red-600 text-white shadow-sm'
-              : isLight
-              ? 'text-black/70 hover:text-black hover:bg-black/5'
-              : 'text-white/70 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Settings2 className="w-4 h-4" />
-          <span className="hidden sm:inline">Configurações</span>
-        </button>
+        {NAV_ITEMS.map(({ tab, label, Icon }) => {
+          const isCurrent = activeTab === tab;
+          return (
+            <button
+              key={tab}
+              type="button"
+              aria-label={label}
+              aria-current={isCurrent ? 'page' : undefined}
+              onClick={() => setActiveTab(tab)}
+              className={`min-h-11 min-w-11 flex items-center justify-center gap-1.5 px-3 rounded-xl text-sm font-semibold cursor-pointer transition-colors ${
+                isCurrent ? 'bg-red-600 text-white' : 'ink-secondary hover:text-[var(--text-fg)] hover:bg-black/5 dark:hover:bg-white/10'
+              }`}
+            >
+              <Icon className="w-[18px] h-[18px]" aria-hidden="true" />
+              <span className="hidden sm:inline">{label}</span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

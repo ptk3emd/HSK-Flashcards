@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { ChevronDown, RotateCcw } from 'lucide-react';
 import { FSRSOptions } from '../types/card';
-import { ALL_HSK_LEVELS } from '../data/defaultDecks';
+import { ALL_HSK_LEVELS, LEVEL_NUMERALS } from '../data/defaultDecks';
 import {
   DEFAULT_FSRS_OPTIONS,
   MAX_INTERVAL_LIMIT,
@@ -26,7 +26,6 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
   onUpdateFSRSOptions,
   theme,
 }) => {
-  const isLight = theme === 'light';
   const levelRetention = fsrsOptions.retention_by_level ?? {};
 
   const [intervalDraft, setIntervalDraft] = useState(String(fsrsOptions.maximum_interval));
@@ -43,11 +42,8 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
     setWeightsError(null);
   }, [fsrsOptions.w]);
 
-  const inputClass = `w-full px-3 py-1.5 rounded-xl text-xs border font-semibold ${
-    isLight ? 'bg-white border-black/15 text-black' : 'bg-black/40 border-white/15 text-white'
-  }`;
-  const hintClass = `text-[11px] leading-relaxed ${isLight ? 'text-black/60' : 'text-white/50'}`;
-  const sectionClass = `pt-4 border-t ${isLight ? 'border-black/5' : 'border-white/10'} space-y-3`;
+  const fieldClass =
+    'min-h-11 px-3 rounded-xl text-sm border bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60';
 
   const setLevelRetention = (level: string, value: number | null) => {
     const next = { ...levelRetention };
@@ -76,7 +72,7 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
     const parsed = parseWeights(weightsDraft);
     if (!parsed) {
       setWeightsError(
-        `Informe ${WEIGHTS_COUNT} números separados por vírgula. Os quatro primeiros devem ser positivos.`
+        `${WEIGHTS_COUNT} números separados por vírgula; os quatro primeiros positivos.`
       );
       return;
     }
@@ -88,44 +84,47 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
   };
 
   return (
-    <div className="space-y-5">
-      {/* Global request retention */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-xs font-semibold">
-          <span>Retenção desejada (padrão):</span>
-          <span className="text-red-500 font-bold">{formatPercent(fsrsOptions.request_retention)}</span>
+    <div className="ledger border-t border-[var(--separator)]">
+      <div className="py-3 space-y-2">
+        <div className="flex items-center justify-between gap-4">
+          <label htmlFor="retention-global" className="text-sm">Retenção desejada</label>
+          <span className="tabular text-sm font-semibold">{formatPercent(fsrsOptions.request_retention)}</span>
         </div>
         <input
+          id="retention-global"
           type="range"
           min={SLIDER_MIN}
           max={SLIDER_MAX}
           step={SLIDER_STEP}
           value={fsrsOptions.request_retention}
-          aria-label="Retenção desejada padrão"
           onChange={(e) =>
             onUpdateFSRSOptions({
               ...fsrsOptions,
               request_retention: parseFloat(e.target.value),
             })
           }
-          className="w-full accent-red-500 cursor-pointer"
+          className="w-full accent-red-600 cursor-pointer"
         />
-        <p className={hintClass}>
-          Padrão 90%. Vale para os níveis sem ajuste próprio.
-        </p>
       </div>
 
-      {/* Per-level request retention */}
-      <div className={sectionClass}>
-        <h3 className="text-xs font-bold">Retenção por nível</h3>
-        <div className="space-y-2.5">
+      <details className="group py-1">
+        <summary className="flex items-center justify-between gap-4 min-h-11 cursor-pointer list-none text-sm [&::-webkit-details-marker]:hidden">
+          <span>Retenção por nível</span>
+          <span className="flex items-center gap-2 text-xs ink-tertiary tabular">
+            {Object.keys(levelRetention).length > 0 ? `${Object.keys(levelRetention).length} ajustados` : 'padrão'}
+            <ChevronDown aria-hidden="true" className="w-4 h-4 transition-transform group-open:rotate-180" />
+          </span>
+        </summary>
+        <ul className="pb-2">
           {ALL_HSK_LEVELS.map((level) => {
             const override = levelRetention[level];
             const isOverridden = override !== undefined;
             const effective = override ?? fsrsOptions.request_retention;
             return (
-              <div key={level} className="grid grid-cols-[72px_minmax(0,1fr)_auto] items-center gap-3">
-                <span className="text-xs font-semibold">{level}</span>
+              <li key={level} className="grid grid-cols-[2.5rem_minmax(0,1fr)_3rem_2.75rem] items-center gap-2">
+                <span lang="zh-CN" aria-hidden="true" className={`hanzi-index text-lg text-center ${isOverridden ? 'text-red-700 dark:text-red-300' : 'ink-tertiary'}`}>
+                  {LEVEL_NUMERALS[level]}
+                </span>
                 <input
                   type="range"
                   min={SLIDER_MIN}
@@ -134,104 +133,80 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
                   value={effective}
                   aria-label={`Retenção desejada para ${level}`}
                   onChange={(e) => setLevelRetention(level, parseFloat(e.target.value))}
-                  className="w-full accent-red-500 cursor-pointer"
+                  className="w-full accent-red-600 cursor-pointer"
                 />
-                <div className="flex items-center justify-end gap-1.5 min-w-[92px]">
-                  <span
-                    className={`text-xs font-bold tabular-nums ${
-                      isOverridden ? 'text-red-500' : 'opacity-50'
-                    }`}
+                <span className={`text-sm text-right tabular ${isOverridden ? 'font-semibold' : 'ink-tertiary'}`}>
+                  {formatPercent(effective)}
+                </span>
+                {isOverridden ? (
+                  <button
+                    type="button"
+                    onClick={() => setLevelRetention(level, null)}
+                    className="size-11 rounded-xl flex items-center justify-center ink-tertiary hover:text-[var(--text-fg)] cursor-pointer"
+                    aria-label={`Usar a retenção padrão em ${level}`}
                   >
-                    {formatPercent(effective)}
-                  </span>
-                  {isOverridden && (
-                    <button
-                      type="button"
-                      onClick={() => setLevelRetention(level, null)}
-                      className={`p-1 rounded-lg cursor-pointer transition-all ${
-                        isLight ? 'hover:bg-black/5 text-black/60' : 'hover:bg-white/10 text-white/60'
-                      }`}
-                      title={`Usar a retenção padrão em ${level}`}
-                      aria-label={`Usar a retenção padrão em ${level}`}
-                    >
-                      <RotateCcw className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
-              </div>
+                    <RotateCcw aria-hidden="true" className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <span className="size-11" aria-hidden="true" />
+                )}
+              </li>
             );
           })}
-        </div>
-        <p className={hintClass}>
-          Níveis sem ajuste usam a retenção padrão. Valores menores espaçam mais as revisões.
-        </p>
+        </ul>
+      </details>
+
+      <div className="flex items-center justify-between gap-4 py-3">
+        <label htmlFor="max-interval" className="text-sm">Intervalo máximo (dias)</label>
+        <input
+          id="max-interval"
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={MAX_INTERVAL_LIMIT}
+          value={intervalDraft}
+          onChange={(e) => setIntervalDraft(e.target.value)}
+          onBlur={commitInterval}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') commitInterval();
+          }}
+          className={`${fieldClass} w-24 text-right tabular font-semibold`}
+        />
       </div>
 
-      {/* Maximum interval and advanced weights */}
-      <div className={sectionClass}>
-        <div>
-          <label
-            htmlFor="max-interval"
-            className={`block text-xs font-semibold mb-1 ${isLight ? 'text-black/80' : 'text-white/80'}`}
-          >
-            Intervalo máximo (dias):
-          </label>
-          <input
-            id="max-interval"
-            type="number"
-            min={1}
-            max={MAX_INTERVAL_LIMIT}
-            value={intervalDraft}
-            onChange={(e) => setIntervalDraft(e.target.value)}
-            onBlur={commitInterval}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') commitInterval();
-            }}
-            className={inputClass}
+      <details className="group py-1">
+        <summary className="flex items-center justify-between min-h-11 cursor-pointer list-none text-sm select-none [&::-webkit-details-marker]:hidden">
+          Pesos FSRS
+          <ChevronDown aria-hidden="true" className="w-4 h-4 ink-tertiary transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="pb-3 space-y-2">
+          <textarea
+            rows={3}
+            value={weightsDraft}
+            onChange={(e) => setWeightsDraft(e.target.value)}
+            spellCheck={false}
+            aria-label="Pesos FSRS"
+            className={`${fieldClass} w-full py-2 text-xs font-mono resize-y`}
           />
-          <p className={`${hintClass} mt-1`}>
-            Maior intervalo entre revisões. Padrão {MAX_INTERVAL_LIMIT} dias.
-          </p>
-        </div>
-
-        <details className={`rounded-2xl border p-3 ${isLight ? 'border-black/10 bg-black/[0.02]' : 'border-white/10 bg-black/20'}`}>
-          <summary className="cursor-pointer text-xs font-bold select-none">
-            Avançado: pesos FSRS (w)
-          </summary>
-          <div className="mt-3 space-y-2">
-            <textarea
-              rows={3}
-              value={weightsDraft}
-              onChange={(e) => setWeightsDraft(e.target.value)}
-              spellCheck={false}
-              aria-label="Pesos FSRS"
-              className={`${inputClass} font-mono resize-y`}
-            />
-            {weightsError && <p className="text-[11px] text-red-500">{weightsError}</p>}
-            <p className={hintClass}>
-              {WEIGHTS_COUNT} valores separados por vírgula. Mudanças valem para as próximas revisões de todos os cartões.
-            </p>
-            <div className="flex flex-wrap gap-2 pt-1">
-              <button
-                type="button"
-                onClick={applyWeights}
-                className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs cursor-pointer shadow-sm transition-all active:scale-95"
-              >
-                Aplicar pesos
-              </button>
-              <button
-                type="button"
-                onClick={restoreWeights}
-                className={`px-3.5 py-1.5 rounded-xl font-bold text-xs cursor-pointer transition-all ${
-                  isLight ? 'bg-black/5 hover:bg-black/10 text-black' : 'bg-white/10 hover:bg-white/15 text-white'
-                }`}
-              >
-                Restaurar padrão
-              </button>
-            </div>
+          {weightsError && <p className="text-xs text-red-700 dark:text-red-300">{weightsError}</p>}
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={applyWeights}
+              className="min-h-10 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer transition-colors"
+            >
+              Aplicar
+            </button>
+            <button
+              type="button"
+              onClick={restoreWeights}
+              className="min-h-10 px-3.5 rounded-xl font-medium text-sm cursor-pointer transition-colors ink-secondary hover:text-[var(--text-fg)]"
+            >
+              Padrão
+            </button>
           </div>
-        </details>
-      </div>
+        </div>
+      </details>
     </div>
   );
 };

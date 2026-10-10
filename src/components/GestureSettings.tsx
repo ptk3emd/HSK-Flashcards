@@ -32,7 +32,6 @@ const GESTURE_ICONS: Record<StudyGesture, LucideIcon> = {
 
 /** Lets the student choose what each gesture on the study card does. */
 export const GestureSettings: React.FC<GestureSettingsProps> = ({ deckConfig, onUpdateDeckConfig, theme }) => {
-  const isLight = theme === 'light';
   const gestures = deckConfig.gestures;
   const isDefault = GESTURES.every(({ id }) => gestures[id] === DEFAULT_GESTURES[id]);
   const { canReveal, canGrade } = gestureCoverage(gestures, deckConfig.twoButtonGrading);
@@ -43,44 +42,43 @@ export const GestureSettings: React.FC<GestureSettingsProps> = ({ deckConfig, on
   const warning =
     deckConfig.hideAnswerButtons && (!canReveal || !canGrade)
       ? !canReveal
-        ? 'Com os botões de resposta ocultos, defina um gesto para mostrar a resposta.'
-        : 'Com os botões de resposta ocultos, defina um gesto para avaliar o cartão.'
+        ? 'Sem botões: defina um gesto para mostrar a resposta.'
+        : 'Sem botões: defina um gesto para avaliar.'
       : null;
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-xs font-semibold">Gestos no cartão</h3>
+        <h3 className="text-sm font-semibold">Gestos</h3>
         <button
           type="button"
           onClick={() => onUpdateDeckConfig({ ...deckConfig, gestures: { ...DEFAULT_GESTURES } })}
           disabled={isDefault}
-          className={`min-h-9 flex items-center gap-1.5 px-3 rounded-xl text-[11px] font-semibold cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
-            isLight ? 'bg-black/5 hover:bg-black/10' : 'bg-white/10 hover:bg-white/15'
-          }`}
+          aria-label="Restaurar padrão"
+          className="min-h-10 flex items-center gap-1.5 px-3 rounded-xl text-sm font-medium ink-secondary hover:text-[var(--text-fg)] cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <RotateCcw className="w-3.5 h-3.5" />
-          Restaurar padrão
+          Padrão
         </button>
       </div>
 
-      <ul className={`rounded-2xl border divide-y ${isLight ? 'border-black/10 divide-black/5' : 'border-white/10 divide-white/5'}`}>
+      <ul className="ledger">
         {GESTURES.map(({ id, label }) => {
           const Icon = GESTURE_ICONS[id];
           const selectId = `gesture-${id}`;
           return (
-            <li key={id} className="flex items-center justify-between gap-3 px-3 py-2">
-              <label htmlFor={selectId} className="flex-1 flex items-center gap-2.5 min-w-0 text-xs font-medium leading-snug cursor-pointer">
-                <Icon className="w-4 h-4 shrink-0 opacity-60" aria-hidden="true" />
+            <li key={id} className="flex items-center justify-between gap-3 py-2">
+              <label htmlFor={selectId} className="flex-1 flex items-center gap-2.5 min-w-0 text-sm leading-snug cursor-pointer">
+                <Icon className="w-4 h-4 shrink-0 ink-tertiary" aria-hidden="true" />
                 <span>{label}</span>
               </label>
               <select
                 id={selectId}
                 value={gestures[id]}
                 onChange={(e) => setGesture(id, e.target.value as StudyAction)}
-                className={`min-h-9 w-40 shrink-0 px-2.5 rounded-xl text-xs border cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60 ${
-                  isLight ? 'bg-white border-black/15 text-black' : 'bg-black/40 border-white/15 text-white'
-                } ${gestures[id] === 'none' ? 'opacity-60' : ''}`}
+                className={`min-h-11 w-40 shrink-0 px-2.5 rounded-xl text-sm border cursor-pointer bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 ${
+                  gestures[id] === 'none' ? 'ink-tertiary' : ''
+                }`}
               >
                 {STUDY_ACTIONS.map((action) => {
                   const off = deckConfig.twoButtonGrading && (action.id === 'hard' || action.id === 'easy');
@@ -97,7 +95,7 @@ export const GestureSettings: React.FC<GestureSettingsProps> = ({ deckConfig, on
       </ul>
 
       {warning && (
-        <p className="flex items-start gap-2 text-[11px] leading-relaxed text-amber-700 dark:text-amber-300" role="status">
+        <p className="flex items-start gap-2 text-xs leading-relaxed text-amber-700 dark:text-amber-300" role="status">
           <TriangleAlert className="w-3.5 h-3.5 mt-0.5 shrink-0" aria-hidden="true" />
           {warning}
         </p>

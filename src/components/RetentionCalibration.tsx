@@ -50,9 +50,8 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
 
   if (data.total.count === 0) {
     return (
-      <div className={`py-10 text-center text-xs ${subtleText}`}>
-        Sem revisões de cartões em revisão neste período. A calibração compara a previsão do FSRS
-        com o resultado de cada revisão.
+      <div className={`py-10 text-center text-sm ${subtleText}`}>
+        Sem revisões neste período
       </div>
     );
   }
@@ -60,34 +59,28 @@ export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs
   return (
     <div className="space-y-5">
       {/* Summary */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className={`rounded-2xl p-3 border ${'bg-black/[0.02] border-black/5 dark:bg-white/[0.03] dark:border-white/10'}`}>
-          <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Real</div>
-          <div className="text-lg font-black tabular-nums">{formatPercent(totalRate)}</div>
-        </div>
-        <div className={`rounded-2xl p-3 border ${'bg-black/[0.02] border-black/5 dark:bg-white/[0.03] dark:border-white/10'}`}>
-          <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Prevista</div>
-          <div className="text-lg font-black tabular-nums">{formatPercent(totalPredicted)}</div>
-        </div>
-        <div className={`rounded-2xl p-3 border ${'bg-black/[0.02] border-black/5 dark:bg-white/[0.03] dark:border-white/10'}`}>
-          <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Diferença</div>
-          <div
-            className={`text-lg font-black tabular-nums ${
+      <dl className="grid grid-cols-4 -mx-5 sm:-mx-6 border-y border-[var(--separator)] divide-x divide-[var(--separator)]">
+        {[
+          { label: 'Real', value: formatPercent(totalRate), tone: '' },
+          { label: 'Prevista', value: formatPercent(totalPredicted), tone: '' },
+          {
+            label: 'Diferença',
+            value: gapPoints === null ? '-' : `${gapPoints > 0 ? '+' : ''}${gapPoints}`,
+            tone:
               gapPoints === null || Math.abs(gapPoints) < 5
                 ? ''
                 : gapPoints < 0
-                ? 'text-red-500'
-                : 'text-emerald-500'
-            }`}
-          >
-            {gapPoints === null ? '-' : `${gapPoints > 0 ? '+' : ''}${gapPoints} pts`}
+                ? 'text-red-700 dark:text-red-300'
+                : 'text-emerald-700 dark:text-emerald-300',
+          },
+          { label: 'Revisões', value: String(data.total.count), tone: '' },
+        ].map((item) => (
+          <div key={item.label} className="px-3 py-3 text-center">
+            <dt className={`text-xs ${subtleText}`}>{item.label}</dt>
+            <dd className={`text-lg font-semibold tabular-nums ${item.tone}`}>{item.value}</dd>
           </div>
-        </div>
-        <div className={`rounded-2xl p-3 border ${'bg-black/[0.02] border-black/5 dark:bg-white/[0.03] dark:border-white/10'}`}>
-          <div className={`text-xs uppercase font-bold tracking-wider ${subtleText}`}>Revisões</div>
-          <div className="text-lg font-black tabular-nums">{data.total.count}</div>
-        </div>
-      </div>
+        ))}
+      </dl>
 
       {/* Heatmap: one row per day, one column per predicted-recall bin */}
       <div

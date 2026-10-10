@@ -130,3 +130,50 @@
     opacity: 0;
   }
 }
+
+/* ==========================================================================
+   LEDGER SHEETS (navigation screens)
+   The study card's frosted glass, spread into sheets that read as a ledger:
+   rows indexed by hanzi numerals, hairlines between rows, tabular figures.
+   In the components layer so utilities on the element can still override.
+   ========================================================================== */
+@layer components {
+  .sheet {
+    background: var(--glass-surface);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+    box-shadow: var(--glass-highlight);
+    border-radius: 28px;
+    color: var(--text-fg);
+  }
+  /* A row list inside a sheet: one hairline between rows, none at the edges */
+  .ledger > * + * {
+    border-top: 1px solid var(--separator);
+  }
+  .hanzi-index {
+    font-family: var(--font-hanzi);
+    font-weight: 500;
+    line-height: 1;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .ink-secondary {
+    color: var(--text-secondary);
+  }
+  .ink-tertiary {
+    color: var(--text-tertiary);
+  }
+}
+
+@layer components {
+  /* A sheet that floats over content (the bottom bar): glass edges plus a soft drop */
+  .sheet-float {
+    box-shadow: var(--glass-highlight), 0 12px 32px rgba(0, 0, 0, 0.18);
+  }
+}
+
+/* The striped ground stays put while the sheets scroll over it, so a long page never runs into the vignette's black edge */
+@layer components {
+  .app-ground { background-attachment: fixed; }
+}
