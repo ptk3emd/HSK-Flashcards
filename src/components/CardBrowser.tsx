@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useCallback, lazy, Suspense } from 'react';
+import { createPortal } from 'react-dom';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
@@ -420,20 +421,24 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
       </section>
 
       {/* Card Preview Modal */}
-      {previewCard && (
+      {previewCard && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in">
           <div
             ref={previewDialogRef}
             role="dialog"
             aria-modal="true"
             aria-label={`Pré-visualização de ${previewCard.hanzi}`}
-            className={`w-full max-w-xl rounded-3xl p-6 relative flex flex-col items-center gap-4 shadow-2xl border ${
+            className={`w-full max-w-xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain rounded-3xl p-6 relative flex flex-col items-center gap-4 shadow-2xl border ${
               isLight
-                ? 'bg-white/95 border-white text-ink'
+                ? 'bg-white border-white text-ink'
                 : 'bg-neutral-900 border-white/20 text-white'
             }`}
           >
-            <div className="w-full flex items-center justify-between pb-2 border-b border-black/10 dark:border-white/10">
+            <div
+              className={`sticky top-0 z-10 -mx-6 -mt-6 px-6 pt-6 w-[calc(100%+3rem)] flex items-center justify-between pb-2 border-b border-black/10 dark:border-white/10 ${
+                isLight ? 'bg-white' : 'bg-neutral-900'
+              }`}
+            >
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold">{previewCard.level}</span>
                 {getStateBadge(previewCard.state)}
@@ -441,7 +446,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               <button
                 type="button"
                 onClick={() => setPreviewCard(null)}
-                className="opacity-60 hover:opacity-100 text-sm font-semibold cursor-pointer flex items-center gap-1"
+                className="min-h-11 px-2 opacity-60 hover:opacity-100 text-sm font-semibold cursor-pointer flex items-center gap-1"
               >
                 <X className="w-4 h-4" />
                 <span>Fechar</span>
@@ -523,7 +528,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
 
       {/* Handwriting Canvas Modal */}
       {writingCard && (
