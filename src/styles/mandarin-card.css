@@ -67,6 +67,8 @@
   --glass-field: rgba(255, 252, 250, 0.58);
   --glass-edge: rgba(255, 255, 255, 0.7);
   --glass-solid: #fbf3f0;
+  /* Popovers read over busy content: a denser glass than the panels */
+  --glass-menu: rgba(255, 252, 250, 0.84);
   --glass-highlight: inset 0 1.5px 1px rgba(255, 255, 255, 0.88),
                      inset 0 -1px 1px rgba(255, 255, 255, 0.38),
                      inset 1px 0 1px rgba(255, 255, 255, 0.48),
@@ -130,6 +132,7 @@
   --glass-field: rgba(12, 6, 7, 0.42);
   --glass-edge: rgba(255, 255, 255, 0.16);
   --glass-solid: #2a1417;
+  --glass-menu: rgba(40, 20, 22, 0.8);
   --glass-highlight: inset 0 1.5px 1px rgba(255, 255, 255, 0.28),
                      inset 0 -1px 1px rgba(255, 255, 255, 0.08),
                      inset 1px 0 1px rgba(255, 255, 255, 0.15),
