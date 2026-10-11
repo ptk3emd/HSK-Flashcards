@@ -103,6 +103,16 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4 animate-in fade-in duration-200">
+      {/* Brand lockup: the seal mark and the name, above the day's count */}
+      <div className="flex items-center gap-2.5 px-1">
+        <svg aria-hidden="true" viewBox="0 0 120 120" className="size-6 shrink-0">
+          <rect width="120" height="120" rx="8" fill="#B3261E" />
+          <path d="M22 98 V80 H42 V62 H62 V44 H98 V98 Z" fill="#F4EEE3" />
+        </svg>
+        <span className="hanzi-index text-lg font-semibold">Lóutī</span>
+        <span className="text-[11px] uppercase tracking-[0.2em] ink-tertiary">Mandarim</span>
+      </div>
+
       {/* Today: the count and the one action that matters */}
       <section className="sheet px-6 pt-6 pb-6 sm:px-8 sm:pt-8" aria-labelledby="today-heading">
         <h1 id="today-heading" className="text-sm font-medium ink-secondary">
@@ -173,9 +183,9 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                     {LEVEL_NUMERALS[lvl]}
                   </span>
                   <span className="flex-1 min-w-0">
-                    <span className="flex items-baseline gap-2 min-w-0">
+                    <span className="flex flex-wrap items-baseline gap-x-2 min-w-0">
                       <span className="font-semibold whitespace-nowrap">{lvl}</span>
-                      <span className="text-xs tabular ink-tertiary truncate">{formatCount(total)} no total</span>
+                      <span className="text-xs tabular ink-tertiary whitespace-nowrap">{formatCount(total)} no total</span>
                     </span>
                     <span className="block text-xs tabular ink-secondary truncate">
                       +{formatCount(count)}
