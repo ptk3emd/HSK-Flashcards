@@ -92,7 +92,7 @@ export const BrowserSkeleton: React.FC = () => (
 
 export const PadSkeleton: React.FC = () => (
   <Loading label="Carregando lousa de escrita">
-    <div className="w-full max-w-md mx-auto p-3 rounded-3xl border bg-white/95 border-white dark:bg-neutral-900/95 dark:border-white/15">
+    <div className="sheet w-full max-w-md mx-auto p-3">
       <Bar className="h-8 w-40 mb-3" />
       <Bar className="aspect-square w-full rounded-3xl" />
       <Bar className="h-9 w-full mt-3 rounded-xl" />

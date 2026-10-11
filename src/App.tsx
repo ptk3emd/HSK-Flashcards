@@ -239,7 +239,7 @@ export default function App() {
                       onChange={(e) =>
                         handleUpdateDeckConfig({ ...deckConfig, [key]: parseInt(e.target.value, 10) || fallback })
                       }
-                      className="w-24 min-h-11 px-3 rounded-xl text-right text-sm font-semibold tabular border bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+                      className="w-24 min-h-11 px-3 rounded-xl text-right text-sm font-semibold tabular glass-field focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
                     />
                   </div>
                 ))}

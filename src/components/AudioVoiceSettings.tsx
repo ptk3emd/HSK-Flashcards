@@ -198,7 +198,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
               id="voice-uri"
               value={deckConfig.speechVoiceURI || ''}
               onChange={(e) => handleVoiceURIChange(e.target.value)}
-              className="sm:max-w-xs w-full min-h-11 px-3 rounded-xl text-sm border cursor-pointer bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+              className="sm:max-w-xs w-full min-h-11 px-3 rounded-xl text-sm glass-field cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
             >
               <option value="">Automática</option>
               {voices.map((v, idx) => {
@@ -225,7 +225,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
             value={sampleText}
             onChange={(e) => setSampleText(e.target.value)}
             placeholder="你好！很高兴认识你。"
-            className="flex-1 min-w-0 min-h-11 px-3 rounded-xl text-sm border bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+            className="flex-1 min-w-0 min-h-11 px-3 rounded-xl text-sm glass-field focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
           />
           <button
             type="button"

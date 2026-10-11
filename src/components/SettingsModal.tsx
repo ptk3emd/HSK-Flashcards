@@ -33,11 +33,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border shadow-2xl transition-all p-5 sm:p-7 ${
-          isLight
-            ? 'bg-white/95 border-white shadow-red-500/10 text-ink'
-            : 'bg-night-panel/95 border-white/15 text-white'
-        }`}
+        className="sheet w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl transition-all p-5 sm:p-7"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -137,11 +133,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     dailyNewLimit: parseInt(e.target.value, 10) || 20,
                   })
                 }
-                className={`w-full px-3 py-1.5 rounded-xl text-xs border font-semibold ${
-                  isLight
-                    ? 'bg-white border-black/15 text-black'
-                    : 'bg-black/40 border-white/15 text-white'
-                }`}
+                className="glass-field w-full px-3 py-1.5 rounded-xl text-xs font-semibold"
               />
             </div>
 
@@ -160,11 +152,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     dailyReviewLimit: parseInt(e.target.value, 10) || 100,
                   })
                 }
-                className={`w-full px-3 py-1.5 rounded-xl text-xs border font-semibold ${
-                  isLight
-                    ? 'bg-white border-black/15 text-black'
-                    : 'bg-black/40 border-white/15 text-white'
-                }`}
+                className="glass-field w-full px-3 py-1.5 rounded-xl text-xs font-semibold"
               />
             </div>
           </div>

@@ -593,7 +593,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
               {hoveredPoint && (
                 <div
                   aria-hidden="true"
-                  className="absolute top-0 right-0 px-2.5 py-1 rounded-lg text-xs tabular bg-white dark:bg-zinc-900 shadow-sm"
+                  className="glass-field !rounded-lg absolute top-0 right-0 px-2.5 py-1 text-xs tabular shadow-sm"
                 >
                   <span className="ink-secondary">Dia {hoveredPoint.day}</span>{' '}
                   <span className="font-semibold text-red-700 dark:text-red-300">

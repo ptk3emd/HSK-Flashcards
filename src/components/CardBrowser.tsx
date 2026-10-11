@@ -244,7 +244,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                   ? 'olá, água'
                   : 'Hanzi, pinyin ou tradução'
               }
-              className="w-full min-h-11 pl-10 pr-10 rounded-xl text-sm bg-black/[0.04] dark:bg-white/[0.06] placeholder:text-[var(--text-tertiary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 [&::-webkit-search-cancel-button]:hidden"
+              className="glass-field w-full min-h-11 pl-10 pr-10 text-sm [&::-webkit-search-cancel-button]:hidden"
             />
             {search && (
               <button
@@ -428,16 +428,10 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
             role="dialog"
             aria-modal="true"
             aria-label={`Pré-visualização de ${previewCard.hanzi}`}
-            className={`w-full max-w-xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain rounded-3xl p-6 relative flex flex-col items-center gap-4 shadow-2xl border ${
-              isLight
-                ? 'bg-white border-white text-ink'
-                : 'bg-neutral-900 border-white/20 text-white'
-            }`}
+            className="sheet w-full max-w-xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain p-6 relative flex flex-col items-center gap-4 rounded-[28px]"
           >
             <div
-              className={`sticky top-0 z-10 -mx-6 -mt-6 px-6 pt-6 w-[calc(100%+3rem)] flex items-center justify-between pb-2 border-b border-black/10 dark:border-white/10 ${
-                isLight ? 'bg-white' : 'bg-neutral-900'
-              }`}
+              className="sticky top-0 z-10 -mx-6 -mt-6 px-6 pt-6 w-[calc(100%+3rem)] flex items-center justify-between pb-2 border-b border-[var(--separator)] bg-[var(--glass-field)] backdrop-blur-xl"
             >
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold">{previewCard.level}</span>
@@ -476,9 +470,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 value={mnemonicDraft}
                 onChange={(e) => setMnemonicDraft(e.target.value)}
                 placeholder="Escreva uma associação para lembrar o significado"
-                className={`w-full px-3 py-2 rounded-xl text-xs border resize-y ${
-                  isLight ? 'bg-white border-black/15 text-black' : 'bg-black/40 border-white/15 text-white'
-                }`}
+                className="glass-field w-full px-3 py-2 text-xs resize-y"
               />
               <div className="flex justify-end">
                 <button

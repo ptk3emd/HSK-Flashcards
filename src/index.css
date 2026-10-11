@@ -146,6 +146,22 @@
     border-radius: 28px;
     color: var(--text-fg);
   }
+  /* Inputs and selects on the glass: a frosted field with a hairline edge */
+  .glass-field {
+    background: var(--glass-field);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid var(--glass-edge);
+    border-radius: 14px;
+    color: var(--text-fg);
+  }
+  .glass-field::placeholder {
+    color: var(--text-tertiary);
+  }
+  .glass-field:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
   /* A row list inside a sheet: one hairline between rows, none at the edges */
   .ledger > * + * {
     border-top: 1px solid var(--separator);
@@ -163,6 +179,17 @@
   }
   .ink-tertiary {
     color: var(--text-tertiary);
+  }
+}
+
+/* Users who ask for less transparency get the same shapes on solid surfaces */
+@media (prefers-reduced-transparency: reduce) {
+  .sheet,
+  .sheet-float,
+  .glass-field {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 
