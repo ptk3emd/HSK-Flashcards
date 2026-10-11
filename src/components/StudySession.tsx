@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
+import { createPortal } from 'react-dom';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGesture } from '../types/card';
 import { GESTURES, GRADE_ACTIONS, effectiveActionLabel, isActionAvailable } from '../lib/gestures';
@@ -129,6 +130,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   useDialogFocus(writingDialogRef, showWritingPad && currentCard !== null, closeWritingPad);
   useDialogFocus(voiceDialogRef, showVoiceSettingsModal && !!onUpdateDeckConfig, closeVoiceSettings);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
   useDialogFocus(menuRef, isMenuOpen, closeMenu);
 
@@ -789,6 +791,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
       {/* Bottom bar: back, queue counts, undo and the session menu */}
       <nav
+        ref={navRef}
         aria-label="Sessão"
         className="sheet relative z-30 w-full !rounded-none border-t border-[var(--separator)]"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
@@ -842,8 +845,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
           </div>
         </div>
 
-        {isMenuOpen && (
-          <>
+        {/* Portalled to the body: inside the glass bar, the menu could not blur the card behind it */}
+        {isMenuOpen && createPortal(
+          <div className={isLight ? 'card-theme-light text-ink' : 'night_mode card-theme-dark text-white'}>
             <button
               type="button"
               aria-label="Fechar menu"
@@ -856,7 +860,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
               role="dialog"
               aria-modal="true"
               aria-label="Mais opções"
-              className="sheet animate-in fade-in zoom-in-95 duration-150 origin-bottom-right absolute right-2 bottom-full mb-2 z-50 w-64 max-h-[70vh] overflow-y-auto !rounded-2xl p-1.5"
+              style={{ bottom: navRef.current ? window.innerHeight - navRef.current.getBoundingClientRect().top + 8 : 72 }}
+              className="sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-bottom-right fixed right-2 z-50 w-64 max-h-[70vh] overflow-y-auto !rounded-2xl p-1.5"
             >
               {[
                 { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
@@ -903,7 +908,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 );
               })}
             </div>
-          </>
+          </div>,
+          document.body
         )}
       </nav>
 

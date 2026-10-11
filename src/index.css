@@ -146,6 +146,10 @@
     border-radius: 28px;
     color: var(--text-fg);
   }
+  /* A popover over busy content: the glass, denser so its text reads */
+  .sheet-menu {
+    background: var(--glass-menu);
+  }
   /* Inputs and selects on the glass: a frosted field with a hairline edge */
   .glass-field {
     background: var(--glass-field);
@@ -186,6 +190,7 @@
 @media (prefers-reduced-transparency: reduce) {
   .sheet,
   .sheet-float,
+  .sheet-menu,
   .glass-field {
     background: var(--glass-solid);
     -webkit-backdrop-filter: none;
