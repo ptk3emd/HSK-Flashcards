@@ -76,7 +76,7 @@ export const GestureSettings: React.FC<GestureSettingsProps> = ({ deckConfig, on
                 id={selectId}
                 value={gestures[id]}
                 onChange={(e) => setGesture(id, e.target.value as StudyAction)}
-                className={`min-h-11 w-40 shrink-0 px-2.5 rounded-xl text-sm border cursor-pointer bg-white/60 border-black/10 dark:bg-black/30 dark:border-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 ${
+                className={`min-h-11 w-40 shrink-0 px-2.5 rounded-xl text-sm glass-field cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 ${
                   gestures[id] === 'none' ? 'ink-tertiary' : ''
                 }`}
               >

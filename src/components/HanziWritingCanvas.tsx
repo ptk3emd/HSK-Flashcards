@@ -206,10 +206,8 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col items-center w-full max-w-md mx-auto p-3 rounded-3xl backdrop-blur-2xl border transition-all ${
-        embedded
-          ? 'shadow-xl ' + (isLight ? 'bg-white/85 border-white/95 text-ink' : 'bg-black/50 border-white/15 text-white')
-          : 'shadow-2xl ' + (isLight ? 'bg-white/95 border-white text-ink' : 'bg-neutral-900/95 border-white/15 text-white')
+      className={`sheet flex flex-col items-center w-full max-w-md mx-auto p-3 transition-all ${
+        embedded ? 'shadow-xl' : 'shadow-2xl'
       }`}
     >
       <div className="w-full flex items-center justify-between gap-2 mb-3 px-1">

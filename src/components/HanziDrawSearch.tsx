@@ -117,9 +117,7 @@ export const HanziDrawSearch: React.FC<HanziDrawSearchProps> = ({ cards, theme, 
 
   return (
     <div
-      className={`rounded-2xl border p-3 flex flex-col gap-3 animate-in fade-in duration-200 ${
-        isLight ? 'bg-white/80 border-black/10' : 'bg-black/30 border-white/10'
-      }`}
+      className="sheet !rounded-2xl p-3 flex flex-col gap-3 animate-in fade-in duration-200"
     >
       <div className="flex items-center justify-between gap-2">
         <span className="text-xs font-semibold opacity-80">Desenhe o caractere</span>

@@ -790,9 +790,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
       {/* Bottom bar: back, queue counts, undo and the session menu */}
       <nav
         aria-label="Sessão"
-        className={`relative z-30 w-full border-t ${
-          isLight ? 'bg-white/90 border-black/5 text-ink' : 'bg-black/85 border-white/5 text-white'
-        }`}
+        className="sheet relative z-30 w-full !rounded-none border-t border-[var(--separator)]"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="max-w-2xl mx-auto px-2 h-16 flex items-center justify-between">
@@ -858,9 +856,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               role="dialog"
               aria-modal="true"
               aria-label="Mais opções"
-              className={`animate-in fade-in zoom-in-95 duration-150 origin-bottom-right absolute right-2 bottom-full mb-2 z-50 w-64 max-h-[70vh] overflow-y-auto rounded-2xl p-1.5 shadow-2xl border ${
-                isLight ? 'bg-white border-black/10 text-ink' : 'bg-neutral-900 border-white/10 text-white'
-              }`}
+              className="sheet animate-in fade-in zoom-in-95 duration-150 origin-bottom-right absolute right-2 bottom-full mb-2 z-50 w-64 max-h-[70vh] overflow-y-auto !rounded-2xl p-1.5"
             >
               {[
                 { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
@@ -950,11 +946,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             aria-modal="true"
             aria-label="Configurações da sessão"
             onClick={(e) => e.stopPropagation()}
-            className={`w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-7 shadow-2xl border animate-in zoom-in-95 duration-200 ${
-              isLight
-                ? 'bg-white/95 border-white text-ink'
-                : 'bg-night-panel/95 border-white/15 text-white'
-            }`}
+            className="sheet w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 sm:p-7 animate-in zoom-in-95 duration-200"
           >
             <AudioVoiceSettings
               deckConfig={deckConfig}
