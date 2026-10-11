@@ -1,4 +1,4 @@
-import { Card, DeckConfig, FSRSOptions, ReviewLog } from '../types/card';
+import { Card, DeckConfig, ExamAttempt, FSRSOptions, ReviewLog } from '../types/card';
 import {
   DEFAULT_FSRS_OPTIONS,
   MAX_INTERVAL_LIMIT,
@@ -15,6 +15,9 @@ const FSRS_STORAGE_KEY = 'hanzi_anki_fsrs_v2';
 const LOGS_STORAGE_KEY = 'hanzi_anki_review_logs_v2';
 const THEME_STORAGE_KEY = 'hanzi_anki_theme_v2';
 const CONTENT_VERSION_KEY = 'hanzi_anki_content_version';
+const EXAM_ATTEMPTS_KEY = 'hanzi_anki_exam_attempts_v1';
+const STORIES_READ_KEY = 'hanzi_anki_stories_read_v1';
+const MAX_EXAM_ATTEMPTS = 20;
 
 /**
  * Bump when the bundled vocabulary text changes. Saved native cards then pick up the new
@@ -350,4 +353,48 @@ export function popReviewLog(): ReviewLog | null {
     return last;
   }
   return null;
+}
+
+/** Mock exam results, newest first. Invalid stored data is ignored, not thrown. */
+export function loadExamAttempts(): ExamAttempt[] {
+  try {
+    const raw = localStorage.getItem(EXAM_ATTEMPTS_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as ExamAttempt[]) : [];
+  } catch (e) {
+    console.error('Failed to load exam attempts', e);
+    return [];
+  }
+}
+
+export function saveExamAttempt(attempt: ExamAttempt): void {
+  try {
+    const next = [attempt, ...loadExamAttempts()].slice(0, MAX_EXAM_ATTEMPTS);
+    localStorage.setItem(EXAM_ATTEMPTS_KEY, JSON.stringify(next));
+  } catch (e) {
+    console.error('Failed to save exam attempt', e);
+  }
+}
+
+/** Ids of the stories the student has finished. */
+export function loadStoriesRead(): string[] {
+  try {
+    const raw = localStorage.getItem(STORIES_READ_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [];
+  } catch (e) {
+    console.error('Failed to load stories read', e);
+    return [];
+  }
+}
+
+export function markStoryRead(id: string): void {
+  try {
+    const ids = Array.from(new Set([...loadStoriesRead(), id]));
+    localStorage.setItem(STORIES_READ_KEY, JSON.stringify(ids));
+  } catch (e) {
+    console.error('Failed to save story progress', e);
+  }
 }

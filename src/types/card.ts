@@ -91,3 +91,68 @@ export type StudyAction =
   | 'menu';
 
 export type GestureMap = Record<StudyGesture, StudyAction>;
+
+/* Learn tab: stories that teach a grammar point, and HSK mock exams */
+
+export interface StoryToken {
+  hanzi: string;
+  pinyin: string;
+  punct: boolean;
+}
+
+export interface StorySentence {
+  tokens: StoryToken[];
+  ptbr: string;
+}
+
+export interface StoryQuestion {
+  prompt: string;
+  options: string[];
+  answer: number;
+}
+
+export interface Story {
+  id: string;
+  level: string;
+  grammar: string;
+  title: string;
+  sentences: StorySentence[];
+  questions: StoryQuestion[];
+}
+
+export interface GrammarGroup {
+  category: string;
+  points: string[];
+}
+
+export interface LevelContent {
+  stories: Story[];
+  grammar: GrammarGroup[];
+}
+
+export type ExamPart = 'listening' | 'reading';
+
+export interface ExamItem {
+  id: string;
+  part: ExamPart;
+  /** Chinese text spoken for a listening item; the prompt stays in Portuguese */
+  audio?: string;
+  prompt: string;
+  options: string[];
+  answer: number;
+}
+
+export interface ExamPartSpec {
+  part: ExamPart;
+  label: string;
+  count: number;
+  minutes: number;
+}
+
+export interface ExamAttempt {
+  id: string;
+  level: string;
+  finishedAt: string;
+  correct: Record<ExamPart, number>;
+  total: Record<ExamPart, number>;
+}

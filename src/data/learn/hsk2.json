@@ -1,0 +1,812 @@
+{
+ "stories": [
+  {
+   "id": "h2-le",
+   "level": "HSK 2",
+   "grammar": "了 (完成态和变化态)",
+   "title": "我买了三本书",
+   "sentences": [
+    {
+     "tokens": [
+      {
+       "hanzi": "我",
+       "pinyin": "wǒ",
+       "punct": false
+      },
+      {
+       "hanzi": "买",
+       "pinyin": "mǎi",
+       "punct": false
+      },
+      {
+       "hanzi": "了",
+       "pinyin": "le",
+       "punct": false
+      },
+      {
+       "hanzi": "三",
+       "pinyin": "sān",
+       "punct": false
+      },
+      {
+       "hanzi": "本",
+       "pinyin": "běn",
+       "punct": false
+      },
+      {
+       "hanzi": "书",
+       "pinyin": "shū",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Eu comprei três livros."
+    },
+    {
+     "tokens": [
+      {
+       "hanzi": "他",
+       "pinyin": "tā",
+       "punct": false
+      },
+      {
+       "hanzi": "吃",
+       "pinyin": "chī",
+       "punct": false
+      },
+      {
+       "hanzi": "了",
+       "pinyin": "le",
+       "punct": false
+      },
+      {
+       "hanzi": "饭",
+       "pinyin": "fàn",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Ele comeu."
+    },
+    {
+     "tokens": [
+      {
+       "hanzi": "天",
+       "pinyin": "tiān",
+       "punct": false
+      },
+      {
+       "hanzi": "冷",
+       "pinyin": "lěng",
+       "punct": false
+      },
+      {
+       "hanzi": "了",
+       "pinyin": "le",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "O tempo ficou frio."
+    }
+   ],
+   "questions": [
+    {
+     "prompt": "Quantos livros ele comprou?",
+     "options": [
+      "Dois",
+      "Três",
+      "Quatro",
+      "Cinco"
+     ],
+     "answer": 1
+    },
+    {
+     "prompt": "Como ficou o tempo?",
+     "options": [
+      "Quente",
+      "Frio",
+      "Bom",
+      "Chuvoso"
+     ],
+     "answer": 1
+    }
+   ]
+  },
+  {
+   "id": "h2-guo",
+   "level": "HSK 2",
+   "grammar": "过 (经历)",
+   "title": "我去过中国",
+   "sentences": [
+    {
+     "tokens": [
+      {
+       "hanzi": "我",
+       "pinyin": "wǒ",
+       "punct": false
+      },
+      {
+       "hanzi": "去",
+       "pinyin": "qù",
+       "punct": false
+      },
+      {
+       "hanzi": "过",
+       "pinyin": "guò",
+       "punct": false
+      },
+      {
+       "hanzi": "中国",
+       "pinyin": "Zhōng guó",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Eu já estive na China."
+    },
+    {
+     "tokens": [
+      {
+       "hanzi": "你",
+       "pinyin": "nǐ",
+       "punct": false
+      },
+      {
+       "hanzi": "吃",
+       "pinyin": "chī",
+       "punct": false
+      },
+      {
+       "hanzi": "过",
+       "pinyin": "guò",
+       "punct": false
+      },
+      {
+       "hanzi": "中国",
+       "pinyin": "Zhōng guó",
+       "punct": false
+      },
+      {
+       "hanzi": "菜",
+       "pinyin": "cài",
+       "punct": false
+      },
+      {
+       "hanzi": "吗",
+       "pinyin": "ma",
+       "punct": false
+      },
+      {
+       "hanzi": "？",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Você já comeu comida chinesa?"
+    }
+   ],
+   "questions": [
+    {
+     "prompt": "Quem já esteve na China?",
+     "options": [
+      "Eu",
+      "Ele",
+      "Ela",
+      "Nós"
+     ],
+     "answer": 0
+    },
+    {
+     "prompt": "O que a pessoa pergunta?",
+     "options": [
+      "Se já comeu comida chinesa",
+      "Onde mora",
+      "Que horas são",
+      "Qual é o nome"
+     ],
+     "answer": 0
+    }
+   ]
+  },
+  {
+   "id": "h2-zhe",
+   "level": "HSK 2",
+   "grammar": "着 (状态持续)",
+   "title": "门开着",
+   "sentences": [
+    {
+     "tokens": [
+      {
+       "hanzi": "门",
+       "pinyin": "mén",
+       "punct": false
+      },
+      {
+       "hanzi": "开",
+       "pinyin": "kāi",
+       "punct": false
+      },
+      {
+       "hanzi": "着",
+       "pinyin": "zhe",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "A porta está aberta."
+    },
+    {
+     "tokens": [
+      {
+       "hanzi": "他",
+       "pinyin": "tā",
+       "punct": false
+      },
+      {
+       "hanzi": "坐",
+       "pinyin": "zuò",
+       "punct": false
+      },
+      {
+       "hanzi": "着",
+       "pinyin": "zhe",
+       "punct": false
+      },
+      {
+       "hanzi": "看",
+       "pinyin": "kàn",
+       "punct": false
+      },
+      {
+       "hanzi": "书",
+       "pinyin": "shū",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Ele está sentado lendo um livro."
+    }
+   ],
+   "questions": [
+    {
+     "prompt": "O que ele faz sentado?",
+     "options": [
+      "Dorme",
+      "Lê",
+      "Come",
+      "Canta"
+     ],
+     "answer": 1
+    },
+    {
+     "prompt": "Como está a porta?",
+     "options": [
+      "Fechada",
+      "Aberta",
+      "Quebrada",
+      "Pintada"
+     ],
+     "answer": 1
+    }
+   ]
+  },
+  {
+   "id": "h2-bi",
+   "level": "HSK 2",
+   "grammar": "比 (比较句)",
+   "title": "他比我高",
+   "sentences": [
+    {
+     "tokens": [
+      {
+       "hanzi": "他",
+       "pinyin": "tā",
+       "punct": false
+      },
+      {
+       "hanzi": "比",
+       "pinyin": "bǐ",
+       "punct": false
+      },
+      {
+       "hanzi": "我",
+       "pinyin": "wǒ",
+       "punct": false
+      },
+      {
+       "hanzi": "高",
+       "pinyin": "gāo",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Ele é mais alto do que eu."
+    },
+    {
+     "tokens": [
+      {
+       "hanzi": "这",
+       "pinyin": "zhè",
+       "punct": false
+      },
+      {
+       "hanzi": "个",
+       "pinyin": "gè",
+       "punct": false
+      },
+      {
+       "hanzi": "比",
+       "pinyin": "bǐ",
+       "punct": false
+      },
+      {
+       "hanzi": "那",
+       "pinyin": "nà",
+       "punct": false
+      },
+      {
+       "hanzi": "个",
+       "pinyin": "gè",
+       "punct": false
+      },
+      {
+       "hanzi": "贵",
+       "pinyin": "guì",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Este é mais caro do que aquele."
+    }
+   ],
+   "questions": [
+    {
+     "prompt": "Quem é mais alto?",
+     "options": [
+      "Eu",
+      "Ele",
+      "Os dois",
+      "Ninguém"
+     ],
+     "answer": 1
+    },
+    {
+     "prompt": "Qual é mais caro?",
+     "options": [
+      "Este",
+      "Aquele",
+      "Os dois",
+      "Nenhum"
+     ],
+     "answer": 0
+    }
+   ]
+  },
+  {
+   "id": "h2-yinwei",
+   "level": "HSK 2",
+   "grammar": "因为 ... 所以 ... (因果)",
+   "title": "因为下雨",
+   "sentences": [
+    {
+     "tokens": [
+      {
+       "hanzi": "因为",
+       "pinyin": "yīn wèi",
+       "punct": false
+      },
+      {
+       "hanzi": "下",
+       "pinyin": "xià",
+       "punct": false
+      },
+      {
+       "hanzi": "雨",
+       "pinyin": "yǔ",
+       "punct": false
+      },
+      {
+       "hanzi": "，",
+       "pinyin": "",
+       "punct": true
+      },
+      {
+       "hanzi": "所以",
+       "pinyin": "suǒ yǐ",
+       "punct": false
+      },
+      {
+       "hanzi": "我",
+       "pinyin": "wǒ",
+       "punct": false
+      },
+      {
+       "hanzi": "不",
+       "pinyin": "bù",
+       "punct": false
+      },
+      {
+       "hanzi": "去",
+       "pinyin": "qù",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Como está chovendo, eu não vou."
+    }
+   ],
+   "questions": [
+    {
+     "prompt": "Por que a pessoa não vai?",
+     "options": [
+      "Está chovendo",
+      "Está cansada",
+      "É feriado",
+      "Não quer"
+     ],
+     "answer": 0
+    },
+    {
+     "prompt": "O que a pessoa decidiu?",
+     "options": [
+      "Ir ao cinema",
+      "Não ir",
+      "Ir de carro",
+      "Ficar com um amigo"
+     ],
+     "answer": 1
+    }
+   ]
+  },
+  {
+   "id": "h2-chongdie",
+   "level": "HSK 2",
+   "grammar": "动词重叠 (AA)",
+   "title": "你看看这个",
+   "sentences": [
+    {
+     "tokens": [
+      {
+       "hanzi": "你",
+       "pinyin": "nǐ",
+       "punct": false
+      },
+      {
+       "hanzi": "看",
+       "pinyin": "kàn",
+       "punct": false
+      },
+      {
+       "hanzi": "看",
+       "pinyin": "kàn",
+       "punct": false
+      },
+      {
+       "hanzi": "这",
+       "pinyin": "zhè",
+       "punct": false
+      },
+      {
+       "hanzi": "个",
+       "pinyin": "gè",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Dê uma olhada nisso."
+    },
+    {
+     "tokens": [
+      {
+       "hanzi": "我",
+       "pinyin": "wǒ",
+       "punct": false
+      },
+      {
+       "hanzi": "想",
+       "pinyin": "xiǎng",
+       "punct": false
+      },
+      {
+       "hanzi": "想",
+       "pinyin": "xiǎng",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Vou pensar um pouco."
+    },
+    {
+     "tokens": [
+      {
+       "hanzi": "请",
+       "pinyin": "qǐng",
+       "punct": false
+      },
+      {
+       "hanzi": "你",
+       "pinyin": "nǐ",
+       "punct": false
+      },
+      {
+       "hanzi": "说",
+       "pinyin": "shuō",
+       "punct": false
+      },
+      {
+       "hanzi": "说",
+       "pinyin": "shuō",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Por favor, fale um pouco."
+    }
+   ],
+   "questions": [
+    {
+     "prompt": "O que a pessoa pede?",
+     "options": [
+      "Que olhe um pouco",
+      "Que compre",
+      "Que corra",
+      "Que cante"
+     ],
+     "answer": 0
+    },
+    {
+     "prompt": "O que a pessoa vai fazer?",
+     "options": [
+      "Pensar um pouco",
+      "Dormir",
+      "Comer",
+      "Sair"
+     ],
+     "answer": 0
+    }
+   ]
+  },
+  {
+   "id": "h2-zui",
+   "level": "HSK 2",
+   "grammar": "最 (superlativo)",
+   "title": "他是班里最高的",
+   "sentences": [
+    {
+     "tokens": [
+      {
+       "hanzi": "他",
+       "pinyin": "tā",
+       "punct": false
+      },
+      {
+       "hanzi": "是",
+       "pinyin": "shì",
+       "punct": false
+      },
+      {
+       "hanzi": "班",
+       "pinyin": "bān",
+       "punct": false
+      },
+      {
+       "hanzi": "里",
+       "pinyin": "lǐ",
+       "punct": false
+      },
+      {
+       "hanzi": "最",
+       "pinyin": "zuì",
+       "punct": false
+      },
+      {
+       "hanzi": "高",
+       "pinyin": "gāo",
+       "punct": false
+      },
+      {
+       "hanzi": "的",
+       "pinyin": "de",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Ele é o mais alto da turma."
+    },
+    {
+     "tokens": [
+      {
+       "hanzi": "这",
+       "pinyin": "zhè",
+       "punct": false
+      },
+      {
+       "hanzi": "个",
+       "pinyin": "gè",
+       "punct": false
+      },
+      {
+       "hanzi": "词",
+       "pinyin": "cí",
+       "punct": false
+      },
+      {
+       "hanzi": "最",
+       "pinyin": "zuì",
+       "punct": false
+      },
+      {
+       "hanzi": "长",
+       "pinyin": "cháng",
+       "punct": false
+      },
+      {
+       "hanzi": "。",
+       "pinyin": "",
+       "punct": true
+      }
+     ],
+     "ptbr": "Esta palavra é a mais longa."
+    }
+   ],
+   "questions": [
+    {
+     "prompt": "Quem é o mais alto da turma?",
+     "options": [
+      "Ele",
+      "Eu",
+      "Ela",
+      "Ninguém"
+     ],
+     "answer": 0
+    },
+    {
+     "prompt": "Qual palavra é a mais longa?",
+     "options": [
+      "Esta",
+      "Aquela",
+      "Nenhuma",
+      "Todas"
+     ],
+     "answer": 0
+    }
+   ]
+  }
+ ],
+ "grammar": [
+  {
+   "category": "Palavras de posição e prefixos",
+   "points": [
+    "左, 右; 面 (sufixo)"
+   ]
+  },
+  {
+   "category": "Verbos",
+   "points": [
+    "Reduplicação: AA, A一A, A了A, ABAB",
+    "Auxiliar de possibilidade: 可能",
+    "Separáveis: 帮忙, 游泳, 跳舞, 跑步"
+   ]
+  },
+  {
+   "category": "Pronomes",
+   "points": [
+    "Interrogativo: 为什么",
+    "Reflexivo: 自己",
+    "Demonstrativos: 那么, 那样, 这么, 这样, 每"
+   ]
+  },
+  {
+   "category": "Adjetivos",
+   "points": [
+    "Reduplicação: AA, AABB"
+   ]
+  },
+  {
+   "category": "Números e medidas",
+   "points": [
+    "Números: 万, 好多, 多",
+    "Classificadores: 条, 位, 间, 名, 包",
+    "Ação: 次"
+   ]
+  },
+  {
+   "category": "Advérbios",
+   "points": [
+    "De grau: 多, 好, 最",
+    "De âmbito: 一起",
+    "De tempo: 还, 已经, 有时（候）, 快, 快要, 正常",
+    "De frequência: 经常",
+    "De negação: 别",
+    "Relacionais: 再, 就",
+    "De modalidade: 都, 就, 还是"
+   ]
+  },
+  {
+   "category": "Preposições",
+   "points": [
+    "Origem: 从",
+    "Direção: 往, 从, 给",
+    "Comparação: 比",
+    "Objeto: 跟",
+    "Causa: 因为"
+   ]
+  },
+  {
+   "category": "Conjunções",
+   "points": [
+    "Entre orações: 但, 但是, 那, 虽然, 还是, 因为, 所以"
+   ]
+  },
+  {
+   "category": "Partículas",
+   "points": [
+    "Estrutural: 得, 地",
+    "Aspecto: 过, 着",
+    "Modais: 呢, 吧, 的, 啊"
+   ]
+  },
+  {
+   "category": "Estruturas de frase",
+   "points": [
+    "Complemento de estado e de resultado (动补短语)",
+    "Locução com 的 (的字短语)",
+    "Frase em série e frase com verbo auxiliar (连动, 兼语)",
+    "Expressões fixas: 什么的, 还是……吧"
+   ]
+  }
+ ]
+}

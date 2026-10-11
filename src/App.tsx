@@ -27,6 +27,7 @@ import {
   Layers,
   Search,
   BarChart3,
+  GraduationCap,
   Settings2,
 } from 'lucide-react';
 
@@ -36,10 +37,13 @@ const loadCardBrowser = () => import('./components/CardBrowser').then((m) => m.C
 const loadStatsView = () => import('./components/StatsView').then((m) => m.StatsView);
 const CardBrowserLazy = lazy(() => loadCardBrowser().then((c) => ({ default: c })));
 const StatsViewLazy = lazy(() => loadStatsView().then((c) => ({ default: c })));
+const loadLearnView = () => import('./components/LearnView').then((m) => m.LearnView);
+const LearnViewLazy = lazy(() => loadLearnView().then((c) => ({ default: c })));
 
 const NAV_ITEMS = [
   { tab: 'decks', label: 'Decks', Icon: Layers },
   { tab: 'browser', label: 'Dicionário', Icon: Search },
+  { tab: 'learn', label: 'Aprender', Icon: GraduationCap },
   { tab: 'stats', label: 'Estatísticas', Icon: BarChart3 },
   { tab: 'settings', label: 'Configurações', Icon: Settings2 },
 ] as const;
@@ -49,7 +53,7 @@ export default function App() {
   const [deckConfig, setDeckConfig] = useState<DeckConfig>(loadDeckConfig());
   const [fsrsOptions, setFSRSOptions] = useState<FSRSOptions>(loadFSRSOptions());
   const [theme, setTheme] = useState<'dark' | 'light'>(getStoredTheme());
-  const [activeTab, setActiveTab] = useState<'study' | 'decks' | 'browser' | 'stats' | 'settings'>('decks');
+  const [activeTab, setActiveTab] = useState<'study' | 'decks' | 'browser' | 'learn' | 'stats' | 'settings'>('decks');
   const [isolatedStudyLevel, setIsolatedStudyLevel] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -57,6 +61,7 @@ export default function App() {
 
   const CardBrowser = usePrefetched(loadCardBrowser, 'idle') ?? CardBrowserLazy;
   const StatsView = usePrefetched(loadStatsView, 'idle') ?? StatsViewLazy;
+  const LearnView = usePrefetched(loadLearnView, 'idle') ?? LearnViewLazy;
 
   // Load cards on initial mount
   useEffect(() => {
@@ -174,6 +179,12 @@ export default function App() {
               onUpdateCard={handleUpdateSingleCard}
               onAddCards={handleAddCards}
             />
+          </Suspense>
+        )}
+
+        {activeTab === 'learn' && (
+          <Suspense fallback={<ViewLoading variant="decks" />}>
+            <LearnView />
           </Suspense>
         )}
 
