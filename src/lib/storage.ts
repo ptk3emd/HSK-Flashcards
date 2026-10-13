@@ -1,4 +1,4 @@
-import { Card, DeckConfig, ExamAttempt, FSRSOptions, ReviewLog } from '../types/card';
+import { Card, DeckConfig, ExamAttempt, ExamItem, ExamSession, FSRSOptions, ReviewLog } from '../types/card';
 import {
   DEFAULT_FSRS_OPTIONS,
   MAX_INTERVAL_LIMIT,
@@ -17,7 +17,8 @@ const THEME_STORAGE_KEY = 'hanzi_anki_theme_v2';
 const CONTENT_VERSION_KEY = 'hanzi_anki_content_version';
 const EXAM_ATTEMPTS_KEY = 'hanzi_anki_exam_attempts_v1';
 const STORIES_READ_KEY = 'hanzi_anki_stories_read_v1';
-const MAX_EXAM_ATTEMPTS = 20;
+const EXAM_SESSION_KEY = 'hanzi_anki_exam_session_v1';
+const MAX_EXAM_ATTEMPTS = 20; // per level
 
 /**
  * Bump when the bundled vocabulary text changes. Saved native cards then pick up the new
@@ -355,23 +356,37 @@ export function popReviewLog(): ReviewLog | null {
   return null;
 }
 
-/** Mock exam results, newest first. Invalid stored data is ignored, not thrown. */
+const isCount = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+
+/** Checks the shape of a stored attempt, so a corrupt entry cannot break the Learn tab. */
+function isExamAttempt(v: unknown): v is ExamAttempt {
+  if (typeof v !== 'object' || v === null) return false;
+  const a = v as Record<string, unknown>;
+  const pair = (p: unknown) =>
+    typeof p === 'object' && p !== null && isCount((p as Record<string, unknown>).listening) && isCount((p as Record<string, unknown>).reading);
+  return typeof a.id === 'string' && typeof a.level === 'string' && typeof a.finishedAt === 'string' && pair(a.correct) && pair(a.total);
+}
+
+/** Mock exam results, newest first. Invalid stored entries are dropped, not thrown. */
 export function loadExamAttempts(): ExamAttempt[] {
   try {
     const raw = localStorage.getItem(EXAM_ATTEMPTS_KEY);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as ExamAttempt[]) : [];
+    return Array.isArray(parsed) ? parsed.filter(isExamAttempt) : [];
   } catch (e) {
     console.error('Failed to load exam attempts', e);
     return [];
   }
 }
 
+/** Keeps the newest attempts of each level, so one level's history cannot evict another's. */
 export function saveExamAttempt(attempt: ExamAttempt): void {
   try {
-    const next = [attempt, ...loadExamAttempts()].slice(0, MAX_EXAM_ATTEMPTS);
-    localStorage.setItem(EXAM_ATTEMPTS_KEY, JSON.stringify(next));
+    const all = loadExamAttempts();
+    const sameLevel = [attempt, ...all.filter((a) => a.level === attempt.level)].slice(0, MAX_EXAM_ATTEMPTS);
+    const others = all.filter((a) => a.level !== attempt.level);
+    localStorage.setItem(EXAM_ATTEMPTS_KEY, JSON.stringify([...sameLevel, ...others]));
   } catch (e) {
     console.error('Failed to save exam attempt', e);
   }
@@ -396,5 +411,70 @@ export function markStoryRead(id: string): void {
     localStorage.setItem(STORIES_READ_KEY, JSON.stringify(ids));
   } catch (e) {
     console.error('Failed to save story progress', e);
+  }
+}
+
+function isExamItem(v: unknown): v is ExamItem {
+  if (typeof v !== 'object' || v === null) return false;
+  const i = v as Record<string, unknown>;
+  return (
+    typeof i.id === 'string' &&
+    (i.part === 'listening' || i.part === 'reading') &&
+    typeof i.kind === 'string' &&
+    typeof i.prompt === 'string' &&
+    Array.isArray(i.options) &&
+    i.options.length >= 2 &&
+    i.options.every((o) => typeof o === 'string') &&
+    Number.isInteger(i.answer) &&
+    (i.answer as number) >= 0 &&
+    (i.answer as number) < i.options.length
+  );
+}
+
+function isExamSession(v: unknown): v is ExamSession {
+  if (typeof v !== 'object' || v === null) return false;
+  const s = v as Record<string, unknown>;
+  return (
+    typeof s.level === 'string' &&
+    Array.isArray(s.items) &&
+    s.items.length > 0 &&
+    s.items.every(isExamItem) &&
+    typeof s.picks === 'object' &&
+    s.picks !== null &&
+    Array.isArray(s.assisted) &&
+    s.assisted.every((id) => typeof id === 'string') &&
+    Number.isInteger(s.partIndex) &&
+    (s.partIndex as number) >= 0 &&
+    (s.partIndex as number) <= 1 &&
+    isCount(s.endsAt)
+  );
+}
+
+/** The exam in progress, if the student left it half done. Invalid data counts as none. */
+export function loadExamSession(): ExamSession | null {
+  try {
+    const raw = localStorage.getItem(EXAM_SESSION_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    return isExamSession(parsed) ? parsed : null;
+  } catch (e) {
+    console.error('Failed to load the exam in progress', e);
+    return null;
+  }
+}
+
+export function saveExamSession(session: ExamSession): void {
+  try {
+    localStorage.setItem(EXAM_SESSION_KEY, JSON.stringify(session));
+  } catch (e) {
+    console.error('Failed to save the exam in progress', e);
+  }
+}
+
+export function clearExamSession(): void {
+  try {
+    localStorage.removeItem(EXAM_SESSION_KEY);
+  } catch (e) {
+    console.error('Failed to clear the exam in progress', e);
   }
 }

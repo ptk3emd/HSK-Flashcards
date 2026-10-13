@@ -1,5 +1,13 @@
-import { Card, ExamItem, ExamPart, ExamPartSpec, LevelContent, Story } from '../types/card';
-import { loadNativeLevelCards } from '../data/defaultDecks';
+import {
+  ExamCloze,
+  ExamItem,
+  ExamPart,
+  ExamPartSpec,
+  ExamPassage,
+  ExamSentence,
+  LevelContent,
+  StorySentence,
+} from '../types/card';
 
 /** Levels that have stories and mock exams so far. */
 export const LEARN_LEVELS = ['HSK 1', 'HSK 2'] as const;
@@ -61,56 +69,154 @@ function withShuffledOptions(
   return { options: order.map((i) => options[i]), answer: order.indexOf(answer) };
 }
 
-/** A short Portuguese gloss of a card: the first meaning, without grammar notes. */
-export function shortMeaning(card: Card): string {
-  const plain = card.ptbr.replace(/<[^>]+>/g, '').replace(/\([^)]*\)/g, '').trim();
-  return plain.split(';')[0].trim();
+const STOP_WORDS = new Set([
+  'eu', 'você', 'voce', 'ele', 'ela', 'nós', 'nos', 'eles', 'elas', 'um', 'uma', 'uns', 'umas', 'o', 'a', 'os', 'as',
+  'de', 'do', 'da', 'dos', 'das', 'em', 'no', 'na', 'nos', 'nas', 'para', 'com', 'por', 'que', 'é', 'e', 'está',
+  'são', 'estão', 'tem', 'tenho', 'meu', 'minha', 'seu', 'sua', 'ao', 'à', 'se', 'mas', 'ou', 'não', 'nao', 'muito',
+]);
+
+function contentWords(text: string): Set<string> {
+  const plain = text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ');
+  return new Set(plain.split(/\s+/).filter((w) => w.length >= 3 && !STOP_WORDS.has(w)));
 }
 
 /**
- * Builds one exam for a level. Listening items play a word from the level and ask for its
- * meaning. Reading items are the stories' questions first, then word-meaning questions.
- * Every item is generated from the level's own words and stories, never copied from an
- * official paper.
+ * True when two Portuguese options could both pass as the same answer: equal, one inside the
+ * other, or sharing most of their meaningful words. Distractors must not be confusable with
+ * the right option, or with each other.
  */
-export function buildExam(
-  level: LearnLevel,
-  cards: Card[],
-  content: LevelContent,
-  seed: number
-): ExamItem[] {
-  const rng = createRng(seed);
-  const words = cards.filter((c) => shortMeaning(c).length > 0);
-  const meanings = Array.from(new Set(words.map(shortMeaning)));
+export function isConfusable(a: string, b: string): boolean {
+  const norm = (t: string) =>
+    t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  const na = norm(a);
+  const nb = norm(b);
+  if (!na || !nb) return false;
+  if (na === nb || na.includes(nb) || nb.includes(na)) return true;
+  const wa = contentWords(a);
+  const wb = contentWords(b);
+  const smaller = Math.min(wa.size, wb.size);
+  if (smaller === 0) return false;
+  let shared = 0;
+  wa.forEach((w) => {
+    if (wb.has(w)) shared += 1;
+  });
+  return shared / smaller >= 0.75;
+}
 
-  const wordItem = (card: Card, id: string, part: ExamPart, asAudio: boolean): ExamItem => {
-    const gloss = shortMeaning(card);
-    const distractors = shuffle(meanings.filter((m) => m !== gloss), rng).slice(0, 3);
-    const shuffled = withShuffledOptions([gloss, ...distractors], 0, rng);
-    return asAudio
-      ? { id, part, audio: card.hanzi, prompt: 'Ouça e escolha o significado.', options: shuffled.options, answer: shuffled.answer }
-      : { id, part, prompt: `Qual é o significado de "${card.hanzi}"?`, options: shuffled.options, answer: shuffled.answer };
-  };
+/** Up to `count` options from `pool` that are not confusable with `correct` or with each other. */
+function pickDistractors(correct: string, pool: string[], count: number, rng: () => number): string[] {
+  const picked: string[] = [];
+  for (const candidate of shuffle(pool, rng)) {
+    if (isConfusable(correct, candidate)) continue;
+    if (picked.some((p) => isConfusable(p, candidate))) continue;
+    picked.push(candidate);
+    if (picked.length === count) break;
+  }
+  return picked;
+}
 
-  const storyItems: ExamItem[] = content.stories.flatMap((story: Story) =>
-    story.questions.map((q, i) => {
-      const shuffled = withShuffledOptions(q.options, q.answer, rng);
-      return { id: `${story.id}-q${i}`, part: 'reading' as ExamPart, prompt: q.prompt, options: shuffled.options, answer: shuffled.answer };
-    })
+const spokenText = (s: ExamSentence | StorySentence) => s.tokens.map((t) => t.hanzi).join('');
+
+function translationItem(
+  id: string,
+  part: ExamPart,
+  kind: 'listen' | 'sentence',
+  sentence: ExamSentence,
+  all: ExamSentence[],
+  rng: () => number
+): ExamItem {
+  const distractors = pickDistractors(
+    sentence.ptbr,
+    all.filter((s) => s.id !== sentence.id).map((s) => s.ptbr),
+    3,
+    rng
   );
+  const shuffled = withShuffledOptions([sentence.ptbr, ...distractors], 0, rng);
+  return {
+    id,
+    part,
+    kind,
+    audio: kind === 'listen' ? spokenText(sentence) : undefined,
+    text: [{ tokens: sentence.tokens, ptbr: sentence.ptbr }],
+    prompt: kind === 'listen' ? 'Ouça a frase e escolha a tradução.' : 'Leia a frase e escolha a tradução.',
+    options: shuffled.options,
+    answer: shuffled.answer,
+    grammar: sentence.grammar,
+  };
+}
 
+function passageItems(passage: ExamPassage, rng: () => number): ExamItem[] {
+  return passage.questions.map((q, i) => {
+    const shuffled = withShuffledOptions(q.options, q.answer, rng);
+    return {
+      id: `${passage.id}-q${i}`,
+      part: 'reading' as ExamPart,
+      kind: 'passage' as const,
+      text: passage.sentences,
+      prompt: q.prompt,
+      options: shuffled.options,
+      answer: shuffled.answer,
+      explain: q.explain,
+    };
+  });
+}
+
+function clozeItem(c: ExamCloze, rng: () => number): ExamItem {
+  const shuffled = withShuffledOptions(c.options, c.answer, rng);
+  return {
+    id: c.id,
+    part: 'reading',
+    kind: 'cloze',
+    text: [{ tokens: c.tokens, ptbr: c.ptbr }],
+    prompt: 'Complete a frase.',
+    options: shuffled.options,
+    answer: shuffled.answer,
+    explain: c.explain,
+    grammar: c.grammar,
+  };
+}
+
+/**
+ * Builds one exam for a level from its own bank of texts, never from the stories and never
+ * copied from an official paper. Listening plays a sentence and asks for its translation.
+ * Reading mixes passage questions, sentences with a blank (grammar) and, if the bank is
+ * short, sentence translations.
+ */
+export function buildExam(level: LearnLevel, content: LevelContent, seed: number): ExamItem[] {
+  const rng = createRng(seed);
   const spec = Object.fromEntries(EXAM_SPECS[level].map((s) => [s.part, s.count])) as Record<ExamPart, number>;
+  const { sentences, passages, cloze } = content.exam;
 
-  const listening = shuffle(words, rng)
+  const shuffledSentences = shuffle(sentences, rng);
+  const listening = shuffledSentences
     .slice(0, spec.listening)
-    .map((card, i) => wordItem(card, `${level}-l${i}`, 'listening', true));
+    .map((s, i) => translationItem(`${level}-l${i}`, 'listening', 'listen', s, sentences, rng));
 
-  const readingFromStories = shuffle(storyItems, rng).slice(0, spec.reading);
-  const readingFromWords = shuffle(words, rng)
-    .slice(0, Math.max(0, spec.reading - readingFromStories.length))
-    .map((card, i) => wordItem(card, `${level}-r${i}`, 'reading', false));
+  const clozeTarget = Math.min(cloze.length, Math.round(spec.reading * 0.35));
+  const clozeItems = shuffle(cloze, rng).slice(0, clozeTarget).map((c) => clozeItem(c, rng));
 
-  return [...listening, ...readingFromStories, ...readingFromWords];
+  // Questions of one passage stay together, so the text is read once per group
+  const groups: ExamItem[][] = [];
+  let count = clozeItems.length;
+  for (const passage of shuffle(passages, rng)) {
+    if (count >= spec.reading) break;
+    const items = passageItems(passage, rng).slice(0, spec.reading - count);
+    groups.push(items);
+    count += items.length;
+  }
+  const reading: ExamItem[] = shuffle<ExamItem[]>([...groups, ...clozeItems.map((c) => [c])], rng).flat();
+
+  // Fill any remaining gap with sentence translations that listening did not use
+  const spare = shuffledSentences.slice(spec.listening);
+  for (let i = 0; reading.length < spec.reading && i < spare.length; i++) {
+    reading.push(translationItem(`${level}-r${i}`, 'reading', 'sentence', spare[i], sentences, rng));
+  }
+
+  return [...listening, ...reading];
 }
 
 /** Counts the right answers per part; `picks` maps item id to the chosen option index. */
@@ -124,4 +230,21 @@ export function scoreExam(items: ExamItem[], picks: Record<string, number | null
     if (picks[item.id] === item.answer) score[item.part].correct += 1;
   }
   return score;
+}
+
+export interface ReadinessBand {
+  label: string;
+  note: string;
+}
+
+/**
+ * A rough read on how ready the student is for the level. It is an internal estimate from this
+ * mock only, not an official HSK score or a pass mark.
+ */
+export function readinessBand(correct: number, total: number): ReadinessBand {
+  const percent = total === 0 ? 0 : (correct / total) * 100;
+  const note = 'Estimativa interna deste simulado, não é nota oficial do HSK.';
+  if (percent >= 80) return { label: 'Preparado para este nível', note };
+  if (percent >= 60) return { label: 'Quase lá', note };
+  return { label: 'Reforce este nível', note };
 }

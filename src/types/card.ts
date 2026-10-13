@@ -116,30 +116,94 @@ export interface Story {
   level: string;
   grammar: string;
   title: string;
+  titlePt: string;
   sentences: StorySentence[];
   questions: StoryQuestion[];
 }
 
+export interface GrammarPoint {
+  text: string;
+  /** The story that teaches this point, when there is one */
+  storyId?: string;
+}
+
 export interface GrammarGroup {
   category: string;
-  points: string[];
+  points: GrammarPoint[];
+}
+
+/** A question about a passage; `explain` is shown when the student gets it wrong. */
+export interface ExamQuestion {
+  prompt: string;
+  options: string[];
+  answer: number;
+  explain: string;
+}
+
+export interface ExamSentence {
+  id: string;
+  tokens: StoryToken[];
+  ptbr: string;
+  grammar?: string;
+}
+
+export interface ExamPassage {
+  id: string;
+  sentences: StorySentence[];
+  questions: ExamQuestion[];
+}
+
+/** A sentence with one blank (a token whose hanzi is ＿) and the options that fill it. */
+export interface ExamCloze {
+  id: string;
+  tokens: StoryToken[];
+  ptbr: string;
+  options: string[];
+  answer: number;
+  explain: string;
+  grammar: string;
+}
+
+export interface ExamBank {
+  sentences: ExamSentence[];
+  passages: ExamPassage[];
+  cloze: ExamCloze[];
 }
 
 export interface LevelContent {
   stories: Story[];
   grammar: GrammarGroup[];
+  exam: ExamBank;
 }
 
 export type ExamPart = 'listening' | 'reading';
 
+export type ExamItemKind = 'listen' | 'sentence' | 'passage' | 'cloze';
+
 export interface ExamItem {
   id: string;
   part: ExamPart;
-  /** Chinese text spoken for a listening item; the prompt stays in Portuguese */
+  kind: ExamItemKind;
+  /** Chinese text spoken for a listening item */
   audio?: string;
+  /** The Chinese text of the item: shown to read, or kept as the transcript of a listening item */
+  text?: StorySentence[];
   prompt: string;
   options: string[];
   answer: number;
+  explain?: string;
+  grammar?: string;
+}
+
+/** A started exam, saved after every answer so a reload can resume it. */
+export interface ExamSession {
+  level: string;
+  items: ExamItem[];
+  picks: Record<string, number | null>;
+  /** Items whose text was shown for a listening question */
+  assisted: string[];
+  partIndex: number;
+  endsAt: number;
 }
 
 export interface ExamPartSpec {
@@ -155,4 +219,6 @@ export interface ExamAttempt {
   finishedAt: string;
   correct: Record<ExamPart, number>;
   total: Record<ExamPart, number>;
+  /** Listening questions answered with the text shown */
+  assisted?: number;
 }
