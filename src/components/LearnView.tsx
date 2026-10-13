@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ExamAttempt, LevelContent, Story } from '../types/card';
 import { LEARN_LEVELS, EXAM_SPECS, LearnLevel, loadLevelContent } from '../lib/learn';
 import { loadExamAttempts, loadStoriesRead } from '../lib/storage';
@@ -11,21 +11,36 @@ type Section = 'stories' | 'exams';
 export const LearnView: React.FC = () => {
   const [section, setSection] = useState<Section>('stories');
   const [content, setContent] = useState<Partial<Record<LearnLevel, LevelContent>>>({});
+  const [contentState, setContentState] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [openStory, setOpenStory] = useState<Story | null>(null);
   const [examLevel, setExamLevel] = useState<LearnLevel | null>(null);
   const [read, setRead] = useState<string[]>(() => loadStoriesRead());
   const [attempts, setAttempts] = useState<ExamAttempt[]>(() => loadExamAttempts());
 
+  // Set when the tab unmounts, so a late response never updates an unmounted view
+  const mounted = useRef(true);
   useEffect(() => {
-    let cancelled = false;
-    Promise.all(LEARN_LEVELS.map((lvl) => loadLevelContent(lvl).then((c) => [lvl, c] as const))).then((pairs) => {
-      if (cancelled) return;
-      setContent(Object.fromEntries(pairs) as Partial<Record<LearnLevel, LevelContent>>);
-    });
+    mounted.current = true;
     return () => {
-      cancelled = true;
+      mounted.current = false;
     };
   }, []);
+
+  // Stories are only fetched when their section is opened; the exams never need them
+  useEffect(() => {
+    if (section !== 'stories' || contentState !== 'idle') return;
+    setContentState('loading');
+    Promise.all(LEARN_LEVELS.map((lvl) => loadLevelContent(lvl).then((c) => [lvl, c] as const)))
+      .then((pairs) => {
+        if (!mounted.current) return;
+        setContent(Object.fromEntries(pairs) as Partial<Record<LearnLevel, LevelContent>>);
+        setContentState('ready');
+      })
+      .catch((e) => {
+        console.error('Failed to load the stories', e);
+        if (mounted.current) setContentState('error');
+      });
+  }, [section, contentState]);
 
   if (openStory) {
     return (
@@ -81,7 +96,24 @@ export const LearnView: React.FC = () => {
         ))}
       </div>
 
-      {section === 'stories' &&
+      {section === 'stories' && contentState !== 'ready' && (
+        <section className="sheet p-5 sm:p-6 flex items-center justify-between gap-4">
+          <p role={contentState === 'error' ? 'alert' : 'status'} className="text-sm ink-secondary">
+            {contentState === 'error' ? 'Não foi possível carregar as histórias.' : 'Carregando histórias...'}
+          </p>
+          {contentState === 'error' && (
+            <button
+              type="button"
+              onClick={() => setContentState('idle')}
+              className="min-h-11 px-4 rounded-xl glass-field text-sm font-medium cursor-pointer shrink-0"
+            >
+              Tentar de novo
+            </button>
+          )}
+        </section>
+      )}
+
+      {section === 'stories' && contentState === 'ready' &&
         LEARN_LEVELS.map((lvl) => {
           const levelContent = content[lvl];
           return (

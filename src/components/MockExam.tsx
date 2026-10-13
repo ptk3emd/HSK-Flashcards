@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
-import { Card, ExamAttempt, ExamItem, ExamPart } from '../types/card';
+import { ExamAttempt, ExamItem, ExamPart } from '../types/card';
 import { speakChinese } from '../lib/speech';
 import { saveExamAttempt } from '../lib/storage';
 import { EXAM_SPECS, LearnLevel, buildExam, loadLevelContent, scoreExam } from '../lib/learn';
@@ -31,7 +31,6 @@ export const MockExam: React.FC<MockExamProps> = ({ level, onExit }) => {
   const [items, setItems] = useState<ExamItem[]>([]);
   const [picks, setPicks] = useState<Record<string, number | null>>({});
   const [partIndex, setPartIndex] = useState(0);
-  const [submitted, setSubmitted] = useState<Partial<Record<ExamPart, boolean>>>({});
   const [index, setIndex] = useState(0);
   const [endsAt, setEndsAt] = useState(0);
   const [now, setNow] = useState(() => Date.now());
@@ -40,11 +39,12 @@ export const MockExam: React.FC<MockExamProps> = ({ level, onExit }) => {
 
   const specs = EXAM_SPECS[level];
   const part = PART_ORDER[partIndex];
+  // A part is locked once submitted: every earlier part, and all of them when the exam is over
+  const isLocked = (p: ExamPart) => stage === 'result' || PART_ORDER.indexOf(p) < partIndex;
   const partItems = useMemo(() => items.filter((i) => i.part === part), [items, part]);
   const current = partItems[index];
 
   const submitPart = (target: ExamPart) => {
-    setSubmitted((prev) => ({ ...prev, [target]: true }));
     const next = PART_ORDER.indexOf(target) + 1;
     if (next < PART_ORDER.length) {
       setPartIndex(next);
@@ -55,20 +55,20 @@ export const MockExam: React.FC<MockExamProps> = ({ level, onExit }) => {
     }
   };
 
-  // Keeps the countdown current and submits the part when time is up
+  // The display ticks twice a second; the submission fires at the deadline itself
   useEffect(() => {
     if (stage !== 'part') return;
     const id = window.setInterval(() => setNow(Date.now()), 500);
     return () => window.clearInterval(id);
   }, [stage]);
 
-  const remaining = endsAt - now;
   useEffect(() => {
-    if (stage === 'part' && endsAt > 0 && remaining <= 0 && !submitted[part]) {
-      submitPart(part);
-    }
-    // submitPart reads the latest state; the effect depends only on the clock
-  }, [remaining, stage]);
+    if (stage !== 'part') return;
+    const id = window.setTimeout(() => submitPart(part), Math.max(0, endsAt - Date.now()));
+    return () => window.clearTimeout(id);
+  }, [stage, partIndex, endsAt]);
+
+  const remaining = endsAt - now;
 
   // Listening items are spoken as they appear
   useEffect(() => {
@@ -98,12 +98,11 @@ export const MockExam: React.FC<MockExamProps> = ({ level, onExit }) => {
     try {
       const [content, cards] = await Promise.all([
         loadLevelContent(level),
-        loadNativeLevelCards(level) as Promise<Card[]>,
+        loadNativeLevelCards(level),
       ]);
       const seed = Date.now() % 2147483647;
       setItems(buildExam(level, cards, content, seed));
       setPicks({});
-      setSubmitted({});
       setPartIndex(0);
       setIndex(0);
       savedRef.current = false;
@@ -119,7 +118,7 @@ export const MockExam: React.FC<MockExamProps> = ({ level, onExit }) => {
   };
 
   const choose = (item: ExamItem, option: number) => {
-    if (submitted[item.part]) return;
+    if (isLocked(item.part)) return;
     setPicks((prev) => ({ ...prev, [item.id]: option }));
   };
 
@@ -210,7 +209,7 @@ export const MockExam: React.FC<MockExamProps> = ({ level, onExit }) => {
 
   // stage === 'part'
   const spec = specs[partIndex];
-  const locked = !!submitted[part];
+  const locked = isLocked(part);
   const position = partItems.length ? index + 1 : 0;
 
   return (

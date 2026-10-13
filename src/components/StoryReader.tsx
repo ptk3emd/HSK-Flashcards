@@ -17,9 +17,12 @@ export const StoryReader: React.FC<StoryReaderProps> = ({ story, onBack, onFinis
 
   const choose = (qIndex: number, option: number) => {
     if (picks[qIndex] !== undefined) return;
-    const next = { ...picks, [qIndex]: option };
-    setPicks(next);
-    if (Object.keys(next).length === story.questions.length) markStoryRead(story.id);
+    setPicks({ ...picks, [qIndex]: option });
+  };
+
+  const finish = () => {
+    markStoryRead(story.id);
+    onFinished();
   };
 
   const listen = (text: string) => speakChinese(text, { rate: 0.8 });
@@ -113,7 +116,7 @@ export const StoryReader: React.FC<StoryReaderProps> = ({ story, onBack, onFinis
       {answered && (
         <button
           type="button"
-          onClick={onFinished}
+          onClick={finish}
           className="w-full min-h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer"
         >
           Concluir história

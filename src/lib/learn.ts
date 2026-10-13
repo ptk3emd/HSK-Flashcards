@@ -1,5 +1,4 @@
 import { Card, ExamItem, ExamPart, ExamPartSpec, LevelContent, Story } from '../types/card';
-import { loadNativeLevelCards } from '../data/defaultDecks';
 
 /** Levels that have stories and mock exams so far. */
 export const LEARN_LEVELS = ['HSK 1', 'HSK 2'] as const;

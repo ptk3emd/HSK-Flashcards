@@ -17,7 +17,7 @@ const THEME_STORAGE_KEY = 'hanzi_anki_theme_v2';
 const CONTENT_VERSION_KEY = 'hanzi_anki_content_version';
 const EXAM_ATTEMPTS_KEY = 'hanzi_anki_exam_attempts_v1';
 const STORIES_READ_KEY = 'hanzi_anki_stories_read_v1';
-const MAX_EXAM_ATTEMPTS = 20;
+const MAX_EXAM_ATTEMPTS = 20; // per level
 
 /**
  * Bump when the bundled vocabulary text changes. Saved native cards then pick up the new
@@ -355,23 +355,37 @@ export function popReviewLog(): ReviewLog | null {
   return null;
 }
 
-/** Mock exam results, newest first. Invalid stored data is ignored, not thrown. */
+const isCount = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+
+/** Checks the shape of a stored attempt, so a corrupt entry cannot break the Learn tab. */
+function isExamAttempt(v: unknown): v is ExamAttempt {
+  if (typeof v !== 'object' || v === null) return false;
+  const a = v as Record<string, unknown>;
+  const pair = (p: unknown) =>
+    typeof p === 'object' && p !== null && isCount((p as Record<string, unknown>).listening) && isCount((p as Record<string, unknown>).reading);
+  return typeof a.id === 'string' && typeof a.level === 'string' && typeof a.finishedAt === 'string' && pair(a.correct) && pair(a.total);
+}
+
+/** Mock exam results, newest first. Invalid stored entries are dropped, not thrown. */
 export function loadExamAttempts(): ExamAttempt[] {
   try {
     const raw = localStorage.getItem(EXAM_ATTEMPTS_KEY);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as ExamAttempt[]) : [];
+    return Array.isArray(parsed) ? parsed.filter(isExamAttempt) : [];
   } catch (e) {
     console.error('Failed to load exam attempts', e);
     return [];
   }
 }
 
+/** Keeps the newest attempts of each level, so one level's history cannot evict another's. */
 export function saveExamAttempt(attempt: ExamAttempt): void {
   try {
-    const next = [attempt, ...loadExamAttempts()].slice(0, MAX_EXAM_ATTEMPTS);
-    localStorage.setItem(EXAM_ATTEMPTS_KEY, JSON.stringify(next));
+    const all = loadExamAttempts();
+    const sameLevel = [attempt, ...all.filter((a) => a.level === attempt.level)].slice(0, MAX_EXAM_ATTEMPTS);
+    const others = all.filter((a) => a.level !== attempt.level);
+    localStorage.setItem(EXAM_ATTEMPTS_KEY, JSON.stringify([...sameLevel, ...others]));
   } catch (e) {
     console.error('Failed to save exam attempt', e);
   }
