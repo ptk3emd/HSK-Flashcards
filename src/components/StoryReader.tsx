@@ -1,18 +1,39 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Volume2, CheckCircle2, XCircle } from 'lucide-react';
-import { Story } from '../types/card';
+import { Card, Story } from '../types/card';
+import { loadNativeLevelCards } from '../data/defaultDecks';
 import { speakChinese } from '../lib/speech';
 import { markStoryRead } from '../lib/storage';
 
 interface StoryReaderProps {
   story: Story;
+  /** The student's deck, to tell which words of the story are missing from it */
+  cards: Card[];
+  onAddCards: (cards: Card[]) => void;
   onBack: () => void;
   onFinished: () => void;
 }
 
 /** One short story with its grammar point: Chinese with pinyin, the Portuguese beside it, then questions. */
-export const StoryReader: React.FC<StoryReaderProps> = ({ story, onBack, onFinished }) => {
+export const StoryReader: React.FC<StoryReaderProps> = ({ story, cards, onAddCards, onBack, onFinished }) => {
   const [picks, setPicks] = useState<Record<number, number>>({});
+  const [adding, setAdding] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
+
+  // Words of the story the deck does not have, which happens when the story's level was never downloaded
+  const deckWords = new Set(cards.flatMap((c) => c.hanzi.split('|')));
+  const storyWords = Array.from(new Set(story.sentences.flatMap((s) => s.tokens.filter((t) => !t.punct).map((t) => t.hanzi))));
+  const missing = storyWords.filter((w) => !deckWords.has(w));
+
+  const addLevel = async () => {
+    setAdding('busy');
+    try {
+      onAddCards(await loadNativeLevelCards(story.level));
+      setAdding('done');
+    } catch (e) {
+      console.error('Failed to add the level', e);
+      setAdding('error');
+    }
+  };
   const answered = Object.keys(picks).length === story.questions.length;
 
   const choose = (qIndex: number, option: number) => {
@@ -43,8 +64,29 @@ export const StoryReader: React.FC<StoryReaderProps> = ({ story, onBack, onFinis
 
       <header className="space-y-1.5">
         <p className="text-xs uppercase tracking-[0.14em] ink-tertiary">{story.grammar}</p>
-        <h2 id="story-title" className="text-xl font-semibold">{story.title}</h2>
+        <h2 id="story-title" lang="zh-CN" className="text-xl font-semibold">{story.title}</h2>
+        <p className="text-sm ink-secondary">{story.titlePt}</p>
       </header>
+
+      {missing.length > 0 && adding !== 'done' && (
+        <div className="rounded-xl glass-field p-4 space-y-3 text-sm">
+          <p>
+            {missing.length} {missing.length === 1 ? 'palavra desta história não está' : 'palavras desta história não estão'} no seu baralho.
+          </p>
+          <button
+            type="button"
+            onClick={addLevel}
+            disabled={adding === 'busy'}
+            className="min-h-11 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium cursor-pointer disabled:opacity-60"
+          >
+            {adding === 'busy' ? 'Adicionando...' : `Adicionar o ${story.level} ao baralho`}
+          </button>
+          {adding === 'error' && <p role="alert" className="text-red-700 dark:text-red-300">Não foi possível adicionar. Tente de novo.</p>}
+        </div>
+      )}
+      {adding === 'done' && (
+        <p role="status" className="text-sm ink-secondary">{story.level} adicionado ao baralho. Ative o nível em Decks para estudar as palavras.</p>
+      )}
 
       <ol className="space-y-5 list-none p-0 m-0">
         {story.sentences.map((sentence, si) => {

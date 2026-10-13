@@ -184,7 +184,7 @@ export default function App() {
 
         {activeTab === 'learn' && (
           <Suspense fallback={<ViewLoading variant="decks" />}>
-            <LearnView />
+            <LearnView cards={cards} onAddCards={handleAddCards} />
           </Suspense>
         )}
 

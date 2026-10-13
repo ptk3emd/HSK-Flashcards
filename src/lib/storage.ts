@@ -1,4 +1,4 @@
-import { Card, DeckConfig, ExamAttempt, FSRSOptions, ReviewLog } from '../types/card';
+import { Card, DeckConfig, ExamAttempt, ExamItem, ExamSession, FSRSOptions, ReviewLog } from '../types/card';
 import {
   DEFAULT_FSRS_OPTIONS,
   MAX_INTERVAL_LIMIT,
@@ -17,6 +17,7 @@ const THEME_STORAGE_KEY = 'hanzi_anki_theme_v2';
 const CONTENT_VERSION_KEY = 'hanzi_anki_content_version';
 const EXAM_ATTEMPTS_KEY = 'hanzi_anki_exam_attempts_v1';
 const STORIES_READ_KEY = 'hanzi_anki_stories_read_v1';
+const EXAM_SESSION_KEY = 'hanzi_anki_exam_session_v1';
 const MAX_EXAM_ATTEMPTS = 20; // per level
 
 /**
@@ -410,5 +411,70 @@ export function markStoryRead(id: string): void {
     localStorage.setItem(STORIES_READ_KEY, JSON.stringify(ids));
   } catch (e) {
     console.error('Failed to save story progress', e);
+  }
+}
+
+function isExamItem(v: unknown): v is ExamItem {
+  if (typeof v !== 'object' || v === null) return false;
+  const i = v as Record<string, unknown>;
+  return (
+    typeof i.id === 'string' &&
+    (i.part === 'listening' || i.part === 'reading') &&
+    typeof i.kind === 'string' &&
+    typeof i.prompt === 'string' &&
+    Array.isArray(i.options) &&
+    i.options.length >= 2 &&
+    i.options.every((o) => typeof o === 'string') &&
+    Number.isInteger(i.answer) &&
+    (i.answer as number) >= 0 &&
+    (i.answer as number) < i.options.length
+  );
+}
+
+function isExamSession(v: unknown): v is ExamSession {
+  if (typeof v !== 'object' || v === null) return false;
+  const s = v as Record<string, unknown>;
+  return (
+    typeof s.level === 'string' &&
+    Array.isArray(s.items) &&
+    s.items.length > 0 &&
+    s.items.every(isExamItem) &&
+    typeof s.picks === 'object' &&
+    s.picks !== null &&
+    Array.isArray(s.assisted) &&
+    s.assisted.every((id) => typeof id === 'string') &&
+    Number.isInteger(s.partIndex) &&
+    (s.partIndex as number) >= 0 &&
+    (s.partIndex as number) <= 1 &&
+    isCount(s.endsAt)
+  );
+}
+
+/** The exam in progress, if the student left it half done. Invalid data counts as none. */
+export function loadExamSession(): ExamSession | null {
+  try {
+    const raw = localStorage.getItem(EXAM_SESSION_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    return isExamSession(parsed) ? parsed : null;
+  } catch (e) {
+    console.error('Failed to load the exam in progress', e);
+    return null;
+  }
+}
+
+export function saveExamSession(session: ExamSession): void {
+  try {
+    localStorage.setItem(EXAM_SESSION_KEY, JSON.stringify(session));
+  } catch (e) {
+    console.error('Failed to save the exam in progress', e);
+  }
+}
+
+export function clearExamSession(): void {
+  try {
+    localStorage.removeItem(EXAM_SESSION_KEY);
+  } catch (e) {
+    console.error('Failed to clear the exam in progress', e);
   }
 }
