@@ -5,19 +5,21 @@
 }
 
 .study-session-status {
-  width: min(100%, var(--card-max-width));
+  width: var(--avail-card-width);
+  max-width: 100%;
   margin: 0 auto;
-  padding: max(24px, env(safe-area-inset-top)) 20px 16px;
+  padding: max(24px, env(safe-area-inset-top)) 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 4px 16px;
   color: var(--text-fg);
   font-size: 13px;
   line-height: 1.5;
 }
 .study-session-status > :first-child { font-weight: 650; }
-.study-session-status > :last-child { text-align: right; }
+.study-session-status > :last-child { margin-left: auto; text-align: right; }
 
 .study-session .study-progress-fill {
   transform-origin: left;
@@ -41,7 +43,27 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
 }
 
+.study-session .study-answer-footer,
+.study-session .study-utilities {
+  width: var(--avail-card-width);
+  max-width: 100%;
+  padding-inline: 0;
+}
 .study-session .study-answer-footer { gap: 0; }
+.study-workspace {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-block: 16px;
+}
+.study-session .study-scene { flex: 1; }
+/* On roomy screens, keep the answer and its ratings in one reading sequence. */
+@media (min-width: 768px) and (min-height: 700px) {
+  .study-workspace { justify-content: center; gap: 32px; padding-block: 32px; }
+  .study-session .study-scene { flex: 0 0 auto; }
+}
 .study-session .study-gesture-hint { color: var(--text-fg); text-align: center; }
 .study-session .study-reveal {
   min-height: 96px;
@@ -110,7 +132,7 @@
   .study-session .study-shortcut { display: none; }
 }
 @media (max-width: 380px) {
-  .study-session-status { font-size: 12px; padding-inline: 16px; }
+  .study-session-status { font-size: 12px; }
   .study-session .study-grade-label { font-size: 12px; }
   .study-session .study-grade-interval { font-size: 18px; }
 }
@@ -127,7 +149,11 @@
   }
   .study-session[data-grading='four'][data-answer-buttons='visible'] .study-reveal { height: 96px; }
 }
-.study-session-menu {
+.study-session-menu { max-width: calc(100vw - 24px); }
+.study-menu-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--text-secondary) transparent;
 }

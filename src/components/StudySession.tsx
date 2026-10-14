@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
 import { createPortal } from 'react-dom';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGesture } from '../types/card';
@@ -145,7 +145,37 @@ export const StudySession: React.FC<StudySessionProps> = ({
   useDialogFocus(writingDialogRef, showWritingPad && currentCard !== null, closeWritingPad);
   useDialogFocus(voiceDialogRef, showVoiceSettingsModal && !!onUpdateDeckConfig, closeVoiceSettings);
   const menuRef = useRef<HTMLDivElement>(null);
-  const navRef = useRef<HTMLElement>(null);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const [menuPosition, setMenuPosition] = useState({ bottom: 72, right: 12, maxHeight: 400 });
+  useLayoutEffect(() => {
+    if (!isMenuOpen) return;
+    const positionMenu = () => {
+      const trigger = menuTriggerRef.current?.getBoundingClientRect();
+      if (!trigger) return;
+      const viewport = window.visualViewport;
+      const top = viewport?.offsetTop ?? 0;
+      const height = viewport?.height ?? window.innerHeight;
+      const bottomEdge = top + height;
+      // Keep the menu inside the visible viewport even after scrolling or resizing.
+      const menuBottom = Math.max(top + Math.min(160, height - 24), Math.min(trigger.top - 8, bottomEdge - 12));
+      setMenuPosition({
+        bottom: window.innerHeight - menuBottom,
+        right: Math.max(12, window.innerWidth - trigger.right),
+        maxHeight: Math.max(0, menuBottom - top - 12),
+      });
+    };
+    positionMenu();
+    window.addEventListener('resize', positionMenu);
+    window.addEventListener('scroll', positionMenu, true);
+    window.visualViewport?.addEventListener('resize', positionMenu);
+    window.visualViewport?.addEventListener('scroll', positionMenu);
+    return () => {
+      window.removeEventListener('resize', positionMenu);
+      window.removeEventListener('scroll', positionMenu, true);
+      window.visualViewport?.removeEventListener('resize', positionMenu);
+      window.visualViewport?.removeEventListener('scroll', positionMenu);
+    };
+  }, [isMenuOpen]);
   const closeMenu = useCallback(() => {
     // Closing the menu also invalidates any pending level selection.
     levelRequestRef.current += 1;
@@ -650,241 +680,242 @@ export const StudySession: React.FC<StudySessionProps> = ({
       </div>
 
       {/* Main Flashcard Scene (Zero vertical shifting on answer reveal) */}
-      <div
-        className="study-card-container relative w-full flex-1 flex flex-col items-center justify-center my-auto py-4"
-        style={{
-          perspective: '1000px',
-          WebkitPerspective: '1000px',
-          backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden',
-          touchAction: usesVerticalSwipes ? 'none' : 'pan-y',
-          WebkitTouchCallout: 'none',
-        }}
-        onContextMenu={gestureMap.longPress !== 'none' ? (e) => e.preventDefault() : undefined}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerCancel}
-        onLostPointerCapture={handlePointerCancel}
-      >
-        {dragLabel && (
-          <div
-            aria-hidden="true"
-            className={`study-gesture-cue absolute top-2 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full text-sm font-bold ${dragTone}`}
-            style={{ opacity: Math.min(1, (dragDistance - 30) / 35) }}
-          >
-            {dragLabel}
-          </div>
-        )}
-        {currentCard ? (
-          <div
-            key={currentCard.id}
-            ref={cardWrapperRef}
-            className="study-tactile-card w-full"
-            data-dragging={drag ? 'true' : undefined}
-            aria-busy={isGrading}
-            style={{
-              // Resistance bounds travel but the gesture's raw distance still decides its action.
-              transform: reducedMotion ? undefined : `translate3d(${160 * Math.tanh((drag?.x ?? 0) / 180)}px, ${100 * Math.tanh((drag?.y ?? 0) / 140)}px, 0) rotate(${Math.max(-7, Math.min(7, (drag?.x ?? 0) / 35))}deg)`,
-              transition: reducedMotion || drag ? 'none' : 'transform 0.42s cubic-bezier(0.16, 1, 0.3, 1)',
-            }}
-          >
-            <MandarinCardView
-              card={currentCard}
-              isFlipped={isFlipped}
-            />
-          </div>
-        ) : (
-          <div className="mandarin-scene">
+      <div className="study-workspace">
+        <div
+          className="study-card-container study-scene relative w-full flex flex-col items-center justify-center"
+          style={{
+            perspective: '1000px',
+            WebkitPerspective: '1000px',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+            touchAction: usesVerticalSwipes ? 'none' : 'pan-y',
+            WebkitTouchCallout: 'none',
+          }}
+          onContextMenu={gestureMap.longPress !== 'none' ? (e) => e.preventDefault() : undefined}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
+          onLostPointerCapture={handlePointerCancel}
+        >
+          {dragLabel && (
             <div
-              className={`mandarin-card text-center py-12 px-6 flex flex-col items-center gap-4 ${
-                isLight ? 'bg-white/85 text-ink' : ''
-              }`}
+              aria-hidden="true"
+              className={`study-gesture-cue absolute top-2 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full text-sm font-bold ${dragTone}`}
+              style={{ opacity: Math.min(1, (dragDistance - 30) / 35) }}
             >
-              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mb-1">
-                <CheckCircle2 className="w-10 h-10" />
-              </div>
-              <h2 className="text-2xl font-black tracking-tight">
-                {isolatedLevel ? `Nível ${isolatedLevel} Concluído!` : 'Sessão Concluída!'}
-              </h2>
-              <p className="text-sm opacity-80 max-w-sm">
-                {isolatedLevel
-                  ? `Você concluiu todos os cartões agendados para ${isolatedLevel}.`
-                  : 'Todos os cartões agendados para os níveis ativos foram revisados.'}
-              </p>
+              {dragLabel}
+            </div>
+          )}
+          {currentCard ? (
+            <div
+              key={currentCard.id}
+              ref={cardWrapperRef}
+              className="study-tactile-card w-full"
+              data-dragging={drag ? 'true' : undefined}
+              aria-busy={isGrading}
+              style={{
+                // Resistance bounds travel but the gesture's raw distance still decides its action.
+                transform: reducedMotion ? undefined : `translate3d(${160 * Math.tanh((drag?.x ?? 0) / 180)}px, ${100 * Math.tanh((drag?.y ?? 0) / 140)}px, 0) rotate(${Math.max(-7, Math.min(7, (drag?.x ?? 0) / 35))}deg)`,
+                transition: reducedMotion || drag ? 'none' : 'transform 0.42s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              <MandarinCardView
+                card={currentCard}
+                isFlipped={isFlipped}
+              />
+            </div>
+          ) : (
+            <div className="mandarin-scene">
+              <div
+                className={`mandarin-card text-center py-12 px-6 flex flex-col items-center gap-4 ${
+                  isLight ? 'bg-white/85 text-ink' : ''
+                }`}
+              >
+                <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mb-1">
+                  <CheckCircle2 className="w-10 h-10" />
+                </div>
+                <h2 className="text-2xl font-black tracking-tight">
+                  {isolatedLevel ? `Nível ${isolatedLevel} Concluído!` : 'Sessão Concluída!'}
+                </h2>
+                <p className="text-sm opacity-80 max-w-sm">
+                  {isolatedLevel
+                    ? `Você concluiu todos os cartões agendados para ${isolatedLevel}.`
+                    : 'Todos os cartões agendados para os níveis ativos foram revisados.'}
+                </p>
 
-              <div className="mt-3 flex flex-wrap gap-2.5 justify-center">
-                {isolatedLevel && (
+                <div className="mt-3 flex flex-wrap gap-2.5 justify-center">
+                  {isolatedLevel && (
+                    <button
+                      type="button"
+                      onClick={() => handleSwitchLevel(null)}
+                      className="min-h-11 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-all cursor-pointer shadow-md"
+                    >
+                      Estudar Todos os Níveis
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={() => handleSwitchLevel(null)}
-                    className="min-h-11 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-all cursor-pointer shadow-md"
+                    onClick={onExit}
+                    className={`min-h-11 px-5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer shadow-md ${
+                      isLight
+                        ? 'bg-black/10 hover:bg-black/15 text-black'
+                        : 'bg-white/20 hover:bg-white/30 text-white'
+                    }`}
                   >
-                    Estudar Todos os Níveis
+                    Voltar ao Painel
                   </button>
-                )}
-                <button
-                  type="button"
-                  onClick={onExit}
-                  className={`min-h-11 px-5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer shadow-md ${
-                    isLight
-                      ? 'bg-black/10 hover:bg-black/15 text-black'
-                      : 'bg-white/20 hover:bg-white/30 text-white'
-                  }`}
-                >
-                  Voltar ao Painel
-                </button>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Bottom Bar — Anki style with fixed layout height to prevent vertical jitter */}
-      {currentCard && <footer className="study-answer-footer w-full max-w-2xl mx-auto px-4 py-4 flex flex-col items-center gap-3 z-20">
-        {/* Action Controls with fixed min-height to guarantee zero layout flicker */}
-        <div className="w-full min-h-[68px] flex items-stretch">
-          {deckConfig.hideAnswerButtons ? (
-            <p className="study-gesture-hint w-full flex items-center justify-center gap-2 text-sm">
-              {gestureHints.length === 0
-                ? isFlipped
-                  ? 'Nenhum gesto avalia o cartão. Ajuste os gestos nas configurações.'
-                  : 'Nenhum gesto mostra a resposta. Ajuste os gestos nas configurações.'
-                : reviewedInSession > 0
-                ? null
-                : gestureHints.join(' · ')}
-            </p>
-          ) : !isFlipped ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!exitingRef.current) setIsFlipped(true);
-              }}
-              disabled={!currentCard || isGrading}
-              className={`study-reveal w-full h-full py-4 px-6 rounded-2xl font-bold text-base shadow-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border active:scale-[0.99] backdrop-blur-xl ${
-                isLight
-                  ? 'bg-white/85 hover:bg-white text-ink border-white/95'
-                  : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
-              }`}
-            >
-              <span>Mostrar Resposta</span>
-              <kbd className="study-shortcut">Espaço</kbd>
-            </button>
-          ) : (
-            <div
-              className={`study-grades grid ${deckConfig.twoButtonGrading ? 'grid-cols-2' : 'grid-cols-4'} gap-2 w-full h-full`}
-              style={{
-                transform: 'translate3d(0, 0, 0)',
-                WebkitTransform: 'translate3d(0, 0, 0)',
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-              }}
-            >
-              {/* Rating 1: Again */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  gradeCard(1);
-                }}
-                disabled={isGrading}
-                data-grade="1"
-                className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
-                  isLight
-                    ? 'bg-red-50 hover:bg-red-100 text-red-950 border-red-300'
-                    : 'bg-red-600/35 hover:bg-red-600/50 text-white border-red-500/40'
-                }`}
-              >
-                <span className="study-grade-label">Novamente</span>
-                <span className="study-grade-interval">
-                  {predictions ? predictions[1].text : '< 10m'}
-                </span>
-                <kbd className="study-shortcut">1</kbd>
-              </button>
-
-              {/* Rating 2: Hard */}
-              {!deckConfig.twoButtonGrading && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  gradeCard(2);
-                }}
-                disabled={isGrading}
-                data-grade="2"
-                className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
-                  isLight
-                    ? 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-amber-300'
-                    : 'bg-amber-600/35 hover:bg-amber-600/50 text-white border-amber-500/40'
-                }`}
-              >
-                <span className="study-grade-label">Difícil</span>
-                <span className="study-grade-interval">
-                  {predictions ? predictions[2].text : '1d'}
-                </span>
-                <kbd className="study-shortcut">2</kbd>
-              </button>
-              )}
-
-              {/* Rating 3: Good */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  gradeCard(3);
-                }}
-                disabled={isGrading}
-                data-grade="3"
-                className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ring-1 ${
-                  isLight
-                    ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border-emerald-400 ring-emerald-400/40'
-                    : 'bg-emerald-600/35 hover:bg-emerald-600/50 text-white border-emerald-500/40 ring-emerald-400/30'
-                }`}
-              >
-                <span className="study-grade-label">Bom</span>
-                <span className="study-grade-interval">
-                  {predictions ? predictions[3].text : '3d'}
-                </span>
-                <kbd className="study-shortcut">Espaço / 3</kbd>
-              </button>
-
-              {/* Rating 4: Easy */}
-              {!deckConfig.twoButtonGrading && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  gradeCard(4);
-                }}
-                disabled={isGrading}
-                data-grade="4"
-                className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
-                  isLight
-                    ? 'bg-blue-50 hover:bg-blue-100 text-blue-950 border-blue-300'
-                    : 'bg-blue-600/35 hover:bg-blue-600/50 text-white border-blue-500/40'
-                }`}
-              >
-                <span className="study-grade-label">Fácil</span>
-                <span className="study-grade-interval">
-                  {predictions ? predictions[4].text : '5d'}
-                </span>
-                <kbd className="study-shortcut">4</kbd>
-              </button>
-              )}
             </div>
           )}
         </div>
-      </footer>}
+
+        {/* Bottom Bar — Anki style with fixed layout height to prevent vertical jitter */}
+        {currentCard && <footer className="study-answer-footer mx-auto flex flex-col items-center gap-3 z-20">
+          {/* Action Controls with fixed min-height to guarantee zero layout flicker */}
+          <div className="w-full min-h-[68px] flex items-stretch">
+            {deckConfig.hideAnswerButtons ? (
+              <p className="study-gesture-hint w-full flex items-center justify-center gap-2 text-sm">
+                {gestureHints.length === 0
+                  ? isFlipped
+                    ? 'Nenhum gesto avalia o cartão. Ajuste os gestos nas configurações.'
+                    : 'Nenhum gesto mostra a resposta. Ajuste os gestos nas configurações.'
+                  : reviewedInSession > 0
+                  ? null
+                  : gestureHints.join(' · ')}
+              </p>
+            ) : !isFlipped ? (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!exitingRef.current) setIsFlipped(true);
+                }}
+                disabled={!currentCard || isGrading}
+                className={`study-reveal w-full h-full py-4 px-6 rounded-2xl font-bold text-base shadow-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border active:scale-[0.99] backdrop-blur-xl ${
+                  isLight
+                    ? 'bg-white/85 hover:bg-white text-ink border-white/95'
+                    : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
+                }`}
+              >
+                <span>Mostrar Resposta</span>
+                <kbd className="study-shortcut">Espaço</kbd>
+              </button>
+            ) : (
+              <div
+                className={`study-grades grid ${deckConfig.twoButtonGrading ? 'grid-cols-2' : 'grid-cols-4'} gap-2 w-full h-full`}
+                style={{
+                  transform: 'translate3d(0, 0, 0)',
+                  WebkitTransform: 'translate3d(0, 0, 0)',
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                }}
+              >
+                {/* Rating 1: Again */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    gradeCard(1);
+                  }}
+                  disabled={isGrading}
+                  data-grade="1"
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
+                    isLight
+                      ? 'bg-red-50 hover:bg-red-100 text-red-950 border-red-300'
+                      : 'bg-red-600/35 hover:bg-red-600/50 text-white border-red-500/40'
+                  }`}
+                >
+                  <span className="study-grade-label">Novamente</span>
+                  <span className="study-grade-interval">
+                    {predictions ? predictions[1].text : '< 10m'}
+                  </span>
+                  <kbd className="study-shortcut">1</kbd>
+                </button>
+
+                {/* Rating 2: Hard */}
+                {!deckConfig.twoButtonGrading && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    gradeCard(2);
+                  }}
+                  disabled={isGrading}
+                  data-grade="2"
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
+                    isLight
+                      ? 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-amber-300'
+                      : 'bg-amber-600/35 hover:bg-amber-600/50 text-white border-amber-500/40'
+                  }`}
+                >
+                  <span className="study-grade-label">Difícil</span>
+                  <span className="study-grade-interval">
+                    {predictions ? predictions[2].text : '1d'}
+                  </span>
+                  <kbd className="study-shortcut">2</kbd>
+                </button>
+                )}
+
+                {/* Rating 3: Good */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    gradeCard(3);
+                  }}
+                  disabled={isGrading}
+                  data-grade="3"
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ring-1 ${
+                    isLight
+                      ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border-emerald-400 ring-emerald-400/40'
+                      : 'bg-emerald-600/35 hover:bg-emerald-600/50 text-white border-emerald-500/40 ring-emerald-400/30'
+                  }`}
+                >
+                  <span className="study-grade-label">Bom</span>
+                  <span className="study-grade-interval">
+                    {predictions ? predictions[3].text : '3d'}
+                  </span>
+                  <kbd className="study-shortcut">Espaço / 3</kbd>
+                </button>
+
+                {/* Rating 4: Easy */}
+                {!deckConfig.twoButtonGrading && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    gradeCard(4);
+                  }}
+                  disabled={isGrading}
+                  data-grade="4"
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
+                    isLight
+                      ? 'bg-blue-50 hover:bg-blue-100 text-blue-950 border-blue-300'
+                      : 'bg-blue-600/35 hover:bg-blue-600/50 text-white border-blue-500/40'
+                  }`}
+                >
+                  <span className="study-grade-label">Fácil</span>
+                  <span className="study-grade-interval">
+                    {predictions ? predictions[4].text : '5d'}
+                  </span>
+                  <kbd className="study-shortcut">4</kbd>
+                </button>
+                )}
+              </div>
+            )}
+          </div>
+        </footer>}
+      </div>
 
       {/* Bottom bar: back, queue counts, undo and the session menu */}
       <nav
-        ref={navRef}
         aria-label="Sessão"
         className="sheet relative z-30 w-full !rounded-none border-t border-[var(--separator)]"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
-        <div className="max-w-2xl mx-auto px-2 h-16 flex items-center justify-between">
+        <div className="study-utilities mx-auto h-16 flex items-center justify-between">
           <div className="flex items-center gap-1">
             <button
               type="button"
@@ -920,6 +951,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             </button>
             <button
               type="button"
+              ref={menuTriggerRef}
               onClick={() => setIsMenuOpen((prev) => !prev)}
               onMouseDown={keepCardFocus}
               aria-label="Mais opções"
@@ -948,61 +980,63 @@ export const StudySession: React.FC<StudySessionProps> = ({
               role="dialog"
               aria-modal="true"
               aria-label="Mais opções"
-              style={{ bottom: navRef.current ? window.innerHeight - navRef.current.getBoundingClientRect().top + 8 : 72 }}
-              className="study-session-menu sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-bottom-right fixed right-2 z-50 w-64 max-h-[70vh] overflow-y-auto !rounded-2xl p-1.5"
+              style={menuPosition}
+              className="study-session-menu sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-bottom-right fixed z-50 w-64 flex flex-col overflow-hidden !rounded-2xl p-1.5"
             >
-              {[
-                { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
-                { icon: Volume2, label: 'Ouvir pronúncia', hint: 'R', onClick: handleSpeak, show: !!currentCard },
-                { icon: PauseCircle, label: 'Suspender cartão', hint: '', onClick: handleSuspendCurrent, show: !!currentCard },
-                { icon: Settings2, label: 'Configurações da sessão', hint: '', onClick: () => setShowVoiceSettingsModal(true), show: !!onUpdateDeckConfig },
-                { icon: isLight ? Moon : Sun, label: isLight ? 'Tema escuro' : 'Tema claro', hint: '', onClick: onToggleTheme, show: true },
-              ]
-                .filter((item) => item.show)
-                .map(({ icon: Icon, label, hint, onClick }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => {
-                      closeMenu();
-                      onClick();
-                    }}
-                    className={`w-full min-h-11 flex items-center gap-3 px-3 rounded-xl text-sm transition-colors cursor-pointer ${
-                      isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 opacity-70" />
-                    <span className="flex-1 text-left">{label}</span>
-                    {hint && <span className="text-xs opacity-80">{hint}</span>}
-                  </button>
-                ))}
-
-              <div className={`my-1.5 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`} />
-              <div className="px-3 py-1 text-xs font-semibold">Nível</div>
               {loadingLevel && (
-                <p role="status" className="px-3 py-2 text-sm">Carregando {loadingLevel}…</p>
+                <p role="status" className="shrink-0 px-3 py-2 text-sm">Carregando {loadingLevel}…</p>
               )}
               {levelLoadError && (
-                <p role="alert" className="px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError}</span>. Tente novamente.</p>
+                <p role="alert" className="shrink-0 px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError}</span>. Tente novamente.</p>
               )}
-              {[null, ...ALL_HSK_LEVELS].map((lvl) => {
-                const isSelected = isolatedLevel === lvl;
-                return (
-                  <button
-                    key={lvl ?? 'all'}
-                    type="button"
-                    onClick={() => handleSwitchLevel(lvl)}
-                    disabled={loadingLevel !== null}
-                    aria-pressed={isSelected}
-                    className={`w-full min-h-11 disabled:opacity-50 disabled:cursor-wait flex items-center justify-between px-3 rounded-xl text-sm transition-colors cursor-pointer ${
-                      isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-                    }`}
-                  >
-                    <span>{lvl ?? 'Todos os ativos'}</span>
-                    {isSelected && <Check className="w-4 h-4 text-red-500" />}
-                  </button>
-                );
-              })}
+              <div className="study-menu-scroll">
+                {[
+                  { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
+                  { icon: Volume2, label: 'Ouvir pronúncia', hint: 'R', onClick: handleSpeak, show: !!currentCard },
+                  { icon: PauseCircle, label: 'Suspender cartão', hint: '', onClick: handleSuspendCurrent, show: !!currentCard },
+                  { icon: Settings2, label: 'Configurações da sessão', hint: '', onClick: () => setShowVoiceSettingsModal(true), show: !!onUpdateDeckConfig },
+                  { icon: isLight ? Moon : Sun, label: isLight ? 'Tema escuro' : 'Tema claro', hint: '', onClick: onToggleTheme, show: true },
+                ]
+                  .filter((item) => item.show)
+                  .map(({ icon: Icon, label, hint, onClick }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => {
+                        closeMenu();
+                        onClick();
+                      }}
+                      className={`w-full min-h-11 flex items-center gap-3 px-3 rounded-xl text-sm transition-colors cursor-pointer ${
+                        isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 opacity-70" />
+                      <span className="flex-1 text-left">{label}</span>
+                      {hint && <span className="text-xs opacity-80">{hint}</span>}
+                    </button>
+                  ))}
+
+                <div className={`my-1.5 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`} />
+                <div className="px-3 py-1 text-xs font-semibold">Nível</div>
+                {[null, ...ALL_HSK_LEVELS].map((lvl) => {
+                  const isSelected = isolatedLevel === lvl;
+                  return (
+                    <button
+                      key={lvl ?? 'all'}
+                      type="button"
+                      onClick={() => handleSwitchLevel(lvl)}
+                      disabled={loadingLevel !== null}
+                      aria-pressed={isSelected}
+                      className={`w-full min-h-11 disabled:opacity-50 disabled:cursor-wait flex items-center justify-between px-3 rounded-xl text-sm transition-colors cursor-pointer ${
+                        isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+                      }`}
+                    >
+                      <span>{lvl ?? 'Todos os ativos'}</span>
+                      {isSelected && <Check className="w-4 h-4 text-red-500" />}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>,
           document.body
