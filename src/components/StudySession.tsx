@@ -13,6 +13,7 @@ import { ViewLoading } from './ViewLoading';
 import { usePrefetched } from './usePrefetched';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
 import { StudyOptionsSettings } from './StudyOptionsSettings';
+import '../styles/study-session.css';
 
 // The writing pad carries hanzi-writer; it loads on its own and is fetched ahead once this view mounts
 const loadWritingCanvas = () => import('./HanziWritingCanvas').then((m) => m.HanziWritingCanvas);
@@ -57,6 +58,16 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const [reviewedInSession, setReviewedInSession] = useState(0);
 
   const isLight = theme === 'light';
+  const [reducedMotion, setReducedMotion] = useState(
+    () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
+  );
+  useEffect(() => {
+    const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    if (!media) return;
+    const update = () => setReducedMotion(media.matches);
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
 
   // Fetched as soon as this view mounts, so the pad opens instantly when asked for
   const HanziWritingCanvas = usePrefetched(loadWritingCanvas) ?? HanziWritingCanvasLazy;
@@ -210,32 +221,60 @@ export const StudySession: React.FC<StudySessionProps> = ({
   // card makes its entrance. Input is held during the exit so a grade cannot land twice.
   const cardWrapperRef = useRef<HTMLDivElement>(null);
   const exitingRef = useRef(false);
+  const exitAnimationRef = useRef<Animation | null>(null);
+  const [isGrading, setIsGrading] = useState(false);
+
+  // Cancelling an exit (leaving the session or changing levels) must never record a grade.
+  useEffect(() => {
+    exitingRef.current = false;
+    setIsGrading(false);
+    return () => {
+      const animation = exitAnimationRef.current;
+      exitAnimationRef.current = null;
+      animation?.cancel();
+      exitingRef.current = false;
+    };
+  }, [currentCard?.id, isolatedLevel]);
   const gradeCard = useCallback(
     (rating: Rating) => {
-      if (exitingRef.current) return;
+      if (exitingRef.current || !currentCard) return;
       const el = cardWrapperRef.current;
       const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-      if (!el || typeof el.animate !== 'function' || reduceMotion) {
+      if (!el || typeof el.animate !== 'function' || typeof DOMMatrixReadOnly === 'undefined' || reduceMotion) {
+        // Keep the same duplicate-input guard even when no animation is played.
+        exitingRef.current = true;
         handleAnswer(rating);
+        window.queueMicrotask(() => { exitingRef.current = false; });
         return;
       }
       exitingRef.current = true;
+      setIsGrading(true);
       const [dx, dy] = GRADE_EXIT[rating];
       const from = getComputedStyle(el).transform;
+      // Travel outward from the release position, so a long swipe never jumps back.
+      const matrix = new DOMMatrixReadOnly(from === 'none' ? undefined : from);
+      const travelX = matrix.m41 + dx * Math.min(window.innerWidth * 0.45, 260);
+      const travelY = matrix.m42 + dy * 130;
       const exit = el.animate(
         [
           { transform: from === 'none' ? 'translate3d(0, 0, 0)' : from, opacity: 1 },
-          { transform: `translate3d(${dx * 140}px, ${dy * 70}px, 0) rotate(${dx * 6}deg)`, opacity: 0 },
+          { transform: `translate3d(${travelX}px, ${travelY}px, 0) rotate(${dx * 9}deg) scale(0.97)`, opacity: 0 },
         ],
         { duration: 180, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }
       );
-      const finish = () => {
-        exitingRef.current = false;
+      exitAnimationRef.current = exit;
+      void exit.finished.then(() => {
+        if (exitAnimationRef.current !== exit) return;
+        exitAnimationRef.current = null;
         handleAnswer(rating);
-      };
-      exit.finished.then(finish, finish);
+        exit.cancel(); // Also release the transform if a same-card learning step stays due.
+        exitingRef.current = false;
+        setIsGrading(false);
+      }).catch(() => {
+        // Cancellation is a navigation event, never an answer.
+      });
     },
-    [handleAnswer]
+    [handleAnswer, currentCard]
   );
 
   const handleUndo = useCallback(() => {
@@ -256,7 +295,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   }, [sessionCards, onUpdateCards]);
 
   const handleSuspendCurrent = useCallback(() => {
-    if (!currentCard) return;
+    if (!currentCard || exitingRef.current) return;
     const suspended: Card = { ...currentCard, suspended: true };
     const nextCards = sessionCards.map(c => (c.id === currentCard.id ? suspended : c));
     setSessionCards(nextCards);
@@ -276,7 +315,19 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const tapTimerRef = useRef<number | undefined>(undefined);
   const longPressTimerRef = useRef<number | undefined>(undefined);
   const longPressFiredRef = useRef(false);
-  const [drag, setDrag] = useState<{ x: number; y: number; gesture: StudyGesture } | null>(null);
+  type Drag = { x: number; y: number; gesture: StudyGesture };
+  const [drag, setDrag] = useState<Drag | null>(null);
+  const pendingDragRef = useRef<Drag | null>(null);
+  const dragFrameRef = useRef<number | null>(null);
+  // Pointer events can arrive faster than a display refresh. Paint at most once per frame.
+  const queueDrag = (next: Drag | null) => {
+    pendingDragRef.current = next;
+    if (dragFrameRef.current !== null) return;
+    dragFrameRef.current = window.requestAnimationFrame(() => {
+      dragFrameRef.current = null;
+      setDrag(pendingDragRef.current);
+    });
+  };
 
   // A touch that ends a gesture is followed by the browser's synthetic click. When the
   // gesture opens the menu or the writing pad, that click would land on the new backdrop
@@ -295,7 +346,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   };
 
   const runGestureAction = (action: StudyAction, fromPointer = true) => {
-    if (!currentCard || !isActionAvailable(action, gestureCtx)) return;
+    if (!currentCard || exitingRef.current || !isActionAvailable(action, gestureCtx)) return;
     if (fromPointer && (action === 'menu' || action === 'writing')) swallowGhostClick();
     switch (action) {
       case 'reveal':
@@ -342,12 +393,19 @@ export const StudySession: React.FC<StudySessionProps> = ({
     () => () => {
       window.clearTimeout(tapTimerRef.current);
       window.clearTimeout(longPressTimerRef.current);
+      if (dragFrameRef.current !== null) window.cancelAnimationFrame(dragFrameRef.current);
     },
     []
   );
-  // A pending single tap belongs to the card it was made on
+  // Pending taps and drags belong to the card on which they started.
   useEffect(() => {
     window.clearTimeout(tapTimerRef.current);
+    window.clearTimeout(longPressTimerRef.current);
+    if (dragFrameRef.current !== null) window.cancelAnimationFrame(dragFrameRef.current);
+    dragFrameRef.current = null;
+    pendingDragRef.current = null;
+    gestureRef.current = null;
+    setDrag(null);
     lastTapRef.current = 0;
   }, [currentCard?.id]);
 
@@ -357,6 +415,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const resetDrag = () => {
     gestureRef.current = null;
     window.clearTimeout(longPressTimerRef.current);
+    if (dragFrameRef.current !== null) window.cancelAnimationFrame(dragFrameRef.current);
+    dragFrameRef.current = null;
+    pendingDragRef.current = null;
     setDrag(null);
   };
 
@@ -389,11 +450,11 @@ export const StudySession: React.FC<StudySessionProps> = ({
     const gesture = swipeGestureFor(dx, dy);
     // The card only follows the finger toward a gesture that does something here
     if (!isActionAvailable(gestureMap[gesture], gestureCtx)) {
-      if (drag) setDrag(null);
+      queueDrag(null);
       return;
     }
     const horizontal = gesture === 'swipeLeft' || gesture === 'swipeRight';
-    setDrag({ x: horizontal ? dx : 0, y: horizontal ? 0 : dy, gesture });
+    queueDrag({ x: horizontal ? dx : 0, y: horizontal ? 0 : dy, gesture });
   };
 
   const handleTap = () => {
@@ -479,7 +540,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   // Handle switching level right inside study session
   const handleSwitchLevel = async (lvl: string | null) => {
+    if (exitingRef.current) return;
     setIsMenuOpen(false);
+    resetDrag();
     setReviewedInSession(0);
     if (!lvl) {
       onSelectIsolatedLevel(null);
@@ -544,15 +607,20 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   return (
     <main
-      className={`card ${
+      data-grading={deckConfig.twoButtonGrading ? 'two' : 'four'}
+      className={`card study-session ${
         isLight ? 'card-theme-light' : 'night_mode card-theme-dark'
       } flex flex-col justify-between select-none relative min-h-screen w-full transition-colors duration-300 overflow-x-hidden`}
     >
       <h1 className="sr-only">Sessão de estudo</h1>
+      <div className="study-session-status" aria-live="polite" aria-atomic="true">
+        <span>{isolatedLevel ?? 'Todos os ativos'}</span>
+        <span className="tabular-nums">{reviewedInSession} revisados · {remainingCount} restantes</span>
+      </div>
 
-      {/* Session progress: a hairline, no text */}
+      {/* Session progress stays visually subordinate to the card. */}
       <div
-        className={`fixed top-0 inset-x-0 z-40 h-0.5 ${isLight ? 'bg-black/5' : 'bg-white/5'}`}
+        className={`fixed top-0 inset-x-0 z-40 h-1 ${isLight ? 'bg-black/5' : 'bg-white/5'}`}
         role="progressbar"
         aria-label="Progresso da sessão"
         aria-valuenow={progressPercent}
@@ -560,8 +628,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
         aria-valuemax={100}
       >
         <div
-          className="h-full bg-red-600/80 transition-[width] duration-500 ease-out"
-          style={{ width: `${progressPercent}%` }}
+          className="study-progress-fill h-full bg-red-600"
+          style={{ transform: `scaleX(${progressPercent / 100})` }}
         />
       </div>
 
@@ -586,8 +654,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
         {dragLabel && (
           <div
             aria-hidden="true"
-            className={`absolute top-2 left-1/2 -translate-x-1/2 z-10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${dragTone}`}
-            style={{ opacity: Math.min(1, (dragDistance - 30) / 60) }}
+            className={`study-gesture-cue absolute top-2 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full text-sm font-bold ${dragTone}`}
+            style={{ opacity: Math.min(1, (dragDistance - 30) / 35) }}
           >
             {dragLabel}
           </div>
@@ -596,10 +664,13 @@ export const StudySession: React.FC<StudySessionProps> = ({
           <div
             key={currentCard.id}
             ref={cardWrapperRef}
-            className="w-full"
+            className="study-tactile-card w-full"
+            data-dragging={drag ? 'true' : undefined}
+            aria-busy={isGrading}
             style={{
-              transform: `translate3d(${drag?.x ?? 0}px, ${drag?.y ?? 0}px, 0) rotate(${(drag?.x ?? 0) / 40}deg)`,
-              transition: drag ? 'none' : 'transform 0.36s cubic-bezier(0.16, 1, 0.3, 1)',
+              // Resistance bounds travel but the gesture's raw distance still decides its action.
+              transform: reducedMotion ? undefined : `translate3d(${160 * Math.tanh((drag?.x ?? 0) / 180)}px, ${100 * Math.tanh((drag?.y ?? 0) / 140)}px, 0) rotate(${Math.max(-7, Math.min(7, (drag?.x ?? 0) / 35))}deg)`,
+              transition: reducedMotion || drag ? 'none' : 'transform 0.42s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
             <MandarinCardView
@@ -654,7 +725,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
       </div>
 
       {/* Bottom Bar — Anki style with fixed layout height to prevent vertical jitter */}
-      <footer className="w-full max-w-2xl mx-auto px-4 py-4 flex flex-col items-center gap-3 z-20">
+      <footer className="study-answer-footer w-full max-w-2xl mx-auto px-4 py-4 flex flex-col items-center gap-3 z-20">
         {/* Action Controls with fixed min-height to guarantee zero layout flicker */}
         <div className="w-full min-h-[68px] flex items-stretch">
           {deckConfig.hideAnswerButtons ? (
@@ -674,10 +745,10 @@ export const StudySession: React.FC<StudySessionProps> = ({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                setIsFlipped(true);
+                if (!exitingRef.current) setIsFlipped(true);
               }}
-              disabled={!currentCard}
-              className={`w-full h-full py-4 px-6 rounded-2xl font-bold text-base shadow-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border active:scale-[0.99] backdrop-blur-xl ${
+              disabled={!currentCard || isGrading}
+              className={`study-reveal w-full h-full py-4 px-6 rounded-2xl font-bold text-base shadow-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border active:scale-[0.99] backdrop-blur-xl ${
                 isLight
                   ? 'bg-white/85 hover:bg-white text-ink border-white/95'
                   : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
@@ -689,11 +760,12 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 WebkitBackfaceVisibility: 'hidden',
               }}
             >
-              Mostrar Resposta (Espaço)
+              <span>Mostrar Resposta</span>
+              <kbd className="study-shortcut">Espaço</kbd>
             </button>
           ) : (
             <div
-              className={`grid ${deckConfig.twoButtonGrading ? 'grid-cols-2' : 'grid-cols-4'} gap-2 w-full h-full`}
+              className={`study-grades grid ${deckConfig.twoButtonGrading ? 'grid-cols-2' : 'grid-cols-4'} gap-2 w-full h-full`}
               style={{
                 transform: 'translate3d(0, 0, 0)',
                 WebkitTransform: 'translate3d(0, 0, 0)',
@@ -708,17 +780,19 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   e.stopPropagation();
                   gradeCard(1);
                 }}
+                disabled={isGrading}
+                data-grade="1"
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
                   isLight
                     ? 'bg-red-50 hover:bg-red-100 text-red-950 border-red-300'
                     : 'bg-red-600/35 hover:bg-red-600/50 text-white border-red-500/40'
                 }`}
               >
-                <span className="text-[11px] font-extrabold text-red-700 dark:text-red-200 uppercase tracking-wider">Novamente</span>
-                <span className="text-sm font-black mt-0.5 text-current">
+                <span className="study-grade-label">Novamente</span>
+                <span className="study-grade-interval">
                   {predictions ? predictions[1].text : '< 10m'}
                 </span>
-                <span className="text-[10px] opacity-60 mt-0.5">1</span>
+                <kbd className="study-shortcut">1</kbd>
               </button>
 
               {/* Rating 2: Hard */}
@@ -729,17 +803,19 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   e.stopPropagation();
                   gradeCard(2);
                 }}
+                disabled={isGrading}
+                data-grade="2"
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
                   isLight
                     ? 'bg-amber-50 hover:bg-amber-100 text-amber-950 border-amber-300'
                     : 'bg-amber-600/35 hover:bg-amber-600/50 text-white border-amber-500/40'
                 }`}
               >
-                <span className="text-[11px] font-extrabold text-amber-700 dark:text-amber-200 uppercase tracking-wider">Difícil</span>
-                <span className="text-sm font-black mt-0.5 text-current">
+                <span className="study-grade-label">Difícil</span>
+                <span className="study-grade-interval">
                   {predictions ? predictions[2].text : '1d'}
                 </span>
-                <span className="text-[10px] opacity-60 mt-0.5">2</span>
+                <kbd className="study-shortcut">2</kbd>
               </button>
               )}
 
@@ -750,17 +826,19 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   e.stopPropagation();
                   gradeCard(3);
                 }}
+                disabled={isGrading}
+                data-grade="3"
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ring-1 ${
                   isLight
                     ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border-emerald-400 ring-emerald-400/40'
                     : 'bg-emerald-600/35 hover:bg-emerald-600/50 text-white border-emerald-500/40 ring-emerald-400/30'
                 }`}
               >
-                <span className="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-200 uppercase tracking-wider">Bom</span>
-                <span className="text-sm font-black mt-0.5 text-current">
+                <span className="study-grade-label">Bom</span>
+                <span className="study-grade-interval">
                   {predictions ? predictions[3].text : '3d'}
                 </span>
-                <span className="text-[10px] opacity-60 mt-0.5">Espaço / 3</span>
+                <kbd className="study-shortcut">Espaço / 3</kbd>
               </button>
 
               {/* Rating 4: Easy */}
@@ -771,17 +849,19 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   e.stopPropagation();
                   gradeCard(4);
                 }}
+                disabled={isGrading}
+                data-grade="4"
                 className={`flex flex-col items-center justify-center py-2 px-1 rounded-2xl transition-all cursor-pointer active:scale-95 border backdrop-blur-xl shadow-md ${
                   isLight
                     ? 'bg-blue-50 hover:bg-blue-100 text-blue-950 border-blue-300'
                     : 'bg-blue-600/35 hover:bg-blue-600/50 text-white border-blue-500/40'
                 }`}
               >
-                <span className="text-[11px] font-extrabold text-blue-700 dark:text-blue-200 uppercase tracking-wider">Fácil</span>
-                <span className="text-sm font-black mt-0.5 text-current">
+                <span className="study-grade-label">Fácil</span>
+                <span className="study-grade-interval">
                   {predictions ? predictions[4].text : '5d'}
                 </span>
-                <span className="text-[10px] opacity-60 mt-0.5">4</span>
+                <kbd className="study-shortcut">4</kbd>
               </button>
               )}
             </div>
@@ -821,7 +901,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               type="button"
               onClick={handleUndo}
               onMouseDown={keepCardFocus}
-              disabled={!canUndo}
+              disabled={!canUndo || isGrading}
               aria-label="Desfazer última revisão"
               title="Desfazer (Ctrl+Z)"
               className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default ${
