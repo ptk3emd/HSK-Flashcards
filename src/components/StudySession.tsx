@@ -4,7 +4,7 @@ import { useDialogFocus } from './useDialogFocus';
 import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGesture } from '../types/card';
 import { GESTURES, GRADE_ACTIONS, effectiveActionLabel, isActionAvailable } from '../lib/gestures';
 import { MandarinCardView } from './MandarinCardView';
-import { isLeech, predictNextIntervals, scheduleCard } from '../lib/fsrs';
+import { predictNextIntervals, scheduleCard } from '../lib/fsrs';
 import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
@@ -56,6 +56,10 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const [showWritingPad, setShowWritingPad] = useState(false);
   const [showVoiceSettingsModal, setShowVoiceSettingsModal] = useState(false);
   const [reviewedInSession, setReviewedInSession] = useState(0);
+  const [loadingLevel, setLoadingLevel] = useState<string | null>(null);
+  const [levelLoadError, setLevelLoadError] = useState<string | null>(null);
+  const levelRequestRef = useRef(0);
+  useEffect(() => () => { levelRequestRef.current += 1; }, []);
 
   const isLight = theme === 'light';
   const [reducedMotion, setReducedMotion] = useState(
@@ -142,7 +146,13 @@ export const StudySession: React.FC<StudySessionProps> = ({
   useDialogFocus(voiceDialogRef, showVoiceSettingsModal && !!onUpdateDeckConfig, closeVoiceSettings);
   const menuRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLElement>(null);
-  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+  const closeMenu = useCallback(() => {
+    // Closing the menu also invalidates any pending level selection.
+    levelRequestRef.current += 1;
+    setLoadingLevel(null);
+    setLevelLoadError(null);
+    setIsMenuOpen(false);
+  }, []);
   useDialogFocus(menuRef, isMenuOpen, closeMenu);
 
   useEffect(() => {
@@ -519,9 +529,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
     dragAction === 'again'
       ? 'bg-red-600 text-white'
       : dragAction === 'good' || (dragAction === 'revealOrGood' && isFlipped)
-      ? 'bg-emerald-600 text-white'
+      ? 'bg-emerald-700 text-white'
       : dragAction === 'hard'
-      ? 'bg-amber-600 text-white'
+      ? 'bg-amber-700 text-white'
       : dragAction === 'easy'
       ? 'bg-blue-600 text-white'
       : isLight
@@ -538,30 +548,35 @@ export const StudySession: React.FC<StudySessionProps> = ({
     return isFlipped ? GRADE_ACTIONS.includes(action) || action === 'revealOrGood' : action === 'reveal' || action === 'revealOrGood';
   }).map(({ id, label }) => `${label}: ${effectiveActionLabel(gestureMap[id], isFlipped)}`);
 
-  // Handle switching level right inside study session
+  // Keep the current queue intact until the requested level is ready.
   const handleSwitchLevel = async (lvl: string | null) => {
-    if (exitingRef.current) return;
-    setIsMenuOpen(false);
-    resetDrag();
-    setReviewedInSession(0);
-    if (!lvl) {
-      onSelectIsolatedLevel(null);
+    if (exitingRef.current || loadingLevel !== null) return;
+    setLevelLoadError(null);
+    const selectLevel = () => {
+      resetDrag();
+      setReviewedInSession(0);
+      onSelectIsolatedLevel(lvl);
+      closeMenu();
+    };
+    if (!lvl || sessionCards.some(c => c.level === lvl)) {
+      selectLevel();
       return;
     }
 
-    const hasCards = sessionCards.some(c => c.level === lvl);
-    if (!hasCards) {
-      try {
-        const nativeCards = await loadNativeLevelCards(lvl);
-        onAddCards(nativeCards);
-        onSelectIsolatedLevel(lvl);
-      } catch (err) {
-        console.error('Failed to load level', lvl, err);
+    const request = ++levelRequestRef.current;
+    setLoadingLevel(lvl);
+    try {
+      const nativeCards = await loadNativeLevelCards(lvl);
+      if (request !== levelRequestRef.current) return;
+      onAddCards(nativeCards);
+      selectLevel();
+    } catch {
+      if (request === levelRequestRef.current) {
+        setLevelLoadError(lvl);
       }
-      return;
+    } finally {
+      if (request === levelRequestRef.current) setLoadingLevel(null);
     }
-
-    onSelectIsolatedLevel(lvl);
   };
 
   useEffect(() => {
@@ -608,6 +623,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   return (
     <main
       data-grading={deckConfig.twoButtonGrading ? 'two' : 'four'}
+      data-answer-buttons={deckConfig.hideAnswerButtons ? 'hidden' : 'visible'}
       className={`card study-session ${
         isLight ? 'card-theme-light' : 'night_mode card-theme-dark'
       } flex flex-col justify-between select-none relative min-h-screen w-full transition-colors duration-300 overflow-x-hidden`}
@@ -615,7 +631,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
       <h1 className="sr-only">Sessão de estudo</h1>
       <div className="study-session-status" aria-live="polite" aria-atomic="true">
         <span>{isolatedLevel ?? 'Todos os ativos'}</span>
-        <span className="tabular-nums">{reviewedInSession} revisados · {remainingCount} restantes</span>
+        <span className="tabular-nums">{reviewedInSession} {reviewedInSession === 1 ? 'revisado' : 'revisados'} · {remainingCount} {remainingCount === 1 ? 'restante' : 'restantes'}</span>
       </div>
 
       {/* Session progress stays visually subordinate to the card. */}
@@ -702,7 +718,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   <button
                     type="button"
                     onClick={() => handleSwitchLevel(null)}
-                    className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-all cursor-pointer shadow-md"
+                    className="min-h-11 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-all cursor-pointer shadow-md"
                   >
                     Estudar Todos os Níveis
                   </button>
@@ -710,7 +726,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 <button
                   type="button"
                   onClick={onExit}
-                  className={`px-5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer shadow-md ${
+                  className={`min-h-11 px-5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer shadow-md ${
                     isLight
                       ? 'bg-black/10 hover:bg-black/15 text-black'
                       : 'bg-white/20 hover:bg-white/30 text-white'
@@ -725,14 +741,12 @@ export const StudySession: React.FC<StudySessionProps> = ({
       </div>
 
       {/* Bottom Bar — Anki style with fixed layout height to prevent vertical jitter */}
-      <footer className="study-answer-footer w-full max-w-2xl mx-auto px-4 py-4 flex flex-col items-center gap-3 z-20">
+      {currentCard && <footer className="study-answer-footer w-full max-w-2xl mx-auto px-4 py-4 flex flex-col items-center gap-3 z-20">
         {/* Action Controls with fixed min-height to guarantee zero layout flicker */}
         <div className="w-full min-h-[68px] flex items-stretch">
           {deckConfig.hideAnswerButtons ? (
-            <p className={`w-full flex items-center justify-center gap-2 text-xs ${isLight ? 'text-black/60' : 'text-white/60'}`}>
-              {!currentCard
-                ? null
-                : gestureHints.length === 0
+            <p className="study-gesture-hint w-full flex items-center justify-center gap-2 text-sm">
+              {gestureHints.length === 0
                 ? isFlipped
                   ? 'Nenhum gesto avalia o cartão. Ajuste os gestos nas configurações.'
                   : 'Nenhum gesto mostra a resposta. Ajuste os gestos nas configurações.'
@@ -753,12 +767,6 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   ? 'bg-white/85 hover:bg-white text-ink border-white/95'
                   : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
               }`}
-              style={{
-                transform: 'translate3d(0, 0, 0)',
-                WebkitTransform: 'translate3d(0, 0, 0)',
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-              }}
             >
               <span>Mostrar Resposta</span>
               <kbd className="study-shortcut">Espaço</kbd>
@@ -867,7 +875,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             </div>
           )}
         </div>
-      </footer>
+      </footer>}
 
       {/* Bottom bar: back, queue counts, undo and the session menu */}
       <nav
@@ -889,10 +897,10 @@ export const StudySession: React.FC<StudySessionProps> = ({
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-3 px-2 text-base font-semibold tabular-nums" aria-label="Novos, aprendendo e revisão">
-              <span className={`text-blue-600 dark:text-blue-400 ${currentCard?.state === 0 ? 'underline underline-offset-4' : ''}`} title="Novos">{newCount}</span>
-              <span className={`text-red-600 dark:text-red-400 ${currentCard && (currentCard.state === 1 || currentCard.state === 3) ? 'underline underline-offset-4' : ''}`} title="Aprendendo">{learningCount}</span>
-              <span className={`text-emerald-600 dark:text-emerald-400 ${currentCard?.state === 2 ? 'underline underline-offset-4' : ''}`} title="Revisão">{reviewCount}</span>
+            <div className="flex items-center gap-3 px-2 text-base font-semibold tabular-nums" role="group" aria-label="Fila de cartões">
+              <span className={`text-blue-900 dark:text-blue-400 ${currentCard?.state === 0 ? 'underline underline-offset-4' : ''}`} title="Novos">{newCount}<span className="sr-only"> novos</span></span>
+              <span className={`text-red-900 dark:text-red-400 ${currentCard && (currentCard.state === 1 || currentCard.state === 3) ? 'underline underline-offset-4' : ''}`} title="Aprendendo">{learningCount}<span className="sr-only"> aprendendo</span></span>
+              <span className={`text-emerald-900 dark:text-emerald-400 ${currentCard?.state === 2 ? 'underline underline-offset-4' : ''}`} title="Revisão">{reviewCount}<span className="sr-only"> para revisão</span></span>
             </div>
           </div>
 
@@ -941,7 +949,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               aria-modal="true"
               aria-label="Mais opções"
               style={{ bottom: navRef.current ? window.innerHeight - navRef.current.getBoundingClientRect().top + 8 : 72 }}
-              className="sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-bottom-right fixed right-2 z-50 w-64 max-h-[70vh] overflow-y-auto !rounded-2xl p-1.5"
+              className="study-session-menu sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-bottom-right fixed right-2 z-50 w-64 max-h-[70vh] overflow-y-auto !rounded-2xl p-1.5"
             >
               {[
                 { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
@@ -965,12 +973,18 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   >
                     <Icon className="w-4 h-4 opacity-70" />
                     <span className="flex-1 text-left">{label}</span>
-                    {hint && <span className="text-xs opacity-40">{hint}</span>}
+                    {hint && <span className="text-xs opacity-80">{hint}</span>}
                   </button>
                 ))}
 
               <div className={`my-1.5 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`} />
-              <div className="px-3 py-1 text-xs font-semibold opacity-50">Nível</div>
+              <div className="px-3 py-1 text-xs font-semibold">Nível</div>
+              {loadingLevel && (
+                <p role="status" className="px-3 py-2 text-sm">Carregando {loadingLevel}…</p>
+              )}
+              {levelLoadError && (
+                <p role="alert" className="px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError}</span>. Tente novamente.</p>
+              )}
               {[null, ...ALL_HSK_LEVELS].map((lvl) => {
                 const isSelected = isolatedLevel === lvl;
                 return (
@@ -978,7 +992,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
                     key={lvl ?? 'all'}
                     type="button"
                     onClick={() => handleSwitchLevel(lvl)}
-                    className={`w-full min-h-10 flex items-center justify-between px-3 rounded-xl text-sm transition-colors cursor-pointer ${
+                    disabled={loadingLevel !== null}
+                    aria-pressed={isSelected}
+                    className={`w-full min-h-11 disabled:opacity-50 disabled:cursor-wait flex items-center justify-between px-3 rounded-xl text-sm transition-colors cursor-pointer ${
                       isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
                     }`}
                   >

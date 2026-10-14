@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: var(--text-secondary);
+  color: var(--text-fg);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -34,12 +34,15 @@
   box-shadow: var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 .study-session .mandarin-dock .ptbr { font-weight: 650; }
+.study-session .pinying,
+.study-session .card-label { color: var(--text-fg); }
 .study-session .study-gesture-cue {
   pointer-events: none;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
 }
 
 .study-session .study-answer-footer { gap: 0; }
+.study-session .study-gesture-hint { color: var(--text-fg); text-align: center; }
 .study-session .study-reveal {
   min-height: 96px;
   display: flex;
@@ -95,10 +98,13 @@
   color: var(--text-secondary);
   font-size: 12px;
 }
-.study-session button:focus-visible {
+.study-session button:focus-visible,
+.study-session-menu button:focus-visible {
   outline: 3px solid var(--text-fg);
   outline-offset: 4px;
 }
+
+.study-session-menu button:focus-visible { outline-offset: -3px; }
 
 @media (hover: none), (pointer: coarse), (max-width: 640px) {
   .study-session .study-shortcut { display: none; }
@@ -111,15 +117,19 @@
 /* Four legible targets rather than compressed labels on the narrowest phones.
    Reserve the same action area before reveal, so the card never jumps. */
 @media (max-width: 360px) {
-  .study-session[data-grading='four'] .study-answer-footer > div {
+  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-answer-footer > div {
     min-height: 200px;
     align-items: flex-end;
   }
-  .study-session[data-grading='four'] .study-grades {
+  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-grades {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     height: 200px;
   }
-  .study-session[data-grading='four'] .study-reveal { height: 96px; }
+  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-reveal { height: 96px; }
+}
+.study-session-menu {
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-secondary) transparent;
 }
 @media (prefers-reduced-transparency: reduce) {
   .study-session .mandarin-card,
@@ -135,5 +145,5 @@
   .study-session .study-reveal,
   .study-session .study-grades > button { transition: none; }
   .study-session .study-reveal:active,
-  .study-session .study-grades > button:active { transform: none; }
+  .study-session .study-grades > button:active { transform: none; scale: 1; }
 }
