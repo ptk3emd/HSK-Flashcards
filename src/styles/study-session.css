@@ -1,0 +1,139 @@
+/* The session amplifies the existing acrylic material; every rule stays on this surface. */
+.study-session {
+  min-height: 100svh;
+  color: var(--text-fg);
+}
+
+.study-session-status {
+  width: min(100%, var(--card-max-width));
+  margin: 0 auto;
+  padding: max(24px, env(safe-area-inset-top)) 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.study-session-status > :first-child { font-weight: 650; }
+.study-session-status > :last-child { text-align: right; }
+
+.study-session .study-progress-fill {
+  transform-origin: left;
+  transition: transform 400ms var(--anim-curve);
+}
+
+.study-session .study-tactile-card .mandarin-card {
+  /* Specular inset edges plus a soft, offset shadow make the material feel lifted. */
+  box-shadow: var(--glass-highlight), 0 16px 40px rgba(0, 0, 0, 0.14);
+}
+.study-session .study-tactile-card[data-dragging] { will-change: transform; }
+.study-session .mandarin-dock {
+  border-radius: var(--card-radius);
+  box-shadow: var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.study-session .mandarin-dock .ptbr { font-weight: 650; }
+.study-session .study-gesture-cue {
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+}
+
+.study-session .study-answer-footer { gap: 0; }
+.study-session .study-reveal {
+  min-height: 96px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background: var(--glass-menu);
+  color: var(--text-fg);
+  border-color: var(--glass-edge);
+  box-shadow: var(--glass-highlight), 0 10px 24px rgba(0, 0, 0, 0.12);
+  font-size: 18px;
+  transition: background-color 160ms ease, transform 160ms var(--anim-curve);
+}
+.study-session .study-reveal:hover:not(:disabled) { background: var(--glass-solid); }
+.study-session .study-reveal:active:not(:disabled) { transform: translateY(2px); }
+
+.study-session .study-grades > button {
+  min-height: 96px;
+  padding: 12px 4px;
+  gap: 3px;
+  box-shadow: var(--glass-highlight), 0 6px 16px rgba(0, 0, 0, 0.08);
+  transition: background-color 160ms ease, transform 160ms var(--anim-curve);
+}
+.study-session .study-grades > button:disabled { cursor: wait; }
+.study-session .study-grades > button[data-grade='3'] {
+  background: #047857;
+  color: white;
+  border-color: #059669;
+  box-shadow: var(--glass-highlight), 0 8px 20px rgba(0, 0, 0, 0.14);
+}
+.study-session .study-grades > button[data-grade='3']:hover:not(:disabled) { background: #065f46; }
+.study-session .study-grade-label {
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.3;
+}
+.study-session .study-grade-interval {
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+.study-session .study-shortcut {
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.4;
+  color: inherit;
+}
+.study-session .study-reveal .study-shortcut {
+  padding: 4px 9px;
+  border: 1px solid var(--separator);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.study-session button:focus-visible {
+  outline: 3px solid var(--text-fg);
+  outline-offset: 4px;
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 640px) {
+  .study-session .study-shortcut { display: none; }
+}
+@media (max-width: 380px) {
+  .study-session-status { font-size: 12px; padding-inline: 16px; }
+  .study-session .study-grade-label { font-size: 12px; }
+  .study-session .study-grade-interval { font-size: 18px; }
+}
+/* Four legible targets rather than compressed labels on the narrowest phones.
+   Reserve the same action area before reveal, so the card never jumps. */
+@media (max-width: 360px) {
+  .study-session[data-grading='four'] .study-answer-footer > div {
+    min-height: 200px;
+    align-items: flex-end;
+  }
+  .study-session[data-grading='four'] .study-grades {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: 200px;
+  }
+  .study-session[data-grading='four'] .study-reveal { height: 96px; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .study-session .mandarin-card,
+  .study-session .mandarin-dock,
+  .study-session .study-reveal {
+    background: var(--glass-solid);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .study-session .study-progress-fill,
+  .study-session .study-reveal,
+  .study-session .study-grades > button { transition: none; }
+  .study-session .study-reveal:active,
+  .study-session .study-grades > button:active { transform: none; }
+}
