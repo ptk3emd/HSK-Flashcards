@@ -355,3 +355,68 @@
 .study-ladder-step[data-grade] { animation: none; -webkit-mask-image: none; mask-image: none; }
   .study-seal { animation: none; }
 }
+
+/* Session complete: the seal 完 (finished) on the same glass card, one line of summary */
+.study-session .study-done {
+  min-height: clamp(260px, 42svh, 440px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 24px;
+  text-align: center;
+}
+.study-done .study-done-seal {
+  position: static;
+  width: 88px;
+  height: 88px;
+  font-size: 52px;
+  margin-bottom: 12px;
+  transform: rotate(-8deg);
+}
+.study-done-title {
+  font-family: var(--font-hanzi);
+  font-size: clamp(24px, 6cqi, 32px);
+  font-weight: 600;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.study-done-summary { font-size: 15px; color: var(--text-secondary); }
+.study-done-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.study-done-actions > button {
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 160ms var(--anim-curve);
+}
+.study-done-actions > button:active { transform: translateY(1px); }
+.study-done-primary { background: #B3261E; color: #fff; }
+.study-done-primary:hover { background: #8F1E18; }
+.study-done-secondary {
+  background: var(--glass-menu);
+  color: var(--text-fg);
+  box-shadow: var(--glass-highlight), inset 0 0 0 1px var(--glass-edge);
+}
+.study-done-secondary:hover { background: var(--glass-solid); }
+.study-done .study-done-seal { animation-duration: 320ms; }
+@media (prefers-reduced-motion: reduce) { .study-done .study-done-seal { animation: none; } }
+
+/* Short screens (small phones, landscape): the card gives up height so the answer stays in view */
+@media (max-height: 720px) {
+  .study-session { --hanzi-max-size: 120px; }
+  .study-session-status { padding-top: max(12px, env(safe-area-inset-top)); }
+  .study-workspace { gap: 16px; padding-block: 8px; }
+  .study-session .study-tactile-card .mandarin-card,
+  .study-session .study-done { min-height: clamp(200px, 32svh, 320px); }
+  .study-session .mandarin-scene { gap: 12px; }
+}
