@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { Card } from '../types/card';
 import { Volume2, PenTool, AlertTriangle, Lightbulb } from 'lucide-react';
 import { isLeech } from '../lib/fsrs';
@@ -29,18 +29,19 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
 
   const leech = isLeech(card);
 
-  // Each new card settles in with a short fade and rise. Runs on the same DOM node,
-  // so nothing remounts, and it is skipped when the OS asks for reduced motion.
-  useEffect(() => {
+  // Each new card settles in with a short fade and rise. A layout effect starts it before the
+  // first paint, so the card is never shown at rest for a frame and then hidden (the flicker).
+  // Skipped when the OS asks for reduced motion.
+  useLayoutEffect(() => {
     const el = cardRef.current;
     if (!el || typeof el.animate !== 'function') return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const animation = el.animate(
       [
-        { opacity: 0, transform: 'translate3d(0, 12px, 0) scale(0.985)' },
+        { opacity: 0, transform: 'translate3d(0, 8px, 0) scale(0.99)' },
         { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' },
       ],
-      { duration: 420, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+      { duration: 280, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
     );
     return () => animation.cancel();
   }, [card.id]);

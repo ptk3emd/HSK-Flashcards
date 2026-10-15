@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal, flushSync } from 'react-dom';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGesture } from '../types/card';
 import { GESTURES, GRADE_ACTIONS, effectiveActionLabel, isActionAvailable } from '../lib/gestures';
@@ -352,21 +352,21 @@ export const StudySession: React.FC<StudySessionProps> = ({
       const matrix = new DOMMatrixReadOnly(from === 'none' ? undefined : from);
       const travelX = matrix.m41 + dx * Math.min(window.innerWidth * 0.45, 260);
       const travelY = matrix.m42 + dy * 130;
-      // The seal lands first (the first third), the card takes the hit, then it leaves.
+      // The seal lands as the card starts to move; both are transform and opacity only.
       const rest = from === 'none' ? 'translate3d(0, 0, 0)' : from;
       const exit = el.animate(
         [
-          { transform: rest, opacity: 1, offset: 0 },
-          { transform: `${rest} scale(0.985)`, opacity: 1, offset: 0.3, easing: 'cubic-bezier(0.4, 0, 1, 1)' },
-          { transform: `translate3d(${travelX}px, ${travelY}px, 0) rotate(${dx * 9}deg) scale(0.96)`, opacity: 0, offset: 1 },
+          { transform: rest, opacity: 1 },
+          { transform: `translate3d(${travelX}px, ${travelY}px, 0) rotate(${dx * 9}deg) scale(0.96)`, opacity: 0 },
         ],
-        { duration: 340, fill: 'forwards' }
+        { duration: 240, delay: 60, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'both' }
       );
       exitAnimationRef.current = exit;
       void exit.finished.then(() => {
         if (exitAnimationRef.current !== exit) return;
         exitAnimationRef.current = null;
-        handleAnswer(rating);
+        // Commit the next card before releasing the fill, or the answered card flashes back for a frame.
+        flushSync(() => handleAnswer(rating));
         exit.cancel(); // Also release the transform if a same-card learning step stays due.
         exitingRef.current = false;
         setIsGrading(false);
