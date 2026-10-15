@@ -1,34 +1,115 @@
-/* The session amplifies the existing acrylic material; every rule stays on this surface. */
-.study-session {
+/* AnkiDroid reference: quiet utilities, an inset striped stage and compact ratings.
+   Card material, typography and spacing inherit the supplied mandarin-card tokens. */
+.card.study-session {
+  --study-gutter: 12px;
+  --study-action-height: 60px;
+  --study-shell: #f7f5f2;
+  --study-control: #eae8e5;
   min-height: 100svh;
+  min-height: 100dvh;
   color: var(--text-fg);
-}
-
-.study-session-status {
-  width: var(--avail-card-width);
-  max-width: 100%;
-  margin: 0 auto;
-  padding: max(20px, env(safe-area-inset-top)) 0 4px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: baseline;
-  gap: 10px 16px;
-  color: var(--text-fg);
-  font-size: 13px;
-  line-height: 1.4;
-}
-.study-session-status > :first-child { font-weight: 650; }
-.study-session-status > :nth-child(2) {
-  font-family: var(--font-hanzi);
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1;
-}
-.study-session-status .study-status-of {
   font-family: var(--font-text);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-secondary);
+  background: var(--study-shell);
+  padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+}
+.card.study-session.night_mode { --study-shell: #0b0b0b; --study-control: #101719; background: var(--study-shell); }
+.study-toolbar { flex: none; padding-top: env(safe-area-inset-top); }
+.study-utilities { padding-inline: var(--study-gutter); gap: 8px; }
+.study-utilities > div { min-width: 0; }
+.study-utilities > div:last-child { flex-shrink: 0; }
+.study-utilities [aria-label='Fila de cartões'] { flex-wrap: wrap; gap: 4px 8px; font-size: 14px; }
+.study-workspace {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 var(--study-gutter) max(12px, env(safe-area-inset-bottom));
+}
+.study-session .study-scene {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 24px var(--screen-padding);
+  border-radius: 16px;
+  overflow: clip;
+}
+.study-session .mandarin-scene { width: 100%; max-width: var(--card-max-width); }
+.study-session .study-tactile-card .mandarin-card,
+.study-session .mandarin-dock { width: 100%; box-shadow: var(--glass-highlight); }
+.study-session .mandarin-dock { border-radius: 999px; }
+.study-session .pinying { max-height: none; overflow-wrap: anywhere; }
+.study-session .front-scene .pinying.hidden { max-height: 0; }
+.study-session .ptbr { min-width: 0; overflow-wrap: anywhere; font-weight: 500; }
+.study-session .mnemonic-hint { overflow-wrap: anywhere; }
+.study-session .study-tactile-card[data-dragging] { will-change: transform; }
+.study-session .study-gesture-cue { pointer-events: none; }
+.study-session .study-answer-footer { width: 100%; gap: 0; flex: none; }
+.study-session .study-answer-footer > div { min-height: var(--study-action-height); }
+.study-session .study-reveal,
+.study-session .study-grades > button {
+  min-height: var(--study-action-height);
+  padding: 8px 4px;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  transition: background-color 160ms ease;
+}
+.study-session .study-reveal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--study-control);
+  color: var(--text-fg);
+  font-size: 18px;
+  font-weight: 600;
+}
+.study-session .study-grades { gap: 8px; }
+.study-session .study-grades > button {
+  background: var(--grade-bg);
+  color: var(--grade-fg);
+  gap: 0;
+}
+.study-session [data-grade='1'] { --grade-bg: #f6e4e3; --grade-fg: #982c29; }
+.study-session [data-grade='2'] { --grade-bg: #f3ebdc; --grade-fg: #795015; }
+.study-session [data-grade='3'] { --grade-bg: #e5eddf; --grade-fg: #3d622c; }
+.study-session [data-grade='4'] { --grade-bg: #e1ebf3; --grade-fg: #285a84; }
+.study-session.night_mode [data-grade='1'] { --grade-bg: #1c1010; --grade-fg: #ee9998; }
+.study-session.night_mode [data-grade='2'] { --grade-bg: #1d1910; --grade-fg: #dfbd7e; }
+.study-session.night_mode [data-grade='3'] { --grade-bg: #101710; --grade-fg: #bad594; }
+.study-session.night_mode [data-grade='4'] { --grade-bg: #10171d; --grade-fg: #9dc8eb; }
+.study-grade-interval { order: -1; font-size: 14px; font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.study-grade-label { font-size: 16px; font-weight: 600; line-height: 1.3; }
+.study-session .study-shortcut { display: none; }
+.study-session .study-gesture-hint { color: var(--text-secondary); text-align: center; flex-wrap: wrap; }
+@media (hover: hover) {
+  .study-session .study-reveal:hover:not(:disabled) { background: color-mix(in srgb, var(--study-control), var(--text-fg) 8%); }
+  .study-session .study-grades > button:hover:not(:disabled) { background: color-mix(in srgb, var(--grade-bg), var(--grade-fg) 12%); }
+}
+.study-session button:focus-visible,
+.study-session-menu button:focus-visible { outline: 3px solid var(--text-fg); outline-offset: -3px; }
+.study-session .study-grades > button:disabled { opacity: 0.5; cursor: wait; }
+.study-session-menu { max-width: calc(100vw - 24px); }
+.study-menu-scroll { min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--text-secondary) transparent; }
+.study-session-status { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 8px 12px 16px; font-size: 13px; }
+.study-status-of { color: var(--text-secondary); }
+@media (max-width: 380px) {
+  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-answer-footer > div { min-height: calc(var(--study-action-height) * 2 + 8px); align-items: flex-end; }
+  .study-session[data-grading='four'] .study-grades { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .study-session[data-grading='four'] .study-reveal { height: var(--study-action-height); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .study-session .mandarin-card, .study-session .mandarin-dock { background: var(--glass-solid); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .study-session .mandarin-card, .study-session .mandarin-dock { background: var(--glass-solid); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .study-session .study-reveal, .study-session .study-grades > button { transition: none; }
+  .study-session button:active { transform: none; scale: 1; }
+  .study-ladder-step[data-grade], .study-seal { animation: none; }
 }
 
 /* The progress ladder: one step per card, rising like the brand's staircase */
@@ -64,187 +145,6 @@
   to { transform: scaleY(1); }
 }
 
-.study-session .study-tactile-card .mandarin-card {
-  /* Specular inset edges plus a soft, offset shadow make the material feel lifted. */
-  box-shadow: var(--glass-highlight), 0 16px 40px rgba(0, 0, 0, 0.14);
-}
-.study-session .study-tactile-card[data-dragging] { will-change: transform; }
-.study-session .mandarin-dock {
-  border-radius: var(--card-radius);
-  box-shadow: var(--glass-highlight), 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-.study-session .mandarin-dock .ptbr { font-weight: 650; }
-.study-session .pinying,
-.study-session .card-label { color: var(--text-fg); }
-.study-session .study-gesture-cue {
-  pointer-events: none;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
-}
-
-.study-session .study-answer-footer,
-.study-session .study-utilities {
-  width: var(--avail-card-width);
-  max-width: 100%;
-  padding-inline: 0;
-}
-.study-session .study-answer-footer { gap: 0; }
-.study-workspace {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  padding-block: 16px;
-}
-.study-session .study-scene { flex: 1; }
-/* On roomy screens, keep the answer and its ratings in one reading sequence. */
-@media (min-width: 768px) and (min-height: 700px) {
-  .study-workspace { justify-content: center; gap: 32px; padding-block: 32px; }
-  .study-session .study-scene { flex: 0 0 auto; }
-}
-.study-session .study-gesture-hint { color: var(--text-fg); text-align: center; }
-.study-session .study-reveal {
-  min-height: 96px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  background: var(--glass-menu);
-  color: var(--text-fg);
-  border-color: var(--glass-edge);
-  box-shadow: var(--glass-highlight), 0 10px 24px rgba(0, 0, 0, 0.12);
-  font-size: 18px;
-  transition: background-color 160ms ease, transform 160ms var(--anim-curve);
-}
-.study-session .study-reveal:hover:not(:disabled) { background: var(--glass-solid); }
-.study-session .study-reveal:active:not(:disabled) { transform: translateY(2px); }
-
-.study-session .study-grades > button {
-  min-height: 96px;
-  padding: 12px 4px;
-  gap: 3px;
-  box-shadow: var(--glass-highlight), 0 6px 16px rgba(0, 0, 0, 0.08);
-  transition: background-color 160ms ease, transform 160ms var(--anim-curve);
-}
-.study-session .study-grades > button:disabled { cursor: wait; }
-.study-session .study-grades > button[data-grade='3'] {
-  background: #047857;
-  color: white;
-  border-color: #059669;
-  box-shadow: var(--glass-highlight), 0 8px 20px rgba(0, 0, 0, 0.14);
-}
-.study-session .study-grades > button[data-grade='3']:hover:not(:disabled) { background: #065f46; }
-.study-session .study-grade-label {
-  font-size: 13px;
-  font-weight: 750;
-  line-height: 1.3;
-}
-.study-session .study-grade-interval {
-  font-size: 20px;
-  font-weight: 750;
-  line-height: 1.3;
-  font-variant-numeric: tabular-nums;
-}
-.study-session .study-shortcut {
-  font-family: inherit;
-  font-size: 11px;
-  line-height: 1.4;
-  color: inherit;
-}
-.study-session .study-reveal .study-shortcut {
-  padding: 4px 9px;
-  border: 1px solid var(--separator);
-  border-radius: 6px;
-  color: var(--text-secondary);
-  font-size: 12px;
-}
-.study-session button:focus-visible,
-.study-session-menu button:focus-visible {
-  outline: 3px solid var(--text-fg);
-  outline-offset: 4px;
-}
-
-.study-session-menu button:focus-visible { outline-offset: -3px; }
-
-@media (hover: none), (pointer: coarse), (max-width: 640px) {
-  .study-session .study-shortcut { display: none; }
-}
-@media (max-width: 380px) {
-  .study-session-status { font-size: 12px; }
-  .study-session .study-grade-label { font-size: 12px; }
-  .study-session .study-grade-interval { font-size: 18px; }
-}
-/* Four legible targets rather than compressed labels on the narrowest phones.
-   Reserve the same action area before reveal, so the card never jumps. */
-@media (max-width: 360px) {
-  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-answer-footer > div {
-    min-height: 152px;
-    align-items: flex-end;
-  }
-  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-grades {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    height: 152px;
-  }
-  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-reveal { height: 72px; }
-}
-.study-session-menu { max-width: calc(100vw - 24px); }
-.study-menu-scroll {
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--text-secondary) transparent;
-}
-@media (prefers-reduced-transparency: reduce) {
-  .study-session .mandarin-card,
-  .study-session .mandarin-dock,
-  .study-session .study-reveal {
-    background: var(--glass-solid);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .study-session .study-progress-fill,
-  .study-session .study-reveal,
-  .study-session .study-grades > button { transition: none; }
-  .study-session .study-reveal:active,
-  .study-session .study-grades > button:active { transform: none; scale: 1; }
-}
-
-/* ==========================================================================
-   Ink and seal: the hanzi leads, the meaning spreads like ink, the grade is stamped
-   ========================================================================== */
-.study-session { --hanzi-max-size: 112px; --card-max-width: 560px; }
-.study-session .card-label { display: none; }
-.study-session .study-tactile-card .mandarin-card {
-  position: relative;
-  min-height: clamp(200px, 30svh, 300px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.study-session .study-tactile-card .hanzi {
-  /* Short words fill the card like calligraphy: one em per character across the width, up to the cap */
-  font-size: clamp(var(--hanzi-min-size), calc((100cqi - 8px) / (var(--hanzi-count, 3) + 1)), var(--hanzi-max-size));
-  max-width: calc(var(--hanzi-count, 3) * 1em);
-  line-height: 1.1;
-}
-.study-session .study-tactile-card .hanzi.is-long { font-size: clamp(28px, 9cqi, 52px) !important; }
-.study-session .study-tactile-card .pinying { color: var(--text-secondary); }
-
-/* The meaning rises in on the compositor: transform and opacity only, no masks or filters
-   over the glass, which stutter and flash on phones. */
-.study-session .mandarin-dock { transition: none; }
-.study-session .mandarin-dock.dock-visible { animation: dock-rise 220ms cubic-bezier(0.16, 1, 0.3, 1) both; }
-.study-session .mandarin-dock.dock-visible .ptbr { animation: none; }
-@keyframes dock-rise {
-  from { opacity: 0; transform: translate3d(0, 6px, 0) scale(0.98); }
-  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
-}
-
-
 /* The seal: lacquer red, paper border, one character in the brand's serif. */
 .study-seal {
   position: absolute;
@@ -272,67 +172,6 @@
   from { transform: scale(1.7) rotate(-14deg); opacity: 0; }
   70% { transform: scale(0.94) rotate(-7deg); opacity: 1; }
   to { transform: scale(1) rotate(-8deg); opacity: 1; }
-}
-
-/* Answer controls read as one glass bar, a hairline between grades; Bom keeps the fill. */
-.study-session .study-grades {
-  gap: 0;
-  border-radius: 20px;
-  overflow: hidden;
-  background: var(--glass-menu);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  backdrop-filter: blur(30px) saturate(180%);
-  box-shadow: var(--glass-highlight), 0 10px 28px rgba(0, 0, 0, 0.12);
-}
-.study-session .study-grades > button {
-  position: relative;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  color: var(--text-fg);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  --ring: 0;
-}
-.study-session .study-grades > button + button { box-shadow: inset 1px 0 0 var(--separator); }
-.study-session .study-grades > button::before {
-  content: '';
-  position: absolute;
-  inset: 0 18% auto;
-  height: 3px;
-  border-radius: 0 0 3px 3px;
-  background: var(--grade-tone);
-}
-.study-session .study-grades > button[data-grade='1'] { --grade-tone: #B3261E; }
-.study-session .study-grades > button[data-grade='2'] { --grade-tone: #B45309; }
-.study-session .study-grades > button[data-grade='4'] { --grade-tone: #1D4ED8; }
-.night_mode .study-grades > button[data-grade='1'] { --grade-tone: #F87171; }
-.night_mode .study-grades > button[data-grade='2'] { --grade-tone: #FBBF24; }
-.night_mode .study-grades > button[data-grade='4'] { --grade-tone: #60A5FA; }
-.study-session .study-grades > button:hover:not(:disabled) { background: rgba(127, 127, 127, 0.1); }
-.study-session .study-grades > button[data-grade='3'] {
-  background: #047857;
-  color: #fff;
-  border: 0;
-  box-shadow: none;
-}
-.study-session .study-grades > button[data-grade='3']::before { display: none; }
-.study-session .study-grade-interval { font-size: 19px; }
-.study-session .study-grades > button,
-.study-session .study-reveal { min-height: 72px; }
-.study-session .mandarin-dock { min-height: 52px; padding-block: 12px; }
-.study-session { --ptbr-size: clamp(18px, 4.6vw, 22px); }
-.study-session .study-reveal { border-radius: 20px; }
-
-@media (max-width: 360px) {
-  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-grades > button:nth-child(3) { box-shadow: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .study-session .mandarin-dock.dock-visible,
-  .study-ladder-step[data-grade],
-  .study-seal { animation: none; }
 }
 
 /* Session complete: the seal 完 (finished) on the same glass card, one line of summary */
@@ -389,13 +228,3 @@
 .study-done-secondary:hover { background: var(--glass-solid); }
 .study-done .study-done-seal { animation-duration: 320ms; }
 @media (prefers-reduced-motion: reduce) { .study-done .study-done-seal { animation: none; } }
-
-/* Short screens (small phones, landscape): the card gives up height so the answer stays in view */
-@media (max-height: 720px) {
-  .study-session { --hanzi-max-size: 96px; }
-  .study-session-status { padding-top: max(12px, env(safe-area-inset-top)); }
-  .study-workspace { gap: 16px; padding-block: 8px; }
-  .study-session .study-tactile-card .mandarin-card,
-  .study-session .study-done { min-height: clamp(170px, 28svh, 260px); }
-  .study-session .mandarin-scene { gap: 12px; }
-}
