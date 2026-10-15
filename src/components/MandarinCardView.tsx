@@ -82,6 +82,7 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
         style={{
           // @ts-expect-error CSS custom variable
           '--chars-per-line': charsPerLine > 8 ? 8 : charsPerLine,
+          '--hanzi-count': Math.max(1, Math.min(cleanHanzi.length, 8)),
         }}
       >
         {/* Main Acrylic Card (PERSISTENT DOM - ZERO FLICKER / NO REMOUNT) */}

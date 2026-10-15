@@ -8,22 +8,60 @@
   width: var(--avail-card-width);
   max-width: 100%;
   margin: 0 auto;
-  padding: max(24px, env(safe-area-inset-top)) 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 4px 16px;
+  padding: max(20px, env(safe-area-inset-top)) 0 4px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 10px 16px;
   color: var(--text-fg);
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 .study-session-status > :first-child { font-weight: 650; }
-.study-session-status > :last-child { margin-left: auto; text-align: right; }
+.study-session-status > :nth-child(2) {
+  font-family: var(--font-hanzi);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+}
+.study-session-status .study-status-of {
+  font-family: var(--font-text);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
 
-.study-session .study-progress-fill {
-  transform-origin: left;
-  transition: transform 400ms var(--anim-curve);
+/* The progress ladder: one step per card, rising like the brand's staircase */
+.study-ladder {
+  grid-column: 1 / -1;
+  height: 14px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+.study-ladder-step {
+  flex: 1 1 0;
+  min-width: 2px;
+  border-radius: 1px;
+  background: var(--separator);
+  opacity: 0.7;
+  transform-origin: bottom;
+  transition: background-color 240ms ease;
+}
+.study-ladder-step[data-grade] { opacity: 1; }
+.study-ladder-step[data-grade] { animation: ladder-climb 420ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.study-ladder-step[data-grade='1'] { background: #B3261E; }
+.study-ladder-step[data-grade='2'] { background: #B45309; }
+.study-ladder-step[data-grade='3'] { background: #047857; }
+.study-ladder-step[data-grade='4'] { background: #1D4ED8; }
+.night_mode .study-ladder-step[data-grade='1'] { background: #F87171; }
+.night_mode .study-ladder-step[data-grade='2'] { background: #FBBF24; }
+.night_mode .study-ladder-step[data-grade='3'] { background: #34D399; }
+.night_mode .study-ladder-step[data-grade='4'] { background: #60A5FA; }
+.study-ladder-step[data-next] { background: var(--text-secondary); opacity: 0.55; }
+@keyframes ladder-climb {
+  from { transform: scaleY(0.2); }
+  to { transform: scaleY(1); }
 }
 
 .study-session .study-tactile-card .mandarin-card {
@@ -172,4 +210,148 @@
   .study-session .study-grades > button { transition: none; }
   .study-session .study-reveal:active,
   .study-session .study-grades > button:active { transform: none; scale: 1; }
+}
+
+/* ==========================================================================
+   Ink and seal: the hanzi leads, the meaning spreads like ink, the grade is stamped
+   ========================================================================== */
+.study-session { --hanzi-max-size: 168px; --card-max-width: 720px; }
+.study-session .card-label { display: none; }
+.study-session .study-tactile-card .mandarin-card {
+  position: relative;
+  min-height: clamp(260px, 42svh, 440px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.study-session .study-tactile-card .hanzi {
+  /* Short words fill the card like calligraphy: one em per character across the width, up to the cap */
+  font-size: clamp(var(--hanzi-min-size), calc((100cqi - 8px) / var(--hanzi-count, 3)), var(--hanzi-max-size));
+  max-width: calc(var(--hanzi-count, 3) * 1em);
+  line-height: 1.1;
+}
+.study-session .study-tactile-card .hanzi.is-long { font-size: clamp(32px, 10cqi, 64px) !important; }
+.study-session .study-tactile-card .pinying { color: var(--text-secondary); }
+
+/* The meaning blooms out from the centre with an irregular, inked edge. */
+.study-session .mandarin-dock { transition: none; }
+.study-session .mandarin-dock.dock-visible {
+  -webkit-mask-image: var(--ink-blot);
+  mask-image: var(--ink-blot);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: 420% 1200%;
+  mask-size: 420% 1200%;
+  animation: ink-spread 640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.study-session .mandarin-dock.dock-visible .ptbr { animation: ink-settle 640ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.study-session {
+  --ink-blot: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='f' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04' numOctaves='3' seed='11'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='34' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Ccircle cx='100' cy='100' r='60' filter='url(%23f)'/%3E%3C/svg%3E");
+}
+/* The mask is dropped on the last frame, so the settled pill keeps its clean edge */
+@keyframes ink-spread {
+  from { -webkit-mask-size: 8% 24%; mask-size: 8% 24%; opacity: 0.2; }
+  60% { opacity: 1; }
+  99% { -webkit-mask-size: 420% 1200%; mask-size: 420% 1200%; opacity: 1; }
+  to { -webkit-mask-image: none; mask-image: none; opacity: 1; }
+}
+@keyframes ink-settle {
+  from { filter: blur(6px); letter-spacing: 0.08em; }
+  to { filter: blur(0); letter-spacing: normal; }
+}
+.study-session .mnemonic-hint { transition-delay: 220ms; }
+
+/* The seal: lacquer red, paper border, one character in the brand's serif. */
+.study-seal {
+  position: absolute;
+  top: clamp(14px, 4cqi, 28px);
+  right: clamp(14px, 4cqi, 28px);
+  z-index: 20;
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #B3261E;
+  color: #F4EEE3;
+  box-shadow: inset 0 0 0 3px #B3261E, inset 0 0 0 5px rgba(244, 238, 227, 0.9);
+  font-family: var(--font-hanzi);
+  font-size: 44px;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+  /* Worn edges, the way real seal paste prints */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.6 1.95'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1.6 1.95'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  animation: seal-press 160ms cubic-bezier(0.3, 0, 0.2, 1) both;
+}
+.study-tactile-card { position: relative; container-type: inline-size; }
+@keyframes seal-press {
+  from { transform: scale(1.7) rotate(-14deg); opacity: 0; }
+  70% { transform: scale(0.94) rotate(-7deg); opacity: 1; }
+  to { transform: scale(1) rotate(-8deg); opacity: 1; }
+}
+
+/* Answer controls read as one glass bar, a hairline between grades; Bom keeps the fill. */
+.study-session .study-grades {
+  gap: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--glass-menu);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: var(--glass-highlight), 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+.study-session .study-grades > button {
+  position: relative;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-fg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  --ring: 0;
+}
+.study-session .study-grades > button + button { box-shadow: inset 1px 0 0 var(--separator); }
+.study-session .study-grades > button::before {
+  content: '';
+  position: absolute;
+  inset: 0 18% auto;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--grade-tone);
+}
+.study-session .study-grades > button[data-grade='1'] { --grade-tone: #B3261E; }
+.study-session .study-grades > button[data-grade='2'] { --grade-tone: #B45309; }
+.study-session .study-grades > button[data-grade='4'] { --grade-tone: #1D4ED8; }
+.night_mode .study-grades > button[data-grade='1'] { --grade-tone: #F87171; }
+.night_mode .study-grades > button[data-grade='2'] { --grade-tone: #FBBF24; }
+.night_mode .study-grades > button[data-grade='4'] { --grade-tone: #60A5FA; }
+.study-session .study-grades > button:hover:not(:disabled) { background: rgba(127, 127, 127, 0.1); }
+.study-session .study-grades > button[data-grade='3'] {
+  background: #047857;
+  color: #fff;
+  border: 0;
+  box-shadow: none;
+}
+.study-session .study-grades > button[data-grade='3']::before { display: none; }
+.study-session .study-grade-interval { font-size: 22px; }
+.study-session .study-reveal { border-radius: 20px; }
+
+@media (max-width: 360px) {
+  .study-session[data-grading='four'][data-answer-buttons='visible'] .study-grades > button:nth-child(3) { box-shadow: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .study-session .mandarin-dock.dock-visible,
+  .study-session .mandarin-dock.dock-visible .ptbr,
+  .study-ladder-step[data-grade] { opacity: 1; }
+.study-ladder-step[data-grade] { animation: none; -webkit-mask-image: none; mask-image: none; }
+  .study-seal { animation: none; }
 }
