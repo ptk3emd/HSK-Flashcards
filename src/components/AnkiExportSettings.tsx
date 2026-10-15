@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { InlineLoadingSkeleton } from './ViewLoading';
 import { Download } from 'lucide-react';
 import type { Card, DeckConfig, FSRSOptions, ReviewLog } from '../types/card';
 
@@ -57,7 +58,7 @@ export function AnkiExportSettings({ cards, deckConfig, fsrsOptions }: Props) {
     <button type="button" onClick={prepare} disabled={busy} className="min-h-11 px-4 py-2 rounded-xl bg-red-700 hover:bg-red-800 text-white font-semibold inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-wait">
       <Download size={18} aria-hidden="true" />{busy ? 'Preparando exportação…' : 'Preparar CSV e backup'}
     </button>
-    {busy && <p role="status" className="text-sm">Carregando todos os níveis e reunindo seus dados…</p>}
+    {busy && <InlineLoadingSkeleton label="Carregando todos os níveis e reunindo seus dados…" />}
     {error && <p role="alert" className="text-sm leading-relaxed">{error}</p>}
     {files && <div className="space-y-3">
       <p role="status" className="text-sm">{files.count.toLocaleString('pt-BR')} cartões prontos. Baixe os dois arquivos para guardar uma cópia completa.</p>

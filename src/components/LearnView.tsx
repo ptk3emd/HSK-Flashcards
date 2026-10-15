@@ -3,6 +3,7 @@ import { Card, ExamAttempt, ExamSession, LevelContent, Story } from '../types/ca
 import { LEARN_LEVELS, EXAM_SPECS, LearnLevel, loadLevelContent } from '../lib/learn';
 import { clearExamSession, loadExamAttempts, loadExamSession, loadStoriesRead } from '../lib/storage';
 import { StoryReader } from './StoryReader';
+import { StoriesSkeleton } from './ViewLoading';
 import { MockExam } from './MockExam';
 
 type Section = 'stories' | 'exams';
@@ -119,10 +120,11 @@ export const LearnView: React.FC<LearnViewProps> = ({ cards, onAddCards }) => {
         ))}
       </div>
 
-      {section === 'stories' && contentState !== 'ready' && (
+      {section === 'stories' && (contentState === 'idle' || contentState === 'loading') && <StoriesSkeleton />}
+      {section === 'stories' && contentState === 'error' && (
         <section className="sheet p-5 sm:p-6 flex items-center justify-between gap-4">
-          <p role={contentState === 'error' ? 'alert' : 'status'} className="text-sm ink-secondary">
-            {contentState === 'error' ? 'Não foi possível carregar as histórias.' : 'Carregando histórias...'}
+          <p role="alert" className="text-sm ink-secondary">
+            Não foi possível carregar as histórias.
           </p>
           {contentState === 'error' && (
             <button
