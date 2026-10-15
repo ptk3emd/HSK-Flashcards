@@ -8,7 +8,7 @@ import { predictNextIntervals, scheduleCard } from '../lib/fsrs';
 import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { ArrowLeft, Volume2, CheckCircle2, Moon, Sun, PenTool, Settings2, PauseCircle, Undo2, EllipsisVertical, Check } from 'lucide-react';
+import { ArrowLeft, Volume2, Moon, Sun, PenTool, Settings2, PauseCircle, Undo2, EllipsisVertical, Check } from 'lucide-react';
 import { ViewLoading } from './ViewLoading';
 import { usePrefetched } from './usePrefetched';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
@@ -51,7 +51,8 @@ const LADDER_MAX_STEPS = 48;
  * A climbed step takes the colour of the grade it got, so the session's history reads at a glance.
  */
 const StudyLadder: React.FC<{ grades: Rating[]; total: number; percent: number }> = ({ grades, total, percent }) => {
-  const steps = Math.max(1, Math.min(total, LADDER_MAX_STEPS));
+  if (total === 0) return null;
+  const steps = Math.min(total, LADDER_MAX_STEPS);
   const perStep = Math.max(1, total) / steps;
   return (
     <div
@@ -722,9 +723,13 @@ export const StudySession: React.FC<StudySessionProps> = ({
       <header className="study-session-status">
         <span>{isolatedLevel ?? 'Todos os ativos'}</span>
         <span className="tabular-nums" aria-live="polite" aria-atomic="true">
-          {reviewedInSession}
-          <span className="study-status-of"> de {totalSessionCount}</span>
-          <span className="sr-only"> revisados</span>
+          {totalSessionCount > 0 && (
+            <>
+              {reviewedInSession}
+              <span className="study-status-of"> de {totalSessionCount}</span>
+              <span className="sr-only"> revisados</span>
+            </>
+          )}
         </span>
         <StudyLadder grades={sessionGrades} total={totalSessionCount} percent={progressPercent} />
       </header>
@@ -778,46 +783,33 @@ export const StudySession: React.FC<StudySessionProps> = ({
             </div>
           ) : (
             <div className="mandarin-scene">
-              <div
-                className={`mandarin-card text-center py-12 px-6 flex flex-col items-center gap-4 ${
-                  isLight ? 'bg-white/85 text-ink' : ''
-                }`}
-              >
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mb-1">
-                  <CheckCircle2 className="w-10 h-10" />
+              <section className="mandarin-card study-done" aria-labelledby="study-done-title">
+                <div className="study-seal study-done-seal" aria-hidden="true">
+                  <span lang="zh-CN">完</span>
                 </div>
-                <h2 className="text-2xl font-black tracking-tight">
-                  {isolatedLevel ? `Nível ${isolatedLevel} Concluído!` : 'Sessão Concluída!'}
+                <h2 id="study-done-title" className="study-done-title">
+                  {isolatedLevel ? `${isolatedLevel} em dia` : 'Sessão concluída'}
                 </h2>
-                <p className="text-sm opacity-80 max-w-sm">
-                  {isolatedLevel
-                    ? `Você concluiu todos os cartões agendados para ${isolatedLevel}.`
-                    : 'Todos os cartões agendados para os níveis ativos foram revisados.'}
+                <p className="study-done-summary tabular-nums">
+                  {reviewedInSession > 0
+                    ? `${reviewedInSession} ${reviewedInSession === 1 ? 'cartão revisado' : 'cartões revisados'} nesta sessão.`
+                    : 'Nenhum cartão agendado para agora.'}
                 </p>
-
-                <div className="mt-3 flex flex-wrap gap-2.5 justify-center">
+                <div className="study-done-actions">
                   {isolatedLevel && (
-                    <button
-                      type="button"
-                      onClick={() => handleSwitchLevel(null)}
-                      className="min-h-11 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-all cursor-pointer shadow-md"
-                    >
-                      Estudar Todos os Níveis
+                    <button type="button" onClick={() => handleSwitchLevel(null)} className="study-done-primary">
+                      Estudar todos os níveis
                     </button>
                   )}
                   <button
                     type="button"
                     onClick={onExit}
-                    className={`min-h-11 px-5 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer shadow-md ${
-                      isLight
-                        ? 'bg-black/10 hover:bg-black/15 text-black'
-                        : 'bg-white/20 hover:bg-white/30 text-white'
-                    }`}
+                    className={isolatedLevel ? 'study-done-secondary' : 'study-done-primary'}
                   >
-                    Voltar ao Painel
+                    Voltar ao painel
                   </button>
                 </div>
-              </div>
+              </section>
             </div>
           )}
         </div>
@@ -850,7 +842,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                     : 'bg-white/15 hover:bg-white/25 text-white border-white/20'
                 }`}
               >
-                <span>Mostrar Resposta</span>
+                <span>Mostrar resposta</span>
                 <kbd className="study-shortcut">Espaço</kbd>
               </button>
             ) : (
