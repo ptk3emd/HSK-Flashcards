@@ -9,7 +9,7 @@ import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
 import { ArrowLeft, Volume2, Moon, Sun, PenTool, Settings2, PauseCircle, Undo2, EllipsisVertical, Check } from 'lucide-react';
-import { ViewLoading } from './ViewLoading';
+import { ViewLoading, InlineLoadingSkeleton } from './ViewLoading';
 import { usePrefetched } from './usePrefetched';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
 import { StudyOptionsSettings } from './StudyOptionsSettings';
@@ -312,7 +312,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   // The answered card leaves in the direction of its grade, the same directions the swipe
   // gestures use: Novamente left, Bom right, Fácil up, Difícil down. It starts from wherever
-  // the card is (mid-swipe included), takes 180 ms, then the grade is applied and the next
+  // the card is (mid-swipe included), takes 160 ms, then the grade is applied and the next
   // card makes its entrance. Input is held during the exit so a grade cannot land twice.
   const cardWrapperRef = useRef<HTMLDivElement>(null);
   const exitingRef = useRef(false);
@@ -350,16 +350,16 @@ export const StudySession: React.FC<StudySessionProps> = ({
       const from = getComputedStyle(el).transform;
       // Travel outward from the release position, so a long swipe never jumps back.
       const matrix = new DOMMatrixReadOnly(from === 'none' ? undefined : from);
-      const travelX = matrix.m41 + dx * Math.min(window.innerWidth * 0.45, 260);
-      const travelY = matrix.m42 + dy * 130;
+      const travelX = matrix.m41 + dx * Math.min(window.innerWidth * 0.16, 80);
+      const travelY = matrix.m42 + dy * 48;
       // The seal lands as the card starts to move; both are transform and opacity only.
       const rest = from === 'none' ? 'translate3d(0, 0, 0)' : from;
       const exit = el.animate(
         [
           { transform: rest, opacity: 1 },
-          { transform: `translate3d(${travelX}px, ${travelY}px, 0) rotate(${dx * 9}deg) scale(0.96)`, opacity: 0 },
+          { transform: `translate3d(${travelX}px, ${travelY}px, 0) `, opacity: 0 },
         ],
-        { duration: 240, delay: 60, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'both' }
+        { duration: 160, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'both' }
       );
       exitAnimationRef.current = exit;
       void exit.finished.then(() => {
@@ -814,7 +814,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               className="study-session-menu sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-top-right fixed z-50 w-64 flex flex-col overflow-hidden !rounded-2xl p-1.5"
             >
               {loadingLevel && (
-                <p role="status" className="shrink-0 px-3 py-2 text-sm">Carregando {loadingLevel}…</p>
+                <div className="shrink-0 px-3 py-2"><InlineLoadingSkeleton label={`Carregando ${loadingLevel}…`} /></div>
               )}
               {levelLoadError && (
                 <p role="alert" className="shrink-0 px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError}</span>. Tente novamente.</p>
@@ -928,6 +928,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
               }}
             >
               <MandarinCardView
+                stableLayout
                 card={currentCard}
                 isFlipped={isFlipped}
               />

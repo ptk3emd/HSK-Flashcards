@@ -6,16 +6,18 @@ import { isLeech } from '../lib/fsrs';
 interface MandarinCardViewProps {
   card: Card;
   isFlipped: boolean;
+  stableLayout?: boolean;
   onSpeak?: () => void;
   onOpenWriting?: () => void;
 }
 
-export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
+export const MandarinCardView = React.memo(function MandarinCardView({
   card,
   isFlipped,
+  stableLayout = false,
   onSpeak,
   onOpenWriting,
-}) => {
+}: MandarinCardViewProps) {
   const [pinyinHidden, setPinyinHidden] = useState(true);
   const hanziRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -33,27 +35,25 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
   // first paint, so the card is never shown at rest for a frame and then hidden (the flicker).
   // Skipped when the OS asks for reduced motion.
   useLayoutEffect(() => {
-    const el = cardRef.current;
+    const el = stableLayout ? hanziRef.current : cardRef.current;
     if (!el || typeof el.animate !== 'function') return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
     const animation = el.animate(
       [
-        { opacity: 0, transform: 'translate3d(0, 8px, 0) scale(0.99)' },
+        { opacity: 0.35, transform: 'translate3d(0, 4px, 0)' },
         { opacity: 1, transform: 'translate3d(0, 0, 0) scale(1)' },
       ],
-      { duration: 280, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
+      { duration: 160, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }
     );
     return () => animation.cancel();
-  }, [card.id]);
+  }, [card.id, stableLayout]);
 
   // When card.id changes, reset front delayed reveal
   useEffect(() => {
     if (!isFlipped) {
       setPinyinHidden(true);
       const timer = setTimeout(() => {
-        requestAnimationFrame(() => {
-          setPinyinHidden(false);
-        });
+        setPinyinHidden(false);
       }, 50);
       return () => clearTimeout(timer);
     } else {
@@ -142,7 +142,7 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
           {card.pinyin && (
             <div
               id={!isFlipped ? 'pinying-delayed' : undefined}
-              className={`pinying ${!isFlipped && pinyinHidden ? 'hidden' : ''}`}
+              className={`pinying ${stableLayout ? 'pinyin-stable' : ''} ${!isFlipped && pinyinHidden ? (stableLayout ? 'pinyin-pending' : 'hidden') : ''}`}
               dangerouslySetInnerHTML={{ __html: card.pinyin }}
             />
           )}
@@ -183,4 +183,4 @@ export const MandarinCardView: React.FC<MandarinCardViewProps> = ({
       </div>
     </div>
   );
-};
+});

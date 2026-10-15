@@ -228,3 +228,21 @@
 .study-done-secondary:hover { background: var(--glass-solid); }
 .study-done .study-done-seal { animation-duration: 320ms; }
 @media (prefers-reduced-motion: reduce) { .study-done .study-done-seal { animation: none; } }
+
+/* The pinyin occupies its final space from the first paint; only its ink fades in. */
+.study-session .pinying.pinyin-stable,
+.study-session .pinying.pinyin-stable#pinying-delayed {
+  display: block;
+  max-height: none;
+  margin-top: var(--pinying-gap-open);
+  transition: opacity 160ms ease;
+  transform: none;
+}
+.study-session .pinying.pinyin-pending { opacity: 0; pointer-events: none; }
+.study-session .mandarin-dock { transition: opacity 160ms ease; transform: none; }
+.study-session .mandarin-dock.dock-hidden { transform: none; }
+.study-session .mandarin-dock.dock-visible .ptbr { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .study-session .pinying.pinyin-stable,
+  .study-session .mandarin-dock { transition: none; }
+}

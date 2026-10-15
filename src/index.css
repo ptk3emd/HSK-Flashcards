@@ -209,3 +209,5 @@
 @layer components {
   .app-ground { background-attachment: fixed; }
 }
+
+.loading-placeholder[data-paused] .skeleton::after { animation-play-state: paused; }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 /**
  * Loading placeholders shaped like the view that is on its way, so the layout does not
@@ -30,11 +30,60 @@ const Rows: React.FC<{ count: number; index?: boolean }> = ({ count, index = tru
 );
 
 /** Announces the wait once; the shapes themselves are hidden from assistive tech. */
-const Loading: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => (
-  <div role="status" aria-busy="true" className="w-full animate-in fade-in duration-200">
+const Loading: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    let visible = true;
+    const update = () => { node.toggleAttribute('data-paused', document.hidden || !visible); };
+    const observer = typeof IntersectionObserver === 'undefined' ? null : new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      update();
+    });
+    observer?.observe(node);
+    document.addEventListener('visibilitychange', update);
+    update();
+    return () => { observer?.disconnect(); document.removeEventListener('visibilitychange', update); };
+  }, []);
+  return <div ref={ref} role="status" aria-busy="true" className="loading-placeholder w-full">
     <span className="sr-only">{label}</span>
     <div aria-hidden="true">{children}</div>
-  </div>
+  </div>;
+};
+
+export const InlineLoadingSkeleton: React.FC<{ label: string }> = ({ label }) => (
+  <Loading label={label}>
+    <div className="space-y-2 py-1">
+      <p className="text-sm">{label}</p>
+      <Bar className="h-3 w-full" />
+      <Bar className="h-3 w-2/3" />
+    </div>
+  </Loading>
+);
+
+export const StoriesSkeleton: React.FC = () => (
+  <Loading label="Carregando histórias">
+    <div className="space-y-4">
+      {[0, 1].map(level => <Sheet key={level} className="overflow-hidden">
+        <Bar className="h-5 w-20 m-5" />
+        <Rows count={3} index={false} />
+      </Sheet>)}
+    </div>
+  </Loading>
+);
+
+export const LearnSkeleton: React.FC = () => (
+  <Loading label="Carregando área de aprendizado">
+    <div className="w-full max-w-3xl mx-auto space-y-4">
+      <Bar className="h-7 w-36" />
+      <Bar className="h-11 w-60" />
+      {[0, 1].map(level => <Sheet key={level} className="overflow-hidden">
+        <Bar className="h-5 w-20 m-5" />
+        <Rows count={3} index={false} />
+      </Sheet>)}
+    </div>
+  </Loading>
 );
 
 export const DecksSkeleton: React.FC = () => (
@@ -105,6 +154,7 @@ const VARIANTS = {
   stats: StatsSkeleton,
   browser: BrowserSkeleton,
   pad: PadSkeleton,
+  learn: LearnSkeleton,
 } as const;
 
 /** Suspense fallback for a code-split view. */
