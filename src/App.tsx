@@ -19,6 +19,7 @@ import { StudySession } from './components/StudySession';
 import { DeckDashboard } from './components/DeckDashboard';
 import { ViewLoading, DecksSkeleton } from './components/ViewLoading';
 import { AudioVoiceSettings } from './components/AudioVoiceSettings';
+import { AnkiExportSettings } from './components/AnkiExportSettings';
 import { FSRSSettings } from './components/FSRSSettings';
 import { StudyOptionsSettings } from './components/StudyOptionsSettings';
 import { useSystemBarHidden } from './components/useSystemBarHidden';
@@ -256,6 +257,8 @@ export default function App() {
                 ))}
               </div>
             </section>
+
+            <AnkiExportSettings cards={cards} deckConfig={deckConfig} fsrsOptions={fsrsOptions} />
 
             <section className="sheet px-5 sm:px-7 py-3" aria-labelledby="settings-look">
               <div className="flex items-center justify-between gap-4">

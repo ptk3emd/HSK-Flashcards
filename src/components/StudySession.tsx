@@ -200,7 +200,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   useDialogFocus(voiceDialogRef, showVoiceSettingsModal && !!onUpdateDeckConfig, closeVoiceSettings);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
-  const [menuPosition, setMenuPosition] = useState({ bottom: 72, right: 12, maxHeight: 400 });
+  const [menuPosition, setMenuPosition] = useState({ top: 64, right: 12, maxHeight: 400 });
   useLayoutEffect(() => {
     if (!isMenuOpen) return;
     const positionMenu = () => {
@@ -211,11 +211,11 @@ export const StudySession: React.FC<StudySessionProps> = ({
       const height = viewport?.height ?? window.innerHeight;
       const bottomEdge = top + height;
       // Keep the menu inside the visible viewport even after scrolling or resizing.
-      const menuBottom = Math.max(top + Math.min(160, height - 24), Math.min(trigger.top - 8, bottomEdge - 12));
+      const menuTop = Math.max(top + 12, Math.min(trigger.bottom + 8, bottomEdge - Math.min(160, height - 24)));
       setMenuPosition({
-        bottom: window.innerHeight - menuBottom,
+        top: menuTop,
         right: Math.max(12, window.innerWidth - trigger.right),
-        maxHeight: Math.max(0, menuBottom - top - 12),
+        maxHeight: Math.max(0, bottomEdge - menuTop - 12),
       });
     };
     positionMenu();
@@ -513,18 +513,34 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const swipeGestureFor = (dx: number, dy: number): StudyGesture =>
     Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'swipeRight' : 'swipeLeft') : dy > 0 ? 'swipeDown' : 'swipeUp';
 
-  const resetDrag = () => {
+  const resetDrag = useCallback(() => {
     gestureRef.current = null;
     window.clearTimeout(longPressTimerRef.current);
     if (dragFrameRef.current !== null) window.cancelAnimationFrame(dragFrameRef.current);
     dragFrameRef.current = null;
     pendingDragRef.current = null;
     setDrag(null);
-  };
+  }, []);
+
+  // A backgrounded window must not finish an old drag or delayed tap on return.
+  useEffect(() => {
+    const cancelInput = () => {
+      resetDrag();
+      window.clearTimeout(tapTimerRef.current);
+      lastTapRef.current = 0;
+    };
+    const onVisibility = () => { if (document.hidden) cancelInput(); };
+    window.addEventListener('blur', cancelInput);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.removeEventListener('blur', cancelInput);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, [resetDrag]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!currentCard || gestureRef.current || exitingRef.current) return; // a second finger never takes over the first
-    if ((e.target as HTMLElement).closest('button')) return; // card buttons keep their own taps
+    if (e.button !== 0 || (e.target as HTMLElement).closest('button, a, input, textarea, select')) return; // card buttons keep their own taps
     gestureRef.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
     e.currentTarget.setPointerCapture(e.pointerId);
     longPressFiredRef.current = false;
@@ -720,6 +736,90 @@ export const StudySession: React.FC<StudySessionProps> = ({
       } flex flex-col justify-between select-none relative min-h-screen w-full transition-colors duration-300 overflow-x-hidden`}
     >
       <h1 className="sr-only">Sessão de estudo</h1>
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {isolatedLevel ?? 'Todos os ativos'}: {reviewedInSession} {reviewedInSession === 1 ? 'revisado' : 'revisados'} · {remainingCount} {remainingCount === 1 ? 'restante' : 'restantes'}
+      </p>
+
+      {/* Top utilities follow the supplied AnkiDroid reference and keyboard reading order. */}
+      <nav
+        aria-label="Sessão"
+        className="study-toolbar relative z-30 w-full"
+      >
+        <div className="study-utilities mx-auto h-16 flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={onExit}
+              onMouseDown={keepCardFocus}
+              aria-label="Voltar aos Decks"
+              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
+                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+              }`}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 px-2 text-base font-semibold tabular-nums" role="group" aria-label="Fila de cartões">
+              <span className={`text-blue-900 dark:text-blue-400 ${currentCard?.state === 0 ? 'underline underline-offset-4' : ''}`} title="Novos">{newCount}<span className="sr-only"> novos</span></span>
+              <span className={`text-red-900 dark:text-red-400 ${currentCard && (currentCard.state === 1 || currentCard.state === 3) ? 'underline underline-offset-4' : ''}`} title="Aprendendo">{learningCount}<span className="sr-only"> aprendendo</span></span>
+              <span className={`text-emerald-900 dark:text-emerald-400 ${currentCard?.state === 2 ? 'underline underline-offset-4' : ''}`} title="Revisão">{reviewCount}<span className="sr-only"> para revisão</span></span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={handleUndo}
+              onMouseDown={keepCardFocus}
+              disabled={!canUndo || isGrading}
+              aria-label="Desfazer última revisão"
+              title="Desfazer (Ctrl+Z)"
+              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default ${
+                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+              }`}
+            >
+              <Undo2 className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              ref={menuTriggerRef}
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              onMouseDown={keepCardFocus}
+              aria-label="Mais opções"
+              aria-expanded={isMenuOpen}
+              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
+                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+              }`}
+            >
+              <EllipsisVertical className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Portalled to the body: inside the glass bar, the menu could not blur the card behind it */}
+        {isMenuOpen && createPortal(
+          <div className={isLight ? 'card-theme-light text-ink' : 'night_mode card-theme-dark text-white'}>
+            <button
+              type="button"
+              aria-label="Fechar menu"
+              tabIndex={-1}
+              className="fixed inset-0 z-40 cursor-default"
+              onClick={closeMenu}
+            />
+            <div
+              ref={menuRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mais opções"
+              style={menuPosition}
+              className="study-session-menu sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-top-right fixed z-50 w-64 flex flex-col overflow-hidden !rounded-2xl p-1.5"
+            >
+              {loadingLevel && (
+                <p role="status" className="shrink-0 px-3 py-2 text-sm">Carregando {loadingLevel}…</p>
+              )}
+              {levelLoadError && (
+                <p role="alert" className="shrink-0 px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError}</span>. Tente novamente.</p>
+              )}
+              <div className="study-menu-scroll">
       <header className="study-session-status">
         <span>{isolatedLevel ?? 'Todos os ativos'}</span>
         <span className="tabular-nums" aria-live="polite" aria-atomic="true">
@@ -733,11 +833,63 @@ export const StudySession: React.FC<StudySessionProps> = ({
         </span>
         <StudyLadder grades={sessionGrades} total={totalSessionCount} percent={progressPercent} />
       </header>
+                {[
+                  { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
+                  { icon: Volume2, label: 'Ouvir pronúncia', hint: 'R', onClick: handleSpeak, show: !!currentCard },
+                  { icon: PauseCircle, label: 'Suspender cartão', hint: '', onClick: handleSuspendCurrent, show: !!currentCard },
+                  { icon: Settings2, label: 'Configurações da sessão', hint: '', onClick: () => setShowVoiceSettingsModal(true), show: !!onUpdateDeckConfig },
+                  { icon: isLight ? Moon : Sun, label: isLight ? 'Tema escuro' : 'Tema claro', hint: '', onClick: onToggleTheme, show: true },
+                ]
+                  .filter((item) => item.show)
+                  .map(({ icon: Icon, label, hint, onClick }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => {
+                        closeMenu();
+                        onClick();
+                      }}
+                      className={`w-full min-h-11 flex items-center gap-3 px-3 rounded-xl text-sm transition-colors cursor-pointer ${
+                        isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 opacity-70" />
+                      <span className="flex-1 text-left">{label}</span>
+                      {hint && <span className="text-xs opacity-80">{hint}</span>}
+                    </button>
+                  ))}
+
+                <div className={`my-1.5 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`} />
+                <div className="px-3 py-1 text-xs font-semibold">Nível</div>
+                {[null, ...ALL_HSK_LEVELS].map((lvl) => {
+                  const isSelected = isolatedLevel === lvl;
+                  return (
+                    <button
+                      key={lvl ?? 'all'}
+                      type="button"
+                      onClick={() => handleSwitchLevel(lvl)}
+                      disabled={loadingLevel !== null}
+                      aria-pressed={isSelected}
+                      className={`w-full min-h-11 disabled:opacity-50 disabled:cursor-wait flex items-center justify-between px-3 rounded-xl text-sm transition-colors cursor-pointer ${
+                        isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
+                      }`}
+                    >
+                      <span>{lvl ?? 'Todos os ativos'}</span>
+                      {isSelected && <Check className="w-4 h-4 text-red-500" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+      </nav>
 
       {/* Main Flashcard Scene (Zero vertical shifting on answer reveal) */}
       <div className="study-workspace">
         <div
-          className="study-card-container study-scene relative w-full flex flex-col items-center justify-center"
+          className={`study-card-container study-scene relative flex flex-col items-center justify-center ${isLight ? 'card-theme-light' : 'card-theme-dark'}`}
           style={{
             perspective: '1000px',
             WebkitPerspective: '1000px',
@@ -952,139 +1104,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
         </footer>}
       </div>
 
-      {/* Bottom bar: back, queue counts, undo and the session menu */}
-      <nav
-        aria-label="Sessão"
-        className="sheet relative z-30 w-full !rounded-none border-t border-[var(--separator)]"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-      >
-        <div className="study-utilities mx-auto h-16 flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={onExit}
-              onMouseDown={keepCardFocus}
-              aria-label="Voltar aos Decks"
-              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
-                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-              }`}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-3 px-2 text-base font-semibold tabular-nums" role="group" aria-label="Fila de cartões">
-              <span className={`text-blue-900 dark:text-blue-400 ${currentCard?.state === 0 ? 'underline underline-offset-4' : ''}`} title="Novos">{newCount}<span className="sr-only"> novos</span></span>
-              <span className={`text-red-900 dark:text-red-400 ${currentCard && (currentCard.state === 1 || currentCard.state === 3) ? 'underline underline-offset-4' : ''}`} title="Aprendendo">{learningCount}<span className="sr-only"> aprendendo</span></span>
-              <span className={`text-emerald-900 dark:text-emerald-400 ${currentCard?.state === 2 ? 'underline underline-offset-4' : ''}`} title="Revisão">{reviewCount}<span className="sr-only"> para revisão</span></span>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={handleUndo}
-              onMouseDown={keepCardFocus}
-              disabled={!canUndo || isGrading}
-              aria-label="Desfazer última revisão"
-              title="Desfazer (Ctrl+Z)"
-              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default ${
-                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-              }`}
-            >
-              <Undo2 className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              ref={menuTriggerRef}
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              onMouseDown={keepCardFocus}
-              aria-label="Mais opções"
-              aria-expanded={isMenuOpen}
-              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
-                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-              }`}
-            >
-              <EllipsisVertical className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Portalled to the body: inside the glass bar, the menu could not blur the card behind it */}
-        {isMenuOpen && createPortal(
-          <div className={isLight ? 'card-theme-light text-ink' : 'night_mode card-theme-dark text-white'}>
-            <button
-              type="button"
-              aria-label="Fechar menu"
-              tabIndex={-1}
-              className="fixed inset-0 z-40 cursor-default"
-              onClick={closeMenu}
-            />
-            <div
-              ref={menuRef}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Mais opções"
-              style={menuPosition}
-              className="study-session-menu sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-bottom-right fixed z-50 w-64 flex flex-col overflow-hidden !rounded-2xl p-1.5"
-            >
-              {loadingLevel && (
-                <p role="status" className="shrink-0 px-3 py-2 text-sm">Carregando {loadingLevel}…</p>
-              )}
-              {levelLoadError && (
-                <p role="alert" className="shrink-0 px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError}</span>. Tente novamente.</p>
-              )}
-              <div className="study-menu-scroll">
-                {[
-                  { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
-                  { icon: Volume2, label: 'Ouvir pronúncia', hint: 'R', onClick: handleSpeak, show: !!currentCard },
-                  { icon: PauseCircle, label: 'Suspender cartão', hint: '', onClick: handleSuspendCurrent, show: !!currentCard },
-                  { icon: Settings2, label: 'Configurações da sessão', hint: '', onClick: () => setShowVoiceSettingsModal(true), show: !!onUpdateDeckConfig },
-                  { icon: isLight ? Moon : Sun, label: isLight ? 'Tema escuro' : 'Tema claro', hint: '', onClick: onToggleTheme, show: true },
-                ]
-                  .filter((item) => item.show)
-                  .map(({ icon: Icon, label, hint, onClick }) => (
-                    <button
-                      key={label}
-                      type="button"
-                      onClick={() => {
-                        closeMenu();
-                        onClick();
-                      }}
-                      className={`w-full min-h-11 flex items-center gap-3 px-3 rounded-xl text-sm transition-colors cursor-pointer ${
-                        isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4 opacity-70" />
-                      <span className="flex-1 text-left">{label}</span>
-                      {hint && <span className="text-xs opacity-80">{hint}</span>}
-                    </button>
-                  ))}
-
-                <div className={`my-1.5 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`} />
-                <div className="px-3 py-1 text-xs font-semibold">Nível</div>
-                {[null, ...ALL_HSK_LEVELS].map((lvl) => {
-                  const isSelected = isolatedLevel === lvl;
-                  return (
-                    <button
-                      key={lvl ?? 'all'}
-                      type="button"
-                      onClick={() => handleSwitchLevel(lvl)}
-                      disabled={loadingLevel !== null}
-                      aria-pressed={isSelected}
-                      className={`w-full min-h-11 disabled:opacity-50 disabled:cursor-wait flex items-center justify-between px-3 rounded-xl text-sm transition-colors cursor-pointer ${
-                        isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-                      }`}
-                    >
-                      <span>{lvl ?? 'Todos os ativos'}</span>
-                      {isSelected && <Check className="w-4 h-4 text-red-500" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
-      </nav>
 
       {/* Floating Hanzi Writing Canvas Overlay */}
       {showWritingPad && currentCard && (
