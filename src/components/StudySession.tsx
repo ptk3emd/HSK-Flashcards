@@ -33,6 +33,54 @@ interface StudySessionProps {
   onExit: () => void;
 }
 
+/** Seal characters per grade: 再 again, 难 hard, 好 good, 易 easy */
+const SEAL_CHAR: Record<Rating, string> = { 1: '再', 2: '难', 3: '好', 4: '易' };
+
+/** The red seal the grade presses onto the card as it leaves. Decorative: the grade itself is announced by the counter. */
+const GradeSeal: React.FC<{ rating: Rating }> = ({ rating }) => (
+  <div className="study-seal" data-grade={rating} aria-hidden="true">
+    <span lang="zh-CN">{SEAL_CHAR[rating]}</span>
+  </div>
+);
+
+/** Most steps the ladder draws; longer sessions group several cards per step */
+const LADDER_MAX_STEPS = 48;
+
+/**
+ * Session progress as a staircase (楼梯, the brand): one step per card, rising left to right.
+ * A climbed step takes the colour of the grade it got, so the session's history reads at a glance.
+ */
+const StudyLadder: React.FC<{ grades: Rating[]; total: number; percent: number }> = ({ grades, total, percent }) => {
+  const steps = Math.max(1, Math.min(total, LADDER_MAX_STEPS));
+  const perStep = Math.max(1, total) / steps;
+  return (
+    <div
+      className="study-ladder"
+      role="progressbar"
+      aria-label="Progresso da sessão"
+      aria-valuenow={percent}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      {Array.from({ length: steps }, (_, i) => {
+        // A step is climbed once every card it stands for has been answered; it shows the last grade among them
+        const last = Math.ceil((i + 1) * perStep) - 1;
+        const grade = last < grades.length ? grades[last] : undefined;
+        const isNext = !grade && Math.floor(grades.length / perStep) === i;
+        return (
+          <span
+            key={i}
+            className="study-ladder-step"
+            data-grade={grade}
+            data-next={isNext || undefined}
+            style={{ height: `${3 + (11 * i) / Math.max(1, steps - 1)}px` }}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
 /** Exit direction per grade (x, y): matches the swipe gestures' layout */
 const GRADE_EXIT: Record<Rating, [number, number]> = { 1: [-1, 0], 2: [0, 1], 3: [1, 0], 4: [0, -1] };
 
@@ -56,6 +104,10 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const [showWritingPad, setShowWritingPad] = useState(false);
   const [showVoiceSettingsModal, setShowVoiceSettingsModal] = useState(false);
   const [reviewedInSession, setReviewedInSession] = useState(0);
+  // The grade of every card answered in this session, in order: the steps of the progress ladder
+  const [sessionGrades, setSessionGrades] = useState<Rating[]>([]);
+  // The seal pressed onto the card that is leaving, named by its grade
+  const [stamp, setStamp] = useState<Rating | null>(null);
   const [loadingLevel, setLoadingLevel] = useState<string | null>(null);
   const [levelLoadError, setLevelLoadError] = useState<string | null>(null);
   const levelRequestRef = useRef(0);
@@ -78,6 +130,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   useEffect(() => {
     setReviewedInSession(0);
+    setSessionGrades([]);
   }, [isolatedLevel]);
 
   useEffect(() => {
@@ -249,6 +302,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
       setSessionCards(newCardList);
       onUpdateCards(newCardList);
       setReviewedInSession(prev => prev + 1);
+      setSessionGrades(prev => [...prev, rating]);
 
       setIsFlipped(false);
     },
@@ -268,6 +322,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   useEffect(() => {
     exitingRef.current = false;
     setIsGrading(false);
+    setStamp(null);
     return () => {
       const animation = exitAnimationRef.current;
       exitAnimationRef.current = null;
@@ -289,18 +344,22 @@ export const StudySession: React.FC<StudySessionProps> = ({
       }
       exitingRef.current = true;
       setIsGrading(true);
+      setStamp(rating);
       const [dx, dy] = GRADE_EXIT[rating];
       const from = getComputedStyle(el).transform;
       // Travel outward from the release position, so a long swipe never jumps back.
       const matrix = new DOMMatrixReadOnly(from === 'none' ? undefined : from);
       const travelX = matrix.m41 + dx * Math.min(window.innerWidth * 0.45, 260);
       const travelY = matrix.m42 + dy * 130;
+      // The seal lands first (the first third), the card takes the hit, then it leaves.
+      const rest = from === 'none' ? 'translate3d(0, 0, 0)' : from;
       const exit = el.animate(
         [
-          { transform: from === 'none' ? 'translate3d(0, 0, 0)' : from, opacity: 1 },
-          { transform: `translate3d(${travelX}px, ${travelY}px, 0) rotate(${dx * 9}deg) scale(0.97)`, opacity: 0 },
+          { transform: rest, opacity: 1, offset: 0 },
+          { transform: `${rest} scale(0.985)`, opacity: 1, offset: 0.3, easing: 'cubic-bezier(0.4, 0, 1, 1)' },
+          { transform: `translate3d(${travelX}px, ${travelY}px, 0) rotate(${dx * 9}deg) scale(0.96)`, opacity: 0, offset: 1 },
         ],
-        { duration: 180, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'forwards' }
+        { duration: 340, fill: 'forwards' }
       );
       exitAnimationRef.current = exit;
       void exit.finished.then(() => {
@@ -331,6 +390,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
     setSessionCards(reverted);
     onUpdateCards(reverted);
     setReviewedInSession(prev => Math.max(0, prev - 1));
+    setSessionGrades(prev => prev.slice(0, -1));
     setIsFlipped(false);
   }, [sessionCards, onUpdateCards]);
 
@@ -659,25 +719,15 @@ export const StudySession: React.FC<StudySessionProps> = ({
       } flex flex-col justify-between select-none relative min-h-screen w-full transition-colors duration-300 overflow-x-hidden`}
     >
       <h1 className="sr-only">Sessão de estudo</h1>
-      <div className="study-session-status" aria-live="polite" aria-atomic="true">
+      <header className="study-session-status">
         <span>{isolatedLevel ?? 'Todos os ativos'}</span>
-        <span className="tabular-nums">{reviewedInSession} {reviewedInSession === 1 ? 'revisado' : 'revisados'} · {remainingCount} {remainingCount === 1 ? 'restante' : 'restantes'}</span>
-      </div>
-
-      {/* Session progress stays visually subordinate to the card. */}
-      <div
-        className={`fixed top-0 inset-x-0 z-40 h-1 ${isLight ? 'bg-black/5' : 'bg-white/5'}`}
-        role="progressbar"
-        aria-label="Progresso da sessão"
-        aria-valuenow={progressPercent}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        <div
-          className="study-progress-fill h-full bg-red-600"
-          style={{ transform: `scaleX(${progressPercent / 100})` }}
-        />
-      </div>
+        <span className="tabular-nums" aria-live="polite" aria-atomic="true">
+          {reviewedInSession}
+          <span className="study-status-of"> de {totalSessionCount}</span>
+          <span className="sr-only"> revisados</span>
+        </span>
+        <StudyLadder grades={sessionGrades} total={totalSessionCount} percent={progressPercent} />
+      </header>
 
       {/* Main Flashcard Scene (Zero vertical shifting on answer reveal) */}
       <div className="study-workspace">
@@ -724,6 +774,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 card={currentCard}
                 isFlipped={isFlipped}
               />
+              {stamp && <GradeSeal rating={stamp} />}
             </div>
           ) : (
             <div className="mandarin-scene">
