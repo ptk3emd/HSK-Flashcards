@@ -18,7 +18,9 @@ import {
   saveAuthSkipped,
 } from './lib/storage';
 import { CloudSync, Session, SyncStatus, getSupabase, isCloudEnabled } from './lib/sync';
+import { parseUserProfile } from './lib/profile';
 import { AuthScreen } from './components/AuthScreen';
+import { ChangePasswordScreen } from './components/ChangePasswordScreen';
 import { AccountSettings } from './components/AccountSettings';
 import { StudySession } from './components/StudySession';
 import { DeckDashboard } from './components/DeckDashboard';
@@ -68,7 +70,9 @@ export default function App() {
   const [authReady, setAuthReady] = useState(!isCloudEnabled);
   const [authSkipped, setAuthSkipped] = useState(loadAuthSkipped);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+  const [passwordOpen, setPasswordOpen] = useState(false);
   const userId = session?.user.id ?? null;
+  const profile = session ? parseUserProfile(session.user.user_metadata) : null;
 
   useEffect(() => {
     const supabase = getSupabase();
@@ -197,6 +201,17 @@ export default function App() {
     );
   }
 
+  // Dedicated change-password screen, reached from Settings > Conta
+  if (passwordOpen && session) {
+    return (
+      <ChangePasswordScreen
+        theme={theme}
+        email={session.user.email ?? ''}
+        onBack={() => setPasswordOpen(false)}
+      />
+    );
+  }
+
   // Full-screen focused study mode
   if (activeTab === 'study') {
     return (
@@ -274,10 +289,12 @@ export default function App() {
               <AccountSettings
                 email={session?.user.email ?? null}
                 status={syncStatus}
+                profile={profile}
                 onSignIn={() => {
                   saveAuthSkipped(false);
                   setAuthSkipped(false);
                 }}
+                onChangePassword={() => setPasswordOpen(true)}
               />
             )}
 

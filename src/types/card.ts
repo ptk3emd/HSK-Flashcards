@@ -27,6 +27,15 @@ export interface Card {
   mnemonic?: string; // User-written memory hint shown on the card back
 }
 
+/** Display-only profile collected at sign-up and kept in the account metadata */
+export interface UserProfile {
+  name: string;
+  /** ISO 3166-1 alpha-2 country code */
+  country: string;
+  /** ISO date, YYYY-MM-DD */
+  birthDate: string;
+}
+
 export interface ReviewLog {
   cardId: string;
   rating: Rating;
