@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { InlineLoadingSkeleton } from './ViewLoading';
 import { Download } from 'lucide-react';
 import type { Card, DeckConfig, FSRSOptions, ReviewLog } from '../types/card';
@@ -6,11 +6,19 @@ import type { Card, DeckConfig, FSRSOptions, ReviewLog } from '../types/card';
 interface Props { cards: Card[]; deckConfig: DeckConfig; fsrsOptions: FSRSOptions; }
 interface Files { csv: string; backup: string; count: number; date: string; }
 
+/** Local calendar day (YYYY-MM-DD): the file name should match the user's date, not UTC's. */
+function localDay(date: Date): string {
+  const pad = (part: number) => String(part).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
 export function AnkiExportSettings({ cards, deckConfig, fsrsOptions }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [files, setFiles] = useState<Files | null>(null);
   const requestRef = useRef(0);
+  // Re-entrancy guard for the click that arrives before the busy state has rendered:
+  // `busy` paints the pending UI, `busyRef` refuses a second concurrent preparation.
   const busyRef = useRef(false);
   const urlsRef = useRef<string[]>([]);
   useEffect(() => () => {
@@ -52,7 +60,7 @@ export function AnkiExportSettings({ cards, deckConfig, fsrsOptions }: Props) {
       const backup = URL.createObjectURL(new Blob([JSON.stringify({ format: 'hsk-flashcards-backup', version: 1,
         exportedAt, deckConfig, fsrsOptions, storage }, null, 2)], { type: 'application/json' }));
       urlsRef.current.push(backup);
-      setFiles({ csv, backup, count: allCards.length, date: exportedAt.slice(0, 10) });
+      setFiles({ csv, backup, count: allCards.length, date: localDay(new Date()) });
     } catch {
       if (request === requestRef.current) {
         urlsRef.current.forEach(URL.revokeObjectURL);

@@ -22,10 +22,14 @@ export async function loadExportCards(userCards: Card[]): Promise<Card[]> {
   return mergeExportCards(levels.flat(), userCards);
 }
 
-const html = (value: string) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\r?\n/g, '<br>');
+/** One pass for markup and line breaks: a field must never carry a raw newline into the CSV. */
+const HTML_ESCAPE: Record<string, string> = {
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '\r': '', '\n': '<br>',
+};
+const html = (value: string) => value.replace(/[&<>"'\r\n]/g, char => HTML_ESCAPE[char]);
 const csv = (value: string) => `"${value.replace(/"/g, '""')}"`;
-const tag = (value: string) => value.trim().replace(/\s+/g, '_');
+/** Anki tags cannot hold whitespace; commas would read as separators elsewhere. */
+const tag = (value: string) => value.trim().replace(/[\s,;]+/g, '_');
 
 /** Anki 2.1.54+ file headers; first two columns map to a Basic note's front/back.
  * A hidden stable identifier distinguishes homographs without claiming an Anki GUID.

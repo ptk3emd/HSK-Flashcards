@@ -39,6 +39,10 @@ test('CSV declares Anki mapping and escapes quotes, markup and line breaks', () 
   assert.ok(output.includes('data-hsk-id=""S-00001"">S-00001</span>'));
   assert.equal(output.split('\r\n').length, 7);
 });
+test('tags are flattened to Anki-safe names without commas or line breaks', () => {
+  const output = buildAnkiCsv([{ ...card, tags: ['Meu, tag', 'outra\ntag'] }], []);
+  assert.ok(output.includes('"HSK_Flashcards HSK_1 Meu_tag outra_tag",'));
+});
 test('backup reads exactly the app-owned storage keys and preserves their raw values', () => {
   const seen: string[] = [];
   const result = readUserBackup({ getItem: key => { seen.push(key); return key === STORAGE_KEYS.cards ? '[{"id":"personal"}]' : null; } });
