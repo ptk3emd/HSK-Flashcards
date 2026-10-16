@@ -12,7 +12,8 @@ Aplicação web progressiva (SPA) de flashcards para aprendizado de Mandarim (HS
 - **Stack**:
   - **Linguagem**: TypeScript (modo estrito)
   - **Frontend**: React 19, Vite 8, Tailwind CSS v4 (`@tailwindcss/vite`), Lucide React
-  - **Armazenamento**: `localStorage` no navegador (100% client-side, sem dependência de banco de dados externo)
+  - **Armazenamento**: `localStorage` no navegador como fonte da verdade (o app funciona offline e sem conta)
+  - **Conta e nuvem (opcional)**: Supabase Auth + tabelas `user_progress` e `review_logs` com RLS (`supabase/migrations/`). Ativo só quando o build recebe `VITE_SUPABASE_PUBLISHABLE_KEY`; a sincronização fica em `src/lib/sync.ts` (mescla em `src/lib/syncMerge.ts`)
   - **Deploy**: Otimizado para build estático no **GitHub Pages**
 
 ---
@@ -93,6 +94,7 @@ npm run clean
 - **Tipagem Estrita**: Manter interfaces e tipos centralizados em `src/types/card.ts`. Evitar `any`.
 - **Design & Tailwind v4**: Utilizar utilitários Tailwind com suporte completo a tema escuro/claro (`theme === 'dark' ? '...' : '...'`).
 - **Persistência Segura**: Qualquer nova funcionalidade de dados deve passar por métodos em `src/lib/storage.ts` com tratamento contra JSON inválido ou cotas de armazenamento.
+- **Nuvem**: Dados novos de estudo que devem seguir o aluno entre aparelhos precisam entrar no upsert de `CloudSync.pushProgress` e na mescla de `CloudSync.start`. Nunca use a chave `service_role`/secret no app; só a publicável.
 - **Verificação**: Sempre rodar `npm run lint` e `npm run test`, e testar `npm run build` antes de finalizar alterações.
 
 ### O que NÃO fazer
