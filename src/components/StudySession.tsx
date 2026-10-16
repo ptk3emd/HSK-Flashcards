@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
-import { createPortal, flushSync } from 'react-dom';
+import { flushSync } from 'react-dom';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGesture } from '../types/card';
 import { GESTURES, GRADE_ACTIONS, effectiveActionLabel, isActionAvailable } from '../lib/gestures';
 import { MandarinCardView } from './MandarinCardView';
+import { StudyToolbar } from './StudyToolbar';
 import { predictNextIntervals, scheduleCard } from '../lib/fsrs';
 import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
-import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { ArrowLeft, Volume2, Moon, Sun, PenTool, Settings2, PauseCircle, Undo2, EllipsisVertical, Check } from 'lucide-react';
-import { ViewLoading, InlineLoadingSkeleton } from './ViewLoading';
+import { loadNativeLevelCards } from '../data/defaultDecks';
+import { ViewLoading } from './ViewLoading';
 import { usePrefetched } from './usePrefetched';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
 import { StudyOptionsSettings } from './StudyOptionsSettings';
@@ -42,45 +42,6 @@ const GradeSeal: React.FC<{ rating: Rating }> = ({ rating }) => (
     <span lang="zh-CN">{SEAL_CHAR[rating]}</span>
   </div>
 );
-
-/** Most steps the ladder draws; longer sessions group several cards per step */
-const LADDER_MAX_STEPS = 48;
-
-/**
- * Session progress as a staircase (楼梯, the brand): one step per card, rising left to right.
- * A climbed step takes the colour of the grade it got, so the session's history reads at a glance.
- */
-const StudyLadder: React.FC<{ grades: Rating[]; total: number; percent: number }> = ({ grades, total, percent }) => {
-  if (total === 0) return null;
-  const steps = Math.min(total, LADDER_MAX_STEPS);
-  const perStep = Math.max(1, total) / steps;
-  return (
-    <div
-      className="study-ladder"
-      role="progressbar"
-      aria-label="Progresso da sessão"
-      aria-valuenow={percent}
-      aria-valuemin={0}
-      aria-valuemax={100}
-    >
-      {Array.from({ length: steps }, (_, i) => {
-        // A step is climbed once every card it stands for has been answered; it shows the last grade among them
-        const last = Math.ceil((i + 1) * perStep) - 1;
-        const grade = last < grades.length ? grades[last] : undefined;
-        const isNext = !grade && Math.floor(grades.length / perStep) === i;
-        return (
-          <span
-            key={i}
-            className="study-ladder-step"
-            data-grade={grade}
-            data-next={isNext || undefined}
-            style={{ height: `${3 + (11 * i) / Math.max(1, steps - 1)}px` }}
-          />
-        );
-      })}
-    </div>
-  );
-};
 
 /** Exit direction per grade (x, y): matches the swipe gestures' layout */
 const GRADE_EXIT: Record<Rating, [number, number]> = { 1: [-1, 0], 2: [0, 1], 3: [1, 0], 4: [0, -1] };
@@ -198,38 +159,6 @@ export const StudySession: React.FC<StudySessionProps> = ({
   const closeVoiceSettings = useCallback(() => setShowVoiceSettingsModal(false), []);
   useDialogFocus(writingDialogRef, showWritingPad && currentCard !== null, closeWritingPad);
   useDialogFocus(voiceDialogRef, showVoiceSettingsModal && !!onUpdateDeckConfig, closeVoiceSettings);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const menuTriggerRef = useRef<HTMLButtonElement>(null);
-  const [menuPosition, setMenuPosition] = useState({ top: 64, right: 12, maxHeight: 400 });
-  useLayoutEffect(() => {
-    if (!isMenuOpen) return;
-    const positionMenu = () => {
-      const trigger = menuTriggerRef.current?.getBoundingClientRect();
-      if (!trigger) return;
-      const viewport = window.visualViewport;
-      const top = viewport?.offsetTop ?? 0;
-      const height = viewport?.height ?? window.innerHeight;
-      const bottomEdge = top + height;
-      // Keep the menu inside the visible viewport even after scrolling or resizing.
-      const menuTop = Math.max(top + 12, Math.min(trigger.bottom + 8, bottomEdge - Math.min(160, height - 24)));
-      setMenuPosition({
-        top: menuTop,
-        right: Math.max(12, window.innerWidth - trigger.right),
-        maxHeight: Math.max(0, bottomEdge - menuTop - 12),
-      });
-    };
-    positionMenu();
-    window.addEventListener('resize', positionMenu);
-    window.addEventListener('scroll', positionMenu, true);
-    window.visualViewport?.addEventListener('resize', positionMenu);
-    window.visualViewport?.addEventListener('scroll', positionMenu);
-    return () => {
-      window.removeEventListener('resize', positionMenu);
-      window.removeEventListener('scroll', positionMenu, true);
-      window.visualViewport?.removeEventListener('resize', positionMenu);
-      window.visualViewport?.removeEventListener('scroll', positionMenu);
-    };
-  }, [isMenuOpen]);
   const closeMenu = useCallback(() => {
     // Closing the menu also invalidates any pending level selection.
     levelRequestRef.current += 1;
@@ -237,7 +166,6 @@ export const StudySession: React.FC<StudySessionProps> = ({
     setLevelLoadError(null);
     setIsMenuOpen(false);
   }, []);
-  useDialogFocus(menuRef, isMenuOpen, closeMenu);
 
   useEffect(() => {
     if (currentCard && deckConfig.autoPlayAudio) {
@@ -486,9 +414,11 @@ export const StudySession: React.FC<StudySessionProps> = ({
         break;
     }
   };
-  // Timers fire after later renders, so they call the latest version (current card, side)
+  // Timers fire after later renders, so they call the latest version (current card, side).
+  // A layout effect keeps the ref fresh without mutating it during render, which is not
+  // safe under concurrent React, and still runs before any timer could fire.
   const runGestureActionRef = useRef(runGestureAction);
-  runGestureActionRef.current = runGestureAction;
+  useLayoutEffect(() => { runGestureActionRef.current = runGestureAction; });
 
   useEffect(
     () => () => {
@@ -624,11 +554,6 @@ export const StudySession: React.FC<StudySessionProps> = ({
     if (gestureRef.current?.id === e.pointerId) resetDrag();
   };
 
-  // Bar buttons pressed with a finger or mouse do not keep focus. Otherwise the next
-  // Space or Enter would press that button again (undo twice, reopen the menu)
-  // instead of revealing or grading the card. Keyboard focus is unaffected.
-  const keepCardFocus = (e: React.MouseEvent) => e.preventDefault();
-
   const dragAction = drag ? gestureMap[drag.gesture] : null;
   const dragLabel =
     drag && dragAction && Math.abs(drag.x) + Math.abs(drag.y) > 30 ? effectiveActionLabel(dragAction, isFlipped) : null;
@@ -740,151 +665,34 @@ export const StudySession: React.FC<StudySessionProps> = ({
         {isolatedLevel ?? 'Todos os ativos'}: {reviewedInSession} {reviewedInSession === 1 ? 'revisado' : 'revisados'} · {remainingCount} {remainingCount === 1 ? 'restante' : 'restantes'}
       </p>
 
-      {/* Top utilities follow the supplied AnkiDroid reference and keyboard reading order. */}
-      <nav
-        aria-label="Sessão"
-        className="study-toolbar relative z-30 w-full"
-      >
-        <div className="study-utilities mx-auto h-16 flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={onExit}
-              onMouseDown={keepCardFocus}
-              aria-label="Voltar aos Decks"
-              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
-                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-              }`}
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-3 px-2 text-base font-semibold tabular-nums" role="group" aria-label="Fila de cartões">
-              <span className={`text-blue-900 dark:text-blue-400 ${currentCard?.state === 0 ? 'underline underline-offset-4' : ''}`} title="Novos">{newCount}<span className="sr-only"> novos</span></span>
-              <span className={`text-red-900 dark:text-red-400 ${currentCard && (currentCard.state === 1 || currentCard.state === 3) ? 'underline underline-offset-4' : ''}`} title="Aprendendo">{learningCount}<span className="sr-only"> aprendendo</span></span>
-              <span className={`text-emerald-900 dark:text-emerald-400 ${currentCard?.state === 2 ? 'underline underline-offset-4' : ''}`} title="Revisão">{reviewCount}<span className="sr-only"> para revisão</span></span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={handleUndo}
-              onMouseDown={keepCardFocus}
-              disabled={!canUndo || isGrading}
-              aria-label="Desfazer última revisão"
-              title="Desfazer (Ctrl+Z)"
-              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-default ${
-                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-              }`}
-            >
-              <Undo2 className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              ref={menuTriggerRef}
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              onMouseDown={keepCardFocus}
-              aria-label="Mais opções"
-              aria-expanded={isMenuOpen}
-              className={`size-11 flex items-center justify-center rounded-full transition-colors cursor-pointer ${
-                isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-              }`}
-            >
-              <EllipsisVertical className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Portalled to the body: inside the glass bar, the menu could not blur the card behind it */}
-        {isMenuOpen && createPortal(
-          <div className={isLight ? 'card-theme-light text-ink' : 'night_mode card-theme-dark text-white'}>
-            <button
-              type="button"
-              aria-label="Fechar menu"
-              tabIndex={-1}
-              className="fixed inset-0 z-40 cursor-default"
-              onClick={closeMenu}
-            />
-            <div
-              ref={menuRef}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Mais opções"
-              style={menuPosition}
-              className="study-session-menu sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-top-right fixed z-50 w-64 flex flex-col overflow-hidden !rounded-2xl p-1.5"
-            >
-              {loadingLevel && (
-                <div className="shrink-0 px-3 py-2"><InlineLoadingSkeleton label={`Carregando ${loadingLevel}…`} /></div>
-              )}
-              {levelLoadError && (
-                <p role="alert" className="shrink-0 px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError}</span>. Tente novamente.</p>
-              )}
-              <div className="study-menu-scroll">
-      <header className="study-session-status">
-        <span>{isolatedLevel ?? 'Todos os ativos'}</span>
-        <span className="tabular-nums" aria-live="polite" aria-atomic="true">
-          {totalSessionCount > 0 && (
-            <>
-              {reviewedInSession}
-              <span className="study-status-of"> de {totalSessionCount}</span>
-              <span className="sr-only"> revisados</span>
-            </>
-          )}
-        </span>
-        <StudyLadder grades={sessionGrades} total={totalSessionCount} percent={progressPercent} />
-      </header>
-                {[
-                  { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: () => setShowWritingPad(true), show: !!currentCard },
-                  { icon: Volume2, label: 'Ouvir pronúncia', hint: 'R', onClick: handleSpeak, show: !!currentCard },
-                  { icon: PauseCircle, label: 'Suspender cartão', hint: '', onClick: handleSuspendCurrent, show: !!currentCard },
-                  { icon: Settings2, label: 'Configurações da sessão', hint: '', onClick: () => setShowVoiceSettingsModal(true), show: !!onUpdateDeckConfig },
-                  { icon: isLight ? Moon : Sun, label: isLight ? 'Tema escuro' : 'Tema claro', hint: '', onClick: onToggleTheme, show: true },
-                ]
-                  .filter((item) => item.show)
-                  .map(({ icon: Icon, label, hint, onClick }) => (
-                    <button
-                      key={label}
-                      type="button"
-                      onClick={() => {
-                        closeMenu();
-                        onClick();
-                      }}
-                      className={`w-full min-h-11 flex items-center gap-3 px-3 rounded-xl text-sm transition-colors cursor-pointer ${
-                        isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4 opacity-70" />
-                      <span className="flex-1 text-left">{label}</span>
-                      {hint && <span className="text-xs opacity-80">{hint}</span>}
-                    </button>
-                  ))}
-
-                <div className={`my-1.5 border-t ${isLight ? 'border-black/5' : 'border-white/10'}`} />
-                <div className="px-3 py-1 text-xs font-semibold">Nível</div>
-                {[null, ...ALL_HSK_LEVELS].map((lvl) => {
-                  const isSelected = isolatedLevel === lvl;
-                  return (
-                    <button
-                      key={lvl ?? 'all'}
-                      type="button"
-                      onClick={() => handleSwitchLevel(lvl)}
-                      disabled={loadingLevel !== null}
-                      aria-pressed={isSelected}
-                      className={`w-full min-h-11 disabled:opacity-50 disabled:cursor-wait flex items-center justify-between px-3 rounded-xl text-sm transition-colors cursor-pointer ${
-                        isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
-                      }`}
-                    >
-                      <span>{lvl ?? 'Todos os ativos'}</span>
-                      {isSelected && <Check className="w-4 h-4 text-red-500" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
-      </nav>
+      <StudyToolbar
+        theme={theme}
+        currentCard={currentCard}
+        newCount={newCount}
+        learningCount={learningCount}
+        reviewCount={reviewCount}
+        canUndo={canUndo}
+        isGrading={isGrading}
+        isolatedLevel={isolatedLevel}
+        reviewedInSession={reviewedInSession}
+        totalSessionCount={totalSessionCount}
+        progressPercent={progressPercent}
+        sessionGrades={sessionGrades}
+        menuOpen={isMenuOpen}
+        loadingLevel={loadingLevel}
+        levelLoadError={levelLoadError}
+        canConfigure={!!onUpdateDeckConfig}
+        onExit={onExit}
+        onUndo={handleUndo}
+        onToggleMenu={() => setIsMenuOpen((prev) => !prev)}
+        onCloseMenu={closeMenu}
+        onSelectLevel={handleSwitchLevel}
+        onOpenWriting={() => setShowWritingPad(true)}
+        onSpeak={handleSpeak}
+        onSuspend={handleSuspendCurrent}
+        onOpenSettings={() => setShowVoiceSettingsModal(true)}
+        onToggleTheme={onToggleTheme}
+      />
 
       {/* Main Flashcard Scene (Zero vertical shifting on answer reveal) */}
       <div className="study-workspace">

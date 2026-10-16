@@ -373,7 +373,7 @@
 }
 
 /* Aplica transição apenas na frente para evitar piscar na troca para o verso */
-.front-scene .pinying#pinying-delayed {
+.front-scene .pinying.pinyin-delayed {
   transition:
     max-height var(--pinying-reveal-time) var(--pinying-reveal-ease),
     margin-top var(--pinying-reveal-time) var(--pinying-reveal-ease),
@@ -563,7 +563,7 @@
 @media (prefers-reduced-motion: reduce) {
   .mandarin-dock,
   .mnemonic-hint,
-  .front-scene .pinying#pinying-delayed,
+  .front-scene .pinying.pinyin-delayed,
   .front-scene .pinying.hidden {
     transition: none !important;
     transform: none !important;

@@ -229,9 +229,10 @@
 .study-done .study-done-seal { animation-duration: 320ms; }
 @media (prefers-reduced-motion: reduce) { .study-done .study-done-seal { animation: none; } }
 
-/* The pinyin occupies its final space from the first paint; only its ink fades in. */
-.study-session .pinying.pinyin-stable,
-.study-session .pinying.pinyin-stable#pinying-delayed {
+/* The pinyin occupies its final space from the first paint; only its ink fades in.
+   One class chain louder than `.front-scene .pinying.pinyin-delayed`, so the stable
+   variant wins regardless of stylesheet order. */
+.study-session .mandarin-card .pinying.pinyin-stable {
   display: block;
   max-height: none;
   margin-top: var(--pinying-gap-open);

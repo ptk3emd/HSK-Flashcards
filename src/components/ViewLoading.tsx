@@ -30,7 +30,7 @@ const Rows: React.FC<{ count: number; index?: boolean }> = ({ count, index = tru
 );
 
 /** Announces the wait once; the shapes themselves are hidden from assistive tech. */
-const Loading: React.FC<{ label: string; children: React.ReactNode }> = ({ label, children }) => {
+const Loading: React.FC<{ label: string; labelVisible?: boolean; children: React.ReactNode }> = ({ label, labelVisible = false, children }) => {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const node = ref.current;
@@ -47,29 +47,31 @@ const Loading: React.FC<{ label: string; children: React.ReactNode }> = ({ label
     return () => { observer?.disconnect(); document.removeEventListener('visibilitychange', update); };
   }, []);
   return <div ref={ref} role="status" aria-busy="true" className="loading-placeholder w-full">
-    <span className="sr-only">{label}</span>
+    {labelVisible ? <p className="text-sm">{label}</p> : <span className="sr-only">{label}</span>}
     <div aria-hidden="true">{children}</div>
   </div>;
 };
 
 export const InlineLoadingSkeleton: React.FC<{ label: string }> = ({ label }) => (
-  <Loading label={label}>
+  <Loading label={label} labelVisible>
     <div className="space-y-2 py-1">
-      <p className="text-sm">{label}</p>
       <Bar className="h-3 w-full" />
       <Bar className="h-3 w-2/3" />
     </div>
   </Loading>
 );
 
+/** Two story ledgers: the shape shared by the Learn area and its stories section. */
+const StorySheets: React.FC = () => (
+  <>{[0, 1].map(level => <Sheet key={level} className="overflow-hidden">
+    <Bar className="h-5 w-20 m-5" />
+    <Rows count={3} index={false} />
+  </Sheet>)}</>
+);
+
 export const StoriesSkeleton: React.FC = () => (
   <Loading label="Carregando histórias">
-    <div className="space-y-4">
-      {[0, 1].map(level => <Sheet key={level} className="overflow-hidden">
-        <Bar className="h-5 w-20 m-5" />
-        <Rows count={3} index={false} />
-      </Sheet>)}
-    </div>
+    <div className="space-y-4"><StorySheets /></div>
   </Loading>
 );
 
@@ -78,10 +80,7 @@ export const LearnSkeleton: React.FC = () => (
     <div className="w-full max-w-3xl mx-auto space-y-4">
       <Bar className="h-7 w-36" />
       <Bar className="h-11 w-60" />
-      {[0, 1].map(level => <Sheet key={level} className="overflow-hidden">
-        <Bar className="h-5 w-20 m-5" />
-        <Rows count={3} index={false} />
-      </Sheet>)}
+      <StorySheets />
     </div>
   </Loading>
 );

@@ -141,8 +141,7 @@ export const MandarinCardView = React.memo(function MandarinCardView({
 
           {card.pinyin && (
             <div
-              id={!isFlipped ? 'pinying-delayed' : undefined}
-              className={`pinying ${stableLayout ? 'pinyin-stable' : ''} ${!isFlipped && pinyinHidden ? (stableLayout ? 'pinyin-pending' : 'hidden') : ''}`}
+              className={`pinying ${stableLayout ? 'pinyin-stable' : ''} ${!isFlipped ? 'pinyin-delayed' : ''} ${!isFlipped && pinyinHidden ? (stableLayout ? 'pinyin-pending' : 'hidden') : ''}`}
               dangerouslySetInnerHTML={{ __html: card.pinyin }}
             />
           )}
