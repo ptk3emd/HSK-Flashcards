@@ -10,7 +10,8 @@
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
     "test": "tsx --test \"src/**/*.test.ts\"",
-    "seed:hsk": "tsx scripts/seed-hsk.ts"
+    "seed:hsk": "tsx scripts/seed-hsk.ts",
+    "seed:fr": "tsx scripts/seed-fr.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
