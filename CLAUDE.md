@@ -6,7 +6,12 @@ Guia de contexto e arquitetura para desenvolvimento no projeto.
 
 ## 1. Visão Geral do Projeto
 
-Aplicação web progressiva (SPA) de flashcards para aprendizado de Mandarim (HSK 1 a 9) com repetição espaçada moderna:
+Aplicação web progressiva (SPA) de flashcards com repetição espaçada moderna, em dois cursos:
+- **Lóutī Mandarim** (`zh`): vocabulário oficial HSK 3.0 (HSK 1 a 7–9), com hanzi, pinyin, escrita, ordem dos traços e aba Aprender.
+- **Palier Français** (`fr`): o mesmo vocabulário nos mesmos níveis, com o equivalente francês na frente do cartão (adaptação cultural onde cabe), sem hanzi. Paleta marinière (bleu de France, écru, selo de cera vermelho) e Garamond.
+
+O curso ativo fica em `src/lib/courseId.ts` (lido uma vez; trocar de curso recarrega o app) e tudo o que difere entre eles em `src/lib/course.ts` (`COURSE`, `levelLabel`). Cada curso tem as próprias chaves no `localStorage` (o francês usa o prefixo `fr_`), e a paleta francesa vive em `src/styles/course-fr.css` sob `html.course-fr`, que remapeia a escala `red` do Tailwind para azul.
+
 - **Algoritmo FSRS nativo**: Cálculo de estabilidade, dificuldade e retrievabilidade baseado no FSRS (Free Spaced Repetition Scheduler).
 - **Recursos principais**: Sessão de estudos com botões de resposta e barra de progresso, lousa de escrita de ideogramas (Hanzi canvas), sintetizador de voz (Web Speech API TTS), navegador/filtro de cartões (busca por Hanzi, Pinyin e tradução) e painel estatístico com curva de retenção, projeção de revisões e histórico.
 - **Stack**:
@@ -71,6 +76,7 @@ npm run clean
     ├── data/               # Vocabulários e listas HSK
     │   ├── defaultDecks.ts         # Baralhos padrão pré-carregados
     │   ├── hsk1.json a hsk7_9.json # Datasets oficiais de vocabulário HSK
+    │   ├── fr/fr1.json a fr7_9.json # Curso de francês: mesmos ids (F-xxxxx), mesmos níveis
     │   └── hskParser.ts            # Parser para importação de CSV/TSV
     │
     ├── lib/                # Lógica de negócio e utilitários
@@ -90,6 +96,7 @@ npm run clean
 
 ### O que FAZER
 - **Compatibilidade GitHub Pages**: Manter toda a arquitetura como Client-Side SPA estática (sem rotas de servidor dinâmicas obrigatórias, imports e caminhos relativos).
+- **Dois cursos**: recurso novo que dependa de hanzi/pinyin deve checar `COURSE.hasCharacters`; nível mostrado ao aluno passa por `levelLabel`; cor de marca usa as utilidades `red-*` ou `var(--brand)` (nunca o hex fixo), para o francês herdar o azul.
 - **Sem emojis na UI**: A interface deve ser estritamente minimalista e limpa. Use exclusivamente ícones vetoriais do pacote `lucide-react`.
 - **Tipagem Estrita**: Manter interfaces e tipos centralizados em `src/types/card.ts`. Evitar `any`.
 - **Design & Tailwind v4**: Utilizar utilitários Tailwind com suporte completo a tema escuro/claro (`theme === 'dark' ? '...' : '...'`).

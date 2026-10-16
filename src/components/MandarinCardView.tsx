@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { Card } from '../types/card';
 import { Volume2, PenTool, AlertTriangle, Lightbulb } from 'lucide-react';
 import { isLeech } from '../lib/fsrs';
+import { COURSE } from '../lib/course';
 
 interface MandarinCardViewProps {
   card: Card;
@@ -84,6 +85,8 @@ export const MandarinCardView = React.memo(function MandarinCardView({
           // @ts-expect-error CSS custom variable
           '--chars-per-line': charsPerLine > 8 ? 8 : charsPerLine,
           '--hanzi-count': Math.max(1, Math.min(cleanHanzi.length, 8)),
+          // French words size by their full length (letters, not characters per line)
+          '--text-length': Math.max(4, (card.hanzi || '').replace(/<[^>]*>/g, '').length),
         }}
       >
         {/* Main Acrylic Card (PERSISTENT DOM - ZERO FLICKER / NO REMOUNT) */}
@@ -100,7 +103,7 @@ export const MandarinCardView = React.memo(function MandarinCardView({
           )}
 
           <div className="absolute top-3.5 right-3.5 flex items-center gap-1 z-10">
-            {onOpenWriting && (
+            {onOpenWriting && COURSE.hasCharacters && (
               <button
                 type="button"
                 onClick={(e) => {
@@ -123,17 +126,18 @@ export const MandarinCardView = React.memo(function MandarinCardView({
                   onSpeak();
                 }}
                 className="p-2 rounded-full opacity-40 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all cursor-pointer"
-                title="Ouvir pronúncia em Mandarim"
-                aria-label="Ouvir pronúncia em Mandarim"
+                title="Ouvir pronúncia"
+                aria-label="Ouvir pronúncia"
               >
                 <Volume2 className="w-4 h-4 text-current" />
               </button>
             )}
           </div>
 
-          <div className="card-label">Hanzi</div>
+          <div className="card-label">{COURSE.hasCharacters ? 'Hanzi' : 'Français'}</div>
           <div
             id="hanzi-text"
+            lang={COURSE.lang}
             ref={hanziRef}
             className={`hanzi ${isLong ? 'is-long' : ''}`}
             dangerouslySetInnerHTML={{ __html: card.hanzi }}

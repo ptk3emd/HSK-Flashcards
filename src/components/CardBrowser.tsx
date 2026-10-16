@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
+import { COURSE, levelLabel } from '../lib/course';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
 import { Search, Volume2, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, Save, Lightbulb } from 'lucide-react';
 import { isLeech } from '../lib/fsrs';
@@ -116,6 +117,8 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
 
       const hanziMatch =
         card.hanzi.toLowerCase().includes(q) ||
+        // French: accents are optional in the query (ecole finds école)
+        (!COURSE.hasCharacters && normalizeText(card.hanzi).includes(normalizedQ)) ||
         (card.traditional ? card.traditional.toLowerCase().includes(q) : false);
 
       const pinyinMatch =
@@ -124,7 +127,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
         // Syllables are spaced (nǐ hǎo), so "nihao" still matches
         normalizeText(card.pinyin).replace(/[\s'-]+/g, '').includes(normalizedQ.replace(/[\s'-]+/g, ''));
 
-      const meaningMatch = card.ptbr.toLowerCase().includes(q);
+      const meaningMatch = card.ptbr.toLowerCase().includes(q) || normalizeText(card.ptbr).includes(normalizedQ);
 
       if (searchTarget === 'hanzi') {
         return hanziMatch;
@@ -236,7 +239,13 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Pesquisar"
               placeholder={
-                searchTarget === 'hanzi'
+                !COURSE.hasCharacters
+                  ? searchTarget === 'meaning'
+                    ? 'olá, água'
+                    : searchTarget === 'hanzi'
+                    ? 'bonjour, école'
+                    : 'Francês ou tradução'
+                  : searchTarget === 'hanzi'
                   ? '你好, 水'
                   : searchTarget === 'pinyin'
                   ? 'nihao, nǐ hǎo'
@@ -257,7 +266,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               </button>
             )}
           </div>
-          <button
+          {COURSE.hasCharacters && <button
             type="button"
             onClick={() => setIsDrawSearchOpen((open) => !open)}
             aria-expanded={isDrawSearchOpen}
@@ -270,7 +279,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
           >
             <PenTool aria-hidden="true" className="w-4 h-4" />
             <span className="hidden sm:inline">Desenhar</span>
-          </button>
+          </button>}
         </div>
 
         <div className="flex items-center gap-x-4 gap-y-2 flex-wrap text-sm">
@@ -278,11 +287,11 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
             {(
               [
                 { id: 'all', label: 'Tudo' },
-                { id: 'hanzi', label: 'Hanzi' },
+                { id: 'hanzi', label: COURSE.hasCharacters ? 'Hanzi' : 'Francês' },
                 { id: 'pinyin', label: 'Pinyin' },
                 { id: 'meaning', label: 'Tradução' },
               ] as const
-            ).map((tab) => {
+            ).filter((tab) => COURSE.hasCharacters || tab.id !== 'pinyin').map((tab) => {
               const isActive = searchTarget === tab.id;
               return (
                 <button
@@ -311,7 +320,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               <option value="all" className="bg-white dark:bg-neutral-900">Todos os níveis</option>
               {ALL_HSK_LEVELS.map((lvl) => (
                 <option key={lvl} value={lvl} className="bg-white dark:bg-neutral-900">
-                  {lvl}
+                  {levelLabel(lvl)}
                 </option>
               ))}
             </select>
@@ -334,7 +343,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
 
         {!isLevelLoaded && (
           <div className="flex items-center justify-between gap-3 pt-3 border-t border-[var(--separator)] text-sm">
-            <span className="ink-secondary">{selectedLevel} não baixado</span>
+            <span className="ink-secondary">{levelLabel(selectedLevel)} não baixado</span>
             <button
               type="button"
               onClick={handleLoadSelectedLevel}
@@ -375,15 +384,21 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                     <button
                       type="button"
                       onClick={() => openPreview(card)}
-                      aria-label={`Abrir ${card.hanzi}, ${card.pinyin}`}
+                      aria-label={COURSE.hasCharacters ? `Abrir ${card.hanzi}, ${card.pinyin}` : `Abrir ${card.hanzi}`}
                       className="absolute inset-0 cursor-pointer focus:outline-none"
                     />
-                    <span lang="zh-CN" className="hanzi-index text-[1.75rem] min-w-[3.5rem] shrink-0 pointer-events-none">
-                      {card.hanzi}
-                    </span>
+                    {COURSE.hasCharacters && (
+                      <span lang="zh-CN" className="hanzi-index text-[1.75rem] min-w-[3.5rem] shrink-0 pointer-events-none">
+                        {card.hanzi}
+                      </span>
+                    )}
                     <div className="min-w-0 flex-1 pointer-events-none">
                       <div className="flex items-baseline gap-2">
-                        <span className="text-sm font-medium truncate">{card.pinyin}</span>
+                        {COURSE.hasCharacters ? (
+                          <span className="text-sm font-medium truncate">{card.pinyin}</span>
+                        ) : (
+                          <span lang={COURSE.lang} className="hanzi-index text-lg leading-snug truncate">{card.hanzi}</span>
+                        )}
                         {card.traditional && card.traditional !== card.hanzi && (
                           <span lang="zh-TW" className="text-xs ink-tertiary shrink-0">{card.traditional}</span>
                         )}
@@ -391,7 +406,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                       <div className="text-sm ink-secondary truncate" dangerouslySetInnerHTML={{ __html: card.ptbr }} />
                     </div>
                     <div className="hidden sm:flex flex-col items-end text-xs ink-tertiary shrink-0 pointer-events-none">
-                      <span>{card.level}</span>
+                      <span>{levelLabel(card.level)}</span>
                       <span>{STATE_LABELS[card.state]}</span>
                     </div>
                     {(leech || card.suspended) && (
@@ -500,14 +515,14 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                   {previewCard.suspended ? <PlayCircle className="w-3.5 h-3.5" /> : <Ban className="w-3.5 h-3.5" />}
                   <span>{previewCard.suspended ? 'Reativar' : 'Suspender'}</span>
                 </button>
-                <button
+                {COURSE.hasCharacters && <button
                   type="button"
                   onClick={() => setWritingCard(previewCard)}
                   className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer transition-all shadow-sm"
                 >
                   <PenTool className="w-3.5 h-3.5" />
                   <span>Praticar Escrita</span>
-                </button>
+                </button>}
                 <button
                   type="button"
                   onClick={() => handleResetCard(previewCard)}

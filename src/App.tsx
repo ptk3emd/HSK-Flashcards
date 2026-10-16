@@ -20,6 +20,8 @@ import {
 import { CloudSync, Session, SyncStatus, getSupabase, isCloudEnabled } from './lib/sync';
 import { parseUserProfile } from './lib/profile';
 import { AuthScreen } from './components/AuthScreen';
+import { CourseSwitch } from './components/CourseSwitch';
+import { COURSE } from './lib/course';
 import { ChangePasswordScreen } from './components/ChangePasswordScreen';
 import { AccountSettings } from './components/AccountSettings';
 import { StudySession } from './components/StudySession';
@@ -55,6 +57,9 @@ const NAV_ITEMS = [
   { tab: 'stats', label: 'Estatísticas', Icon: BarChart3 },
   { tab: 'settings', label: 'Configurações', Icon: Settings2 },
 ] as const;
+
+// The Learn tab (stories and HSK mock exams) exists only in the Mandarin course
+const COURSE_NAV = NAV_ITEMS.filter((item) => item.tab !== 'learn' || COURSE.hasLearn);
 
 export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -265,7 +270,7 @@ export default function App() {
           </Suspense>
         )}
 
-        {activeTab === 'learn' && (
+        {activeTab === 'learn' && COURSE.hasLearn && (
           <Suspense fallback={<ViewLoading variant="learn" />}>
             <LearnView cards={cards} onAddCards={handleAddCards} />
           </Suspense>
@@ -284,6 +289,16 @@ export default function App() {
         {activeTab === 'settings' && (
           <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in duration-200">
             <h1 className="px-2 pt-2 pb-1 text-2xl font-semibold tracking-tight">Configurações</h1>
+
+            <section className="sheet px-5 sm:px-7 py-3" aria-labelledby="settings-course">
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <h2 id="settings-course" className="text-base font-semibold">Idioma de estudo</h2>
+                  <p className="text-xs ink-tertiary">Cada idioma tem os próprios cartões e progresso.</p>
+                </div>
+                <CourseSwitch />
+              </div>
+            </section>
 
             {isCloudEnabled && (
               <AccountSettings
@@ -384,7 +399,7 @@ export default function App() {
         aria-label="Principal"
         className="sheet sheet-float rounded-2xl fixed bottom-4 left-1/2 -translate-x-1/2 z-40 px-2 py-2 flex items-center gap-1"
       >
-        {NAV_ITEMS.map(({ tab, label, Icon }) => {
+        {COURSE_NAV.map(({ tab, label, Icon }) => {
           const isCurrent = activeTab === tab;
           return (
             <button

@@ -3,6 +3,7 @@ import { Card, FSRSOptions, DeckConfig, ReviewLog } from '../types/card';
 import { loadReviewLogs } from '../lib/storage';
 import { calculateRetrievability } from '../lib/fsrs';
 import { LEVEL_NUMERALS } from '../data/defaultDecks';
+import { COURSE, levelLabel } from '../lib/course';
 import { RetentionCalibration } from './RetentionCalibration';
 import { ChevronDown } from 'lucide-react';
 
@@ -699,7 +700,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
         <ul className="ledger border-t border-[var(--separator)]">
           {[
             { label: 'Novos', detail: 'não iniciados', value: newCount, tone: 'text-blue-700 dark:text-blue-300' },
-            { label: 'Aprendendo', detail: 'em assimilação', value: learningCount, tone: 'text-red-700 dark:text-red-300' },
+            { label: 'Aprendendo', detail: 'em assimilação', value: learningCount, tone: 'state-learning text-red-700 dark:text-red-300' },
             { label: 'Jovens', detail: 'intervalo < 21 d', value: youngCount, tone: 'text-amber-700 dark:text-amber-300' },
             { label: 'Maduros', detail: `intervalo ≥ 21 d · ${matureRate}%`, value: matureCount, tone: 'text-emerald-700 dark:text-emerald-300' },
             { label: 'Estudadas', detail: `de ${totalCards} palavras`, value: totalStudied, tone: '' },
@@ -745,12 +746,12 @@ export const StatsView: React.FC<StatsViewProps> = ({
           <ul className="ledger border-t border-[var(--separator)]">
             {hskBreakdown.map(lvl => (
               <li key={lvl.level} className="flex items-center gap-4 px-5 py-3">
-                <span lang="zh-CN" aria-hidden="true" className="hanzi-index text-2xl w-10 text-center shrink-0 ink-tertiary">
+                <span lang={COURSE.lang} aria-hidden="true" className="hanzi-index text-2xl w-10 text-center shrink-0 ink-tertiary">
                   {LEVEL_NUMERALS[lvl.level] ?? '·'}
                 </span>
                 <span className="flex-1 min-w-0">
                   <span className="flex items-baseline justify-between gap-2">
-                    <span className="font-medium">{lvl.level}</span>
+                    <span className="font-medium">{levelLabel(lvl.level)}</span>
                     <span className="text-xs ink-tertiary tabular">
                       {lvl.studied} de {lvl.total} · {lvl.mature} maduras
                     </span>

@@ -107,7 +107,7 @@ export const AccountSettings: React.FC<AccountSettingsProps> = ({
           <button
             type="button"
             onClick={onSignIn}
-            className="min-h-11 px-4 rounded-xl bg-[#B3261E] hover:bg-[#8F1E18] text-white text-sm font-semibold cursor-pointer"
+            className="min-h-11 px-4 rounded-xl bg-[var(--brand)] hover:bg-[var(--brand-strong)] text-white text-sm font-semibold cursor-pointer"
           >
             Entrar
           </button>

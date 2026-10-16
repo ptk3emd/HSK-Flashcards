@@ -139,7 +139,7 @@ export const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({ them
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full min-h-12 rounded-xl bg-[#B3261E] hover:bg-[#8F1E18] text-white text-base font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full min-h-12 rounded-xl bg-[var(--brand)] hover:bg-[var(--brand-strong)] text-white text-base font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {busy ? 'Aguarde...' : 'Alterar senha'}
             </button>

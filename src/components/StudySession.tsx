@@ -8,6 +8,7 @@ import { StudyToolbar } from './StudyToolbar';
 import { predictNextIntervals, scheduleCard } from '../lib/fsrs';
 import { pushReviewLog, popReviewLog } from '../lib/storage';
 import { speakChinese } from '../lib/speech';
+import { COURSE, levelLabel } from '../lib/course';
 import { loadNativeLevelCards } from '../data/defaultDecks';
 import { ViewLoading } from './ViewLoading';
 import { usePrefetched } from './usePrefetched';
@@ -33,13 +34,13 @@ interface StudySessionProps {
   onExit: () => void;
 }
 
-/** Seal characters per grade: 再 again, 难 hard, 好 good, 易 easy */
-const SEAL_CHAR: Record<Rating, string> = { 1: '再', 2: '难', 3: '好', 4: '易' };
-
-/** The red seal the grade presses onto the card as it leaves. Decorative: the grade itself is announced by the counter. */
+/**
+ * The red seal the grade presses onto the card as it leaves: 再 难 好 易 in Mandarin, a wax seal
+ * with E D B F (Encore, Difficile, Bien, Facile) in French. Decorative: the counter announces the grade.
+ */
 const GradeSeal: React.FC<{ rating: Rating }> = ({ rating }) => (
   <div className="study-seal" data-grade={rating} aria-hidden="true">
-    <span lang="zh-CN">{SEAL_CHAR[rating]}</span>
+    <span lang={COURSE.lang}>{COURSE.sealMarks[rating]}</span>
   </div>
 );
 
@@ -404,7 +405,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
         handleSpeak();
         break;
       case 'writing':
-        setShowWritingPad(true);
+        if (COURSE.hasCharacters) setShowWritingPad(true);
         break;
       case 'suspend':
         handleSuspendCurrent();
@@ -643,7 +644,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
         handleUndo();
       } else if (e.key === 'r' || e.key === 'R') {
         handleSpeak();
-      } else if (e.key === 'w' || e.key === 'W') {
+      } else if ((e.key === 'w' || e.key === 'W') && COURSE.hasCharacters) {
         setShowWritingPad((prev) => !prev);
       }
     };
@@ -662,7 +663,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
     >
       <h1 className="sr-only">Sessão de estudo</h1>
       <p className="sr-only" aria-live="polite" aria-atomic="true">
-        {isolatedLevel ?? 'Todos os ativos'}: {reviewedInSession} {reviewedInSession === 1 ? 'revisado' : 'revisados'} · {remainingCount} {remainingCount === 1 ? 'restante' : 'restantes'}
+        {isolatedLevel ? levelLabel(isolatedLevel) : 'Todos os ativos'}: {reviewedInSession} {reviewedInSession === 1 ? 'revisado' : 'revisados'} · {remainingCount} {remainingCount === 1 ? 'restante' : 'restantes'}
       </p>
 
       <StudyToolbar
@@ -746,10 +747,10 @@ export const StudySession: React.FC<StudySessionProps> = ({
             <div className="mandarin-scene">
               <section className="mandarin-card study-done" aria-labelledby="study-done-title">
                 <div className="study-seal study-done-seal" aria-hidden="true">
-                  <span lang="zh-CN">完</span>
+                  <span lang={COURSE.lang}>{COURSE.doneMark}</span>
                 </div>
                 <h2 id="study-done-title" className="study-done-title">
-                  {isolatedLevel ? `${isolatedLevel} em dia` : 'Sessão concluída'}
+                  {isolatedLevel ? `${levelLabel(isolatedLevel)} em dia` : 'Sessão concluída'}
                 </h2>
                 <p className="study-done-summary tabular-nums">
                   {reviewedInSession > 0

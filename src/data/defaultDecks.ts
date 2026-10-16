@@ -1,4 +1,5 @@
 import { Card } from '../types/card';
+import { COURSE } from '../lib/course';
 
 export const ALL_HSK_LEVELS = [
   'HSK 1',
@@ -10,16 +11,8 @@ export const ALL_HSK_LEVELS = [
   'HSK 7-9',
 ] as const;
 
-/** Chinese numeral used as the ledger index for each level. */
-export const LEVEL_NUMERALS: Record<string, string> = {
-  'HSK 1': '一',
-  'HSK 2': '二',
-  'HSK 3': '三',
-  'HSK 4': '四',
-  'HSK 5': '五',
-  'HSK 6': '六',
-  'HSK 7-9': '七–九',
-};
+/** Ledger index for each level: Chinese numerals in Mandarin, roman numerals in French. */
+export const LEVEL_NUMERALS: Record<string, string> = COURSE.levelIndex;
 
 export type HskLevelName = typeof ALL_HSK_LEVELS[number];
 
@@ -42,41 +35,35 @@ export const HSK_LEVEL_INFO: Record<HskLevelName, { count: number; total: number
  * level, so a card's level follows from its id.
  */
 export function levelOfNativeId(id: string): HskLevelName | null {
-  const match = /^S-(\d{5})$/.exec(id);
+  // S- in Mandarin, F- in French: both run on the same syllabus serial
+  const match = /^[SF]-(\d{5})$/.exec(id);
   if (!match) return null;
   const serial = Number(match[1]);
   return ALL_HSK_LEVELS.find((level) => serial <= HSK_LEVEL_INFO[level].total) ?? null;
 }
 
-/**
- * Returns initial default native cards (HSK 1 + HSK 2). Loaded on demand so the
- * app entry bundle does not carry the 500 default cards.
- */
-export async function loadDefaultCards(): Promise<Card[]> {
-  const [hsk1, hsk2] = await Promise.all([import('./hsk1.json'), import('./hsk2.json')]);
-  return [...(hsk1.default as Card[]), ...(hsk2.default as Card[])];
+type LevelModule = { default: unknown };
+
+/** One JSON file per level and course, each loaded on demand so the entry bundle stays light. */
+const LEVEL_FILES: Record<string, { zh: () => Promise<LevelModule>; fr: () => Promise<LevelModule> }> = {
+  'HSK 1': { zh: () => import('./hsk1.json'), fr: () => import('./fr/fr1.json') },
+  'HSK 2': { zh: () => import('./hsk2.json'), fr: () => import('./fr/fr2.json') },
+  'HSK 3': { zh: () => import('./hsk3.json'), fr: () => import('./fr/fr3.json') },
+  'HSK 4': { zh: () => import('./hsk4.json'), fr: () => import('./fr/fr4.json') },
+  'HSK 5': { zh: () => import('./hsk5.json'), fr: () => import('./fr/fr5.json') },
+  'HSK 6': { zh: () => import('./hsk6.json'), fr: () => import('./fr/fr6.json') },
+  'HSK 7-9': { zh: () => import('./hsk7_9.json'), fr: () => import('./fr/fr7_9.json') },
+};
+
+/** The native cards of one level, in the active course. */
+export async function loadNativeLevelCards(level: string): Promise<Card[]> {
+  const files = LEVEL_FILES[level];
+  if (!files) return [];
+  return (await files[COURSE.id]()).default as Card[];
 }
 
-/**
- * Dynamically loads any native HSK level without requiring user import!
- */
-export async function loadNativeLevelCards(level: string): Promise<Card[]> {
-  switch (level) {
-    case 'HSK 1':
-      return (await import('./hsk1.json')).default as Card[];
-    case 'HSK 2':
-      return (await import('./hsk2.json')).default as Card[];
-    case 'HSK 3':
-      return (await import('./hsk3.json')).default as Card[];
-    case 'HSK 4':
-      return (await import('./hsk4.json')).default as Card[];
-    case 'HSK 5':
-      return (await import('./hsk5.json')).default as Card[];
-    case 'HSK 6':
-      return (await import('./hsk6.json')).default as Card[];
-    case 'HSK 7-9':
-      return (await import('./hsk7_9.json')).default as Card[];
-    default:
-      return [];
-  }
+/** The first deck a new student gets: levels 1 and 2. */
+export async function loadDefaultCards(): Promise<Card[]> {
+  const [first, second] = await Promise.all([loadNativeLevelCards('HSK 1'), loadNativeLevelCards('HSK 2')]);
+  return [...first, ...second];
 }

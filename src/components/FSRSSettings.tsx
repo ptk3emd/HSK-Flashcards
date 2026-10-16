@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, RotateCcw } from 'lucide-react';
 import { FSRSOptions } from '../types/card';
 import { ALL_HSK_LEVELS, LEVEL_NUMERALS } from '../data/defaultDecks';
+import { COURSE, levelLabel } from '../lib/course';
 import {
   DEFAULT_FSRS_OPTIONS,
   MAX_INTERVAL_LIMIT,
@@ -131,7 +132,7 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
                   max={SLIDER_MAX}
                   step={SLIDER_STEP}
                   value={effective}
-                  aria-label={`Retenção desejada para ${level}`}
+                  aria-label={`Retenção desejada para ${levelLabel(level)}`}
                   onChange={(e) => setLevelRetention(level, parseFloat(e.target.value))}
                   className="w-full accent-red-600 cursor-pointer"
                 />
@@ -143,7 +144,7 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
                     type="button"
                     onClick={() => setLevelRetention(level, null)}
                     className="size-11 rounded-xl flex items-center justify-center ink-tertiary hover:text-[var(--text-fg)] cursor-pointer"
-                    aria-label={`Usar a retenção padrão em ${level}`}
+                    aria-label={`Usar a retenção padrão em ${levelLabel(level)}`}
                   >
                     <RotateCcw aria-hidden="true" className="w-3.5 h-3.5" />
                   </button>

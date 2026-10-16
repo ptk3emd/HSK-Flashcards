@@ -1,4 +1,5 @@
 import { GestureMap, StudyAction, StudyGesture } from '../types/card';
+import { COURSE } from './course';
 
 export const GESTURES: { id: StudyGesture; label: string }[] = [
   { id: 'tap', label: 'Toque' },
@@ -10,7 +11,7 @@ export const GESTURES: { id: StudyGesture; label: string }[] = [
   { id: 'swipeDown', label: 'Deslizar para baixo' },
 ];
 
-export const STUDY_ACTIONS: { id: StudyAction; label: string }[] = [
+const ALL_STUDY_ACTIONS: { id: StudyAction; label: string }[] = [
   { id: 'none', label: 'Nenhuma' },
   { id: 'reveal', label: 'Mostrar resposta' },
   { id: 'revealOrGood', label: 'Mostrar resposta, depois Bom' },
@@ -24,6 +25,9 @@ export const STUDY_ACTIONS: { id: StudyAction; label: string }[] = [
   { id: 'suspend', label: 'Suspender cartão' },
   { id: 'menu', label: 'Abrir menu' },
 ];
+
+/** The actions a gesture can run; the writing pad exists only where there are characters to write. */
+export const STUDY_ACTIONS = ALL_STUDY_ACTIONS.filter((a) => a.id !== 'writing' || COURSE.hasCharacters);
 
 export const DEFAULT_GESTURES: GestureMap = {
   tap: 'none',
@@ -68,9 +72,10 @@ export function isActionAvailable(
       return false;
     case 'reveal':
       return !ctx.isFlipped;
+    case 'writing':
+      return COURSE.hasCharacters;
     case 'revealOrGood':
     case 'speak':
-    case 'writing':
     case 'suspend':
     case 'menu':
       return true;

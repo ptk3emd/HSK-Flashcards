@@ -1,5 +1,6 @@
 import type { Card, ReviewLog } from '../types/card';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
+import { COURSE, levelLabel } from './course';
 import { STORAGE_KEYS } from './storage';
 
 /** Raised when saved data cannot be read back: the fix is local data, never connectivity. */
@@ -43,10 +44,10 @@ export function buildAnkiCsv(cards: Card[], logs: ReviewLog[]): string {
     logsByCard.set(log.cardId, list);
   }
   const rows = cards.map(card => {
-    const front = `<div lang="zh-CN">${html(card.hanzi)}</div><span hidden data-hsk-id="${html(card.id)}">${html(card.id)}</span>`;
+    const front = `<div lang="${COURSE.lang}">${html(card.hanzi)}</div><span hidden data-hsk-id="${html(card.id)}">${html(card.id)}</span>`;
     const back = [card.pinyin, card.ptbr, card.mnemonic].filter(Boolean).map(value => `<div>${html(value!)}</div>`).join('<br>');
     const tags = ['HSK_Flashcards', tag(card.level), ...(card.tags ?? []).map(tag), ...(card.suspended ? ['suspenso_no_app'] : [])].filter(Boolean).join(' ');
-    return [front, back, tags, `HSK::${card.level}`, card.id,
+    return [front, back, tags, COURSE.id === 'zh' ? `HSK::${card.level}` : `${COURSE.brand}::${levelLabel(card.level)}`, card.id,
       html(JSON.stringify({ card, reviews: logsByCard.get(card.id) ?? [] }))].map(csv).join(',');
   });
   return ['#separator:Comma', '#html:true', '#tags column:3', '#deck column:4',

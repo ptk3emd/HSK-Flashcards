@@ -1,11 +1,13 @@
 /**
- * Audio speech synthesis helper for Chinese Mandarin (zh-CN)
+ * Audio speech synthesis for the studied language: Mandarin (zh-CN) or French (fr-FR), from
+ * the active course. The function names keep "Chinese" from when Mandarin was the only course.
  * Supports browser native voices, gender preference (female / male / auto),
  * pitch modulation, and variable playback rate.
  */
 
 import { VoiceGenderPreference } from '../types/card';
 import { STORAGE_KEYS } from './storage';
+import { COURSE } from './course';
 
 export interface SpeechOptions {
   rate?: number;
@@ -96,6 +98,15 @@ export function getBrowserChineseVoices(): SpeechSynthesisVoice[] {
   for (const v of allVoices) {
     const lang = (v.lang || '').toLowerCase();
     const name = (v.name || '').toLowerCase();
+    // French course: only the language tag decides
+    if (COURSE.id !== 'zh') {
+      if (!COURSE.voicePrefixes.some((p) => lang.startsWith(p))) continue;
+      const key = `${v.voiceURI || v.name}__${lang}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      chineseVoices.push(v);
+      continue;
+    }
     const isChinese =
       lang.startsWith('zh') ||
       lang.startsWith('cmn') ||
@@ -147,7 +158,7 @@ export function getVoiceDisplayLabel(voice: SpeechSynthesisVoice): {
     title: cleanName || voice.name,
     genderBadge,
     genderType: gender,
-    langTag: voice.lang || 'zh-CN',
+    langTag: voice.lang || COURSE.lang,
   };
 }
 
@@ -217,7 +228,7 @@ export function speakChinese(
   const finalRate = Math.min(Math.max(rate, 0.5), 1.6);
 
   const utterance = new SpeechSynthesisUtterance(clean);
-  utterance.lang = 'zh-CN';
+  utterance.lang = COURSE.lang;
   utterance.rate = finalRate;
 
   const availableVoices = window.speechSynthesis.getVoices();
@@ -246,8 +257,9 @@ export function speakChinese(
 
   // 3. Fallback to any voice with Chinese language tag in the entire list
   if (!selectedVoice) {
-    selectedVoice = availableVoices.find(
-      (v) => v.lang.startsWith('zh') || v.lang.includes('cmn') || v.lang.includes('Chinese')
+    selectedVoice = availableVoices.find((v) =>
+      COURSE.voicePrefixes.some((p) => v.lang.toLowerCase().startsWith(p)) ||
+      (COURSE.id === 'zh' && v.lang.includes('Chinese'))
     );
   }
 
