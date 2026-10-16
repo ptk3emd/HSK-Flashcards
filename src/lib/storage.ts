@@ -134,8 +134,9 @@ export function saveSyncOutbox(entries: OutboxEntry[]): void {
  * hanzi, pinyin and translation once, keeping their study history and mnemonics.
  * 2: Portuguese translations reviewed for every level; pinyin spaced per syllable.
  * 3: vocabulary replaced by the official HSK syllabus list (11,000 words, new levels and ids).
+ * 4: French deck: repeated fronts within a level differentiated per Chinese word.
  */
-const CONTENT_VERSION = 3;
+const CONTENT_VERSION = 4;
 
 export { loadNativeLevelCards };
 
