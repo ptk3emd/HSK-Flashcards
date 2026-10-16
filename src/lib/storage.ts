@@ -28,6 +28,92 @@ export const STORAGE_KEYS = {
 const MAX_EXAM_ATTEMPTS = 20; // per level
 
 /**
+ * Account keys stay out of STORAGE_KEYS on purpose: they describe this device's sign-in,
+ * not study data, so they never travel in a backup or to another device.
+ */
+export const ACCOUNT_KEYS = {
+  authSkipped: 'hanzi_anki_auth_skipped_v1',
+  syncOutbox: 'hanzi_anki_sync_outbox_v1',
+} as const;
+
+/** What changed in local study data; the cloud sync listens to these. */
+export type LocalChange =
+  | { kind: 'progress' }
+  | { kind: 'review'; log: ReviewLog }
+  | { kind: 'undo'; log: ReviewLog };
+
+/** Fires after each save of study data, so a listener (the cloud sync) never polls storage. */
+export const localChanges = new EventTarget();
+function emitLocalChange(change: LocalChange): void {
+  localChanges.dispatchEvent(new CustomEvent<LocalChange>('change', { detail: change }));
+}
+
+/** Whether the student chose to use the app without an account on this device. */
+export function loadAuthSkipped(): boolean {
+  try {
+    return localStorage.getItem(ACCOUNT_KEYS.authSkipped) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function saveAuthSkipped(skipped: boolean): void {
+  try {
+    if (skipped) localStorage.setItem(ACCOUNT_KEYS.authSkipped, '1');
+    else localStorage.removeItem(ACCOUNT_KEYS.authSkipped);
+  } catch (e) {
+    console.error('Failed to save the sign-in choice', e);
+  }
+}
+
+/** A review waiting to reach the server: sent ('add') or reverted by undo ('remove'). */
+export interface OutboxEntry {
+  op: 'add' | 'remove';
+  cardId: string;
+  rating: number;
+  state: number;
+  reviewedAt: string;
+  scheduledDays: number;
+  stability: number;
+  difficulty: number;
+}
+
+const MAX_OUTBOX = 2000;
+
+function isOutboxEntry(v: unknown): v is OutboxEntry {
+  if (typeof v !== 'object' || v === null) return false;
+  const e = v as Record<string, unknown>;
+  return (
+    (e.op === 'add' || e.op === 'remove') &&
+    typeof e.cardId === 'string' &&
+    typeof e.reviewedAt === 'string' &&
+    isCount(e.rating) &&
+    isCount(e.state)
+  );
+}
+
+export function loadSyncOutbox(): OutboxEntry[] {
+  try {
+    const raw = localStorage.getItem(ACCOUNT_KEYS.syncOutbox);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter(isOutboxEntry) : [];
+  } catch (e) {
+    console.error('Failed to load the sync queue', e);
+    return [];
+  }
+}
+
+export function saveSyncOutbox(entries: OutboxEntry[]): void {
+  try {
+    if (entries.length === 0) localStorage.removeItem(ACCOUNT_KEYS.syncOutbox);
+    else localStorage.setItem(ACCOUNT_KEYS.syncOutbox, JSON.stringify(entries.slice(-MAX_OUTBOX)));
+  } catch (e) {
+    console.error('Failed to save the sync queue', e);
+  }
+}
+
+/**
  * Bump when the bundled vocabulary text changes. Saved native cards then pick up the new
  * hanzi, pinyin and translation once, keeping their study history and mnemonics.
  * 2: Portuguese translations reviewed for every level; pinyin spaced per syllable.
@@ -243,6 +329,7 @@ export function saveCards(cards: Card[]): void {
   } catch (e) {
     console.error('Failed to save cards to storage', e);
   }
+  emitLocalChange({ kind: 'progress' });
 }
 
 export function loadDeckConfig(): DeckConfig {
@@ -261,6 +348,7 @@ export function loadDeckConfig(): DeckConfig {
 export function saveDeckConfig(config: DeckConfig): void {
   try {
     localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(config));
+    emitLocalChange({ kind: 'progress' });
   } catch (e) {
     console.error(e);
   }
@@ -322,6 +410,7 @@ export function loadFSRSOptions(): FSRSOptions {
 export function saveFSRSOptions(options: FSRSOptions): void {
   try {
     localStorage.setItem(STORAGE_KEYS.fsrs, JSON.stringify(options));
+    emitLocalChange({ kind: 'progress' });
   } catch (e) {
     console.error(e);
   }
@@ -351,6 +440,7 @@ export function pushReviewLog(log: ReviewLog): void {
   const current = loadReviewLogs();
   current.push(log);
   saveReviewLogs(current);
+  emitLocalChange({ kind: 'review', log });
 }
 
 export function popReviewLog(): ReviewLog | null {
@@ -358,6 +448,7 @@ export function popReviewLog(): ReviewLog | null {
   const last = current.pop();
   if (last) {
     saveReviewLogs(current);
+    emitLocalChange({ kind: 'undo', log: last });
     return last;
   }
   return null;
@@ -394,6 +485,7 @@ export function saveExamAttempt(attempt: ExamAttempt): void {
     const sameLevel = [attempt, ...all.filter((a) => a.level === attempt.level)].slice(0, MAX_EXAM_ATTEMPTS);
     const others = all.filter((a) => a.level !== attempt.level);
     localStorage.setItem(STORAGE_KEYS.examAttempts, JSON.stringify([...sameLevel, ...others]));
+    emitLocalChange({ kind: 'progress' });
   } catch (e) {
     console.error('Failed to save exam attempt', e);
   }
@@ -416,6 +508,7 @@ export function markStoryRead(id: string): void {
   try {
     const ids = Array.from(new Set([...loadStoriesRead(), id]));
     localStorage.setItem(STORAGE_KEYS.storiesRead, JSON.stringify(ids));
+    emitLocalChange({ kind: 'progress' });
   } catch (e) {
     console.error('Failed to save story progress', e);
   }

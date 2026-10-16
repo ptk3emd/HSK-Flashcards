@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Card, DeckConfig, FSRSOptions } from './types/card';
 import {
   loadCards,
@@ -14,7 +14,12 @@ import {
   saveFSRSOptions,
   getStoredTheme,
   saveStoredTheme,
+  loadAuthSkipped,
+  saveAuthSkipped,
 } from './lib/storage';
+import { CloudSync, Session, SyncStatus, getSupabase, isCloudEnabled } from './lib/sync';
+import { AuthScreen } from './components/AuthScreen';
+import { AccountSettings } from './components/AccountSettings';
 import { StudySession } from './components/StudySession';
 import { DeckDashboard } from './components/DeckDashboard';
 import { ViewLoading, DecksSkeleton } from './components/ViewLoading';
@@ -57,6 +62,55 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'study' | 'decks' | 'browser' | 'learn' | 'stats' | 'settings'>('decks');
   const [isolatedStudyLevel, setIsolatedStudyLevel] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Cloud account: off entirely when the build has no Supabase key
+  const [session, setSession] = useState<Session | null>(null);
+  const [authReady, setAuthReady] = useState(!isCloudEnabled);
+  const [authSkipped, setAuthSkipped] = useState(loadAuthSkipped);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+  const userId = session?.user.id ?? null;
+
+  useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) return;
+    let active = true;
+    supabase.auth
+      .getSession()
+      .then(({ data }) => active && setSession(data.session))
+      .catch((e) => console.error('Failed to restore the session', e))
+      .finally(() => active && setAuthReady(true));
+    const { data } = supabase.auth.onAuthStateChange((_event, next) => setSession(next));
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
+  }, []);
+
+  // The latest study state, read once when a sync session starts
+  const latestRef = useRef({ cards, deckConfig, fsrsOptions });
+  latestRef.current = { cards, deckConfig, fsrsOptions };
+
+  // One sync session per signed-in user: merge the cloud copy in, then mirror local saves
+  useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase || !userId || !isLoaded) return;
+    const sync = new CloudSync(supabase, userId, setSyncStatus);
+    sync
+      .start(latestRef.current)
+      .then((merged) => {
+        setCards(merged.cards);
+        setDeckConfig(merged.deckConfig);
+        setFSRSOptions(merged.fsrsOptions);
+      })
+      .catch((e) => {
+        console.error('Cloud sync could not start', e);
+        setSyncStatus(navigator.onLine ? 'error' : 'offline');
+      });
+    return () => {
+      sync.stop();
+      setSyncStatus('idle');
+    };
+  }, [userId, isLoaded]);
 
   useSystemBarHidden(deckConfig.hideSystemBar);
 
@@ -119,8 +173,21 @@ export default function App() {
 
   const isLight = theme === 'light';
 
+  // Sign-in comes first when the cloud is available, unless the student chose to stay offline
+  if (isCloudEnabled && authReady && !session && !authSkipped) {
+    return (
+      <AuthScreen
+        theme={theme}
+        onSkip={() => {
+          saveAuthSkipped(true);
+          setAuthSkipped(true);
+        }}
+      />
+    );
+  }
+
   // First paint while the deck loads: the dashboard's shape in the saved theme
-  if (!isLoaded) {
+  if (!isLoaded || !authReady) {
     return (
       <div className={`min-h-screen w-full font-sans ${isLight ? 'card-theme-light text-ink' : 'night_mode card-theme-dark bg-night text-white'}`}>
         <main className="max-w-5xl mx-auto px-4 pt-6 pb-28">
@@ -202,6 +269,17 @@ export default function App() {
         {activeTab === 'settings' && (
           <div className="max-w-2xl mx-auto space-y-4 animate-in fade-in duration-200">
             <h1 className="px-2 pt-2 pb-1 text-2xl font-semibold tracking-tight">Configurações</h1>
+
+            {isCloudEnabled && (
+              <AccountSettings
+                email={session?.user.email ?? null}
+                status={syncStatus}
+                onSignIn={() => {
+                  saveAuthSkipped(false);
+                  setAuthSkipped(false);
+                }}
+              />
+            )}
 
             <section className="sheet px-5 sm:px-7 pt-5 pb-2">
               <AudioVoiceSettings
