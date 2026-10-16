@@ -5,6 +5,7 @@
  */
 
 import { VoiceGenderPreference } from '../types/card';
+import { STORAGE_KEYS } from './storage';
 
 export interface SpeechOptions {
   rate?: number;
@@ -159,7 +160,7 @@ function getStoredAudioPreferences(): {
   voiceURI: string;
 } {
   try {
-    const raw = localStorage.getItem('hanzi_anki_settings_v2');
+    const raw = localStorage.getItem(STORAGE_KEYS.settings);
     if (raw) {
       const parsed = JSON.parse(raw);
       return {

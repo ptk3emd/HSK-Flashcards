@@ -1,5 +1,14 @@
 import type { Card, ReviewLog } from '../types/card';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
+import { STORAGE_KEYS } from './storage';
+
+/** Raised when saved data cannot be read back: the fix is local data, never connectivity. */
+export class ExportDataError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ExportDataError';
+  }
+}
 
 /** Saved versions win by stable ID, including edits, suspension and FSRS state. */
 export function mergeExportCards(nativeCards: Card[], userCards: Card[]): Card[] {
@@ -42,12 +51,27 @@ export function buildAnkiCsv(cards: Card[], logs: ReviewLog[]): string {
 
 /** Explicit app-owned keys only; fail rather than silently export unreadable user data. */
 export function readUserBackup(storage: Pick<Storage, 'getItem'>): Record<string, unknown> {
-  const keys = ['hanzi_anki_cards_v2', 'hanzi_anki_settings_v2', 'hanzi_anki_fsrs_v2',
-    'hanzi_anki_review_logs_v2', 'hanzi_anki_theme_v2', 'hanzi_anki_content_version',
-    'hanzi_anki_exam_attempts_v1', 'hanzi_anki_stories_read_v1', 'hanzi_anki_exam_session_v1'];
-  return Object.fromEntries(keys.flatMap(key => {
+  return Object.fromEntries(Object.values(STORAGE_KEYS).flatMap(key => {
     const value = storage.getItem(key);
     if (value === null) return [];
     return [[key, value]];
   }));
+}
+
+/**
+ * The saved review history, or an empty list when this device never saved any.
+ * Throws ExportDataError when a saved value exists but cannot be read as a list of logs.
+ */
+export function parseReviewLogs(storage: Record<string, unknown>): ReviewLog[] {
+  const raw = storage[STORAGE_KEYS.reviewLogs];
+  if (raw === undefined) return [];
+  if (typeof raw !== 'string') throw new ExportDataError('review history is not a stored string');
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new ExportDataError('review history is not valid JSON');
+  }
+  if (!Array.isArray(parsed)) throw new ExportDataError('review history is not a list');
+  return parsed as ReviewLog[];
 }

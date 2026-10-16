@@ -28,24 +28,36 @@ export function AnkiExportSettings({ cards, deckConfig, fsrsOptions }: Props) {
     urlsRef.current.forEach(URL.revokeObjectURL);
     urlsRef.current = [];
     try {
-      const { loadExportCards, buildAnkiCsv, readUserBackup } = await import('../lib/ankiExport');
+      const { ExportDataError, loadExportCards, buildAnkiCsv, parseReviewLogs, readUserBackup } = await import('../lib/ankiExport');
       const storage = readUserBackup(localStorage);
-      const logs = JSON.parse((storage.hanzi_anki_review_logs_v2 as string) ?? '[]') as ReviewLog[];
-      if (!Array.isArray(logs)) throw new Error('Invalid review history');
+      let logs: ReviewLog[];
+      try {
+        logs = parseReviewLogs(storage);
+      } catch (e) {
+        if (e instanceof ExportDataError) {
+          if (request === requestRef.current) {
+            setError('Não foi possível ler o histórico de revisões salvo neste navegador. Seus dados não foram alterados.');
+          }
+          return;
+        }
+        throw e;
+      }
       const allCards = await loadExportCards(cards);
       if (request !== requestRef.current) return;
       const exportedAt = new Date().toISOString();
       const csv = URL.createObjectURL(new Blob([buildAnkiCsv(allCards, logs)], { type: 'text/csv;charset=utf-8' }));
       urlsRef.current.push(csv);
+      // Canonical backup: the raw app storage plus the parsed deck settings. The full card
+      // list travels in the CSV, so the JSON does not repeat it.
       const backup = URL.createObjectURL(new Blob([JSON.stringify({ format: 'hsk-flashcards-backup', version: 1,
-        exportedAt, cards: allCards, deckConfig, fsrsOptions, reviewLogs: logs, storage }, null, 2)], { type: 'application/json' }));
+        exportedAt, deckConfig, fsrsOptions, storage }, null, 2)], { type: 'application/json' }));
       urlsRef.current.push(backup);
       setFiles({ csv, backup, count: allCards.length, date: exportedAt.slice(0, 10) });
     } catch {
       if (request === requestRef.current) {
         urlsRef.current.forEach(URL.revokeObjectURL);
         urlsRef.current = [];
-        setError('Não foi possível preparar os arquivos. Verifique a conexão para carregar os níveis HSK e tente novamente. Seus dados não foram alterados.');
+        setError('Não foi possível carregar os níveis HSK. Verifique a conexão e tente novamente. Seus dados não foram alterados.');
       }
     } finally {
       if (request === requestRef.current) { busyRef.current = false; setBusy(false); }
@@ -70,7 +82,7 @@ export function AnkiExportSettings({ cards, deckConfig, fsrsOptions }: Props) {
     <details className="text-sm leading-relaxed">
       <summary className="cursor-pointer min-h-11 flex items-center font-semibold">Como importar e o que é preservado</summary>
       <p className="mt-2">No Anki para computador, escolha Arquivo → Importar e selecione o CSV. Use um tipo de nota com frente e verso (como Básico): associe Frente à frente e Verso ao verso. Mantenha HTML ativado; Tags e Baralho são indicados no arquivo. ID e DadosUsuario podem ser ignorados ou associados a campos extras.</p>
-      <p className="mt-2">O CSV leva os intervalos, o estado FSRS, a suspensão e o histórico em DadosUsuario, mas o Anki importa cartões novos: esses dados não recriam o agendamento nem suspendem cartões automaticamente. O backup JSON guarda também preferências, provas e leituras; ele é um arquivo pessoal, não um pacote importável pelo Anki. Áudio sintetizado pelo navegador não é incluído.</p>
+      <p className="mt-2">O CSV leva os intervalos, o estado FSRS, a suspensão e o histórico em DadosUsuario, mas o Anki importa cartões novos: esses dados não recriam o agendamento nem suspendem cartões automaticamente. O backup JSON guarda seus cartões salvos, preferências, provas e leituras; ele é um arquivo pessoal, não um pacote importável pelo Anki. Áudio sintetizado pelo navegador não é incluído.</p>
       <a className="underline inline-block mt-2" href="https://docs.ankiweb.net/importing/text-files.html" target="_blank" rel="noreferrer">Manual de importação do Anki</a>
     </details>
   </section>;

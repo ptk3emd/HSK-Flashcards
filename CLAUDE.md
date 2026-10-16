@@ -26,6 +26,9 @@ npm run dev
 # Checagem de tipos e linting
 npm run lint
 
+# Executar os testes unitários (node:test via tsx)
+npm run test
+
 # Gerar build de produção otimizado para GitHub Pages
 npm run build
 
@@ -54,6 +57,7 @@ npm run clean
     │
     ├── components/         # Componentes visuais modulares
     │   ├── AudioVoiceSettings.tsx  # Configurações de voz/TTS (velocidade, pitch, dialeto)
+    │   ├── AnkiExportSettings.tsx  # Exportação do vocabulário e do backup para o Anki
     │   ├── CardBrowser.tsx         # Busca, filtragem e inspeção do vocabulário
     │   ├── DeckDashboard.tsx       # Visão geral de baralhos e progresso HSK
     │   ├── HanziWritingCanvas.tsx  # Canvas interativo para treino de traçado de ideogramas
@@ -69,6 +73,7 @@ npm run clean
     │   └── hskParser.ts            # Parser para importação de CSV/TSV
     │
     ├── lib/                # Lógica de negócio e utilitários
+    │   ├── ankiExport.ts           # Geração do CSV do Anki e do backup JSON (com testes)
     │   ├── fsrs.ts                 # Implementação matemática do algoritmo FSRS
     │   ├── speech.ts               # Utilitários de síntese de voz (TTS Web Speech API)
     │   └── storage.ts              # Persistência e sincronização via localStorage
@@ -88,7 +93,7 @@ npm run clean
 - **Tipagem Estrita**: Manter interfaces e tipos centralizados em `src/types/card.ts`. Evitar `any`.
 - **Design & Tailwind v4**: Utilizar utilitários Tailwind com suporte completo a tema escuro/claro (`theme === 'dark' ? '...' : '...'`).
 - **Persistência Segura**: Qualquer nova funcionalidade de dados deve passar por métodos em `src/lib/storage.ts` com tratamento contra JSON inválido ou cotas de armazenamento.
-- **Verificação**: Sempre rodar `npm run lint` e testar `npm run build` antes de finalizar alterações.
+- **Verificação**: Sempre rodar `npm run lint` e `npm run test`, e testar `npm run build` antes de finalizar alterações.
 
 ### O que NÃO fazer
 - **NÃO usar emojis** em textos, botões, cabeçalhos ou tooltips.

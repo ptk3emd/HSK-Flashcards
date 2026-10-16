@@ -9,15 +9,22 @@ import {
 import { loadDefaultCards, loadNativeLevelCards, levelOfNativeId } from '../data/defaultDecks';
 import { DEFAULT_GESTURES, sanitizeGestures } from './gestures';
 
-const CARDS_STORAGE_KEY = 'hanzi_anki_cards_v2';
-const SETTINGS_STORAGE_KEY = 'hanzi_anki_settings_v2';
-const FSRS_STORAGE_KEY = 'hanzi_anki_fsrs_v2';
-const LOGS_STORAGE_KEY = 'hanzi_anki_review_logs_v2';
-const THEME_STORAGE_KEY = 'hanzi_anki_theme_v2';
-const CONTENT_VERSION_KEY = 'hanzi_anki_content_version';
-const EXAM_ATTEMPTS_KEY = 'hanzi_anki_exam_attempts_v1';
-const STORIES_READ_KEY = 'hanzi_anki_stories_read_v1';
-const EXAM_SESSION_KEY = 'hanzi_anki_exam_session_v1';
+/**
+ * Every app-owned localStorage key in one place: persistence and the Anki backup
+ * read from this same list, so a new key can never be silently left out of a backup.
+ */
+export const STORAGE_KEYS = {
+  cards: 'hanzi_anki_cards_v2',
+  settings: 'hanzi_anki_settings_v2',
+  fsrs: 'hanzi_anki_fsrs_v2',
+  reviewLogs: 'hanzi_anki_review_logs_v2',
+  theme: 'hanzi_anki_theme_v2',
+  contentVersion: 'hanzi_anki_content_version',
+  examAttempts: 'hanzi_anki_exam_attempts_v1',
+  storiesRead: 'hanzi_anki_stories_read_v1',
+  examSession: 'hanzi_anki_exam_session_v1',
+} as const;
+
 const MAX_EXAM_ATTEMPTS = 20; // per level
 
 /**
@@ -46,7 +53,7 @@ export const DEFAULT_DECK_CONFIG: DeckConfig = {
 
 export function getStoredTheme(): 'dark' | 'light' {
   try {
-    const val = localStorage.getItem(THEME_STORAGE_KEY);
+    const val = localStorage.getItem(STORAGE_KEYS.theme);
     if (val === 'light' || val === 'dark') return val;
   } catch (e) {
     // fallback
@@ -56,7 +63,7 @@ export function getStoredTheme(): 'dark' | 'light' {
 
 export function saveStoredTheme(theme: 'dark' | 'light'): void {
   try {
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    localStorage.setItem(STORAGE_KEYS.theme, theme);
   } catch (e) {
     console.error(e);
   }
@@ -67,7 +74,7 @@ export function saveStoredTheme(theme: 'dark' | 'light'): void {
  */
 export function loadStoredCards(): Card[] | null {
   try {
-    const raw = localStorage.getItem(CARDS_STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.cards);
     if (raw) {
       const parsed = JSON.parse(raw) as Card[];
       if (Array.isArray(parsed) && parsed.length > 0) {
@@ -95,7 +102,7 @@ export async function loadCards(): Promise<Card[]> {
 
 function saveContentVersion(): void {
   try {
-    localStorage.setItem(CONTENT_VERSION_KEY, String(CONTENT_VERSION));
+    localStorage.setItem(STORAGE_KEYS.contentVersion, String(CONTENT_VERSION));
   } catch (e) {
     console.error(e);
   }
@@ -105,7 +112,7 @@ function saveContentVersion(): void {
 async function refreshNativeContent(stored: Card[]): Promise<Card[]> {
   let version = 0;
   try {
-    version = Number(localStorage.getItem(CONTENT_VERSION_KEY)) || 0;
+    version = Number(localStorage.getItem(STORAGE_KEYS.contentVersion)) || 0;
   } catch {
     return stored;
   }
@@ -232,7 +239,7 @@ async function refreshText(cards: Card[]): Promise<Card[]> {
 
 export function saveCards(cards: Card[]): void {
   try {
-    localStorage.setItem(CARDS_STORAGE_KEY, JSON.stringify(cards));
+    localStorage.setItem(STORAGE_KEYS.cards, JSON.stringify(cards));
   } catch (e) {
     console.error('Failed to save cards to storage', e);
   }
@@ -240,7 +247,7 @@ export function saveCards(cards: Card[]): void {
 
 export function loadDeckConfig(): DeckConfig {
   try {
-    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.settings);
     if (raw) {
       const parsed = JSON.parse(raw);
       return { ...DEFAULT_DECK_CONFIG, ...parsed, gestures: sanitizeGestures(parsed?.gestures) };
@@ -253,7 +260,7 @@ export function loadDeckConfig(): DeckConfig {
 
 export function saveDeckConfig(config: DeckConfig): void {
   try {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(config));
+    localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(config));
   } catch (e) {
     console.error(e);
   }
@@ -302,7 +309,7 @@ export function sanitizeFSRSOptions(raw: unknown): FSRSOptions {
 
 export function loadFSRSOptions(): FSRSOptions {
   try {
-    const raw = localStorage.getItem(FSRS_STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.fsrs);
     if (raw) {
       return sanitizeFSRSOptions(JSON.parse(raw));
     }
@@ -314,7 +321,7 @@ export function loadFSRSOptions(): FSRSOptions {
 
 export function saveFSRSOptions(options: FSRSOptions): void {
   try {
-    localStorage.setItem(FSRS_STORAGE_KEY, JSON.stringify(options));
+    localStorage.setItem(STORAGE_KEYS.fsrs, JSON.stringify(options));
   } catch (e) {
     console.error(e);
   }
@@ -322,7 +329,7 @@ export function saveFSRSOptions(options: FSRSOptions): void {
 
 export function loadReviewLogs(): ReviewLog[] {
   try {
-    const raw = localStorage.getItem(LOGS_STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.reviewLogs);
     if (raw) {
       return JSON.parse(raw);
     }
@@ -334,7 +341,7 @@ export function loadReviewLogs(): ReviewLog[] {
 
 export function saveReviewLogs(logs: ReviewLog[]): void {
   try {
-    localStorage.setItem(LOGS_STORAGE_KEY, JSON.stringify(logs.slice(-500))); // keep last 500
+    localStorage.setItem(STORAGE_KEYS.reviewLogs, JSON.stringify(logs.slice(-500))); // keep last 500
   } catch (e) {
     console.error(e);
   }
@@ -370,7 +377,7 @@ function isExamAttempt(v: unknown): v is ExamAttempt {
 /** Mock exam results, newest first. Invalid stored entries are dropped, not thrown. */
 export function loadExamAttempts(): ExamAttempt[] {
   try {
-    const raw = localStorage.getItem(EXAM_ATTEMPTS_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.examAttempts);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.filter(isExamAttempt) : [];
@@ -386,7 +393,7 @@ export function saveExamAttempt(attempt: ExamAttempt): void {
     const all = loadExamAttempts();
     const sameLevel = [attempt, ...all.filter((a) => a.level === attempt.level)].slice(0, MAX_EXAM_ATTEMPTS);
     const others = all.filter((a) => a.level !== attempt.level);
-    localStorage.setItem(EXAM_ATTEMPTS_KEY, JSON.stringify([...sameLevel, ...others]));
+    localStorage.setItem(STORAGE_KEYS.examAttempts, JSON.stringify([...sameLevel, ...others]));
   } catch (e) {
     console.error('Failed to save exam attempt', e);
   }
@@ -395,7 +402,7 @@ export function saveExamAttempt(attempt: ExamAttempt): void {
 /** Ids of the stories the student has finished. */
 export function loadStoriesRead(): string[] {
   try {
-    const raw = localStorage.getItem(STORIES_READ_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.storiesRead);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [];
@@ -408,7 +415,7 @@ export function loadStoriesRead(): string[] {
 export function markStoryRead(id: string): void {
   try {
     const ids = Array.from(new Set([...loadStoriesRead(), id]));
-    localStorage.setItem(STORIES_READ_KEY, JSON.stringify(ids));
+    localStorage.setItem(STORAGE_KEYS.storiesRead, JSON.stringify(ids));
   } catch (e) {
     console.error('Failed to save story progress', e);
   }
@@ -453,7 +460,7 @@ function isExamSession(v: unknown): v is ExamSession {
 /** The exam in progress, if the student left it half done. Invalid data counts as none. */
 export function loadExamSession(): ExamSession | null {
   try {
-    const raw = localStorage.getItem(EXAM_SESSION_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.examSession);
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     return isExamSession(parsed) ? parsed : null;
@@ -465,7 +472,7 @@ export function loadExamSession(): ExamSession | null {
 
 export function saveExamSession(session: ExamSession): void {
   try {
-    localStorage.setItem(EXAM_SESSION_KEY, JSON.stringify(session));
+    localStorage.setItem(STORAGE_KEYS.examSession, JSON.stringify(session));
   } catch (e) {
     console.error('Failed to save the exam in progress', e);
   }
@@ -473,7 +480,7 @@ export function saveExamSession(session: ExamSession): void {
 
 export function clearExamSession(): void {
   try {
-    localStorage.removeItem(EXAM_SESSION_KEY);
+    localStorage.removeItem(STORAGE_KEYS.examSession);
   } catch (e) {
     console.error('Failed to clear the exam in progress', e);
   }
