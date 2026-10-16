@@ -1,0 +1,134 @@
+/* ==========================================================================
+   Palier, the French course: the same glass on a marinière.
+   Navy horizontal stripes on écru (light) or on night navy (dark), bleu de France as the one
+   action colour, a red wax seal for the grades, and Garamond (a French face, 1530s) for the words.
+   Everything here is scoped to .course-fr on <html>, so the Mandarin course never sees it.
+   ========================================================================== */
+
+:root {
+  /* The action colour of each course; buttons that used the brand red use these */
+  --brand: #B3261E;
+  --brand-strong: #8F1E18;
+  /* Learning-state counts stay red in both courses */
+  --state-learning: #b91c1c;
+}
+.night_mode { --state-learning: #f87171; }
+
+:root.course-fr {
+  --brand: #24479E;
+  --brand-strong: #1D3A84;
+
+  /* Every red utility in the app is the brand colour, so the French course remaps the scale
+     to bleu de France instead of editing each component */
+  --color-red-50: #eef2fb;
+  --color-red-100: #dce4f6;
+  --color-red-200: #b9c9ec;
+  --color-red-300: #8ea6dd;
+  --color-red-400: #6f8fd6;
+  --color-red-500: #3c60b3;
+  --color-red-600: #24479e;
+  --color-red-700: #1d3a84;
+  --color-red-800: #1a316b;
+  --color-red-900: #172957;
+  --color-red-950: #0e1a38;
+
+  --color-focus: #3c60b3;
+  --color-night: #0a1226;
+  --color-night-panel: #0d162d;
+  --chart-curve: #3c60b3;
+  --system-red: #2f56b4;
+  --font-hanzi: "EB Garamond", "Garamond", "Cormorant Garamond", "Times New Roman", serif;
+}
+:root.course-fr ::selection { background: rgba(60, 96, 179, 0.3); }
+
+/* State colours that must keep their meaning: learning is red, errors are red */
+.course-fr .state-learning { color: var(--state-learning); }
+.course-fr [role='alert'] { color: #b4232c; }
+.course-fr .night_mode [role='alert'],
+.course-fr .night_mode[role='alert'] { color: #ff8a8a; }
+
+/* ---------------------------------------------------------------- Light: écru marinière */
+.course-fr .card-theme-light {
+  background-color: #efe9dd;
+  background-image:
+    repeating-linear-gradient(
+      180deg,
+      rgba(27, 45, 92, 0.085) 0px,
+      rgba(27, 45, 92, 0.085) 12px,
+      rgba(255, 255, 255, 0) 12px,
+      rgba(255, 255, 255, 0) 30px
+    ),
+    radial-gradient(circle at 50% 10%, #fbf8f1 0%, #ece5d6 55%, #d9d0bd 100%);
+  --text-bg-selected: rgba(60, 96, 179, 0.2);
+  --underline-decoration: rgba(60, 96, 179, 0.45);
+
+  --glass-surface: rgba(255, 253, 248, 0.5);
+  --glass-pill: rgba(255, 253, 248, 0.62);
+  --glass-field: rgba(255, 254, 251, 0.62);
+  --glass-edge: rgba(255, 255, 255, 0.75);
+  --glass-solid: #fbf8f2;
+  --glass-menu: rgba(255, 253, 249, 0.88);
+}
+
+/* ---------------------------------------------------------------- Dark: night navy marinière */
+.course-fr .card-theme-dark,
+.course-fr .card.night_mode {
+  --glass-surface: rgba(16, 26, 54, 0.58);
+  --glass-pill: rgba(22, 34, 68, 0.7);
+  --glass-field: rgba(4, 8, 20, 0.42);
+  --glass-edge: rgba(255, 255, 255, 0.16);
+  --glass-solid: #121c38;
+  --glass-menu: rgba(17, 27, 54, 0.84);
+  --text-bg-selected: rgba(111, 143, 214, 0.32);
+  --underline-decoration: rgba(111, 143, 214, 0.5);
+
+  background-color: #0a1226;
+  background-image:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 12px,
+      rgba(0, 0, 0, 0) 12px,
+      rgba(0, 0, 0, 0) 30px
+    ),
+    radial-gradient(circle at 50% 12%, rgba(60, 96, 179, 0.38) 0%, #0d1731 58%, #04070f 100%);
+}
+
+/* ---------------------------------------------------------------- The word on the card
+   French has no characters per line: words keep whole, break only between them, and the size
+   follows the full length of the entry, so "eau" stands large and a phrase still fits. */
+.course-fr .hanzi,
+.course-fr .hanzi.is-long {
+  word-break: normal;
+  line-break: auto;
+  overflow-wrap: break-word;
+  hyphens: manual;
+  max-width: 100%;
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+  font-size: clamp(24px, calc(100cqi * 2.2 / var(--text-length, 8)), 60px) !important;
+  text-wrap: balance;
+}
+.course-fr .study-session .study-tactile-card .hanzi,
+.course-fr .study-session .study-tactile-card .hanzi.is-long {
+  max-width: 100%;
+  font-size: clamp(28px, calc(100cqi * 2.4 / var(--text-length, 8)), 76px) !important;
+}
+.course-fr .mandarin-dock .ptbr { font-family: var(--font-text); }
+
+/* ---------------------------------------------------------------- The wax seal
+   A round cachet de cire instead of the square chop: deep red, a pressed rim, one Garamond capital. */
+.course-fr .study-seal {
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #d4473f 0%, #ad2620 52%, #7d1612 100%);
+  box-shadow:
+    inset 0 0 0 4px rgba(125, 22, 18, 0.55),
+    inset 0 0 0 6px rgba(255, 214, 200, 0.35),
+    0 3px 8px rgba(80, 10, 8, 0.35);
+  color: #fbe9e2;
+  font-family: var(--font-hanzi);
+  font-style: italic;
+  font-weight: 600;
+}
+.course-fr .study-done .study-done-seal { font-size: 30px; }

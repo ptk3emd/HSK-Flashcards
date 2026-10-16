@@ -1,6 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Card, DeckConfig } from '../types/card';
 import { ALL_HSK_LEVELS, HSK_LEVEL_INFO, LEVEL_NUMERALS, loadNativeLevelCards } from '../data/defaultDecks';
+import { COURSE, levelLabel } from '../lib/course';
+import { BrandMark } from './BrandHeader';
+import { CourseSwitch } from './CourseSwitch';
 import { Play, Loader2 } from 'lucide-react';
 
 interface DeckDashboardProps {
@@ -105,12 +108,10 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
     <div className="w-full max-w-2xl mx-auto space-y-4 animate-in fade-in duration-200">
       {/* Brand lockup: the seal mark and the name, above the day's count */}
       <div className="flex items-center gap-2.5 px-1">
-        <svg aria-hidden="true" viewBox="0 0 120 120" className="size-6 shrink-0">
-          <rect width="120" height="120" rx="8" fill="#B3261E" />
-          <path d="M22 98 V80 H42 V62 H62 V44 H98 V98 Z" fill="#F4EEE3" />
-        </svg>
-        <span className="hanzi-index text-lg font-semibold">Lóutī</span>
-        <span className="text-[11px] uppercase tracking-[0.2em] ink-tertiary">Mandarim</span>
+        <BrandMark className="size-6" />
+        <span className="hanzi-index text-lg font-semibold">{COURSE.brand}</span>
+        <span className="text-[11px] uppercase tracking-[0.2em] ink-tertiary">{COURSE.brandSub}</span>
+        <CourseSwitch className="ml-auto" />
       </div>
 
       {/* Today: the count and the one action that matters */}
@@ -125,7 +126,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
         <p className="mt-3 text-sm tabular ink-secondary">
           <span className="font-semibold text-blue-700 dark:text-blue-300">{newCount}</span> novos
           <span aria-hidden="true"> · </span>
-          <span className="font-semibold text-red-700 dark:text-red-300">{learningCount}</span> aprendendo
+          <span className="state-learning font-semibold text-red-700 dark:text-red-300">{learningCount}</span> aprendendo
           <span aria-hidden="true"> · </span>
           <span className="font-semibold text-emerald-700 dark:text-emerald-300">{reviewCount}</span> revisão
         </p>
@@ -184,7 +185,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                   </span>
                   <span className="flex-1 min-w-0">
                     <span className="flex flex-wrap items-baseline gap-x-2 min-w-0">
-                      <span className="font-semibold whitespace-nowrap">{lvl}</span>
+                      <span className="font-semibold whitespace-nowrap">{levelLabel(lvl)}</span>
                       <span className="text-xs tabular ink-tertiary whitespace-nowrap">{formatCount(total)} no total</span>
                     </span>
                     <span className="block text-xs tabular ink-secondary truncate">
@@ -214,7 +215,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                   type="button"
                   onClick={(e) => handleStudyIsolated(lvl, e)}
                   disabled={isLoading}
-                  aria-label={`Estudar só ${lvl}`}
+                  aria-label={`Estudar só ${levelLabel(lvl)}`}
                   className="relative z-10 size-11 shrink-0 rounded-full flex items-center justify-center cursor-pointer transition-colors hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-40"
                 >
                   <Play className="w-4 h-4 fill-current" aria-hidden="true" />

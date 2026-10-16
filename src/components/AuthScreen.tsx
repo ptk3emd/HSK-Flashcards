@@ -96,7 +96,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ theme, onSkip }) => {
             <button
               type="submit"
               disabled={busy}
-              className="w-full min-h-12 rounded-xl bg-[#B3261E] hover:bg-[#8F1E18] text-white text-base font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-wait transition-colors"
+              className="w-full min-h-12 rounded-xl bg-[var(--brand)] hover:bg-[var(--brand-strong)] text-white text-base font-semibold cursor-pointer disabled:opacity-60 disabled:cursor-wait transition-colors"
             >
               {busy ? 'Aguarde...' : 'Entrar'}
             </button>

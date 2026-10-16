@@ -8,12 +8,13 @@ import {
 } from './fsrs';
 import { loadDefaultCards, loadNativeLevelCards, levelOfNativeId } from '../data/defaultDecks';
 import { DEFAULT_GESTURES, sanitizeGestures } from './gestures';
+import { ACTIVE_COURSE } from './courseId';
 
 /**
  * Every app-owned localStorage key in one place: persistence and the Anki backup
  * read from this same list, so a new key can never be silently left out of a backup.
  */
-export const STORAGE_KEYS = {
+const BASE_KEYS = {
   cards: 'hanzi_anki_cards_v2',
   settings: 'hanzi_anki_settings_v2',
   fsrs: 'hanzi_anki_fsrs_v2',
@@ -24,6 +25,21 @@ export const STORAGE_KEYS = {
   storiesRead: 'hanzi_anki_stories_read_v1',
   examSession: 'hanzi_anki_exam_session_v1',
 } as const;
+
+/**
+ * Each course keeps its own study data under its own keys. Mandarin keeps the original names,
+ * so nothing saved before the French course existed moves; French adds a prefix. The theme is
+ * one device preference shared by both.
+ */
+function courseKeys(): { [K in keyof typeof BASE_KEYS]: string } {
+  if (ACTIVE_COURSE === 'zh') return { ...BASE_KEYS };
+  const prefixed = Object.fromEntries(
+    Object.entries(BASE_KEYS).map(([name, key]) => [name, name === 'theme' ? key : `fr_${key}`])
+  );
+  return prefixed as { [K in keyof typeof BASE_KEYS]: string };
+}
+
+export const STORAGE_KEYS = courseKeys();
 
 const MAX_EXAM_ATTEMPTS = 20; // per level
 

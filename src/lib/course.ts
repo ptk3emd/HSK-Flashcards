@@ -1,0 +1,109 @@
+import { ACTIVE_COURSE, CourseId } from './courseId';
+import { Rating } from '../types/card';
+
+/**
+ * Everything that differs between the Mandarin and the French course. Levels keep the same
+ * internal names ('HSK 1' ... 'HSK 7-9') in both, so decks, settings and statistics share one
+ * shape; only what the student sees changes.
+ */
+export interface CourseConfig {
+  id: CourseId;
+  /** Brand name and the word under it */
+  brand: string;
+  brandSub: string;
+  /** Language tag of the studied words (speech, lang attributes) */
+  lang: string;
+  /** Speech voices whose lang starts with one of these */
+  voicePrefixes: string[];
+  /** Hanzi, pinyin, writing pad, stroke order and draw search */
+  hasCharacters: boolean;
+  /** The Learn tab (stories and HSK mock exams) */
+  hasLearn: boolean;
+  /** Index mark per level in the ledgers */
+  levelIndex: Record<string, string>;
+  /** Seal pressed on a graded card, per grade */
+  sealMarks: Record<Rating, string>;
+  /** Seal on the session-complete card */
+  doneMark: string;
+  /** Sentence used to test the voice */
+  voiceSample: string;
+  /** Browser tab title */
+  title: string;
+  /** Browser UI colour (address bar on phones) */
+  themeColor: string;
+  favicon: string;
+}
+
+const ZH: CourseConfig = {
+  id: 'zh',
+  brand: 'Lóutī',
+  brandSub: 'Mandarim',
+  lang: 'zh-CN',
+  voicePrefixes: ['zh', 'cmn', 'yue'],
+  hasCharacters: true,
+  hasLearn: true,
+  levelIndex: {
+    'HSK 1': '一',
+    'HSK 2': '二',
+    'HSK 3': '三',
+    'HSK 4': '四',
+    'HSK 5': '五',
+    'HSK 6': '六',
+    'HSK 7-9': '七–九',
+  },
+  sealMarks: { 1: '再', 2: '难', 3: '好', 4: '易' },
+  doneMark: '完',
+  voiceSample: '你好！很高兴认识你。',
+  title: 'Lóutī Mandarim - Repetição Espaçada',
+  themeColor: '#B3261E',
+  favicon: './favicon.svg',
+};
+
+/**
+ * Palier: a stair landing, and "par paliers", step by step. The French sibling of Lóutī (楼梯,
+ * staircase): the same nine levels, roman numerals for the index, a wax seal for the grades.
+ */
+const FR: CourseConfig = {
+  id: 'fr',
+  brand: 'Palier',
+  brandSub: 'Français',
+  lang: 'fr-FR',
+  voicePrefixes: ['fr'],
+  hasCharacters: false,
+  hasLearn: false,
+  levelIndex: {
+    'HSK 1': 'I',
+    'HSK 2': 'II',
+    'HSK 3': 'III',
+    'HSK 4': 'IV',
+    'HSK 5': 'V',
+    'HSK 6': 'VI',
+    'HSK 7-9': 'VII–IX',
+  },
+  // Encore, Difficile, Bien, Facile
+  sealMarks: { 1: 'E', 2: 'D', 3: 'B', 4: 'F' },
+  doneMark: 'Fin',
+  voiceSample: 'Bonjour ! Enchanté de faire votre connaissance.',
+  title: 'Palier Français - Repetição Espaçada',
+  themeColor: '#24479E',
+  favicon: './favicon-fr.svg',
+};
+
+export const COURSES: Record<CourseId, CourseConfig> = { zh: ZH, fr: FR };
+export const COURSE: CourseConfig = COURSES[ACTIVE_COURSE];
+
+/** The name a level shows: 'HSK 1' in Mandarin, 'Niveau 1' in French. */
+export function levelLabel(level: string): string {
+  if (COURSE.id === 'zh') return level;
+  return level.replace(/^HSK /, 'Niveau ').replace('7-9', '7–9');
+}
+
+/** Applies the course to the page: colours, title, favicon and theme colour. Runs once at startup. */
+export function applyCourseToDocument(): void {
+  const root = document.documentElement;
+  root.classList.add(`course-${COURSE.id}`);
+  root.lang = 'pt-BR';
+  document.title = COURSE.title;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', COURSE.themeColor);
+  document.querySelector('link[rel="icon"][type="image/svg+xml"]')?.setAttribute('href', COURSE.favicon);
+}

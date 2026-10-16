@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { ArrowLeft, Check, EllipsisVertical, Moon, PauseCircle, PenTool, Settings2, Sun, Undo2, Volume2 } from 'lucide-react';
 import { Card, Rating } from '../types/card';
 import { ALL_HSK_LEVELS } from '../data/defaultDecks';
+import { COURSE, levelLabel } from '../lib/course';
 import { useDialogFocus } from './useDialogFocus';
 import { InlineLoadingSkeleton } from './ViewLoading';
 
@@ -148,7 +149,7 @@ export const StudyToolbar: React.FC<StudyToolbarProps> = ({
   useDialogFocus(menuRef, menuOpen, onCloseMenu);
 
   const menuItems = [
-    { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: onOpenWriting, show: !!currentCard },
+    { icon: PenTool, label: 'Praticar escrita', hint: 'W', onClick: onOpenWriting, show: !!currentCard && COURSE.hasCharacters },
     { icon: Volume2, label: 'Ouvir pronúncia', hint: 'R', onClick: onSpeak, show: !!currentCard },
     { icon: PauseCircle, label: 'Suspender cartão', hint: '', onClick: onSuspend, show: !!currentCard },
     { icon: Settings2, label: 'Configurações da sessão', hint: '', onClick: onOpenSettings, show: canConfigure },
@@ -175,7 +176,7 @@ export const StudyToolbar: React.FC<StudyToolbarProps> = ({
           </button>
           <div className="flex items-center gap-3 px-2 text-base font-semibold tabular-nums" role="group" aria-label="Fila de cartões">
             <span className={`text-blue-900 dark:text-blue-400 ${currentCard?.state === 0 ? 'underline underline-offset-4' : ''}`} title="Novos">{newCount}<span className="sr-only"> novos</span></span>
-            <span className={`text-red-900 dark:text-red-400 ${currentCard && (currentCard.state === 1 || currentCard.state === 3) ? 'underline underline-offset-4' : ''}`} title="Aprendendo">{learningCount}<span className="sr-only"> aprendendo</span></span>
+            <span className={`state-learning text-red-900 dark:text-red-400 ${currentCard && (currentCard.state === 1 || currentCard.state === 3) ? 'underline underline-offset-4' : ''}`} title="Aprendendo">{learningCount}<span className="sr-only"> aprendendo</span></span>
             <span className={`text-emerald-900 dark:text-emerald-400 ${currentCard?.state === 2 ? 'underline underline-offset-4' : ''}`} title="Revisão">{reviewCount}<span className="sr-only"> para revisão</span></span>
           </div>
         </div>
@@ -229,14 +230,14 @@ export const StudyToolbar: React.FC<StudyToolbarProps> = ({
             className="study-session-menu sheet sheet-menu animate-in fade-in zoom-in-95 duration-150 origin-top-right fixed z-50 w-64 flex flex-col overflow-hidden !rounded-2xl p-1.5"
           >
             {loadingLevel && (
-              <div className="shrink-0 px-3 py-2"><InlineLoadingSkeleton label={`Carregando ${loadingLevel}…`} /></div>
+              <div className="shrink-0 px-3 py-2"><InlineLoadingSkeleton label={`Carregando ${loadingLevel ? levelLabel(loadingLevel) : ""}…`} /></div>
             )}
             {levelLoadError && (
-              <p role="alert" className="shrink-0 px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError}</span>. Tente novamente.</p>
+              <p role="alert" className="shrink-0 px-3 py-2 text-sm">Não foi possível carregar <span className="whitespace-nowrap">{levelLoadError ? levelLabel(levelLoadError) : ""}</span>. Tente novamente.</p>
             )}
             <div className="study-menu-scroll">
               <header className="study-session-status">
-                <span>{isolatedLevel ?? 'Todos os ativos'}</span>
+                <span>{isolatedLevel ? levelLabel(isolatedLevel) : 'Todos os ativos'}</span>
                 <span className="tabular-nums" aria-live="polite" aria-atomic="true">
                   {totalSessionCount > 0 && (
                     <>
@@ -283,7 +284,7 @@ export const StudyToolbar: React.FC<StudyToolbarProps> = ({
                       isLight ? 'hover:bg-black/5' : 'hover:bg-white/10'
                     }`}
                   >
-                    <span>{lvl ?? 'Todos os ativos'}</span>
+                    <span>{lvl ? levelLabel(lvl) : 'Todos os ativos'}</span>
                     {isSelected && <Check className="w-4 h-4 text-red-500" />}
                   </button>
                 );

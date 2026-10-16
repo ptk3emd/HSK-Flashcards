@@ -7,6 +7,7 @@ import {
   getVoiceDisplayLabel,
   detectVoiceGender,
 } from '../lib/speech';
+import { COURSE } from '../lib/course';
 
 interface AudioVoiceSettingsProps {
   deckConfig: DeckConfig;
@@ -31,7 +32,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
 }) => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [isPlayingTest, setIsPlayingTest] = useState(false);
-  const [sampleText, setSampleText] = useState('你好！很高兴认识你。');
+  const [sampleText, setSampleText] = useState(COURSE.voiceSample);
 
   // Load and subscribe to voices
   useEffect(() => {
@@ -221,10 +222,10 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
           <input
             id="voice-sample"
             type="text"
-            lang="zh-CN"
+            lang={COURSE.lang}
             value={sampleText}
             onChange={(e) => setSampleText(e.target.value)}
-            placeholder="你好！很高兴认识你。"
+            placeholder={COURSE.voiceSample}
             className="flex-1 min-w-0 min-h-11 px-3 rounded-xl text-sm glass-field focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
           />
           <button

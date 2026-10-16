@@ -15,6 +15,7 @@ import {
   sanitizeFSRSOptions,
   saveSyncOutbox,
 } from './storage';
+import { ACTIVE_COURSE } from './courseId';
 import { isTouched, mergeAttempts, mergeCards, mergeStories, parseRemoteProgress } from './syncMerge';
 
 /**
@@ -35,6 +36,11 @@ export function getSupabase(): SupabaseClient | null {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
   });
   return client;
+}
+
+/** PostgREST and Postgres errors for a column that does not exist yet. */
+function isMissingCourseColumn(error: { code?: string; message?: string }): boolean {
+  return error.code === '42703' || error.code === 'PGRST204' || /column .*course/i.test(error.message ?? '');
 }
 
 export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'offline' | 'error';
@@ -77,6 +83,8 @@ function toOutbox(op: OutboxEntry['op'], log: ReviewLog): OutboxEntry {
 export class CloudSync {
   private pushTimer: number | undefined;
   private flushing = false;
+  /** True while the database still has one progress row per user (before the per-course migration) */
+  private legacyRow = false;
   private stopped = false;
   private readonly onChange = (e: Event) => this.handleChange((e as CustomEvent<LocalChange>).detail);
   private readonly onOnline = () => {
@@ -93,11 +101,20 @@ export class CloudSync {
   /** Merges the cloud copy into this device and returns what the app should now show. */
   async start(local: MergedState): Promise<MergedState> {
     this.onStatus('syncing');
-    const { data, error } = await this.supabase
+    const columns = 'cards, deck_config, fsrs_options, stories_read, exam_attempts, updated_at';
+    let { data, error } = await this.supabase
       .from('user_progress')
-      .select('cards, deck_config, fsrs_options, stories_read, exam_attempts, updated_at')
+      .select(columns)
       .eq('user_id', this.userId)
+      .eq('course', ACTIVE_COURSE)
       .maybeSingle();
+    if (error && isMissingCourseColumn(error)) {
+      // The per-course migration is not applied yet: the single row there is Mandarin.
+      // French stays local until it is, so it can never overwrite that row.
+      if (ACTIVE_COURSE !== 'zh') throw error;
+      this.legacyRow = true;
+      ({ data, error } = await this.supabase.from('user_progress').select(columns).eq('user_id', this.userId).maybeSingle());
+    }
     if (error) throw error;
 
     let merged = local;
@@ -156,7 +173,7 @@ export class CloudSync {
     if (this.stopped) return;
     if (!navigator.onLine) return this.onStatus('offline');
     this.onStatus('syncing');
-    const { error } = await this.supabase.from('user_progress').upsert({
+    const row = {
       user_id: this.userId,
       cards: (loadStoredCards() ?? []).filter(isTouched),
       deck_config: loadDeckConfig(),
@@ -164,7 +181,10 @@ export class CloudSync {
       stories_read: loadStoriesRead(),
       exam_attempts: loadExamAttempts(),
       updated_at: new Date().toISOString(),
-    });
+    };
+    const { error } = this.legacyRow
+      ? await this.supabase.from('user_progress').upsert(row)
+      : await this.supabase.from('user_progress').upsert({ ...row, course: ACTIVE_COURSE }, { onConflict: 'user_id,course' });
     if (this.stopped) return;
     if (error) {
       console.error('Cloud sync failed', error);

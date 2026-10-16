@@ -218,8 +218,8 @@
   transition: background-color 160ms ease, transform 160ms var(--anim-curve);
 }
 .study-done-actions > button:active { transform: translateY(1px); }
-.study-done-primary { background: #B3261E; color: #fff; }
-.study-done-primary:hover { background: #8F1E18; }
+.study-done-primary { background: var(--brand); color: #fff; }
+.study-done-primary:hover { background: var(--brand-strong); }
 .study-done-secondary {
   background: var(--glass-menu);
   color: var(--text-fg);
