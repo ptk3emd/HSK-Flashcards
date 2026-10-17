@@ -437,100 +437,102 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
 
       {/* Card Preview Modal */}
       {previewCard && createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in">
-          <div
-            ref={previewDialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`Pré-visualização de ${previewCard.hanzi}`}
-            className="sheet w-full max-w-xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain p-6 relative flex flex-col items-center gap-4 rounded-[28px]"
-          >
+        <div className={isLight ? 'card-theme-light text-ink' : 'night_mode card-theme-dark text-white'}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in">
             <div
-              className="sticky top-0 z-10 -mx-6 -mt-6 px-6 pt-6 w-[calc(100%+3rem)] flex items-center justify-between pb-2 border-b border-[var(--separator)] bg-[var(--glass-field)] backdrop-blur-xl"
+              ref={previewDialogRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Pré-visualização de ${previewCard.hanzi}`}
+              className="sheet w-full max-w-xl max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain p-6 relative flex flex-col items-center gap-4 rounded-[28px]"
             >
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold">{previewCard.level}</span>
-                {getStateBadge(previewCard.state)}
-              </div>
-              <button
-                type="button"
-                onClick={() => setPreviewCard(null)}
-                className="min-h-11 px-2 opacity-60 hover:opacity-100 text-sm font-semibold cursor-pointer flex items-center gap-1"
+              <div
+                className="sticky top-0 z-10 -mx-6 -mt-6 px-6 pt-6 w-[calc(100%+3rem)] flex items-center justify-between pb-2 border-b border-[var(--separator)] bg-[var(--glass-field)] backdrop-blur-xl"
               >
-                <X className="w-4 h-4" />
-                <span>Fechar</span>
-              </button>
-            </div>
-
-            {/* Acrylic Card preview */}
-            <div
-              className="w-full py-4 cursor-pointer"
-              onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
-            >
-              <MandarinCardView
-                card={previewCard}
-                isFlipped={isPreviewFlipped}
-                onSpeak={() => handleSpeakWord(previewCard.hanzi)}
-                onOpenWriting={() => setWritingCard(previewCard)}
-              />
-            </div>
-
-            <div className="w-full space-y-2">
-              <label className="flex items-center gap-1.5 text-xs font-semibold opacity-80">
-                <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
-                Dica mnemônica
-              </label>
-              <textarea
-                rows={2}
-                value={mnemonicDraft}
-                onChange={(e) => setMnemonicDraft(e.target.value)}
-                placeholder="Escreva uma associação para lembrar o significado"
-                className="glass-field w-full px-3 py-2 text-xs resize-y"
-              />
-              <div className="flex justify-end">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold">{previewCard.level}</span>
+                  {getStateBadge(previewCard.state)}
+                </div>
                 <button
                   type="button"
-                  onClick={handleSaveMnemonic}
-                  disabled={mnemonicDraft.trim() === (previewCard.mnemonic ?? '')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                  onClick={() => setPreviewCard(null)}
+                  className="min-h-11 px-2 opacity-60 hover:opacity-100 text-sm font-semibold cursor-pointer flex items-center gap-1"
                 >
-                  <Save className="w-3.5 h-3.5" />
-                  <span>Salvar dica</span>
+                  <X className="w-4 h-4" />
+                  <span>Fechar</span>
                 </button>
               </div>
-            </div>
 
-            <div className="w-full flex flex-col items-center gap-3 pt-3 border-t border-black/10 dark:border-white/10">
-              <span className="text-[11px] opacity-60">Toque no cartão para virar</span>
-              <div className="w-full flex flex-wrap items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleToggleSuspend(previewCard)}
-                  className={`min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
-                    isLight
-                      ? 'bg-black/5 hover:bg-black/10 text-ink border-black/10'
-                      : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
-                  }`}
-                >
-                  {previewCard.suspended ? <PlayCircle className="w-3.5 h-3.5" /> : <Ban className="w-3.5 h-3.5" />}
-                  <span>{previewCard.suspended ? 'Reativar' : 'Suspender'}</span>
-                </button>
-                {COURSE.hasCharacters && <button
-                  type="button"
-                  onClick={() => setWritingCard(previewCard)}
-                  className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer transition-all shadow-sm"
-                >
-                  <PenTool className="w-3.5 h-3.5" />
-                  <span>Praticar Escrita</span>
-                </button>}
-                <button
-                  type="button"
-                  onClick={() => handleResetCard(previewCard)}
-                  className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-bold cursor-pointer transition-all"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Resetar Progresso</span>
-                </button>
+              {/* Acrylic Card preview */}
+              <div
+                className="w-full py-4 cursor-pointer"
+                onClick={() => setIsPreviewFlipped(!isPreviewFlipped)}
+              >
+                <MandarinCardView
+                  card={previewCard}
+                  isFlipped={isPreviewFlipped}
+                  onSpeak={() => handleSpeakWord(previewCard.hanzi)}
+                  onOpenWriting={() => setWritingCard(previewCard)}
+                />
+              </div>
+
+              <div className="w-full space-y-2">
+                <label className="flex items-center gap-1.5 text-xs font-semibold opacity-80">
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
+                  Dica mnemônica
+                </label>
+                <textarea
+                  rows={2}
+                  value={mnemonicDraft}
+                  onChange={(e) => setMnemonicDraft(e.target.value)}
+                  placeholder="Escreva uma associação para lembrar o significado"
+                  className="glass-field w-full px-3 py-2 text-xs resize-y"
+                />
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleSaveMnemonic}
+                    disabled={mnemonicDraft.trim() === (previewCard.mnemonic ?? '')}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Salvar dica</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="w-full flex flex-col items-center gap-3 pt-3 border-t border-black/10 dark:border-white/10">
+                <span className="text-[11px] opacity-60">Toque no cartão para virar</span>
+                <div className="w-full flex flex-wrap items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleSuspend(previewCard)}
+                    className={`min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-all border ${
+                      isLight
+                        ? 'bg-black/5 hover:bg-black/10 text-ink border-black/10'
+                        : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
+                    }`}
+                  >
+                    {previewCard.suspended ? <PlayCircle className="w-3.5 h-3.5" /> : <Ban className="w-3.5 h-3.5" />}
+                    <span>{previewCard.suspended ? 'Reativar' : 'Suspender'}</span>
+                  </button>
+                  {COURSE.hasCharacters && <button
+                    type="button"
+                    onClick={() => setWritingCard(previewCard)}
+                    className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer transition-all shadow-sm"
+                  >
+                    <PenTool className="w-3.5 h-3.5" />
+                    <span>Praticar Escrita</span>
+                  </button>}
+                  <button
+                    type="button"
+                    onClick={() => handleResetCard(previewCard)}
+                    className="min-h-11 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-bold cursor-pointer transition-all"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Resetar Progresso</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -175,6 +175,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
             step="0.05"
             value={currentSpeed}
             onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
+            style={{ '--range-fill': `${Math.round(((currentSpeed - 0.5) / 0.9) * 100)}%` } as React.CSSProperties}
             className="w-full accent-red-600 cursor-pointer"
           />
           <div role="group" aria-label="Velocidades predefinidas" className="flex flex-wrap gap-1">

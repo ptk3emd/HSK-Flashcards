@@ -27,6 +27,8 @@
   --chart-curve: #ef4444;
   --chart-target: #059669;
   --chart-point-ring: #ffffff;
+  --range-track: #efefef;
+  --range-accent: var(--color-red-600);
 }
 .night_mode {
   --chart-grid: #27272a;
@@ -34,10 +36,56 @@
   --chart-label: #a1a1aa;
   --chart-target: #10b981;
   --chart-point-ring: #18181b;
+  --range-track: rgba(255, 255, 255, 0.22);
 }
 
 ::selection {
   background: rgba(239, 68, 68, 0.35);
+}
+
+/* Range sliders: with accent-color set, Chrome pins the native track to a light grey in both
+   colour schemes, so the track is drawn here; --range-fill carries the value as a percentage */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1rem;
+  background: transparent;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--range-accent) var(--range-fill, 0%),
+    var(--range-track) var(--range-fill, 0%)
+  );
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 999px;
+  background: var(--range-accent);
+}
+input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--range-track);
+}
+input[type='range']::-moz-range-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--range-accent);
+}
+input[type='range']::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--range-accent);
 }
 
 /* Writing pad: the expected stroke keeps tracing from start to end until it is drawn right */

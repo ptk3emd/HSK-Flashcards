@@ -12,7 +12,7 @@ const OPTIONS: { id: CourseId; label: string; lang: string; title: string }[] = 
  * reloads the app in the other one.
  */
 export const CourseSwitch: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <div role="group" aria-label="Idioma de estudo" className={`flex p-0.5 rounded-lg bg-black/5 dark:bg-white/10 ${className}`}>
+  <div role="group" aria-label="Idioma de estudo" className={`flex shrink-0 p-0.5 rounded-lg bg-black/5 dark:bg-white/10 ${className}`}>
     {OPTIONS.map((o) => {
       const current = COURSE.id === o.id;
       return (
@@ -24,7 +24,7 @@ export const CourseSwitch: React.FC<{ className?: string }> = ({ className = '' 
           aria-label={o.title}
           aria-pressed={current}
           onClick={() => switchCourse(o.id)}
-          className={`min-h-9 min-w-11 px-2.5 rounded-md text-sm font-semibold cursor-pointer transition-colors ${
+          className={`min-h-9 min-w-11 px-2.5 rounded-md text-sm font-semibold whitespace-nowrap cursor-pointer transition-colors ${
             current ? 'bg-white text-ink shadow-sm' : 'ink-secondary hover:text-[var(--text-fg)]'
           }`}
         >

@@ -104,6 +104,9 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
               request_retention: parseFloat(e.target.value),
             })
           }
+          style={{
+            '--range-fill': `${Math.round(((fsrsOptions.request_retention - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100)}%`,
+          } as React.CSSProperties}
           className="w-full accent-red-600 cursor-pointer"
         />
       </div>
@@ -134,6 +137,9 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
                   value={effective}
                   aria-label={`Retenção desejada para ${levelLabel(level)}`}
                   onChange={(e) => setLevelRetention(level, parseFloat(e.target.value))}
+                  style={{
+                    '--range-fill': `${Math.round(((effective - SLIDER_MIN) / (SLIDER_MAX - SLIDER_MIN)) * 100)}%`,
+                  } as React.CSSProperties}
                   className="w-full accent-red-600 cursor-pointer"
                 />
                 <span className={`text-sm text-right tabular ${isOverridden ? 'font-semibold' : 'ink-tertiary'}`}>

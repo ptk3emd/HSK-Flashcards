@@ -44,7 +44,7 @@
 .study-session .mnemonic-hint { overflow-wrap: anywhere; }
 .study-session .study-tactile-card[data-dragging] { will-change: transform; }
 .study-session .study-gesture-cue { pointer-events: none; }
-.study-session .study-answer-footer { width: 100%; gap: 0; flex: none; }
+.study-session .study-answer-footer { width: 100%; max-width: var(--card-max-width); gap: 0; flex: none; }
 .study-session .study-answer-footer > div { min-height: var(--study-action-height); }
 .study-session .study-reveal,
 .study-session .study-grades > button {

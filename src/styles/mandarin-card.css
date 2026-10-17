@@ -77,6 +77,7 @@
 
 /* -------------------------------------------------- CORES BASE (modo claro) */
 .card-theme-light {
+  color-scheme: light;
   background-color: #d87679;
   background-image:
     repeating-linear-gradient(
@@ -122,6 +123,7 @@
 .card-theme-dark,
 .card.night_mode,
 .card.nightMode {
+  color-scheme: dark;
   --text: #ffffff;
   --text-secondary: rgba(235, 235, 245, 0.78);
   --text-tertiary: rgba(235, 235, 245, 0.55);
