@@ -59,8 +59,9 @@ function nonEmptyString(value: unknown): value is string {
 /** Reads and validates every level of the course, so a bad file fails before any request. */
 function readRows(): FrRow[] {
   const dir = path.join(process.cwd(), 'src', 'data', course.folder);
+  const filePattern = new RegExp(`^${course.folder}\\d(_\\d+)?\\.json$`);
   const files = readdirSync(dir)
-    .filter((file) => /^fr\d(_\d+)?\.json$/.test(file))
+    .filter((file) => filePattern.test(file))
     .sort();
 
   const rows: FrRow[] = [];
