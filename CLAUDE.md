@@ -6,11 +6,14 @@ Guia de contexto e arquitetura para desenvolvimento no projeto.
 
 ## 1. Visão Geral do Projeto
 
-Aplicação web progressiva (SPA) de flashcards com repetição espaçada moderna, em dois cursos:
+Aplicação web progressiva (SPA) de flashcards com repetição espaçada moderna, em três cursos:
 - **Lóutī Mandarim** (`zh`): vocabulário oficial HSK 3.0 (HSK 1 a 7–9), com hanzi, pinyin, escrita, ordem dos traços e aba Aprender.
 - **Palier Français** (`fr`): o mesmo vocabulário nos mesmos níveis, com o equivalente francês na frente do cartão (adaptação cultural onde cabe), sem hanzi. Paleta marinière (bleu de France, écru, selo de cera vermelho) e Garamond.
+- **Scalino Italiano** (`it`): o mesmo vocabulário nos mesmos níveis, com o equivalente italiano, sem hanzi. Paleta pietra e cipreste (verde, selo de cera verde) e Bodoni.
 
-O curso ativo fica em `src/lib/courseId.ts` (lido uma vez; trocar de curso recarrega o app) e tudo o que difere entre eles em `src/lib/course.ts` (`COURSE`, `levelLabel`). Cada curso tem as próprias chaves no `localStorage` (o francês usa o prefixo `fr_`), e a paleta francesa vive em `src/styles/course-fr.css` sob `html.course-fr`, que remapeia a escala `red` do Tailwind para azul.
+O curso ativo fica em `src/lib/courseId.ts` (lido uma vez; trocar de curso recarrega o app) e tudo o que difere entre eles em `src/lib/course.ts` (`COURSE`, `levelLabel`). Cada curso tem as próprias chaves no `localStorage` (os estrangeiros usam o prefixo do curso: `fr_`, `it_`). As paletas vivem em `src/styles/course-fr.css` e `course-it.css`, sob `html.course-fr` e `html.course-it`, e remapeiam a escala `red` do Tailwind para a cor de cada curso.
+
+O vocabulário estrangeiro fica em `src/data/fr/` e `src/data/it/`, e o Supabase recebe o mesmo conteúdo por `npm run seed:fr` e `npm run seed:it` (`scripts/seed-course.ts`).
 
 - **Algoritmo FSRS nativo**: Cálculo de estabilidade, dificuldade e retrievabilidade baseado no FSRS (Free Spaced Repetition Scheduler).
 - **Recursos principais**: Sessão de estudos com botões de resposta e barra de progresso, lousa de escrita de ideogramas (Hanzi canvas), sintetizador de voz (Web Speech API TTS), navegador/filtro de cartões (busca por Hanzi, Pinyin e tradução) e painel estatístico com curva de retenção, projeção de revisões e histórico.
@@ -77,6 +80,7 @@ npm run clean
     │   ├── defaultDecks.ts         # Baralhos padrão pré-carregados
     │   ├── hsk1.json a hsk7_9.json # Datasets oficiais de vocabulário HSK
     │   ├── fr/fr1.json a fr7_9.json # Curso de francês: mesmos ids (F-xxxxx), mesmos níveis
+    │   ├── it/it1.json a it7_9.json # Curso de italiano: mesmos ids (I-xxxxx), mesmos níveis
     │   └── hskParser.ts            # Parser para importação de CSV/TSV
     │
     ├── lib/                # Lógica de negócio e utilitários

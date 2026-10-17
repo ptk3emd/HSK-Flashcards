@@ -34,7 +34,7 @@ const BASE_KEYS = {
 function courseKeys(): { [K in keyof typeof BASE_KEYS]: string } {
   if (ACTIVE_COURSE === 'zh') return { ...BASE_KEYS };
   const prefixed = Object.fromEntries(
-    Object.entries(BASE_KEYS).map(([name, key]) => [name, name === 'theme' ? key : `fr_${key}`])
+    Object.entries(BASE_KEYS).map(([name, key]) => [name, name === 'theme' ? key : `${ACTIVE_COURSE}_${key}`])
   );
   return prefixed as { [K in keyof typeof BASE_KEYS]: string };
 }

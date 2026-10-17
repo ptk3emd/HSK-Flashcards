@@ -1,5 +1,6 @@
 import { Card } from '../types/card';
 import { COURSE } from '../lib/course';
+import type { CourseId } from '../lib/courseId';
 
 export const ALL_HSK_LEVELS = [
   'HSK 1',
@@ -35,8 +36,8 @@ export const HSK_LEVEL_INFO: Record<HskLevelName, { count: number; total: number
  * level, so a card's level follows from its id.
  */
 export function levelOfNativeId(id: string): HskLevelName | null {
-  // S- in Mandarin, F- in French: both run on the same syllabus serial
-  const match = /^[SF]-(\d{5})$/.exec(id);
+  // S- in Mandarin, F- in French, I- in Italian: all run on the same syllabus serial
+  const match = /^[SFI]-(\d{5})$/.exec(id);
   if (!match) return null;
   const serial = Number(match[1]);
   return ALL_HSK_LEVELS.find((level) => serial <= HSK_LEVEL_INFO[level].total) ?? null;
@@ -45,14 +46,14 @@ export function levelOfNativeId(id: string): HskLevelName | null {
 type LevelModule = { default: unknown };
 
 /** One JSON file per level and course, each loaded on demand so the entry bundle stays light. */
-const LEVEL_FILES: Record<string, { zh: () => Promise<LevelModule>; fr: () => Promise<LevelModule> }> = {
-  'HSK 1': { zh: () => import('./hsk1.json'), fr: () => import('./fr/fr1.json') },
-  'HSK 2': { zh: () => import('./hsk2.json'), fr: () => import('./fr/fr2.json') },
-  'HSK 3': { zh: () => import('./hsk3.json'), fr: () => import('./fr/fr3.json') },
-  'HSK 4': { zh: () => import('./hsk4.json'), fr: () => import('./fr/fr4.json') },
-  'HSK 5': { zh: () => import('./hsk5.json'), fr: () => import('./fr/fr5.json') },
-  'HSK 6': { zh: () => import('./hsk6.json'), fr: () => import('./fr/fr6.json') },
-  'HSK 7-9': { zh: () => import('./hsk7_9.json'), fr: () => import('./fr/fr7_9.json') },
+const LEVEL_FILES: Record<string, Record<CourseId, () => Promise<LevelModule>>> = {
+  'HSK 1': { zh: () => import('./hsk1.json'), fr: () => import('./fr/fr1.json'), it: () => import('./it/it1.json') },
+  'HSK 2': { zh: () => import('./hsk2.json'), fr: () => import('./fr/fr2.json'), it: () => import('./it/it2.json') },
+  'HSK 3': { zh: () => import('./hsk3.json'), fr: () => import('./fr/fr3.json'), it: () => import('./it/it3.json') },
+  'HSK 4': { zh: () => import('./hsk4.json'), fr: () => import('./fr/fr4.json'), it: () => import('./it/it4.json') },
+  'HSK 5': { zh: () => import('./hsk5.json'), fr: () => import('./fr/fr5.json'), it: () => import('./it/it5.json') },
+  'HSK 6': { zh: () => import('./hsk6.json'), fr: () => import('./fr/fr6.json'), it: () => import('./it/it6.json') },
+  'HSK 7-9': { zh: () => import('./hsk7_9.json'), fr: () => import('./fr/fr7_9.json'), it: () => import('./it/it7_9.json') },
 };
 
 /** The native cards of one level, in the active course. */

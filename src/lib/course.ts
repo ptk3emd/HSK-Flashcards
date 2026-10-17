@@ -89,13 +89,44 @@ const FR: CourseConfig = {
   favicon: './favicon-fr.svg',
 };
 
-export const COURSES: Record<CourseId, CourseConfig> = { zh: ZH, fr: FR };
+/**
+ * Scalino, the Italian sibling: a step (gradino) of the same staircase. Bodoni, the Italian
+ * typeface of the 1790s, sets the words; the seal is green wax, the colour of the cypress.
+ */
+const IT: CourseConfig = {
+  id: 'it',
+  brand: 'Scalino',
+  brandSub: 'Italiano',
+  lang: 'it-IT',
+  voicePrefixes: ['it'],
+  hasCharacters: false,
+  hasLearn: false,
+  levelIndex: {
+    'HSK 1': 'I',
+    'HSK 2': 'II',
+    'HSK 3': 'III',
+    'HSK 4': 'IV',
+    'HSK 5': 'V',
+    'HSK 6': 'VI',
+    'HSK 7-9': 'VII–IX',
+  },
+  // Ancora, Difficile, Bene, Facile
+  sealMarks: { 1: 'A', 2: 'D', 3: 'B', 4: 'F' },
+  doneMark: 'Fine',
+  voiceSample: 'Buongiorno! Piacere di conoscerla.',
+  title: 'Scalino Italiano - Repetição Espaçada',
+  themeColor: '#2E5E3E',
+  favicon: './favicon-it.svg',
+};
+
+export const COURSES: Record<CourseId, CourseConfig> = { zh: ZH, fr: FR, it: IT };
 export const COURSE: CourseConfig = COURSES[ACTIVE_COURSE];
 
 /** The name a level shows: 'HSK 1' in Mandarin, 'Niveau 1' in French. */
 export function levelLabel(level: string): string {
   if (COURSE.id === 'zh') return level;
-  return level.replace(/^HSK /, 'Niveau ').replace('7-9', '7–9');
+  const word = COURSE.id === 'it' ? 'Livello' : 'Niveau';
+  return level.replace(/^HSK /, `${word} `).replace('7-9', '7–9');
 }
 
 /** Applies the course to the page: colours, title, favicon and theme colour. Runs once at startup. */

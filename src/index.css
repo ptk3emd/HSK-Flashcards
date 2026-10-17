@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./styles/mandarin-card.css";
 @import "./styles/course-fr.css";
+@import "./styles/course-it.css";
 
 /* dark: utilities follow the in-app theme (the night_mode root), not the OS colour scheme */
 @custom-variant dark (&:where(.night_mode, .night_mode *));

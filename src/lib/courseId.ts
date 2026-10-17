@@ -3,14 +3,17 @@
  * colour depends on it, so switching course saves the choice and reloads the app.
  * No imports here, so storage, the decks and the theme can all depend on it without a cycle.
  */
-export type CourseId = 'zh' | 'fr';
+export type CourseId = 'zh' | 'fr' | 'it';
 
 /** Device setting, kept out of STORAGE_KEYS so it never travels in a backup. */
 export const COURSE_KEY = 'app_course_v1';
 
+const COURSE_IDS: readonly CourseId[] = ['zh', 'fr', 'it'];
+
 function readCourse(): CourseId {
   try {
-    return localStorage.getItem(COURSE_KEY) === 'fr' ? 'fr' : 'zh';
+    const saved = localStorage.getItem(COURSE_KEY);
+    return COURSE_IDS.find((id) => id === saved) ?? 'zh';
   } catch {
     return 'zh';
   }
