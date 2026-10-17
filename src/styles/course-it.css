@@ -1,0 +1,121 @@
+/* ==========================================================================
+   Scalino, the Italian course: a Renaissance palette on stone.
+   Cypress green as the one action colour, a pietra (travertine) ground with fine diagonal
+   tooling in light, and a deep cypress night in dark. Bodoni sets the words, and the grades
+   are pressed as green wax seals. Scoped to .course-it on <html>.
+   ========================================================================== */
+
+:root.course-it {
+  --brand: #2E5E3E;
+  --brand-strong: #234A30;
+
+  /* The Tailwind red scale becomes cypress, so buttons, counts and bars take the course colour */
+  --color-red-50: #eef5ef;
+  --color-red-100: #d9e9dd;
+  --color-red-200: #b4d2bc;
+  --color-red-300: #86b294;
+  --color-red-400: #5f9674;
+  --color-red-500: #3f7a55;
+  --color-red-600: #2e5e3e;
+  --color-red-700: #234a30;
+  --color-red-800: #1c3c27;
+  --color-red-900: #173121;
+  --color-red-950: #0b1a11;
+
+  --color-focus: #3f7a55;
+  --color-night: #0b1610;
+  --color-night-panel: #0e1c14;
+  --chart-curve: #3f7a55;
+  --system-red: #2e5e3e;
+  --font-hanzi: "Bodoni Moda", "Didot", "Playfair Display", "Times New Roman", serif;
+}
+:root.course-it ::selection { background: rgba(63, 122, 85, 0.3); }
+
+/* Learning and error keep their red: colour carries state, not decoration */
+.course-it .state-learning { color: var(--state-learning); }
+.course-it [role='alert'] { color: #b4232c; }
+.course-it .night_mode [role='alert'],
+.course-it .night_mode[role='alert'] { color: #ff8a8a; }
+
+/* ---------------------------------------------------------------- Light: pietra */
+.course-it .card-theme-light {
+  background-color: #ebe5d5;
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      rgba(46, 94, 62, 0.07) 0px,
+      rgba(46, 94, 62, 0.07) 1px,
+      rgba(255, 255, 255, 0) 1px,
+      rgba(255, 255, 255, 0) 14px
+    ),
+    radial-gradient(circle at 50% 10%, #fbf8ef 0%, #e8e0cc 55%, #d4c9ae 100%);
+  --text-bg-selected: rgba(63, 122, 85, 0.2);
+  --underline-decoration: rgba(63, 122, 85, 0.45);
+
+  --glass-surface: rgba(255, 253, 247, 0.5);
+  --glass-pill: rgba(255, 253, 247, 0.62);
+  --glass-field: rgba(255, 254, 250, 0.62);
+  --glass-edge: rgba(255, 255, 255, 0.75);
+  --glass-solid: #fbf8f0;
+  --glass-menu: rgba(255, 253, 248, 0.88);
+}
+
+/* ---------------------------------------------------------------- Dark: cypress night */
+.course-it .card-theme-dark,
+.course-it .card.night_mode {
+  --glass-surface: rgba(14, 30, 21, 0.58);
+  --glass-pill: rgba(20, 40, 28, 0.7);
+  --glass-field: rgba(4, 10, 7, 0.42);
+  --glass-edge: rgba(255, 255, 255, 0.16);
+  --glass-solid: #11261a;
+  --glass-menu: rgba(14, 30, 21, 0.84);
+  --text-bg-selected: rgba(95, 150, 116, 0.32);
+  --underline-decoration: rgba(95, 150, 116, 0.5);
+
+  background-color: #0a130e;
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.025) 0px,
+      rgba(255, 255, 255, 0.025) 1px,
+      rgba(0, 0, 0, 0) 1px,
+      rgba(0, 0, 0, 0) 14px
+    ),
+    radial-gradient(circle at 50% 12%, rgba(63, 122, 85, 0.36) 0%, #0f2016 58%, #050a07 100%);
+}
+
+/* ---------------------------------------------------------------- The word on the card
+   Italian words keep whole, like French; the size follows the length of the entry. */
+.course-it .hanzi,
+.course-it .hanzi.is-long {
+  word-break: normal;
+  line-break: auto;
+  overflow-wrap: break-word;
+  hyphens: manual;
+  max-width: 100%;
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+  font-size: clamp(24px, calc(100cqi * 2.2 / var(--text-length, 8)), 60px) !important;
+  text-wrap: balance;
+}
+.course-it .study-session .study-tactile-card .hanzi,
+.course-it .study-session .study-tactile-card .hanzi.is-long {
+  max-width: 100%;
+  font-size: clamp(28px, calc(100cqi * 2.4 / var(--text-length, 8)), 76px) !important;
+}
+
+/* ---------------------------------------------------------------- The green wax seal */
+.course-it .study-seal {
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #5b8f6a 0%, #2e5e3e 52%, #1b3a26 100%);
+  box-shadow:
+    inset 0 0 0 4px rgba(27, 58, 38, 0.55),
+    inset 0 0 0 6px rgba(220, 240, 224, 0.3),
+    0 3px 8px rgba(10, 30, 16, 0.35);
+  color: #eef6ef;
+  font-family: var(--font-hanzi);
+  font-style: italic;
+  font-weight: 600;
+}
+.course-it .study-done .study-done-seal { font-size: 30px; }

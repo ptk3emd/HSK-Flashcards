@@ -5,6 +5,7 @@ import { COURSE } from '../lib/course';
 const OPTIONS: { id: CourseId; label: string; lang: string; title: string }[] = [
   { id: 'zh', label: '中文', lang: 'zh-CN', title: 'Mandarim' },
   { id: 'fr', label: 'Fr', lang: 'fr', title: 'Francês' },
+  { id: 'it', label: 'It', lang: 'it', title: 'Italiano' },
 ];
 
 /**

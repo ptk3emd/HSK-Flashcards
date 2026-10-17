@@ -11,7 +11,8 @@
     "lint": "tsc --noEmit",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "seed:hsk": "tsx scripts/seed-hsk.ts",
-    "seed:fr": "tsx scripts/seed-fr.ts"
+    "seed:fr": "tsx scripts/seed-course.ts fr",
+    "seed:it": "tsx scripts/seed-course.ts it"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
