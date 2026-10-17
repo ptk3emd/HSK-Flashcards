@@ -15,6 +15,10 @@ export interface CourseConfig {
   lang: string;
   /** Speech voices whose lang starts with one of these */
   voicePrefixes: string[];
+  /** What the word on the card is called: Hanzi, Français, Italiano */
+  wordLabel: string;
+  /** Example search shown in the dictionary's empty field, for the word side */
+  searchExample: string;
   /** Hanzi, pinyin, writing pad, stroke order and draw search */
   hasCharacters: boolean;
   /** The Learn tab (stories and HSK mock exams) */
@@ -40,6 +44,8 @@ const ZH: CourseConfig = {
   brandSub: 'Mandarim',
   lang: 'zh-CN',
   voicePrefixes: ['zh', 'cmn', 'yue'],
+  wordLabel: 'Hanzi',
+  searchExample: '你好, 水',
   hasCharacters: true,
   hasLearn: true,
   levelIndex: {
@@ -69,6 +75,8 @@ const FR: CourseConfig = {
   brandSub: 'Français',
   lang: 'fr-FR',
   voicePrefixes: ['fr'],
+  wordLabel: 'Français',
+  searchExample: 'bonjour, école',
   hasCharacters: false,
   hasLearn: false,
   levelIndex: {
@@ -99,6 +107,8 @@ const IT: CourseConfig = {
   brandSub: 'Italiano',
   lang: 'it-IT',
   voicePrefixes: ['it'],
+  wordLabel: 'Italiano',
+  searchExample: 'ciao, scuola',
   hasCharacters: false,
   hasLearn: false,
   levelIndex: {

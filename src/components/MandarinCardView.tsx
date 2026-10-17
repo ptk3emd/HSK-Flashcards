@@ -134,7 +134,7 @@ export const MandarinCardView = React.memo(function MandarinCardView({
             )}
           </div>
 
-          <div className="card-label">{COURSE.hasCharacters ? 'Hanzi' : 'Français'}</div>
+          <div className="card-label">{COURSE.wordLabel}</div>
           <div
             id="hanzi-text"
             lang={COURSE.lang}

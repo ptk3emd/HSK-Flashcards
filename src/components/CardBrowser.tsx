@@ -243,8 +243,8 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                   ? searchTarget === 'meaning'
                     ? 'olá, água'
                     : searchTarget === 'hanzi'
-                    ? 'bonjour, école'
-                    : 'Francês ou tradução'
+                    ? COURSE.searchExample
+                    : `${COURSE.wordLabel} ou tradução`
                   : searchTarget === 'hanzi'
                   ? '你好, 水'
                   : searchTarget === 'pinyin'
@@ -287,7 +287,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
             {(
               [
                 { id: 'all', label: 'Tudo' },
-                { id: 'hanzi', label: COURSE.hasCharacters ? 'Hanzi' : 'Francês' },
+                { id: 'hanzi', label: COURSE.wordLabel },
                 { id: 'pinyin', label: 'Pinyin' },
                 { id: 'meaning', label: 'Tradução' },
               ] as const
