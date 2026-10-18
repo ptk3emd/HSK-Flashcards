@@ -63,8 +63,8 @@ export const StoryReader: React.FC<StoryReaderProps> = ({ story, cards, onAddCar
       </div>
 
       <header className="space-y-1.5">
-        <p className="text-xs uppercase tracking-[0.14em] ink-tertiary">{story.grammar}</p>
-        <h2 id="story-title" lang="zh-CN" className="text-xl font-semibold">{story.title}</h2>
+        <p className="hanzi-index text-xs uppercase tracking-[0.14em] ink-tertiary">{story.grammar}</p>
+        <h2 id="story-title" lang="zh-CN" className="hanzi-index text-xl font-semibold">{story.title}</h2>
         <p className="text-sm ink-secondary">{story.titlePt}</p>
       </header>
 
@@ -94,14 +94,14 @@ export const StoryReader: React.FC<StoryReaderProps> = ({ story, cards, onAddCar
           return (
             <li key={si} className="flex gap-3">
               <div className="flex-1 min-w-0 space-y-1">
-                <p lang="zh-CN" className="flex flex-wrap items-end gap-x-1 text-2xl leading-[2.4] font-medium">
+                <p lang="zh-CN" className="hanzi-index flex flex-wrap items-end gap-x-1 text-2xl leading-[2.4] font-medium">
                   {sentence.tokens.map((t, ti) =>
                     t.punct ? (
                       <span key={ti} className="pb-1">{t.hanzi}</span>
                     ) : (
                       <ruby key={ti}>
                         {t.hanzi}
-                        <rt className="text-[11px] font-normal ink-tertiary">{t.pinyin}</rt>
+                        <rt className="font-sans text-[11px] font-normal ink-tertiary">{t.pinyin}</rt>
                       </ruby>
                     )
                   )}

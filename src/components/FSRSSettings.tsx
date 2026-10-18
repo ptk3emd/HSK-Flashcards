@@ -125,8 +125,8 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
             const isOverridden = override !== undefined;
             const effective = override ?? fsrsOptions.request_retention;
             return (
-              <li key={level} className="grid grid-cols-[2.5rem_minmax(0,1fr)_3rem_2.75rem] items-center gap-2">
-                <span lang="zh-CN" aria-hidden="true" className={`hanzi-index text-lg text-center ${isOverridden ? 'text-red-700 dark:text-red-300' : 'ink-tertiary'}`}>
+              <li key={level} className="grid grid-cols-[3.5rem_minmax(0,1fr)_3rem_2.75rem] items-center gap-2">
+                <span lang="zh-CN" aria-hidden="true" className={`hanzi-index text-lg whitespace-nowrap text-center ${isOverridden ? 'text-red-700 dark:text-red-300' : 'ink-tertiary'}`}>
                   {LEVEL_NUMERALS[level]}
                 </span>
                 <input

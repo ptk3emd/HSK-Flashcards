@@ -92,7 +92,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
   const positiveReviews = buttonCounts[3] + buttonCounts[4];
   const trueRetentionRate = totalReviews > 0
     ? Math.round((positiveReviews / totalReviews) * 100)
-    : Math.round(targetRetention * 100);
+    : null;
 
   // Mature vs Young true retention
   const matureLogs = filteredLogs.filter(l => (l.previousCardSnapshot?.scheduled_days ?? 0) >= 21);
@@ -348,8 +348,10 @@ export const StatsView: React.FC<StatsViewProps> = ({
   const summaryRows = [
     {
       label: 'Retenção real',
-      detail: `alvo ${Math.round(targetRetention * 100)}% · ${positiveReviews} de ${totalReviews} acertos`,
-      value: `${trueRetentionRate}%`,
+      detail: totalReviews > 0
+        ? `alvo ${Math.round(targetRetention * 100)}% · ${positiveReviews} de ${totalReviews} acertos`
+        : `alvo ${Math.round(targetRetention * 100)}% · sem revisões`,
+      value: trueRetentionRate !== null ? `${trueRetentionRate}%` : '—',
     },
     { label: 'Estabilidade média', detail: `máx. ${decimal(maxStability)} d`, value: `${decimal(avgStability)} d` },
     { label: 'Sequência', detail: `recorde ${maxStreak} d`, value: `${currentStreak} d` },
@@ -425,22 +427,24 @@ export const StatsView: React.FC<StatsViewProps> = ({
         {/* Tab 1: FSRS Forgetting Curve */}
         {retentionTab === 'curve' && (
           <div className="space-y-5">
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ink-secondary">
-              <span className="flex items-center gap-1.5">
-                <span className="w-3 h-0.5 bg-red-500 rounded-full" aria-hidden="true" />
-                R(t)
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-3 border-t border-dashed border-emerald-500" aria-hidden="true" />
-                alvo {Math.round(targetRetention * 100)}%
-              </span>
-              <span className="ml-auto tabular">S = {decimal(avgStability)} d</span>
-            </div>
+            {avgStabilityNum > 0 && (
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ink-secondary">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-3 h-0.5 bg-red-500 rounded-full" aria-hidden="true" />
+                  R(t)
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-3 border-t border-dashed border-emerald-500" aria-hidden="true" />
+                  alvo {Math.round(targetRetention * 100)}%
+                </span>
+                <span className="ml-auto tabular">S = {decimal(avgStability)} d</span>
+              </div>
+            )}
 
             {/* SVG Interactive Chart */}
             <div
               ref={chartBoxRef}
-              className="relative"
+              className={`relative ${avgStabilityNum > 0 ? '' : 'hidden'}`}
             >
               <p id="retention-curve-summary" className="sr-only">
                 {`Curva de retenção estimada para estabilidade de ${avgStability} dias: ${forgettingCurvePoints.points
@@ -604,6 +608,12 @@ export const StatsView: React.FC<StatsViewProps> = ({
               )}
             </div>
 
+            {avgStabilityNum === 0 && (
+              <p className="flex h-[200px] items-center justify-center px-6 text-center text-sm ink-secondary">
+                A curva aparece depois da primeira revisão.
+              </p>
+            )}
+
             <p className="text-xs ink-tertiary">
               <code className="font-mono">R(t) = (1 + 19/81 · t/S)^−0.5</code>
             </p>
@@ -746,7 +756,13 @@ export const StatsView: React.FC<StatsViewProps> = ({
           <ul className="ledger border-t border-[var(--separator)]">
             {hskBreakdown.map(lvl => (
               <li key={lvl.level} className="flex items-center gap-4 px-5 py-3">
-                <span lang={COURSE.lang} aria-hidden="true" className="hanzi-index text-2xl w-10 text-center shrink-0 ink-tertiary">
+                <span
+                  lang={COURSE.lang}
+                  aria-hidden="true"
+                  className={`hanzi-index w-14 whitespace-nowrap text-center shrink-0 ink-tertiary ${
+                    lvl.level === 'HSK 7-9' ? 'text-lg' : 'text-2xl'
+                  }`}
+                >
                   {LEVEL_NUMERALS[lvl.level] ?? '·'}
                 </span>
                 <span className="flex-1 min-w-0">

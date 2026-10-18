@@ -75,7 +75,7 @@ export function AnkiExportSettings({ cards, deckConfig, fsrsOptions }: Props) {
 
   return <section className="sheet px-5 sm:px-7 py-5 space-y-4" aria-labelledby="settings-export">
     <h2 id="settings-export" className="text-base font-semibold">Exportar para o Anki</h2>
-    <p className="text-sm leading-relaxed">{COURSE.id === 'zh' ? 'Todos os níveis HSK 1–9, incluindo o bloco conjunto HSK 7–9' : 'Todos os níveis de francês, do Niveau 1 ao 7–9'}, mais seus cartões e mnemônicos. Os arquivos são preparados neste dispositivo.</p>
+    <p className="text-sm leading-relaxed">{`Todos os níveis ${COURSE.exportLevels}, mais seus cartões e mnemônicos. Os arquivos são preparados neste dispositivo.`}</p>
     <button type="button" onClick={prepare} disabled={busy} className="min-h-11 px-4 py-2 rounded-xl bg-red-700 hover:bg-red-800 text-white font-semibold inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-wait">
       <Download size={18} aria-hidden="true" />{busy ? 'Preparando exportação…' : 'Preparar CSV e backup'}
     </button>
@@ -84,8 +84,8 @@ export function AnkiExportSettings({ cards, deckConfig, fsrsOptions }: Props) {
     {files && <div className="space-y-3">
       <p role="status" className="text-sm">{files.count.toLocaleString('pt-BR')} cartões prontos. Baixe os dois arquivos para guardar uma cópia completa.</p>
       <div className="flex flex-wrap gap-3">
-        <a className="glass-field min-h-11 px-4 py-3 rounded-xl text-sm font-semibold" href={files.csv} download={`${COURSE.id === 'zh' ? 'HSK-1-9' : 'Palier-Francais'}-Anki-${files.date}.csv`}>Baixar CSV para Anki</a>
-        <a className="glass-field min-h-11 px-4 py-3 rounded-xl text-sm font-semibold" href={files.backup} download={`${COURSE.id === 'zh' ? 'HSK' : 'Palier-Francais'}-backup-${files.date}.json`}>Baixar backup completo</a>
+        <a className="glass-field min-h-11 px-4 py-3 rounded-xl text-sm font-semibold" href={files.csv} download={`${COURSE.exportFileBase}-Anki-${files.date}.csv`}>Baixar CSV para Anki</a>
+        <a className="glass-field min-h-11 px-4 py-3 rounded-xl text-sm font-semibold" href={files.backup} download={`${COURSE.exportFileBase}-backup-${files.date}.json`}>Baixar backup completo</a>
       </div>
     </div>}
     <details className="text-sm leading-relaxed">

@@ -157,10 +157,10 @@ export const LearnView: React.FC<LearnViewProps> = ({ cards, onAddCards }) => {
                     >
                       <span className="min-w-0">
                         <span className="flex items-baseline gap-2">
-                          <span lang="zh-CN" className="text-sm font-medium">{story.title}</span>
+                          <span lang="zh-CN" className="hanzi-index text-sm font-medium">{story.title}</span>
                           <span className="text-sm ink-secondary truncate">{story.titlePt}</span>
                         </span>
-                        <span className="block text-xs ink-tertiary truncate">{story.grammar}</span>
+                        <span className="hanzi-index block text-xs ink-tertiary truncate">{story.grammar}</span>
                       </span>
                       {read.includes(story.id) && <span className="text-xs ink-secondary shrink-0">Lida</span>}
                     </button>
@@ -180,7 +180,7 @@ export const LearnView: React.FC<LearnViewProps> = ({ cards, onAddCards }) => {
                       <ul className="space-y-1">
                         {group.points.map((point) => (
                           <li key={point.text} className="flex items-start justify-between gap-3 ink-secondary">
-                            <span>{point.text}</span>
+                            <span className="hanzi-index leading-normal">{point.text}</span>
                             {point.storyId ? (
                               <button
                                 type="button"

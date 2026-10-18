@@ -30,7 +30,7 @@ const formatTime = (ms: number) => {
 const ChineseText: React.FC<{ sentences: StorySentence[] }> = ({ sentences }) => (
   <div lang="zh-CN" className="space-y-2">
     {sentences.map((sentence, si) => (
-      <p key={si} className="flex flex-wrap items-end gap-x-1 text-2xl leading-[2.4] font-medium">
+      <p key={si} className="hanzi-index flex flex-wrap items-end gap-x-1 text-2xl leading-[2.4] font-medium">
         {sentence.tokens.map((t, ti) =>
           t.hanzi === BLANK ? (
             <span key={ti} aria-label="lacuna" className="inline-block min-w-[2.2rem] border-b-2 border-[var(--text-secondary)] mx-1" />
@@ -39,7 +39,7 @@ const ChineseText: React.FC<{ sentences: StorySentence[] }> = ({ sentences }) =>
           ) : (
             <ruby key={ti}>
               {t.hanzi}
-              <rt className="text-[11px] font-normal ink-tertiary">{t.pinyin}</rt>
+              <rt className="font-sans text-[11px] font-normal ink-tertiary">{t.pinyin}</rt>
             </ruby>
           )
         )}
@@ -331,12 +331,12 @@ export const MockExam: React.FC<MockExamProps> = ({ level, resume, onOpenStory, 
                     {item.text && <ChineseText sentences={item.text} />}
                     <p className="font-medium">{item.prompt}</p>
                     <p className="ink-secondary">
-                      Você: {picked == null ? 'sem resposta' : item.options[picked]}
+                      Você: {picked == null ? 'sem resposta' : <span className={item.kind === 'cloze' ? 'hanzi-index' : undefined}>{item.options[picked]}</span>}
                     </p>
-                    <p>Certa: {item.options[item.answer]}</p>
+                    <p>Certa: <span className={item.kind === 'cloze' ? 'hanzi-index' : undefined}>{item.options[item.answer]}</span></p>
                     {item.text?.[0]?.ptbr && item.kind === 'cloze' && <p className="ink-secondary">{item.text[0].ptbr}</p>}
                     {item.explain && <p className="ink-secondary">{item.explain}</p>}
-                    {item.grammar && <p className="text-xs ink-tertiary">Ponto: {item.grammar}</p>}
+                    {item.grammar && <p className="text-xs ink-tertiary">Ponto: <span className="hanzi-index leading-normal">{item.grammar}</span></p>}
                     {story && (
                       <button type="button" onClick={() => onOpenStory(story)} className="min-h-11 px-3 rounded-xl glass-field text-sm font-medium cursor-pointer">
                         Ver história: {story.titlePt}
@@ -419,7 +419,7 @@ export const MockExam: React.FC<MockExamProps> = ({ level, resume, onOpenStory, 
                   aria-pressed={isPicked}
                   lang={current.kind === 'cloze' ? 'zh-CN' : undefined}
                   className={`min-h-12 px-4 rounded-xl text-left cursor-pointer glass-field disabled:cursor-default ${
-                    current.kind === 'cloze' ? 'text-lg' : 'text-sm'
+                    current.kind === 'cloze' ? 'hanzi-index text-lg' : 'text-sm'
                   } ${isPicked ? '!border-red-600' : ''}`}
                 >
                   {option}

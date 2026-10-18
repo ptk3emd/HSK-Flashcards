@@ -31,6 +31,12 @@ export interface CourseConfig {
   doneMark: string;
   /** Sentence used to test the voice */
   voiceSample: string;
+  /** What the Anki export covers: "HSK 1–9, incluindo o bloco conjunto HSK 7–9" */
+  exportLevels: string;
+  /** Base of the exported file names: the CSV for Anki and the JSON backup */
+  exportFileBase: string;
+  /** Browser meta description and Open Graph text */
+  description: string;
   /** Browser tab title */
   title: string;
   /** Browser UI colour (address bar on phones) */
@@ -60,6 +66,9 @@ const ZH: CourseConfig = {
   sealMarks: { 1: '再', 2: '难', 3: '好', 4: '易' },
   doneMark: '完',
   voiceSample: '你好！很高兴认识你。',
+  exportLevels: 'HSK 1–9, incluindo o bloco conjunto HSK 7–9',
+  exportFileBase: 'HSK-1-9',
+  description: 'App de repetição espaçada FSRS para aprender o vocabulário chinês HSK (1 a 9) com cartões acrílicos estilizados.',
   title: 'Lóutī Mandarim - Repetição Espaçada',
   themeColor: '#B3261E',
   favicon: './favicon.svg',
@@ -92,6 +101,9 @@ const FR: CourseConfig = {
   sealMarks: { 1: 'E', 2: 'D', 3: 'B', 4: 'F' },
   doneMark: 'Fin',
   voiceSample: 'Bonjour ! Enchanté de faire votre connaissance.',
+  exportLevels: 'de francês, do Niveau 1 ao 7–9',
+  exportFileBase: 'Palier-Francais',
+  description: 'App de repetição espaçada FSRS para aprender o vocabulário francês, do Niveau 1 ao 7–9, com cartões estilizados.',
   title: 'Palier Français - Repetição Espaçada',
   themeColor: '#24479E',
   favicon: './favicon-fr.svg',
@@ -124,6 +136,9 @@ const IT: CourseConfig = {
   sealMarks: { 1: 'A', 2: 'D', 3: 'B', 4: 'F' },
   doneMark: 'Fine',
   voiceSample: 'Buongiorno! Piacere di conoscerla.',
+  exportLevels: 'de italiano, do Livello 1 ao 7–9',
+  exportFileBase: 'Scalino-Italiano',
+  description: 'App de repetição espaçada FSRS para aprender o vocabulário italiano, do Livello 1 ao 7–9, com cartões estilizados.',
   title: 'Scalino Italiano - Repetição Espaçada',
   themeColor: '#2E5E3E',
   favicon: './favicon-it.svg',
@@ -139,12 +154,18 @@ export function levelLabel(level: string): string {
   return level.replace(/^HSK /, `${word} `).replace('7-9', '7–9');
 }
 
-/** Applies the course to the page: colours, title, favicon and theme colour. Runs once at startup. */
+/** Applies the course to the page: colours, title, meta text, favicon and theme colour. Runs once at startup. */
 export function applyCourseToDocument(): void {
   const root = document.documentElement;
   root.classList.add(`course-${COURSE.id}`);
   root.lang = 'pt-BR';
   document.title = COURSE.title;
+  const setMeta = (selector: string, content: string) =>
+    document.querySelector(selector)?.setAttribute('content', content);
+  setMeta('meta[name="description"]', COURSE.description);
+  setMeta('meta[property="og:title"]', COURSE.title);
+  setMeta('meta[property="og:description"]', COURSE.description);
+  setMeta('meta[name="apple-mobile-web-app-title"]', COURSE.brand);
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', COURSE.themeColor);
   document.querySelector('link[rel="icon"][type="image/svg+xml"]')?.setAttribute('href', COURSE.favicon);
 }

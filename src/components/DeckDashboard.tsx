@@ -177,7 +177,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                 >
                   <span
                     aria-hidden="true"
-                    className={`hanzi-index w-9 shrink-0 text-center transition-colors ${
+                    className={`hanzi-index w-14 whitespace-nowrap shrink-0 text-center transition-colors ${
                       lvl === 'HSK 7-9' ? 'text-lg' : 'text-[28px]'
                     } ${isActive ? 'text-red-600 dark:text-red-400' : 'ink-tertiary'}`}
                   >
