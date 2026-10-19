@@ -5,10 +5,10 @@ import {
   OutboxEntry,
   STORAGE_KEYS,
   loadDeckConfig,
-  loadExamAttempts,
   loadFSRSOptions,
+  loadGrammarStudied,
+  loadQuizAttempts,
   loadReviewLogs,
-  loadStoriesRead,
   loadStoredCards,
   loadSyncOutbox,
   localChanges,
@@ -16,7 +16,7 @@ import {
   saveSyncOutbox,
 } from './storage';
 import { ACTIVE_COURSE } from './courseId';
-import { isTouched, mergeAttempts, mergeCards, mergeStories, parseRemoteProgress } from './syncMerge';
+import { isTouched, mergeAttempts, mergeCards, mergeIds, parseRemoteProgress } from './syncMerge';
 
 /**
  * Cloud copy of the study data in Supabase. The app keeps working from localStorage;
@@ -101,7 +101,7 @@ export class CloudSync {
   /** Merges the cloud copy into this device and returns what the app should now show. */
   async start(local: MergedState): Promise<MergedState> {
     this.onStatus('syncing');
-    const columns = 'cards, deck_config, fsrs_options, stories_read, exam_attempts, updated_at';
+    const columns = 'cards, deck_config, fsrs_options, grammar_studied, quiz_attempts, updated_at';
     let { data, error } = await this.supabase
       .from('user_progress')
       .select(columns)
@@ -127,8 +127,8 @@ export class CloudSync {
       writeLocal(STORAGE_KEYS.cards, cards);
       writeLocal(STORAGE_KEYS.settings, deckConfig);
       writeLocal(STORAGE_KEYS.fsrs, fsrsOptions);
-      writeLocal(STORAGE_KEYS.storiesRead, mergeStories(loadStoriesRead(), remote.stories_read));
-      writeLocal(STORAGE_KEYS.examAttempts, mergeAttempts(loadExamAttempts(), remote.exam_attempts));
+      writeLocal(STORAGE_KEYS.grammarStudied, mergeIds(loadGrammarStudied(), remote.grammar_studied));
+      writeLocal(STORAGE_KEYS.quizAttempts, mergeAttempts(loadQuizAttempts(), remote.quiz_attempts));
       merged = { cards, deckConfig, fsrsOptions };
     }
 
@@ -178,8 +178,8 @@ export class CloudSync {
       cards: (loadStoredCards() ?? []).filter(isTouched),
       deck_config: loadDeckConfig(),
       fsrs_options: loadFSRSOptions(),
-      stories_read: loadStoriesRead(),
-      exam_attempts: loadExamAttempts(),
+      grammar_studied: loadGrammarStudied(),
+      quiz_attempts: loadQuizAttempts(),
       updated_at: new Date().toISOString(),
     };
     const { error } = this.legacyRow

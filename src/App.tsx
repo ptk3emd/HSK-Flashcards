@@ -58,7 +58,7 @@ const NAV_ITEMS = [
   { tab: 'settings', label: 'Configurações', Icon: Settings2 },
 ] as const;
 
-// The Learn tab (stories and HSK mock exams) exists only in the Mandarin course
+// The Learn tab (HSK grammar lessons and practice) exists only in the Mandarin course
 const COURSE_NAV = NAV_ITEMS.filter((item) => item.tab !== 'learn' || COURSE.hasLearn);
 
 export default function App() {
@@ -272,7 +272,7 @@ export default function App() {
 
         {activeTab === 'learn' && COURSE.hasLearn && (
           <Suspense fallback={<ViewLoading variant="learn" />}>
-            <LearnView cards={cards} onAddCards={handleAddCards} />
+            <LearnView />
           </Suspense>
         )}
 

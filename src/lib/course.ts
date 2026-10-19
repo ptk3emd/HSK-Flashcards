@@ -21,7 +21,7 @@ export interface CourseConfig {
   searchExample: string;
   /** Hanzi, pinyin, writing pad, stroke order and draw search */
   hasCharacters: boolean;
-  /** The Learn tab (stories and HSK mock exams) */
+  /** The Learn tab (grammar lessons and practice) */
   hasLearn: boolean;
   /** Index mark per level in the ledgers */
   levelIndex: Record<string, string>;

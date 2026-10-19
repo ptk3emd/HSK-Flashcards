@@ -1,4 +1,4 @@
-import { Card, DeckConfig, ExamAttempt, ExamItem, ExamSession, FSRSOptions, ReviewLog } from '../types/card';
+import { Card, DeckConfig, FSRSOptions, QuizAttempt, ReviewLog } from '../types/card';
 import {
   DEFAULT_FSRS_OPTIONS,
   MAX_INTERVAL_LIMIT,
@@ -21,9 +21,8 @@ const BASE_KEYS = {
   reviewLogs: 'hanzi_anki_review_logs_v2',
   theme: 'hanzi_anki_theme_v2',
   contentVersion: 'hanzi_anki_content_version',
-  examAttempts: 'hanzi_anki_exam_attempts_v1',
-  storiesRead: 'hanzi_anki_stories_read_v1',
-  examSession: 'hanzi_anki_exam_session_v1',
+  grammarStudied: 'hanzi_anki_grammar_studied_v1',
+  quizAttempts: 'hanzi_anki_quiz_attempts_v1',
 } as const;
 
 /**
@@ -41,7 +40,7 @@ function courseKeys(): { [K in keyof typeof BASE_KEYS]: string } {
 
 export const STORAGE_KEYS = courseKeys();
 
-const MAX_EXAM_ATTEMPTS = 20; // per level
+const MAX_QUIZ_ATTEMPTS = 20; // per level
 
 /**
  * Account keys stay out of STORAGE_KEYS on purpose: they describe this device's sign-in,
@@ -474,124 +473,63 @@ export function popReviewLog(): ReviewLog | null {
 const isCount = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 
 /** Checks the shape of a stored attempt, so a corrupt entry cannot break the Learn tab. */
-function isExamAttempt(v: unknown): v is ExamAttempt {
+function isQuizAttempt(v: unknown): v is QuizAttempt {
   if (typeof v !== 'object' || v === null) return false;
   const a = v as Record<string, unknown>;
-  const pair = (p: unknown) =>
-    typeof p === 'object' && p !== null && isCount((p as Record<string, unknown>).listening) && isCount((p as Record<string, unknown>).reading);
-  return typeof a.id === 'string' && typeof a.level === 'string' && typeof a.finishedAt === 'string' && pair(a.correct) && pair(a.total);
+  return (
+    typeof a.id === 'string' &&
+    typeof a.level === 'string' &&
+    typeof a.finishedAt === 'string' &&
+    isCount(a.correct) &&
+    isCount(a.total)
+  );
 }
 
-/** Mock exam results, newest first. Invalid stored entries are dropped, not thrown. */
-export function loadExamAttempts(): ExamAttempt[] {
+/** Quiz results, newest first. Invalid stored entries are dropped, not thrown. */
+export function loadQuizAttempts(): QuizAttempt[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.examAttempts);
+    const raw = localStorage.getItem(STORAGE_KEYS.quizAttempts);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter(isExamAttempt) : [];
+    return Array.isArray(parsed) ? parsed.filter(isQuizAttempt) : [];
   } catch (e) {
-    console.error('Failed to load exam attempts', e);
+    console.error('Failed to load quiz attempts', e);
     return [];
   }
 }
 
 /** Keeps the newest attempts of each level, so one level's history cannot evict another's. */
-export function saveExamAttempt(attempt: ExamAttempt): void {
+export function saveQuizAttempt(attempt: QuizAttempt): void {
   try {
-    const all = loadExamAttempts();
-    const sameLevel = [attempt, ...all.filter((a) => a.level === attempt.level)].slice(0, MAX_EXAM_ATTEMPTS);
+    const all = loadQuizAttempts();
+    const sameLevel = [attempt, ...all.filter((a) => a.level === attempt.level)].slice(0, MAX_QUIZ_ATTEMPTS);
     const others = all.filter((a) => a.level !== attempt.level);
-    localStorage.setItem(STORAGE_KEYS.examAttempts, JSON.stringify([...sameLevel, ...others]));
+    localStorage.setItem(STORAGE_KEYS.quizAttempts, JSON.stringify([...sameLevel, ...others]));
     emitLocalChange({ kind: 'progress' });
   } catch (e) {
-    console.error('Failed to save exam attempt', e);
+    console.error('Failed to save quiz attempt', e);
   }
 }
 
-/** Ids of the stories the student has finished. */
-export function loadStoriesRead(): string[] {
+/** Ids of the grammar points the student has marked as studied. */
+export function loadGrammarStudied(): string[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS.storiesRead);
+    const raw = localStorage.getItem(STORAGE_KEYS.grammarStudied);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [];
   } catch (e) {
-    console.error('Failed to load stories read', e);
+    console.error('Failed to load grammar progress', e);
     return [];
   }
 }
 
-export function markStoryRead(id: string): void {
+export function markGrammarStudied(id: string): void {
   try {
-    const ids = Array.from(new Set([...loadStoriesRead(), id]));
-    localStorage.setItem(STORAGE_KEYS.storiesRead, JSON.stringify(ids));
+    const ids = Array.from(new Set([...loadGrammarStudied(), id]));
+    localStorage.setItem(STORAGE_KEYS.grammarStudied, JSON.stringify(ids));
     emitLocalChange({ kind: 'progress' });
   } catch (e) {
-    console.error('Failed to save story progress', e);
-  }
-}
-
-function isExamItem(v: unknown): v is ExamItem {
-  if (typeof v !== 'object' || v === null) return false;
-  const i = v as Record<string, unknown>;
-  return (
-    typeof i.id === 'string' &&
-    (i.part === 'listening' || i.part === 'reading') &&
-    typeof i.kind === 'string' &&
-    typeof i.prompt === 'string' &&
-    Array.isArray(i.options) &&
-    i.options.length >= 2 &&
-    i.options.every((o) => typeof o === 'string') &&
-    Number.isInteger(i.answer) &&
-    (i.answer as number) >= 0 &&
-    (i.answer as number) < i.options.length
-  );
-}
-
-function isExamSession(v: unknown): v is ExamSession {
-  if (typeof v !== 'object' || v === null) return false;
-  const s = v as Record<string, unknown>;
-  return (
-    typeof s.level === 'string' &&
-    Array.isArray(s.items) &&
-    s.items.length > 0 &&
-    s.items.every(isExamItem) &&
-    typeof s.picks === 'object' &&
-    s.picks !== null &&
-    Array.isArray(s.assisted) &&
-    s.assisted.every((id) => typeof id === 'string') &&
-    Number.isInteger(s.partIndex) &&
-    (s.partIndex as number) >= 0 &&
-    (s.partIndex as number) <= 1 &&
-    isCount(s.endsAt)
-  );
-}
-
-/** The exam in progress, if the student left it half done. Invalid data counts as none. */
-export function loadExamSession(): ExamSession | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.examSession);
-    if (!raw) return null;
-    const parsed: unknown = JSON.parse(raw);
-    return isExamSession(parsed) ? parsed : null;
-  } catch (e) {
-    console.error('Failed to load the exam in progress', e);
-    return null;
-  }
-}
-
-export function saveExamSession(session: ExamSession): void {
-  try {
-    localStorage.setItem(STORAGE_KEYS.examSession, JSON.stringify(session));
-  } catch (e) {
-    console.error('Failed to save the exam in progress', e);
-  }
-}
-
-export function clearExamSession(): void {
-  try {
-    localStorage.removeItem(STORAGE_KEYS.examSession);
-  } catch (e) {
-    console.error('Failed to clear the exam in progress', e);
+    console.error('Failed to save grammar progress', e);
   }
 }

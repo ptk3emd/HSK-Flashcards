@@ -101,39 +101,27 @@ export type StudyAction =
 
 export type GestureMap = Record<StudyGesture, StudyAction>;
 
-/* Learn tab: stories that teach a grammar point, and HSK mock exams */
+/* Learn tab: grammar lessons and multiple-choice practice per HSK level */
 
-export interface StoryToken {
+export interface ChineseToken {
   hanzi: string;
   pinyin: string;
   punct: boolean;
 }
 
-export interface StorySentence {
-  tokens: StoryToken[];
+export interface ExampleSentence {
+  tokens: ChineseToken[];
   ptbr: string;
 }
 
-export interface StoryQuestion {
-  prompt: string;
-  options: string[];
-  answer: number;
-}
-
-export interface Story {
-  id: string;
-  level: string;
-  grammar: string;
-  title: string;
-  titlePt: string;
-  sentences: StorySentence[];
-  questions: StoryQuestion[];
-}
-
+/** One grammar point of a level: what it is, how it is built and example sentences. */
 export interface GrammarPoint {
+  id: string;
   text: string;
-  /** The story that teaches this point, when there is one */
-  storyId?: string;
+  explanation: string;
+  /** The pattern or formula, when the point has one */
+  structure?: string;
+  examples: ExampleSentence[];
 }
 
 export interface GrammarGroup {
@@ -141,93 +129,26 @@ export interface GrammarGroup {
   points: GrammarPoint[];
 }
 
-/** A question about a passage; `explain` is shown when the student gets it wrong. */
-export interface ExamQuestion {
+/** A practice question; `pointId` ties it to the grammar point it tests, when there is one. */
+export interface GrammarExercise {
+  id: string;
+  pointId?: string;
   prompt: string;
   options: string[];
   answer: number;
   explain: string;
-}
-
-export interface ExamSentence {
-  id: string;
-  tokens: StoryToken[];
-  ptbr: string;
-  grammar?: string;
-}
-
-export interface ExamPassage {
-  id: string;
-  sentences: StorySentence[];
-  questions: ExamQuestion[];
-}
-
-/** A sentence with one blank (a token whose hanzi is ＿) and the options that fill it. */
-export interface ExamCloze {
-  id: string;
-  tokens: StoryToken[];
-  ptbr: string;
-  options: string[];
-  answer: number;
-  explain: string;
-  grammar: string;
-}
-
-export interface ExamBank {
-  sentences: ExamSentence[];
-  passages: ExamPassage[];
-  cloze: ExamCloze[];
 }
 
 export interface LevelContent {
-  stories: Story[];
   grammar: GrammarGroup[];
-  exam: ExamBank;
+  exercises: GrammarExercise[];
 }
 
-export type ExamPart = 'listening' | 'reading';
-
-export type ExamItemKind = 'listen' | 'sentence' | 'passage' | 'cloze';
-
-export interface ExamItem {
-  id: string;
-  part: ExamPart;
-  kind: ExamItemKind;
-  /** Chinese text spoken for a listening item */
-  audio?: string;
-  /** The Chinese text of the item: shown to read, or kept as the transcript of a listening item */
-  text?: StorySentence[];
-  prompt: string;
-  options: string[];
-  answer: number;
-  explain?: string;
-  grammar?: string;
-}
-
-/** A started exam, saved after every answer so a reload can resume it. */
-export interface ExamSession {
-  level: string;
-  items: ExamItem[];
-  picks: Record<string, number | null>;
-  /** Items whose text was shown for a listening question */
-  assisted: string[];
-  partIndex: number;
-  endsAt: number;
-}
-
-export interface ExamPartSpec {
-  part: ExamPart;
-  label: string;
-  count: number;
-  minutes: number;
-}
-
-export interface ExamAttempt {
+/** One finished practice round. */
+export interface QuizAttempt {
   id: string;
   level: string;
   finishedAt: string;
-  correct: Record<ExamPart, number>;
-  total: Record<ExamPart, number>;
-  /** Listening questions answered with the text shown */
-  assisted?: number;
+  correct: number;
+  total: number;
 }

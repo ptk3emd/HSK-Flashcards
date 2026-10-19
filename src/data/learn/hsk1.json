@@ -1,6397 +1,1578 @@
 {
- "stories": [
-  {
-   "id": "h1-shi",
-   "level": "HSK 1",
-   "grammar": "是字句 (表示等同或类属)",
-   "title": "我是学生",
-   "titlePt": "Eu sou estudante",
-   "sentences": [
+  "grammar": [
     {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "是",
-       "pinyin": "shì",
-       "punct": false
-      },
-      {
-       "hanzi": "学生",
-       "pinyin": "xué shēng",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Eu sou estudante."
+      "category": "Prefixos e sufixos",
+      "points": [
+        {
+          "id": "h1-prefixos",
+          "text": "小—, 第—",
+          "explanation": "小 antes de um sobrenome forma um apelido informal e afetuoso (小张 = o jovem Zhang). 第 antes de um número forma o ordinal: 第一 = primeiro, 第一次 = primeira vez.",
+          "structure": "第 + número (+ 量词 + substantivo)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "叫", "pinyin": "jiào", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "小张", "pinyin": "Xiǎo Zhāng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nós o chamamos de Xiao Zhang."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "第一", "pinyin": "dì yī", "punct": false },
+                { "hanzi": "个", "pinyin": "ge", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu sou o primeiro."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这", "pinyin": "zhè", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "第一次", "pinyin": "dì yī cì", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "中国", "pinyin": "Zhōng guó", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Esta é a minha primeira vez na China."
+            }
+          ]
+        },
+        {
+          "id": "h1-sufixos",
+          "text": "—们, —边",
+          "explanation": "们 forma o plural de pessoas: 我 → 我们, 老师 → 老师们. 边 vem depois de uma palavra de posição e indica o lugar: 上边, 前边, 外边, 左边.",
+          "structure": "pessoa + 们 · 方位 + 边",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "学生", "pinyin": "xué shēng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "他们", "pinyin": "tā men", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "老师", "pinyin": "lǎo shī", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nós somos estudantes, eles são professores."
+            },
+            {
+              "tokens": [
+                { "hanzi": "桌子", "pinyin": "zhuō zi", "punct": false },
+                { "hanzi": "上边", "pinyin": "shàng bian", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "一", "pinyin": "yī", "punct": false },
+                { "hanzi": "本", "pinyin": "běn", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Há um livro em cima da mesa."
+            },
+            {
+              "tokens": [
+                { "hanzi": "前边", "pinyin": "qián bian", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "那个", "pinyin": "nà ge", "punct": false },
+                { "hanzi": "商店", "pinyin": "shāng diàn", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Aquela loja na frente é boa."
+            }
+          ]
+        }
+      ]
     },
     {
-     "tokens": [
-      {
-       "hanzi": "他",
-       "pinyin": "tā",
-       "punct": false
-      },
-      {
-       "hanzi": "是",
-       "pinyin": "shì",
-       "punct": false
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "的",
-       "pinyin": "de",
-       "punct": false
-      },
-      {
-       "hanzi": "老师",
-       "pinyin": "lǎo shī",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Ele é meu professor."
+      "category": "Palavras de posição",
+      "points": [
+        {
+          "id": "h1-posicao",
+          "text": "上, 下, 里, 外, 前, 后",
+          "explanation": "Palavras de posição vêm depois de um substantivo para dizer onde: 桌子上 (em cima da mesa), 家里 (em casa), 门外 (fora da porta), 学校前 (na frente da escola). Podem receber 边, 面 ou 头: 上边, 里面, 后头.",
+          "structure": "substantivo + 上/下/里/外/前/后 (+ 边/面/头)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "桌子", "pinyin": "zhuō zi", "punct": false },
+                { "hanzi": "上", "pinyin": "shàng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "O livro está em cima da mesa."
+            },
+            {
+              "tokens": [
+                { "hanzi": "学校", "pinyin": "xué xiào", "punct": false },
+                { "hanzi": "里边", "pinyin": "lǐ bian", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "多", "pinyin": "duō", "punct": false },
+                { "hanzi": "学生", "pinyin": "xué shēng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Há muitos estudantes dentro da escola."
+            },
+            {
+              "tokens": [
+                { "hanzi": "门外", "pinyin": "mén wài", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "人", "pinyin": "rén", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Há alguém fora da porta."
+            }
+          ]
+        }
+      ]
     },
     {
-     "tokens": [
-      {
-       "hanzi": "我们",
-       "pinyin": "wǒ men",
-       "punct": false
-      },
-      {
-       "hanzi": "是",
-       "pinyin": "shì",
-       "punct": false
-      },
-      {
-       "hanzi": "好",
-       "pinyin": "hǎo",
-       "punct": false
-      },
-      {
-       "hanzi": "朋友",
-       "pinyin": "péng you",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Nós somos bons amigos."
+      "category": "Verbos",
+      "points": [
+        {
+          "id": "h1-verbos-auxiliares",
+          "text": "Verbos auxiliares: 会, 能, 想, 要, 可以",
+          "explanation": "Vêm antes do verbo principal. 会: capacidade aprendida. 能: capacidade ou possibilidade. 想: vontade, desejo. 要: plano ou necessidade. 可以: permissão.",
+          "structure": "sujeito + 会/能/想/要/可以 + verbo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "说", "pinyin": "shuō", "punct": false },
+                { "hanzi": "汉语", "pinyin": "Hàn yǔ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu sei falar chinês."
+            },
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "想", "pinyin": "xiǎng", "punct": false },
+                { "hanzi": "喝", "pinyin": "hē", "punct": false },
+                { "hanzi": "茶", "pinyin": "chá", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Você quer beber chá?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "可以", "pinyin": "kě yǐ", "punct": false },
+                { "hanzi": "进来", "pinyin": "jìn lái", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Posso entrar?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "明天", "pinyin": "míng tiān", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "学校", "pinyin": "xué xiào", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Amanhã eu vou à escola."
+            }
+          ]
+        },
+        {
+          "id": "h1-verbos-separaveis",
+          "text": "Verbos separáveis: 看病, 睡觉, 说话, 上课, 下课, 上班, 下班, 生病",
+          "explanation": "São verbos formados por verbo + objeto que podem se separar: 上课 pode virar 上完课, 上了课. Elementos como 了 e complementos entram no meio da expressão.",
+          "structure": "verbo + objeto (elementos extras entram no meio)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "八点", "pinyin": "bā diǎn", "punct": false },
+                { "hanzi": "上课", "pinyin": "shàng kè", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "十二点", "pinyin": "shí èr diǎn", "punct": false },
+                { "hanzi": "下课", "pinyin": "xià kè", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu começo a aula às oito e saio às doze."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "生病", "pinyin": "shēng bìng", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "家", "pinyin": "jiā", "punct": false },
+                { "hanzi": "睡觉", "pinyin": "shuì jiào", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele ficou doente e está dormindo em casa."
+            },
+            {
+              "tokens": [
+                { "hanzi": "妈妈", "pinyin": "mā ma", "punct": false },
+                { "hanzi": "每天", "pinyin": "měi tiān", "punct": false },
+                { "hanzi": "八点", "pinyin": "bā diǎn", "punct": false },
+                { "hanzi": "上班", "pinyin": "shàng bān", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "五点", "pinyin": "wǔ diǎn", "punct": false },
+                { "hanzi": "下班", "pinyin": "xià bān", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "A mamãe trabalha das oito às cinco todos os dias."
+            },
+            {
+              "tokens": [
+                { "hanzi": "上课", "pinyin": "shàng kè", "punct": false },
+                { "hanzi": "的时候", "pinyin": "de shí hou", "punct": false },
+                { "hanzi": "不要", "pinyin": "bú yào", "punct": false },
+                { "hanzi": "说话", "pinyin": "shuō huà", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não converse durante a aula."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Pronomes",
+      "points": [
+        {
+          "id": "h1-pronomes-pessoais",
+          "text": "Pessoais: 我, 你, 您, 他, 她, 它, 我们, 你们, 他们, 她们, 它们, 大家",
+          "explanation": "您 é o tratamento formal de 你. 他 (ele), 她 (ela) e 它 (coisa ou animal) têm o mesmo som; só o plural muda com 们. 大家 = todos.",
+          "structure": "pronome (+ 们)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "老师", "pinyin": "lǎo shī", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "您", "pinyin": "nín", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "！", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Professor, olá!"
+            },
+            {
+              "tokens": [
+                { "hanzi": "她", "pinyin": "tā", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "姐姐", "pinyin": "jiě jie", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ela é a minha irmã mais velha."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "学生", "pinyin": "xué shēng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nós todos somos estudantes."
+            },
+            {
+              "tokens": [
+                { "hanzi": "大家", "pinyin": "dà jiā", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "高兴", "pinyin": "gāo xìng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Todos estão muito contentes."
+            }
+          ]
+        },
+        {
+          "id": "h1-pronomes-demonstrativos",
+          "text": "Demonstrativos: 这, 那, 这儿, 那儿, 这里, 那里, 这些, 那些, 这个, 那个, 有些",
+          "explanation": "这 (este) e 那 (aquele) vêm antes de substantivo ou de 量词: 这个人, 那本书. 这儿/这里 e 那儿/那里 indicam lugar. 这些/那些 são o plural; 有些 = alguns, uns.",
+          "structure": "这/那 (+ 量词) + substantivo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "这", "pinyin": "zhè", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Este é o meu livro."
+            },
+            {
+              "tokens": [
+                { "hanzi": "那个", "pinyin": "nà ge", "punct": false },
+                { "hanzi": "饭店", "pinyin": "fàn diàn", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "大", "pinyin": "dà", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Aquele restaurante é grande."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "那儿", "pinyin": "nà r", "punct": false },
+                { "hanzi": "吃饭", "pinyin": "chī fàn", "punct": false },
+                { "hanzi": "吧", "pinyin": "ba", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Vamos comer lá."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这些", "pinyin": "zhè xiē", "punct": false },
+                { "hanzi": "苹果", "pinyin": "píng guǒ", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "贵", "pinyin": "guì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Estas maçãs são caras."
+            }
+          ]
+        },
+        {
+          "id": "h1-pronomes-interrogativos",
+          "text": "Interrogativos: 多, 几, 哪, 哪儿, 哪些, 什么, 谁, 怎么, 怎么样",
+          "explanation": "O pronome interrogativo fica na posição da resposta. 谁 = quem; 什么 = o quê; 哪/哪儿/哪些 = qual/onde/quais; 怎么/怎么样 = como; 几 = quantos (número pequeno); 多 = grau: 多大, 多少钱.",
+          "structure": "pergunta com o interrogativo no lugar da resposta",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "叫", "pinyin": "jiào", "punct": false },
+                { "hanzi": "什么", "pinyin": "shén me", "punct": false },
+                { "hanzi": "名字", "pinyin": "míng zi", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Como você se chama?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "谁", "pinyin": "shéi", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Quem é ele?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "几", "pinyin": "jǐ", "punct": false },
+                { "hanzi": "号", "pinyin": "hào", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Que dia do mês é hoje?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "学校", "pinyin": "xué xiào", "punct": false },
+                { "hanzi": "怎么样", "pinyin": "zěn me yàng", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Como é a sua escola?"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Números e medidas",
+      "points": [
+        {
+          "id": "h1-numeros",
+          "text": "Números: 一 a 十, 百, 千, 万, 半, 两",
+          "explanation": "Com 一 a 十 formam-se os números: 十一 (11), 二十 (20), 二十五 (25). 百, 千 e 万 são centena, milhar e dezena de milhar. Antes de 量词, o 2 é 两, não 二. 半 = meio, metade.",
+          "structure": "número + 百/千/万 · 两 + 量词",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "班", "pinyin": "bān", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "二十", "pinyin": "èr shí", "punct": false },
+                { "hanzi": "个", "pinyin": "ge", "punct": false },
+                { "hanzi": "学生", "pinyin": "xué shēng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nossa turma tem vinte estudantes."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "两百", "pinyin": "liǎng bǎi", "punct": false },
+                { "hanzi": "块", "pinyin": "kuài", "punct": false },
+                { "hanzi": "钱", "pinyin": "qián", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu tenho duzentos yuans."
+            },
+            {
+              "tokens": [
+                { "hanzi": "现在", "pinyin": "xiàn zài", "punct": false },
+                { "hanzi": "八点", "pinyin": "bā diǎn", "punct": false },
+                { "hanzi": "半", "pinyin": "bàn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Agora são oito e meia."
+            }
+          ]
+        },
+        {
+          "id": "h1-classificadores",
+          "text": "Classificadores: 个, 本, 家, 口, 块, 件, 只, 杯",
+          "explanation": "Entre número e substantivo usa-se um classificador. 个 é o mais geral; 本 para livros; 口 para pessoas da família; 杯 para copos; 块 para pedaços e dinheiro; 件 para roupas e assuntos; 只 para animais; 家 para casas e lojas.",
+          "structure": "número + 量词 + substantivo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "家", "pinyin": "jiā", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "四", "pinyin": "sì", "punct": false },
+                { "hanzi": "口", "pinyin": "kǒu", "punct": false },
+                { "hanzi": "人", "pinyin": "rén", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Minha família tem quatro pessoas."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "买了", "pinyin": "mǎi le", "punct": false },
+                { "hanzi": "两", "pinyin": "liǎng", "punct": false },
+                { "hanzi": "本", "pinyin": "běn", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu comprei dois livros."
+            },
+            {
+              "tokens": [
+                { "hanzi": "请", "pinyin": "qǐng", "punct": false },
+                { "hanzi": "给", "pinyin": "gěi", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "一", "pinyin": "yī", "punct": false },
+                { "hanzi": "杯", "pinyin": "bēi", "punct": false },
+                { "hanzi": "茶", "pinyin": "chá", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Por favor, me dê uma xícara de chá."
+            }
+          ]
+        },
+        {
+          "id": "h1-tempo",
+          "text": "Tempo: 日, 号, 岁, 点, 分, 年, 天",
+          "explanation": "As datas seguem a ordem ano, mês, dia: 2026年4月8日 (ou 号, mais falado). A hora vem antes de 点 e os minutos antes de 分; 岁 conta os anos de idade.",
+          "structure": "年 + 月 + 日/号 · hora + 点 + 分 · número + 岁",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "几", "pinyin": "jǐ", "punct": false },
+                { "hanzi": "月", "pinyin": "yuè", "punct": false },
+                { "hanzi": "几", "pinyin": "jǐ", "punct": false },
+                { "hanzi": "号", "pinyin": "hào", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Que data é hoje?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "现在", "pinyin": "xiàn zài", "punct": false },
+                { "hanzi": "九点", "pinyin": "jiǔ diǎn", "punct": false },
+                { "hanzi": "二十", "pinyin": "èr shí", "punct": false },
+                { "hanzi": "分", "pinyin": "fēn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Agora são nove e vinte."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "今年", "pinyin": "jīn nián", "punct": false },
+                { "hanzi": "二十", "pinyin": "èr shí", "punct": false },
+                { "hanzi": "岁", "pinyin": "suì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu tenho vinte anos este ano."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Advérbios",
+      "points": [
+        {
+          "id": "h1-adv-grau",
+          "text": "De grau: 很, 非常, 太, 真, 有点儿",
+          "explanation": "很 antes de adjetivo é quase neutro em frases afirmativas (他很高). 非常 = muito. 太...了 marca excesso. 真 expressa admiração. 有点儿 indica um pouco, geralmente de algo indesejado.",
+          "structure": "太 + adjetivo + 了 · 有(一)点儿 + adjetivo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "真", "pinyin": "zhēn", "punct": false },
+                { "hanzi": "热", "pinyin": "rè", "punct": false },
+                { "hanzi": "！", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Hoje está realmente quente!"
+            },
+            {
+              "tokens": [
+                { "hanzi": "这个", "pinyin": "zhè ge", "punct": false },
+                { "hanzi": "菜", "pinyin": "cài", "punct": false },
+                { "hanzi": "太", "pinyin": "tài", "punct": false },
+                { "hanzi": "好吃", "pinyin": "hǎo chī", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "！", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Este prato está delicioso demais!"
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "有点儿", "pinyin": "yǒu diǎn r", "punct": false },
+                { "hanzi": "累", "pinyin": "lèi", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Estou um pouco cansado."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "非常", "pinyin": "fēi cháng", "punct": false },
+                { "hanzi": "忙", "pinyin": "máng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele está muito ocupado."
+            }
+          ]
+        },
+        {
+          "id": "h1-adv-dou",
+          "text": "De âmbito: 都",
+          "explanation": "都 fica depois do sujeito e antes do verbo, incluindo todos os elementos citados: 我们都是学生. Na negação usa-se 都不 ou 都没.",
+          "structure": "sujeito + 都 + verbo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "留学生", "pinyin": "liú xué shēng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nós todos somos estudantes estrangeiros."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他们", "pinyin": "tā men", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "不", "pinyin": "bù", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "家", "pinyin": "jiā", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nenhum deles está em casa."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这些", "pinyin": "zhè xiē", "punct": false },
+                { "hanzi": "菜", "pinyin": "cài", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "好吃", "pinyin": "hǎo chī", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Todos estes pratos são gostosos."
+            }
+          ]
+        },
+        {
+          "id": "h1-adv-tempo",
+          "text": "De tempo: 在, 正在",
+          "explanation": "在 ou 正在 antes do verbo indicam ação em curso. 正在 costuma vir acompanhado de 呢 no fim da frase: 他正在睡觉呢.",
+          "structure": "sujeito + 在/正在 + verbo (+ 呢)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "看书", "pinyin": "kàn shū", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele está lendo."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "看", "pinyin": "kàn", "punct": false },
+                { "hanzi": "电视", "pinyin": "diàn shì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Estou assistindo TV."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "正在", "pinyin": "zhèng zài", "punct": false },
+                { "hanzi": "睡觉", "pinyin": "shuì jiào", "punct": false },
+                { "hanzi": "呢", "pinyin": "ne", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele está dormindo agora."
+            }
+          ]
+        },
+        {
+          "id": "h1-adv-zai",
+          "text": "De frequência: 再",
+          "explanation": "再 indica repetição no futuro: 再来 = vir de novo, 再说 = falar de novo. Também aparece em despedidas: 再见.",
+          "structure": "再 + verbo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "忙", "pinyin": "máng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "明天", "pinyin": "míng tiān", "punct": false },
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Hoje estou ocupado; volto amanhã."
+            },
+            {
+              "tokens": [
+                { "hanzi": "请", "pinyin": "qǐng", "punct": false },
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "给", "pinyin": "gěi", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "一", "pinyin": "yī", "punct": false },
+                { "hanzi": "杯", "pinyin": "bēi", "punct": false },
+                { "hanzi": "水", "pinyin": "shuǐ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Por favor, me dê mais um copo de água."
+            },
+            {
+              "tokens": [
+                { "hanzi": "欢迎", "pinyin": "huān yíng", "punct": false },
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "！", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Volte sempre!"
+            }
+          ]
+        },
+        {
+          "id": "h1-adv-hai-ye",
+          "text": "Relacionais: 还, 也",
+          "explanation": "也 = também, sempre antes do verbo. 还 = ainda, além disso (他还在学校; 我还要一杯茶). Os dois podem aparecer juntos: 也还.",
+          "structure": "sujeito + 也/还 + verbo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "学生", "pinyin": "xué shēng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "学生", "pinyin": "xué shēng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu sou estudante, ele também é."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "还", "pinyin": "hái", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "学校", "pinyin": "xué xiào", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele ainda está na escola."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "一", "pinyin": "yī", "punct": false },
+                { "hanzi": "杯", "pinyin": "bēi", "punct": false },
+                { "hanzi": "茶", "pinyin": "chá", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "还", "pinyin": "hái", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "一个", "pinyin": "yí ge", "punct": false },
+                { "hanzi": "面包", "pinyin": "miàn bāo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Quero um chá e também um pão."
+            }
+          ]
+        },
+        {
+          "id": "h1-adv-negacao",
+          "text": "De negação: 不, 没（有）, 不要",
+          "explanation": "不 nega estados, hábitos e o futuro: 我不是老师. 没(有) nega o verbo 有 e ações concluídas: 我没有钱. 不要 = não faça.",
+          "structure": "不 + verbo/adjetivo · 没(有) + 有/verbo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "不是", "pinyin": "bú shì", "punct": false },
+                { "hanzi": "老师", "pinyin": "lǎo shī", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu não sou professor."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "没有", "pinyin": "méi yǒu", "punct": false },
+                { "hanzi": "钱", "pinyin": "qián", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu não tenho dinheiro."
+            },
+            {
+              "tokens": [
+                { "hanzi": "上课", "pinyin": "shàng kè", "punct": false },
+                { "hanzi": "时", "pinyin": "shí", "punct": false },
+                { "hanzi": "不要", "pinyin": "bú yào", "punct": false },
+                { "hanzi": "说话", "pinyin": "shuō huà", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não converse durante a aula."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "不", "pinyin": "bù", "punct": false },
+                { "hanzi": "喝茶", "pinyin": "hē chá", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele não bebe chá."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Preposições e conjunções",
+      "points": [
+        {
+          "id": "h1-prep-zai",
+          "text": "Preposição 在 (tempo e lugar)",
+          "explanation": "Como preposição, 在 + lugar vem antes do verbo: 我在中国学习. Também pode indicar tempo: 他在七点来.",
+          "structure": "sujeito + 在 + lugar/tempo + verbo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "中国", "pinyin": "Zhōng guó", "punct": false },
+                { "hanzi": "学习", "pinyin": "xué xí", "punct": false },
+                { "hanzi": "汉语", "pinyin": "Hàn yǔ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu estudo chinês na China."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "七点", "pinyin": "qī diǎn", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "家", "pinyin": "jiā", "punct": false },
+                { "hanzi": "吃", "pinyin": "chī", "punct": false },
+                { "hanzi": "早饭", "pinyin": "zǎo fàn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele toma café da manhã em casa às sete."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "书店", "pinyin": "shū diàn", "punct": false },
+                { "hanzi": "买", "pinyin": "mǎi", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nós compramos livros na livraria."
+            }
+          ]
+        },
+        {
+          "id": "h1-prep-dui",
+          "text": "Preposição 对",
+          "explanation": "对 introduz a pessoa a quem a ação ou a avaliação se dirige: 妈妈对我很好. Aparece também em 对不起 e em 对...说.",
+          "structure": "sujeito + 对 + pessoa + verbo/adjetivo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "妈妈", "pinyin": "mā ma", "punct": false },
+                { "hanzi": "对", "pinyin": "duì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "A mamãe é muito boa comigo."
+            },
+            {
+              "tokens": [
+                { "hanzi": "对不起", "pinyin": "duì bu qǐ", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "晚", "pinyin": "wǎn", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Desculpe, eu me atrasei."
+            },
+            {
+              "tokens": [
+                { "hanzi": "请", "pinyin": "qǐng", "punct": false },
+                { "hanzi": "对", "pinyin": "duì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "说", "pinyin": "shuō", "punct": false },
+                { "hanzi": "汉语", "pinyin": "Hàn yǔ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Por favor, fale comigo em chinês."
+            }
+          ]
+        },
+        {
+          "id": "h1-conj-he",
+          "text": "Conjunção 和",
+          "explanation": "和 liga palavras ou expressões, não orações completas: 苹果和香蕉. Para ligar orações usa-se 也 ou outras conjunções.",
+          "structure": "A + 和 + B",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "买了", "pinyin": "mǎi le", "punct": false },
+                { "hanzi": "苹果", "pinyin": "píng guǒ", "punct": false },
+                { "hanzi": "和", "pinyin": "hé", "punct": false },
+                { "hanzi": "香蕉", "pinyin": "xiāng jiāo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu comprei maçãs e bananas."
+            },
+            {
+              "tokens": [
+                { "hanzi": "爸爸", "pinyin": "bà ba", "punct": false },
+                { "hanzi": "和", "pinyin": "hé", "punct": false },
+                { "hanzi": "妈妈", "pinyin": "mā ma", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "医生", "pinyin": "yī shēng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "O papai e a mamãe são médicos."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Partículas",
+      "points": [
+        {
+          "id": "h1-part-de",
+          "text": "Estrutural 的",
+          "explanation": "的 liga possuidor e coisa possuída (我的书), qualidade e substantivo (好朋友) e pode terminar uma expressão sem substantivo: 这是我的,那是你的.",
+          "structure": "A + 的 (+ B)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "朋友", "pinyin": "péng you", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele é um bom amigo meu."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "买的", "pinyin": "mǎi de", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "贵", "pinyin": "guì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "O livro que eu comprei é caro."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这", "pinyin": "zhè", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "那", "pinyin": "nà", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Este é o meu, aquele é o seu."
+            }
+          ]
+        },
+        {
+          "id": "h1-part-le",
+          "text": "Aspecto 了",
+          "explanation": "了 depois do verbo marca ação concluída (我吃了早饭). No fim da frase marca mudança de estado ou de situação (现在十点了; 他去学校了).",
+          "structure": "verbo + 了 (+ objeto) · frase + 了",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "吃了", "pinyin": "chī le", "punct": false },
+                { "hanzi": "早饭", "pinyin": "zǎo fàn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu tomei o café da manhã."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "学校", "pinyin": "xué xiào", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele foi para a escola."
+            },
+            {
+              "tokens": [
+                { "hanzi": "现在", "pinyin": "xiàn zài", "punct": false },
+                { "hanzi": "十点", "pinyin": "shí diǎn", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Agora já são dez horas."
+            }
+          ]
+        },
+        {
+          "id": "h1-part-modais",
+          "text": "Modais: 吗, 呢, 吧",
+          "explanation": "吗 transforma a frase em pergunta de sim/não. 呢 devolve a pergunta (我很好,你呢?) ou marca pergunta em curso. 吧 propõe uma ação ou suaviza a frase (我们走吧).",
+          "structure": "frase + 吗/呢/吧",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "中国人", "pinyin": "Zhōng guó rén", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Você é chinês?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "呢", "pinyin": "ne", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Estou bem, e você?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "走", "pinyin": "zǒu", "punct": false },
+                { "hanzi": "吧", "pinyin": "ba", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Vamos."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Estruturas de frase",
+      "points": [
+        {
+          "id": "h1-frase-predicados",
+          "text": "Predicado verbal, adjetival e nominal",
+          "explanation": "O predicado pode ser um verbo (我学习汉语), um adjetivo sem 是 (今天很冷) ou um substantivo que indica data, hora, idade etc. (今天星期三).",
+          "structure": "sujeito + verbo · sujeito + adjetivo · sujeito + substantivo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "学习", "pinyin": "xué xí", "punct": false },
+                { "hanzi": "汉语", "pinyin": "Hàn yǔ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu estudo chinês."
+            },
+            {
+              "tokens": [
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "冷", "pinyin": "lěng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Hoje está frio."
+            },
+            {
+              "tokens": [
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "星期三", "pinyin": "xīng qī sān", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Hoje é quarta-feira."
+            }
+          ]
+        },
+        {
+          "id": "h1-frase-perguntas",
+          "text": "Perguntas: sim/não, específica e alternativa",
+          "explanation": "Pergunta de sim/não: frase + 吗. Pergunta específica: o pronome interrogativo ocupa a posição da resposta. Alternativa: verbo + 不 + verbo (你去不去?).",
+          "structure": "frase + 吗 · interrogativo · V + 不 + V",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "学校", "pinyin": "xué xiào", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Você vai à escola?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "哪儿", "pinyin": "nǎ r", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Aonde você vai?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "去不去", "pinyin": "qù bu qù", "punct": false },
+                { "hanzi": "学校", "pinyin": "xué xiào", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Você vai ou não vai à escola?"
+            }
+          ]
+        },
+        {
+          "id": "h1-frase-shi",
+          "text": "Frase com 是 (identidade e classe)",
+          "explanation": "是 liga duas partes equivalentes: quem é ou o que é. A negação é 不是.",
+          "structure": "A + 是 + B",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "学生", "pinyin": "xué shēng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu sou estudante."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "不是", "pinyin": "bú shì", "punct": false },
+                { "hanzi": "老师", "pinyin": "lǎo shī", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele não é professor."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这", "pinyin": "zhè", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "妈妈", "pinyin": "mā ma", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Esta é a minha mãe."
+            }
+          ]
+        },
+        {
+          "id": "h1-frase-you",
+          "text": "Frase com 有 (posse)",
+          "explanation": "有 expressa posse. A negação é 没有 e a pergunta pode terminar com 吗.",
+          "structure": "sujeito + 有 + objeto · sujeito + 没有 + objeto",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "一个", "pinyin": "yí ge", "punct": false },
+                { "hanzi": "哥哥", "pinyin": "gē ge", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu tenho um irmão mais velho."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "没有", "pinyin": "méi yǒu", "punct": false },
+                { "hanzi": "电脑", "pinyin": "diàn nǎo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele não tem computador."
+            },
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "时间", "pinyin": "shí jiān", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Você tem tempo?"
+            }
+          ]
+        },
+        {
+          "id": "h1-frase-cunzai",
+          "text": "Frases com 在 e 有 (existência)",
+          "explanation": "在 diz onde algo ou alguém está; 有 diz que algo existe: 桌子上有一本书. Ordem: lugar + 有 + coisa.",
+          "structure": "lugar + 有 + coisa · pessoa/coisa + 在 + lugar",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "家", "pinyin": "jiā", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele está em casa."
+            },
+            {
+              "tokens": [
+                { "hanzi": "桌子", "pinyin": "zhuō zi", "punct": false },
+                { "hanzi": "上", "pinyin": "shàng", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "一", "pinyin": "yī", "punct": false },
+                { "hanzi": "本", "pinyin": "běn", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Há um livro em cima da mesa."
+            },
+            {
+              "tokens": [
+                { "hanzi": "学校", "pinyin": "xué xiào", "punct": false },
+                { "hanzi": "前边", "pinyin": "qián bian", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "一个", "pinyin": "yí ge", "punct": false },
+                { "hanzi": "商店", "pinyin": "shāng diàn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Há uma loja na frente da escola."
+            }
+          ]
+        },
+        {
+          "id": "h1-frase-lianxu",
+          "text": "Frase em série (连动句)",
+          "explanation": "Duas ações seguidas: a primeira indica o modo ou a finalidade da segunda. 我去商店买东西 = vou à loja (para) comprar coisas.",
+          "structure": "verbo 1 (+ objeto) + verbo 2 (+ objeto)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "商店", "pinyin": "shāng diàn", "punct": false },
+                { "hanzi": "买", "pinyin": "mǎi", "punct": false },
+                { "hanzi": "东西", "pinyin": "dōng xi", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Vou à loja comprar coisas."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "坐", "pinyin": "zuò", "punct": false },
+                { "hanzi": "飞机", "pinyin": "fēi jī", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "北京", "pinyin": "Běi jīng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele vai a Pequim de avião."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "中国", "pinyin": "Zhōng guó", "punct": false },
+                { "hanzi": "学习", "pinyin": "xué xí", "punct": false },
+                { "hanzi": "汉语", "pinyin": "Hàn yǔ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Vou à China estudar chinês."
+            }
+          ]
+        },
+        {
+          "id": "h1-frase-duplo",
+          "text": "Duplo objeto (双宾语句)",
+          "explanation": "Verbos como 给, 送 e 教 aceitam dois objetos: primeiro a pessoa, depois a coisa.",
+          "structure": "sujeito + verbo + pessoa + coisa",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "妈妈", "pinyin": "mā ma", "punct": false },
+                { "hanzi": "给", "pinyin": "gěi", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "一", "pinyin": "yī", "punct": false },
+                { "hanzi": "本", "pinyin": "běn", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "A mamãe me deu um livro."
+            },
+            {
+              "tokens": [
+                { "hanzi": "老师", "pinyin": "lǎo shī", "punct": false },
+                { "hanzi": "教", "pinyin": "jiāo", "punct": false },
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "汉语", "pinyin": "Hàn yǔ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "O professor nos ensina chinês."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "送", "pinyin": "sòng", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "一个", "pinyin": "yí ge", "punct": false },
+                { "hanzi": "苹果", "pinyin": "píng guǒ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu te dou uma maçã de presente."
+            }
+          ]
+        },
+        {
+          "id": "h1-aspecto",
+          "text": "Aspecto: concluído (了) e em curso (在/正在/呢)",
+          "explanation": "Para ação concluída, 了 depois do verbo. Para ação em curso, 在/正在 antes do verbo e, muitas vezes, 呢 no fim. Escolha o aspecto conforme o que a frase quer dizer.",
+          "structure": "verbo + 了 · 在/正在 + verbo (+ 呢)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "买了", "pinyin": "mǎi le", "punct": false },
+                { "hanzi": "三", "pinyin": "sān", "punct": false },
+                { "hanzi": "个", "pinyin": "ge", "punct": false },
+                { "hanzi": "苹果", "pinyin": "píng guǒ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele comprou três maçãs."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "打电话", "pinyin": "dǎ diàn huà", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele está ao telefone."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他们", "pinyin": "tā men", "punct": false },
+                { "hanzi": "正在", "pinyin": "zhèng zài", "punct": false },
+                { "hanzi": "上课", "pinyin": "shàng kè", "punct": false },
+                { "hanzi": "呢", "pinyin": "ne", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eles estão em aula agora."
+            }
+          ]
+        },
+        {
+          "id": "h1-expressoes",
+          "text": "Expressões: preço, ordinal, data e hora",
+          "explanation": "Preço: número + 块/元 (+钱). Ordinal: 第 + número. Data e hora têm ordem fixa: 4月8号, 下午三点半.",
+          "structure": "número + 块/元 · 第 + número · 月/号 + 点/分",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "这", "pinyin": "zhè", "punct": false },
+                { "hanzi": "本", "pinyin": "běn", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "二十", "pinyin": "èr shí", "punct": false },
+                { "hanzi": "块", "pinyin": "kuài", "punct": false },
+                { "hanzi": "钱", "pinyin": "qián", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Este livro custa vinte yuans."
+            },
+            {
+              "tokens": [
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "四月", "pinyin": "sì yuè", "punct": false },
+                { "hanzi": "八号", "pinyin": "bā hào", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Hoje é 8 de abril."
+            },
+            {
+              "tokens": [
+                { "hanzi": "现在", "pinyin": "xiàn zài", "punct": false },
+                { "hanzi": "下午", "pinyin": "xià wǔ", "punct": false },
+                { "hanzi": "三点", "pinyin": "sān diǎn", "punct": false },
+                { "hanzi": "半", "pinyin": "bàn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Agora são três e meia da tarde."
+            }
+          ]
+        }
+      ]
     }
-   ],
-   "questions": [
-    {
-     "prompt": "Quem é o professor?",
-     "options": [
-      "Eu",
-      "Ele",
-      "Nós",
-      "Ela"
-     ],
-     "answer": 1
-    },
-    {
-     "prompt": "Quem é o estudante?",
-     "options": [
-      "Eu",
-      "Ele",
-      "Ela",
-      "Nós"
-     ],
-     "answer": 0
-    }
-   ]
-  },
-  {
-   "id": "h1-you",
-   "level": "HSK 1",
-   "grammar": "有字句 (表示领有)",
-   "title": "我有一个朋友",
-   "titlePt": "Eu tenho um amigo",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "有",
-       "pinyin": "yǒu",
-       "punct": false
-      },
-      {
-       "hanzi": "一",
-       "pinyin": "yī",
-       "punct": false
-      },
-      {
-       "hanzi": "个",
-       "pinyin": "gè",
-       "punct": false
-      },
-      {
-       "hanzi": "朋友",
-       "pinyin": "péng you",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Eu tenho um amigo."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "她",
-       "pinyin": "tā",
-       "punct": false
-      },
-      {
-       "hanzi": "有",
-       "pinyin": "yǒu",
-       "punct": false
-      },
-      {
-       "hanzi": "一",
-       "pinyin": "yī",
-       "punct": false
-      },
-      {
-       "hanzi": "本",
-       "pinyin": "běn",
-       "punct": false
-      },
-      {
-       "hanzi": "书",
-       "pinyin": "shū",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Ela tem um livro."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "你",
-       "pinyin": "nǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "有",
-       "pinyin": "yǒu",
-       "punct": false
-      },
-      {
-       "hanzi": "猫",
-       "pinyin": "māo",
-       "punct": false
-      },
-      {
-       "hanzi": "吗",
-       "pinyin": "ma",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Você tem gato?"
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "Quantos livros ela tem?",
-     "options": [
-      "Um",
-      "Dois",
-      "Três",
-      "Nenhum"
-     ],
-     "answer": 0
-    },
-    {
-     "prompt": "O que eu tenho?",
-     "options": [
-      "Um amigo",
-      "Um gato",
-      "Um livro",
-      "Um professor"
-     ],
-     "answer": 0
-    }
-   ]
-  },
-  {
-   "id": "h1-hen",
-   "level": "HSK 1",
-   "grammar": "形容词谓语句",
-   "title": "天气很好",
-   "titlePt": "O tempo está bom",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "今天",
-       "pinyin": "jīn tiān",
-       "punct": false
-      },
-      {
-       "hanzi": "天气",
-       "pinyin": "tiān qì",
-       "punct": false
-      },
-      {
-       "hanzi": "很",
-       "pinyin": "hěn",
-       "punct": false
-      },
-      {
-       "hanzi": "好",
-       "pinyin": "hǎo",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Hoje o tempo está muito bom."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "这里",
-       "pinyin": "zhè lǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "的",
-       "pinyin": "de",
-       "punct": false
-      },
-      {
-       "hanzi": "天气",
-       "pinyin": "tiān qì",
-       "punct": false
-      },
-      {
-       "hanzi": "很",
-       "pinyin": "hěn",
-       "punct": false
-      },
-      {
-       "hanzi": "热",
-       "pinyin": "rè",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O tempo aqui está muito quente."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "的",
-       "pinyin": "de",
-       "punct": false
-      },
-      {
-       "hanzi": "狗",
-       "pinyin": "gǒu",
-       "punct": false
-      },
-      {
-       "hanzi": "很",
-       "pinyin": "hěn",
-       "punct": false
-      },
-      {
-       "hanzi": "小",
-       "pinyin": "xiǎo",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Meu cachorro é muito pequeno."
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "Como está o tempo hoje?",
-     "options": [
-      "Muito bom",
-      "Muito frio",
-      "Chovendo",
-      "Muito quente"
-     ],
-     "answer": 0
-    },
-    {
-     "prompt": "Como é o cachorro?",
-     "options": [
-      "Grande",
-      "Pequeno",
-      "Bonito",
-      "Quente"
-     ],
-     "answer": 1
-    }
-   ]
-  },
-  {
-   "id": "h1-bu",
-   "level": "HSK 1",
-   "grammar": "否定副词 不 / 没",
-   "title": "我不喝茶",
-   "titlePt": "Eu não bebo chá",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "不",
-       "pinyin": "bù",
-       "punct": false
-      },
-      {
-       "hanzi": "喝",
-       "pinyin": "hē",
-       "punct": false
-      },
-      {
-       "hanzi": "茶",
-       "pinyin": "chá",
-       "punct": false
-      },
-      {
-       "hanzi": "，",
-       "pinyin": "",
-       "punct": true
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "喝",
-       "pinyin": "hē",
-       "punct": false
-      },
-      {
-       "hanzi": "水",
-       "pinyin": "shuǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Eu não bebo chá, eu bebo água."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "今天",
-       "pinyin": "jīn tiān",
-       "punct": false
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "不",
-       "pinyin": "bù",
-       "punct": false
-      },
-      {
-       "hanzi": "忙",
-       "pinyin": "máng",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Hoje eu não estou ocupado."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "你",
-       "pinyin": "nǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "不",
-       "pinyin": "bù",
-       "punct": false
-      },
-      {
-       "hanzi": "热",
-       "pinyin": "rè",
-       "punct": false
-      },
-      {
-       "hanzi": "吗",
-       "pinyin": "ma",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Você não está com calor?"
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "O que a pessoa NÃO bebe?",
-     "options": [
-      "Chá",
-      "Água",
-      "Livro",
-      "Cachorro"
-     ],
-     "answer": 0
-    },
-    {
-     "prompt": "Hoje a pessoa está ocupada?",
-     "options": [
-      "Sim",
-      "Não"
-     ],
-     "answer": 1
-    }
-   ]
-  },
-  {
-   "id": "h1-ji",
-   "level": "HSK 1",
-   "grammar": "疑问代词 (什么 / 谁 / 哪儿 / 几)",
-   "title": "你是谁",
-   "titlePt": "Quem é você?",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "你",
-       "pinyin": "nǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "是",
-       "pinyin": "shì",
-       "punct": false
-      },
-      {
-       "hanzi": "谁",
-       "pinyin": "shéi/shuí",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Quem é você?"
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "是",
-       "pinyin": "shì",
-       "punct": false
-      },
-      {
-       "hanzi": "老师",
-       "pinyin": "lǎo shī",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Eu sou professor."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "你",
-       "pinyin": "nǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "家",
-       "pinyin": "jiā",
-       "punct": false
-      },
-      {
-       "hanzi": "在",
-       "pinyin": "zài",
-       "punct": false
-      },
-      {
-       "hanzi": "哪儿",
-       "pinyin": "nǎr",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "家",
-       "pinyin": "jiā",
-       "punct": false
-      },
-      {
-       "hanzi": "在",
-       "pinyin": "zài",
-       "punct": false
-      },
-      {
-       "hanzi": "中国",
-       "pinyin": "Zhōng guó",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Onde fica a sua casa? A minha fica na China."
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "Onde fica a casa de quem fala?",
-     "options": [
-      "Na China",
-      "Na escola",
-      "Em casa",
-      "Na loja"
-     ],
-     "answer": 0
-    },
-    {
-     "prompt": "Qual é a profissão de quem fala?",
-     "options": [
-      "Estudante",
-      "Professor",
-      "Amigo",
-      "Médico"
-     ],
-     "answer": 1
-    }
-   ]
-  },
-  {
-   "id": "h1-shijian",
-   "level": "HSK 1",
-   "grammar": "时间表示法 (几点 / 几号)",
-   "title": "几点了",
-   "titlePt": "Que horas são?",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "今天",
-       "pinyin": "jīn tiān",
-       "punct": false
-      },
-      {
-       "hanzi": "几",
-       "pinyin": "jǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "号",
-       "pinyin": "hào",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      },
-      {
-       "hanzi": "今天",
-       "pinyin": "jīn tiān",
-       "punct": false
-      },
-      {
-       "hanzi": "十",
-       "pinyin": "shí",
-       "punct": false
-      },
-      {
-       "hanzi": "号",
-       "pinyin": "hào",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Qual é a data de hoje? Hoje é dia 10."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "现在",
-       "pinyin": "xiàn zài",
-       "punct": false
-      },
-      {
-       "hanzi": "几",
-       "pinyin": "jǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "点",
-       "pinyin": "diǎn",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      },
-      {
-       "hanzi": "现在",
-       "pinyin": "xiàn zài",
-       "punct": false
-      },
-      {
-       "hanzi": "三",
-       "pinyin": "sān",
-       "punct": false
-      },
-      {
-       "hanzi": "点",
-       "pinyin": "diǎn",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Que horas são? São três horas."
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "Qual é a data de hoje?",
-     "options": [
-      "Dia 10",
-      "Dia 3",
-      "Dia 8",
-      "Dia 5"
-     ],
-     "answer": 0
-    },
-    {
-     "prompt": "Que horas são?",
-     "options": [
-      "12 horas",
-      "3 horas",
-      "9 horas",
-      "6 horas"
-     ],
-     "answer": 1
-    }
-   ]
-  },
-  {
-   "id": "h1-hui",
-   "level": "HSK 1",
-   "grammar": "能愿动词 (会 / 想 / 要)",
-   "title": "我会说汉语",
-   "titlePt": "Eu sei falar chinês",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "会",
-       "pinyin": "huì",
-       "punct": false
-      },
-      {
-       "hanzi": "说",
-       "pinyin": "shuō",
-       "punct": false
-      },
-      {
-       "hanzi": "汉语",
-       "pinyin": "Hàn yǔ",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Eu sei falar chinês."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "想",
-       "pinyin": "xiǎng",
-       "punct": false
-      },
-      {
-       "hanzi": "喝",
-       "pinyin": "hē",
-       "punct": false
-      },
-      {
-       "hanzi": "水",
-       "pinyin": "shuǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Eu quero beber água."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "你",
-       "pinyin": "nǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "要",
-       "pinyin": "yào",
-       "punct": false
-      },
-      {
-       "hanzi": "吃",
-       "pinyin": "chī",
-       "punct": false
-      },
-      {
-       "hanzi": "饭",
-       "pinyin": "fàn",
-       "punct": false
-      },
-      {
-       "hanzi": "吗",
-       "pinyin": "ma",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Você quer comer?"
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "O que a pessoa sabe fazer?",
-     "options": [
-      "Falar chinês",
-      "Cozinhar",
-      "Dirigir",
-      "Nadar"
-     ],
-     "answer": 0
-    },
-    {
-     "prompt": "O que a pessoa quer beber?",
-     "options": [
-      "Água",
-      "Chá",
-      "Leite",
-      "Suco"
-     ],
-     "answer": 0
-    }
-   ]
-  },
-  {
-   "id": "h1-novo1",
-   "level": "HSK 1",
-   "grammar": "在 / 有 (existência)",
-   "title": "房间 里",
-   "titlePt": "No quarto",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "这",
-       "pinyin": "zhè",
-       "punct": false
-      },
-      {
-       "hanzi": "是",
-       "pinyin": "shì",
-       "punct": false
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "的",
-       "pinyin": "de",
-       "punct": false
-      },
-      {
-       "hanzi": "房间",
-       "pinyin": "fáng jiān",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Este é o meu quarto."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "桌子",
-       "pinyin": "zhuō zi",
-       "punct": false
-      },
-      {
-       "hanzi": "上",
-       "pinyin": "shàng",
-       "punct": false
-      },
-      {
-       "hanzi": "有",
-       "pinyin": "yǒu",
-       "punct": false
-      },
-      {
-       "hanzi": "一",
-       "pinyin": "yī",
-       "punct": false
-      },
-      {
-       "hanzi": "本",
-       "pinyin": "běn",
-       "punct": false
-      },
-      {
-       "hanzi": "书",
-       "pinyin": "shū",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Em cima da mesa há um livro."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "桌子",
-       "pinyin": "zhuō zi",
-       "punct": false
-      },
-      {
-       "hanzi": "上",
-       "pinyin": "shàng",
-       "punct": false
-      },
-      {
-       "hanzi": "还",
-       "pinyin": "hái",
-       "punct": false
-      },
-      {
-       "hanzi": "有",
-       "pinyin": "yǒu",
-       "punct": false
-      },
-      {
-       "hanzi": "一",
-       "pinyin": "yī",
-       "punct": false
-      },
-      {
-       "hanzi": "个",
-       "pinyin": "gè",
-       "punct": false
-      },
-      {
-       "hanzi": "苹果",
-       "pinyin": "píng guǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Em cima da mesa também há uma maçã."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "椅子",
-       "pinyin": "yǐ zi",
-       "punct": false
-      },
-      {
-       "hanzi": "在",
-       "pinyin": "zài",
-       "punct": false
-      },
-      {
-       "hanzi": "桌子",
-       "pinyin": "zhuō zi",
-       "punct": false
-      },
-      {
-       "hanzi": "前",
-       "pinyin": "qián",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "A cadeira está na frente da mesa."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "的",
-       "pinyin": "de",
-       "punct": false
-      },
-      {
-       "hanzi": "猫",
-       "pinyin": "māo",
-       "punct": false
-      },
-      {
-       "hanzi": "在",
-       "pinyin": "zài",
-       "punct": false
-      },
-      {
-       "hanzi": "椅子",
-       "pinyin": "yǐ zi",
-       "punct": false
-      },
-      {
-       "hanzi": "上",
-       "pinyin": "shàng",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O meu gato está na cadeira."
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "O que há em cima da mesa?",
-     "options": [
-      "Um gato e um livro",
-      "Um livro e uma maçã",
-      "Dois livros"
-     ],
-     "answer": 1
-    },
-    {
-     "prompt": "Onde está o gato?",
-     "options": [
-      "Na mesa",
-      "Na escola",
-      "Na cadeira"
-     ],
-     "answer": 2
-    }
-   ]
-  },
-  {
-   "id": "h1-novo2",
-   "level": "HSK 1",
-   "grammar": "连动句 (frase em série)",
-   "title": "去 学校",
-   "titlePt": "Indo à escola",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "今天",
-       "pinyin": "jīn tiān",
-       "punct": false
-      },
-      {
-       "hanzi": "早上",
-       "pinyin": "zǎo shang",
-       "punct": false
-      },
-      {
-       "hanzi": "，",
-       "pinyin": "",
-       "punct": true
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "坐",
-       "pinyin": "zuò",
-       "punct": false
-      },
-      {
-       "hanzi": "出租车",
-       "pinyin": "chū zū chē",
-       "punct": false
-      },
-      {
-       "hanzi": "去",
-       "pinyin": "qù",
-       "punct": false
-      },
-      {
-       "hanzi": "学校",
-       "pinyin": "xué xiào",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Hoje de manhã, eu vou à escola de táxi."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "哥哥",
-       "pinyin": "gē ge",
-       "punct": false
-      },
-      {
-       "hanzi": "开车",
-       "pinyin": "kāi chē",
-       "punct": false
-      },
-      {
-       "hanzi": "去",
-       "pinyin": "qù",
-       "punct": false
-      },
-      {
-       "hanzi": "公司",
-       "pinyin": "gōng sī",
-       "punct": false
-      },
-      {
-       "hanzi": "上班",
-       "pinyin": "shàng bān",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O meu irmão mais velho dirige até a empresa para trabalhar."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "下午",
-       "pinyin": "xià wǔ",
-       "punct": false
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "回",
-       "pinyin": "huí",
-       "punct": false
-      },
-      {
-       "hanzi": "家",
-       "pinyin": "jiā",
-       "punct": false
-      },
-      {
-       "hanzi": "吃",
-       "pinyin": "chī",
-       "punct": false
-      },
-      {
-       "hanzi": "饭",
-       "pinyin": "fàn",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "À tarde, volto para casa para comer."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "晚上",
-       "pinyin": "wǎn shang",
-       "punct": false
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "在",
-       "pinyin": "zài",
-       "punct": false
-      },
-      {
-       "hanzi": "家",
-       "pinyin": "jiā",
-       "punct": false
-      },
-      {
-       "hanzi": "看",
-       "pinyin": "kàn",
-       "punct": false
-      },
-      {
-       "hanzi": "电视",
-       "pinyin": "diàn shì",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "À noite, assisto TV em casa."
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "Como o narrador vai à escola hoje?",
-     "options": [
-      "De ônibus",
-      "De táxi",
-      "De carro"
-     ],
-     "answer": 1
-    },
-    {
-     "prompt": "Como o irmão mais velho vai trabalhar?",
-     "options": [
-      "De táxi",
-      "De trem",
-      "De carro"
-     ],
-     "answer": 2
-    }
-   ]
-  },
-  {
-   "id": "h1-novo3",
-   "level": "HSK 1",
-   "grammar": "双宾语句 (duplo objeto)",
-   "title": "给 我",
-   "titlePt": "Dar algo a alguém",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "妈妈",
-       "pinyin": "mā ma",
-       "punct": false
-      },
-      {
-       "hanzi": "给",
-       "pinyin": "gěi",
-       "punct": false
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "一",
-       "pinyin": "yī",
-       "punct": false
-      },
-      {
-       "hanzi": "本",
-       "pinyin": "běn",
-       "punct": false
-      },
-      {
-       "hanzi": "书",
-       "pinyin": "shū",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "A mamãe me deu um livro."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "爸爸",
-       "pinyin": "bà ba",
-       "punct": false
-      },
-      {
-       "hanzi": "给",
-       "pinyin": "gěi",
-       "punct": false
-      },
-      {
-       "hanzi": "弟弟",
-       "pinyin": "dì di",
-       "punct": false
-      },
-      {
-       "hanzi": "五",
-       "pinyin": "wǔ",
-       "punct": false
-      },
-      {
-       "hanzi": "块",
-       "pinyin": "kuài",
-       "punct": false
-      },
-      {
-       "hanzi": "钱",
-       "pinyin": "qián",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O papai deu cinco kuai ao meu irmão mais novo."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "老师",
-       "pinyin": "lǎo shī",
-       "punct": false
-      },
-      {
-       "hanzi": "问",
-       "pinyin": "wèn",
-       "punct": false
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "一",
-       "pinyin": "yī",
-       "punct": false
-      },
-      {
-       "hanzi": "个",
-       "pinyin": "gè",
-       "punct": false
-      },
-      {
-       "hanzi": "问题",
-       "pinyin": "wèn tí",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "A professora me fez uma pergunta."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "给",
-       "pinyin": "gěi",
-       "punct": false
-      },
-      {
-       "hanzi": "朋友",
-       "pinyin": "péng you",
-       "punct": false
-      },
-      {
-       "hanzi": "一",
-       "pinyin": "yī",
-       "punct": false
-      },
-      {
-       "hanzi": "个",
-       "pinyin": "gè",
-       "punct": false
-      },
-      {
-       "hanzi": "苹果",
-       "pinyin": "píng guǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Eu dei uma maçã ao meu amigo."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "朋友",
-       "pinyin": "péng you",
-       "punct": false
-      },
-      {
-       "hanzi": "也",
-       "pinyin": "yě",
-       "punct": false
-      },
-      {
-       "hanzi": "给",
-       "pinyin": "gěi",
-       "punct": false
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "一",
-       "pinyin": "yī",
-       "punct": false
-      },
-      {
-       "hanzi": "个",
-       "pinyin": "gè",
-       "punct": false
-      },
-      {
-       "hanzi": "包子",
-       "pinyin": "bāo zi",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O meu amigo também me deu um baozi."
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "O que a mamãe deu ao narrador?",
-     "options": [
-      "Um livro",
-      "Uma maçã",
-      "Dinheiro"
-     ],
-     "answer": 0
-    },
-    {
-     "prompt": "Quanto dinheiro o papai deu ao irmão?",
-     "options": [
-      "Dois kuai",
-      "Cinco kuai",
-      "Dez kuai"
-     ],
-     "answer": 1
-    }
-   ]
-  },
-  {
-   "id": "h1-novo4",
-   "level": "HSK 1",
-   "grammar": "了 / 在 / 正在 / 呢 (aspecto)",
-   "title": "在 做 什么",
-   "titlePt": "O que estão fazendo",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "现在",
-       "pinyin": "xiàn zài",
-       "punct": false
-      },
-      {
-       "hanzi": "是",
-       "pinyin": "shì",
-       "punct": false
-      },
-      {
-       "hanzi": "晚上",
-       "pinyin": "wǎn shang",
-       "punct": false
-      },
-      {
-       "hanzi": "八",
-       "pinyin": "bā",
-       "punct": false
-      },
-      {
-       "hanzi": "点",
-       "pinyin": "diǎn",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Agora são oito horas da noite."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "妈妈",
-       "pinyin": "mā ma",
-       "punct": false
-      },
-      {
-       "hanzi": "正在",
-       "pinyin": "zhèng zài",
-       "punct": false
-      },
-      {
-       "hanzi": "做饭",
-       "pinyin": "zuò fàn",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "A mamãe está cozinhando."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "爸爸",
-       "pinyin": "bà ba",
-       "punct": false
-      },
-      {
-       "hanzi": "在",
-       "pinyin": "zài",
-       "punct": false
-      },
-      {
-       "hanzi": "看",
-       "pinyin": "kàn",
-       "punct": false
-      },
-      {
-       "hanzi": "电视",
-       "pinyin": "diàn shì",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O papai está assistindo TV."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "吃",
-       "pinyin": "chī",
-       "punct": false
-      },
-      {
-       "hanzi": "了",
-       "pinyin": "le",
-       "punct": false
-      },
-      {
-       "hanzi": "晚饭",
-       "pinyin": "wǎn fàn",
-       "punct": false
-      },
-      {
-       "hanzi": "，",
-       "pinyin": "",
-       "punct": true
-      },
-      {
-       "hanzi": "弟弟",
-       "pinyin": "dì di",
-       "punct": false
-      },
-      {
-       "hanzi": "还",
-       "pinyin": "hái",
-       "punct": false
-      },
-      {
-       "hanzi": "没有",
-       "pinyin": "méi yǒu",
-       "punct": false
-      },
-      {
-       "hanzi": "吃",
-       "pinyin": "chī",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Eu já jantei, mas o meu irmão mais novo ainda não."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "弟弟",
-       "pinyin": "dì di",
-       "punct": false
-      },
-      {
-       "hanzi": "在",
-       "pinyin": "zài",
-       "punct": false
-      },
-      {
-       "hanzi": "玩",
-       "pinyin": "wán",
-       "punct": false
-      },
-      {
-       "hanzi": "电脑",
-       "pinyin": "diàn nǎo",
-       "punct": false
-      },
-      {
-       "hanzi": "呢",
-       "pinyin": "ne",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O meu irmão mais novo está jogando no computador."
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "O que a mamãe está fazendo?",
-     "options": [
-      "Cozinhando",
-      "Assistindo TV",
-      "Dormindo"
-     ],
-     "answer": 0
-    },
-    {
-     "prompt": "Quem ainda não jantou?",
-     "options": [
-      "O narrador",
-      "O irmão mais novo",
-      "O papai"
-     ],
-     "answer": 1
-    }
-   ]
-  },
-  {
-   "id": "h1-novo5",
-   "level": "HSK 1",
-   "grammar": "吗 / 疑问代词 / 正反 (perguntas)",
-   "title": "你 想 吃 什么",
-   "titlePt": "O que você quer comer?",
-   "sentences": [
-    {
-     "tokens": [
-      {
-       "hanzi": "你",
-       "pinyin": "nǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "喝",
-       "pinyin": "hē",
-       "punct": false
-      },
-      {
-       "hanzi": "不",
-       "pinyin": "bù",
-       "punct": false
-      },
-      {
-       "hanzi": "喝",
-       "pinyin": "hē",
-       "punct": false
-      },
-      {
-       "hanzi": "茶",
-       "pinyin": "chá",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Você quer beber chá ou não?"
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "不",
-       "pinyin": "bù",
-       "punct": false
-      },
-      {
-       "hanzi": "喝",
-       "pinyin": "hē",
-       "punct": false
-      },
-      {
-       "hanzi": "茶",
-       "pinyin": "chá",
-       "punct": false
-      },
-      {
-       "hanzi": "，",
-       "pinyin": "",
-       "punct": true
-      },
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "想",
-       "pinyin": "xiǎng",
-       "punct": false
-      },
-      {
-       "hanzi": "喝",
-       "pinyin": "hē",
-       "punct": false
-      },
-      {
-       "hanzi": "水",
-       "pinyin": "shuǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Não quero chá, quero beber água."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "你",
-       "pinyin": "nǐ",
-       "punct": false
-      },
-      {
-       "hanzi": "想",
-       "pinyin": "xiǎng",
-       "punct": false
-      },
-      {
-       "hanzi": "吃",
-       "pinyin": "chī",
-       "punct": false
-      },
-      {
-       "hanzi": "什么",
-       "pinyin": "shén me",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O que você quer comer?"
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "我",
-       "pinyin": "wǒ",
-       "punct": false
-      },
-      {
-       "hanzi": "想",
-       "pinyin": "xiǎng",
-       "punct": false
-      },
-      {
-       "hanzi": "吃",
-       "pinyin": "chī",
-       "punct": false
-      },
-      {
-       "hanzi": "面条儿",
-       "pinyin": "miàn tiáor",
-       "punct": false
-      },
-      {
-       "hanzi": "。",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "Quero comer macarrão."
-    },
-    {
-     "tokens": [
-      {
-       "hanzi": "面条儿",
-       "pinyin": "miàn tiáor",
-       "punct": false
-      },
-      {
-       "hanzi": "好吃",
-       "pinyin": "hǎo chī",
-       "punct": false
-      },
-      {
-       "hanzi": "吗",
-       "pinyin": "ma",
-       "punct": false
-      },
-      {
-       "hanzi": "？",
-       "pinyin": "",
-       "punct": true
-      }
-     ],
-     "ptbr": "O macarrão é gostoso?"
-    }
-   ],
-   "questions": [
-    {
-     "prompt": "O que a pessoa quer beber?",
-     "options": [
-      "Chá",
-      "Leite",
-      "Água"
-     ],
-     "answer": 2
-    },
-    {
-     "prompt": "O que a pessoa quer comer?",
-     "options": [
-      "Macarrão",
-      "Arroz",
-      "Pão"
-     ],
-     "answer": 0
-    }
-   ]
-  }
- ],
- "grammar": [
-  {
-   "category": "Prefixos e sufixos",
-   "points": [
-    {
-     "text": "小—, 第—"
-    },
-    {
-     "text": "—们, —边"
-    }
-   ]
-  },
-  {
-   "category": "Palavras de posição",
-   "points": [
-    {
-     "text": "上, 下, 里, 外, 前, 后"
-    }
-   ]
-  },
-  {
-   "category": "Verbos",
-   "points": [
-    {
-     "text": "Verbos auxiliares de vontade e capacidade: 会, 能, 想, 要, 可以",
-     "storyId": "h1-hui"
-    },
-    {
-     "text": "Verbos separáveis: 看病, 睡觉, 说话, 上课, 下课, 上班, 下班, 生病"
-    }
-   ]
-  },
-  {
-   "category": "Pronomes",
-   "points": [
-    {
-     "text": "Pessoais: 我, 你, 您, 他, 她, 我们, 你们, 他们, 她们, 它, 它们, 大家"
-    },
-    {
-     "text": "Demonstrativos: 这, 那, 这儿, 那儿, 这里, 那里, 这些, 那些, 这个, 那个, 有些"
-    },
-    {
-     "text": "Interrogativos: 多, 几, 哪, 哪儿, 哪些, 什么, 谁, 怎么, 怎么样",
-     "storyId": "h1-ji"
-    }
-   ]
-  },
-  {
-   "category": "Números e medidas",
-   "points": [
-    {
-     "text": "Números: 一 a 十, 百, 千, 万, 半"
-    },
-    {
-     "text": "Classificadores: 个, 本, 家, 口, 块, 件, 只, 元, 杯"
-    },
-    {
-     "text": "Tempo: 日, 号, 岁, 点, 分, 年, 天"
-    }
-   ]
-  },
-  {
-   "category": "Advérbios",
-   "points": [
-    {
-     "text": "De grau: 非常, 很, 太, 真, 有（一）点儿"
-    },
-    {
-     "text": "De âmbito: 都"
-    },
-    {
-     "text": "De tempo: 在, 正在"
-    },
-    {
-     "text": "De frequência: 再"
-    },
-    {
-     "text": "Relacionais: 还, 也"
-    },
-    {
-     "text": "De negação: 不, 没（有）, 不要",
-     "storyId": "h1-bu"
-    }
-   ]
-  },
-  {
-   "category": "Preposições e conjunções",
-   "points": [
-    {
-     "text": "Tempo e lugar: 在"
-    },
-    {
-     "text": "Objeto: 和, 对"
-    },
-    {
-     "text": "Conjunção: 和"
-    }
-   ]
-  },
-  {
-   "category": "Partículas",
-   "points": [
-    {
-     "text": "Estrutural: 的"
-    },
-    {
-     "text": "Aspecto: 了"
-    },
-    {
-     "text": "Modais: 吗, 呢, 吧"
-    }
-   ]
-  },
-  {
-   "category": "Estruturas de frase",
-   "points": [
-    {
-     "text": "Frase de predicado verbal, adjetival e nominal",
-     "storyId": "h1-hen"
-    },
-    {
-     "text": "Perguntas: sim/não (吗), específica (疑问代词), alternativa (正反)",
-     "storyId": "h1-novo5"
-    },
-    {
-     "text": "Frase com 是 (identidade e classe)",
-     "storyId": "h1-shi"
-    },
-    {
-     "text": "Frase com 有 (posse)",
-     "storyId": "h1-you"
-    },
-    {
-     "text": "Frase com 在 e 有 (existência)",
-     "storyId": "h1-novo1"
-    },
-    {
-     "text": "Frase em série (连动句)",
-     "storyId": "h1-novo2"
-    },
-    {
-     "text": "Duplo objeto (双宾语句)",
-     "storyId": "h1-novo3"
-    },
-    {
-     "text": "Aspecto: concluído (了), em curso (在/正在/呢)",
-     "storyId": "h1-novo4"
-    },
-    {
-     "text": "Expressões: preço (钱数), ordinal (第+número), data e hora",
-     "storyId": "h1-shijian"
-    }
-   ]
-  }
- ],
- "exam": {
-  "sentences": [
-   {
-    "id": "hsk1-s0",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "爱",
-      "pinyin": "ài",
-      "punct": false
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "的",
-      "pinyin": "de",
-      "punct": false
-     },
-     {
-      "hanzi": "家人",
-      "pinyin": "jiā rén",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu amo a minha família."
-   },
-   {
-    "id": "hsk1-s1",
-    "tokens": [
-     {
-      "hanzi": "爸爸",
-      "pinyin": "bà ba",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "公司",
-      "pinyin": "gōng sī",
-      "punct": false
-     },
-     {
-      "hanzi": "工作",
-      "pinyin": "gōng zuò",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "O papai trabalha na empresa."
-   },
-   {
-    "id": "hsk1-s2",
-    "tokens": [
-     {
-      "hanzi": "妈妈",
-      "pinyin": "mā ma",
-      "punct": false
-     },
-     {
-      "hanzi": "今天",
-      "pinyin": "jīn tiān",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "忙",
-      "pinyin": "máng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "A mamãe está muito ocupada hoje."
-   },
-   {
-    "id": "hsk1-s3",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "有",
-      "pinyin": "yǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "一",
-      "pinyin": "yī",
-      "punct": false
-     },
-     {
-      "hanzi": "个",
-      "pinyin": "gè",
-      "punct": false
-     },
-     {
-      "hanzi": "哥哥",
-      "pinyin": "gē ge",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu tenho um irmão mais velho."
-   },
-   {
-    "id": "hsk1-s4",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "弟弟",
-      "pinyin": "dì di",
-      "punct": false
-     },
-     {
-      "hanzi": "今年",
-      "pinyin": "jīn nián",
-      "punct": false
-     },
-     {
-      "hanzi": "六",
-      "pinyin": "liù",
-      "punct": false
-     },
-     {
-      "hanzi": "岁",
-      "pinyin": "suì",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "O meu irmão mais novo tem seis anos este ano."
-   },
-   {
-    "id": "hsk1-s5",
-    "tokens": [
-     {
-      "hanzi": "她",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "的",
-      "pinyin": "de",
-      "punct": false
-     },
-     {
-      "hanzi": "老师",
-      "pinyin": "lǎo shī",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ela é a minha professora."
-   },
-   {
-    "id": "hsk1-s6",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "个",
-      "pinyin": "gè",
-      "punct": false
-     },
-     {
-      "hanzi": "苹果",
-      "pinyin": "píng guǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "贵",
-      "pinyin": "guì",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Esta maçã é muito cara."
-   },
-   {
-    "id": "hsk1-s7",
-    "tokens": [
-     {
-      "hanzi": "那",
-      "pinyin": "nà",
-      "punct": false
-     },
-     {
-      "hanzi": "件",
-      "pinyin": "jiàn",
-      "punct": false
-     },
-     {
-      "hanzi": "衣服",
-      "pinyin": "yī fu",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "漂亮",
-      "pinyin": "piào liang",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Aquela roupa é muito bonita."
-   },
-   {
-    "id": "hsk1-s8",
-    "tokens": [
-     {
-      "hanzi": "现在",
-      "pinyin": "xiàn zài",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "三",
-      "pinyin": "sān",
-      "punct": false
-     },
-     {
-      "hanzi": "点",
-      "pinyin": "diǎn",
-      "punct": false
-     },
-     {
-      "hanzi": "半",
-      "pinyin": "bàn",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Agora são três e meia."
-   },
-   {
-    "id": "hsk1-s9",
-    "tokens": [
-     {
-      "hanzi": "明天",
-      "pinyin": "míng tiān",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "星期天",
-      "pinyin": "xīng qī tiān",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Amanhã é domingo."
-   },
-   {
-    "id": "hsk1-s10",
-    "tokens": [
-     {
-      "hanzi": "今天",
-      "pinyin": "jīn tiān",
-      "punct": false
-     },
-     {
-      "hanzi": "天气",
-      "pinyin": "tiān qì",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "冷",
-      "pinyin": "lěng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Hoje o tempo está muito frio."
-   },
-   {
-    "id": "hsk1-s11",
-    "tokens": [
-     {
-      "hanzi": "外边",
-      "pinyin": "wài bian",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "下雨",
-      "pinyin": "xià yǔ",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Está chovendo lá fora."
-   },
-   {
-    "id": "hsk1-s12",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "想",
-      "pinyin": "xiǎng",
-      "punct": false
-     },
-     {
-      "hanzi": "喝",
-      "pinyin": "hē",
-      "punct": false
-     },
-     {
-      "hanzi": "水",
-      "pinyin": "shuǐ",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Quero beber água."
-   },
-   {
-    "id": "hsk1-s13",
-    "tokens": [
-     {
-      "hanzi": "他",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "学校",
-      "pinyin": "xué xiào",
-      "punct": false
-     },
-     {
-      "hanzi": "读书",
-      "pinyin": "dú shū",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ele estuda na escola."
-   },
-   {
-    "id": "hsk1-s14",
-    "tokens": [
-     {
-      "hanzi": "我们",
-      "pinyin": "wǒ men",
-      "punct": false
-     },
-     {
-      "hanzi": "去",
-      "pinyin": "qù",
-      "punct": false
-     },
-     {
-      "hanzi": "超市",
-      "pinyin": "chāo shì",
-      "punct": false
-     },
-     {
-      "hanzi": "买",
-      "pinyin": "mǎi",
-      "punct": false
-     },
-     {
-      "hanzi": "水果",
-      "pinyin": "shuǐ guǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Vamos ao supermercado comprar frutas."
-   },
-   {
-    "id": "hsk1-s15",
-    "tokens": [
-     {
-      "hanzi": "你",
-      "pinyin": "nǐ",
-      "punct": false
-     },
-     {
-      "hanzi": "叫",
-      "pinyin": "jiào",
-      "punct": false
-     },
-     {
-      "hanzi": "什么",
-      "pinyin": "shén me",
-      "punct": false
-     },
-     {
-      "hanzi": "名字",
-      "pinyin": "míng zi",
-      "punct": false
-     },
-     {
-      "hanzi": "？",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Qual é o seu nome?"
-   },
-   {
-    "id": "hsk1-s16",
-    "tokens": [
-     {
-      "hanzi": "请问",
-      "pinyin": "qǐng wèn",
-      "punct": false
-     },
-     {
-      "hanzi": "，",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "电影院",
-      "pinyin": "diàn yǐng yuàn",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "哪儿",
-      "pinyin": "nǎr",
-      "punct": false
-     },
-     {
-      "hanzi": "？",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Com licença, onde fica o cinema?"
-   },
-   {
-    "id": "hsk1-s17",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "个",
-      "pinyin": "gè",
-      "punct": false
-     },
-     {
-      "hanzi": "多少",
-      "pinyin": "duō shao",
-      "punct": false
-     },
-     {
-      "hanzi": "钱",
-      "pinyin": "qián",
-      "punct": false
-     },
-     {
-      "hanzi": "？",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Quanto custa isto?"
-   },
-   {
-    "id": "hsk1-s18",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "家",
-      "pinyin": "jiā",
-      "punct": false
-     },
-     {
-      "hanzi": "有",
-      "pinyin": "yǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "四",
-      "pinyin": "sì",
-      "punct": false
-     },
-     {
-      "hanzi": "口",
-      "pinyin": "kǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "人",
-      "pinyin": "rén",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Na minha família há quatro pessoas."
-   },
-   {
-    "id": "hsk1-s19",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "的",
-      "pinyin": "de",
-      "punct": false
-     },
-     {
-      "hanzi": "猫",
-      "pinyin": "māo",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "椅子",
-      "pinyin": "yǐ zi",
-      "punct": false
-     },
-     {
-      "hanzi": "上",
-      "pinyin": "shàng",
-      "punct": false
-     },
-     {
-      "hanzi": "睡觉",
-      "pinyin": "shuì jiào",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "O meu gato dorme na cadeira."
-   },
-   {
-    "id": "hsk1-s20",
-    "tokens": [
-     {
-      "hanzi": "他们",
-      "pinyin": "tā men",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "学习",
-      "pinyin": "xué xí",
-      "punct": false
-     },
-     {
-      "hanzi": "汉语",
-      "pinyin": "Hàn yǔ",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eles estão estudando chinês."
-   },
-   {
-    "id": "hsk1-s21",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "喜欢",
-      "pinyin": "xǐ huan",
-      "punct": false
-     },
-     {
-      "hanzi": "听",
-      "pinyin": "tīng",
-      "punct": false
-     },
-     {
-      "hanzi": "歌",
-      "pinyin": "gē",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu gosto de ouvir música."
-   },
-   {
-    "id": "hsk1-s22",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "个",
-      "pinyin": "gè",
-      "punct": false
-     },
-     {
-      "hanzi": "面包",
-      "pinyin": "miàn bāo",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "好吃",
-      "pinyin": "hǎo chī",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Este pão é muito gostoso."
-   },
-   {
-    "id": "hsk1-s23",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "没有",
-      "pinyin": "méi yǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "手机",
-      "pinyin": "shǒu jī",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu não tenho celular."
-   },
-   {
-    "id": "hsk1-s24",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "昨天",
-      "pinyin": "zuó tiān",
-      "punct": false
-     },
-     {
-      "hanzi": "去",
-      "pinyin": "qù",
-      "punct": false
-     },
-     {
-      "hanzi": "了",
-      "pinyin": "le",
-      "punct": false
-     },
-     {
-      "hanzi": "医院",
-      "pinyin": "yī yuàn",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ontem eu fui ao hospital."
-   },
-   {
-    "id": "hsk1-s25",
-    "tokens": [
-     {
-      "hanzi": "她",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "今天",
-      "pinyin": "jīn tiān",
-      "punct": false
-     },
-     {
-      "hanzi": "没有",
-      "pinyin": "méi yǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "上班",
-      "pinyin": "shàng bān",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Hoje ela não foi trabalhar."
-   },
-   {
-    "id": "hsk1-s26",
-    "tokens": [
-     {
-      "hanzi": "他",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "坐",
-      "pinyin": "zuò",
-      "punct": false
-     },
-     {
-      "hanzi": "火车",
-      "pinyin": "huǒ chē",
-      "punct": false
-     },
-     {
-      "hanzi": "回",
-      "pinyin": "huí",
-      "punct": false
-     },
-     {
-      "hanzi": "家",
-      "pinyin": "jiā",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ele volta para casa de trem."
-   },
-   {
-    "id": "hsk1-s27",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "想",
-      "pinyin": "xiǎng",
-      "punct": false
-     },
-     {
-      "hanzi": "买",
-      "pinyin": "mǎi",
-      "punct": false
-     },
-     {
-      "hanzi": "一",
-      "pinyin": "yī",
-      "punct": false
-     },
-     {
-      "hanzi": "个",
-      "pinyin": "gè",
-      "punct": false
-     },
-     {
-      "hanzi": "新",
-      "pinyin": "xīn",
-      "punct": false
-     },
-     {
-      "hanzi": "手机",
-      "pinyin": "shǒu jī",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Quero comprar um celular novo."
-   },
-   {
-    "id": "hsk1-s28",
-    "tokens": [
-     {
-      "hanzi": "下午",
-      "pinyin": "xià wǔ",
-      "punct": false
-     },
-     {
-      "hanzi": "我们",
-      "pinyin": "wǒ men",
-      "punct": false
-     },
-     {
-      "hanzi": "去",
-      "pinyin": "qù",
-      "punct": false
-     },
-     {
-      "hanzi": "看",
-      "pinyin": "kàn",
-      "punct": false
-     },
-     {
-      "hanzi": "电影",
-      "pinyin": "diàn yǐng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "À tarde, vamos ver um filme."
-   },
-   {
-    "id": "hsk1-s29",
-    "tokens": [
-     {
-      "hanzi": "他",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "中学生",
-      "pinyin": "zhōng xué shēng",
-      "punct": false
-     },
-     {
-      "hanzi": "，",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "大学生",
-      "pinyin": "dà xué shēng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ele é aluno do ensino médio e eu sou universitário."
-   },
-   {
-    "id": "hsk1-s30",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "早上",
-      "pinyin": "zǎo shang",
-      "punct": false
-     },
-     {
-      "hanzi": "七",
-      "pinyin": "qī",
-      "punct": false
-     },
-     {
-      "hanzi": "点",
-      "pinyin": "diǎn",
-      "punct": false
-     },
-     {
-      "hanzi": "起床",
-      "pinyin": "qǐ chuáng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu acordo às sete da manhã."
-   },
-   {
-    "id": "hsk1-s31",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "晚上",
-      "pinyin": "wǎn shang",
-      "punct": false
-     },
-     {
-      "hanzi": "十",
-      "pinyin": "shí",
-      "punct": false
-     },
-     {
-      "hanzi": "点",
-      "pinyin": "diǎn",
-      "punct": false
-     },
-     {
-      "hanzi": "睡觉",
-      "pinyin": "shuì jiào",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu vou dormir às dez da noite."
-   },
-   {
-    "id": "hsk1-s32",
-    "tokens": [
-     {
-      "hanzi": "你",
-      "pinyin": "nǐ",
-      "punct": false
-     },
-     {
-      "hanzi": "会",
-      "pinyin": "huì",
-      "punct": false
-     },
-     {
-      "hanzi": "说",
-      "pinyin": "shuō",
-      "punct": false
-     },
-     {
-      "hanzi": "汉语",
-      "pinyin": "Hàn yǔ",
-      "punct": false
-     },
-     {
-      "hanzi": "吗",
-      "pinyin": "ma",
-      "punct": false
-     },
-     {
-      "hanzi": "？",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Você sabe falar chinês?"
-   },
-   {
-    "id": "hsk1-s33",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "不",
-      "pinyin": "bù",
-      "punct": false
-     },
-     {
-      "hanzi": "认识",
-      "pinyin": "rèn shi",
-      "punct": false
-     },
-     {
-      "hanzi": "她",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu não a conheço."
-   },
-   {
-    "id": "hsk1-s34",
-    "tokens": [
-     {
-      "hanzi": "孩子",
-      "pinyin": "hái zi",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "外边",
-      "pinyin": "wài bian",
-      "punct": false
-     },
-     {
-      "hanzi": "玩",
-      "pinyin": "wán",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "A criança está brincando lá fora."
-   },
-   {
-    "id": "hsk1-s35",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "的",
-      "pinyin": "de",
-      "punct": false
-     },
-     {
-      "hanzi": "女朋友",
-      "pinyin": "nǚ péng you",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Esta é a minha namorada."
-   },
-   {
-    "id": "hsk1-s36",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "午饭",
-      "pinyin": "wǔ fàn",
-      "punct": false
-     },
-     {
-      "hanzi": "吃",
-      "pinyin": "chī",
-      "punct": false
-     },
-     {
-      "hanzi": "了",
-      "pinyin": "le",
-      "punct": false
-     },
-     {
-      "hanzi": "米饭",
-      "pinyin": "mǐ fàn",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "No almoço, comi arroz."
-   },
-   {
-    "id": "hsk1-s37",
-    "tokens": [
-     {
-      "hanzi": "姐姐",
-      "pinyin": "jiě jie",
-      "punct": false
-     },
-     {
-      "hanzi": "生病",
-      "pinyin": "shēng bìng",
-      "punct": false
-     },
-     {
-      "hanzi": "了",
-      "pinyin": "le",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "A minha irmã mais velha ficou doente."
-   },
-   {
-    "id": "hsk1-s38",
-    "tokens": [
-     {
-      "hanzi": "请",
-      "pinyin": "qǐng",
-      "punct": false
-     },
-     {
-      "hanzi": "喝",
-      "pinyin": "hē",
-      "punct": false
-     },
-     {
-      "hanzi": "茶",
-      "pinyin": "chá",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Por favor, tome um chá."
-   },
-   {
-    "id": "hsk1-s39",
-    "tokens": [
-     {
-      "hanzi": "对不起",
-      "pinyin": "duì bu qǐ",
-      "punct": false
-     },
-     {
-      "hanzi": "，",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "来",
-      "pinyin": "lái",
-      "punct": false
-     },
-     {
-      "hanzi": "晚",
-      "pinyin": "wǎn",
-      "punct": false
-     },
-     {
-      "hanzi": "了",
-      "pinyin": "le",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Desculpe, cheguei tarde."
-   },
-   {
-    "id": "hsk1-s40",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "会",
-      "pinyin": "huì",
-      "punct": false
-     },
-     {
-      "hanzi": "做饭",
-      "pinyin": "zuò fàn",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu sei cozinhar."
-   },
-   {
-    "id": "hsk1-s41",
-    "tokens": [
-     {
-      "hanzi": "他",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "有",
-      "pinyin": "yǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "两",
-      "pinyin": "liǎng",
-      "punct": false
-     },
-     {
-      "hanzi": "个",
-      "pinyin": "gè",
-      "punct": false
-     },
-     {
-      "hanzi": "孩子",
-      "pinyin": "hái zi",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ele tem dois filhos."
-   },
-   {
-    "id": "hsk1-s42",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "本",
-      "pinyin": "běn",
-      "punct": false
-     },
-     {
-      "hanzi": "书",
-      "pinyin": "shū",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "好看",
-      "pinyin": "hǎo kàn",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Este livro é muito interessante."
-   },
-   {
-    "id": "hsk1-s43",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "家",
-      "pinyin": "jiā",
-      "punct": false
-     },
-     {
-      "hanzi": "有",
-      "pinyin": "yǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "一",
-      "pinyin": "yī",
-      "punct": false
-     },
-     {
-      "hanzi": "只",
-      "pinyin": "zhī",
-      "punct": false
-     },
-     {
-      "hanzi": "狗",
-      "pinyin": "gǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Na minha casa há um cachorro."
-   },
-   {
-    "id": "hsk1-s44",
-    "tokens": [
-     {
-      "hanzi": "中午",
-      "pinyin": "zhōng wǔ",
-      "punct": false
-     },
-     {
-      "hanzi": "我们",
-      "pinyin": "wǒ men",
-      "punct": false
-     },
-     {
-      "hanzi": "吃",
-      "pinyin": "chī",
-      "punct": false
-     },
-     {
-      "hanzi": "饺子",
-      "pinyin": "jiǎo zi",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "No meio-dia, comemos jiaozi."
-   },
-   {
-    "id": "hsk1-s45",
-    "tokens": [
-     {
-      "hanzi": "明年",
-      "pinyin": "míng nián",
-      "punct": false
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "想",
-      "pinyin": "xiǎng",
-      "punct": false
-     },
-     {
-      "hanzi": "去",
-      "pinyin": "qù",
-      "punct": false
-     },
-     {
-      "hanzi": "中国",
-      "pinyin": "Zhōng guó",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ano que vem quero ir à China."
-   },
-   {
-    "id": "hsk1-s46",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "家",
-      "pinyin": "jiā",
-      "punct": false
-     },
-     {
-      "hanzi": "店",
-      "pinyin": "diàn",
-      "punct": false
-     },
-     {
-      "hanzi": "的",
-      "pinyin": "de",
-      "punct": false
-     },
-     {
-      "hanzi": "东西",
-      "pinyin": "dōng xi",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "便宜",
-      "pinyin": "pián yi",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "As coisas desta loja são muito baratas."
-   },
-   {
-    "id": "hsk1-s47",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "的",
-      "pinyin": "de",
-      "punct": false
-     },
-     {
-      "hanzi": "同学",
-      "pinyin": "tóng xué",
-      "punct": false
-     },
-     {
-      "hanzi": "都",
-      "pinyin": "dōu",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "学生",
-      "pinyin": "xué shēng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Os meus colegas são todos estudantes."
-   },
-   {
-    "id": "hsk1-s48",
-    "tokens": [
-     {
-      "hanzi": "他",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "不",
-      "pinyin": "bù",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "家",
-      "pinyin": "jiā",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ele não está em casa."
-   }
   ],
-  "passages": [
-   {
-    "id": "hsk1-p0",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "家",
-        "pinyin": "jiā",
-        "punct": false
-       },
-       {
-        "hanzi": "有",
-        "pinyin": "yǒu",
-        "punct": false
-       },
-       {
-        "hanzi": "五",
-        "pinyin": "wǔ",
-        "punct": false
-       },
-       {
-        "hanzi": "口",
-        "pinyin": "kǒu",
-        "punct": false
-       },
-       {
-        "hanzi": "人",
-        "pinyin": "rén",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "爸爸",
-        "pinyin": "bà ba",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "妈妈",
-        "pinyin": "mā ma",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "哥哥",
-        "pinyin": "gē ge",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "妹妹",
-        "pinyin": "mèi mei",
-        "punct": false
-       },
-       {
-        "hanzi": "和",
-        "pinyin": "hé",
-        "punct": false
-       },
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Na minha família há cinco pessoas: papai, mamãe, irmão mais velho, irmã mais nova e eu."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "我们",
-        "pinyin": "wǒ men",
-        "punct": false
-       },
-       {
-        "hanzi": "都",
-        "pinyin": "dōu",
-        "punct": false
-       },
-       {
-        "hanzi": "爱",
-        "pinyin": "ài",
-        "punct": false
-       },
-       {
-        "hanzi": "这",
-        "pinyin": "zhè",
-        "punct": false
-       },
-       {
-        "hanzi": "个",
-        "pinyin": "gè",
-        "punct": false
-       },
-       {
-        "hanzi": "家",
-        "pinyin": "jiā",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Todos nós amamos esta casa."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Quantas pessoas há na família?",
-      "options": [
-       "Quatro",
-       "Cinco",
-       "Seis"
-      ],
-      "answer": 1,
-      "explain": "O texto diz 五口人, cinco pessoas."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p1",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "今天",
-        "pinyin": "jīn tiān",
-        "punct": false
-       },
-       {
-        "hanzi": "是",
-        "pinyin": "shì",
-        "punct": false
-       },
-       {
-        "hanzi": "星期天",
-        "pinyin": "xīng qī tiān",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Hoje é domingo."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "不",
-        "pinyin": "bù",
-        "punct": false
-       },
-       {
-        "hanzi": "上班",
-        "pinyin": "shàng bān",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "在",
-        "pinyin": "zài",
-        "punct": false
-       },
-       {
-        "hanzi": "家",
-        "pinyin": "jiā",
-        "punct": false
-       },
-       {
-        "hanzi": "休息",
-        "pinyin": "xiū xi",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Não vou trabalhar; descanso em casa."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "下午",
-        "pinyin": "xià wǔ",
-        "punct": false
-       },
-       {
-        "hanzi": "朋友",
-        "pinyin": "péng you",
-        "punct": false
-       },
-       {
-        "hanzi": "来",
-        "pinyin": "lái",
-        "punct": false
-       },
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "家",
-        "pinyin": "jiā",
-        "punct": false
-       },
-       {
-        "hanzi": "玩",
-        "pinyin": "wán",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "À tarde, um amigo vem à minha casa."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Quando o amigo vem?",
-      "options": [
-       "De manhã",
-       "À tarde",
-       "À noite"
-      ],
-      "answer": 1,
-      "explain": "O texto diz 下午, à tarde."
-     },
-     {
-      "prompt": "O narrador trabalha hoje?",
-      "options": [
-       "Sim",
-       "Não",
-       "O texto não diz"
-      ],
-      "answer": 1,
-      "explain": "不上班 significa que ele não trabalha."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p2",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "这",
-        "pinyin": "zhè",
-        "punct": false
-       },
-       {
-        "hanzi": "家",
-        "pinyin": "jiā",
-        "punct": false
-       },
-       {
-        "hanzi": "店",
-        "pinyin": "diàn",
-        "punct": false
-       },
-       {
-        "hanzi": "的",
-        "pinyin": "de",
-        "punct": false
-       },
-       {
-        "hanzi": "苹果",
-        "pinyin": "píng guǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "三",
-        "pinyin": "sān",
-        "punct": false
-       },
-       {
-        "hanzi": "块",
-        "pinyin": "kuài",
-        "punct": false
-       },
-       {
-        "hanzi": "钱",
-        "pinyin": "qián",
-        "punct": false
-       },
-       {
-        "hanzi": "一",
-        "pinyin": "yī",
-        "punct": false
-       },
-       {
-        "hanzi": "个",
-        "pinyin": "gè",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "很",
-        "pinyin": "hěn",
-        "punct": false
-       },
-       {
-        "hanzi": "便宜",
-        "pinyin": "pián yi",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "As maçãs desta loja custam três kuai cada; são muito baratas."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "买",
-        "pinyin": "mǎi",
-        "punct": false
-       },
-       {
-        "hanzi": "了",
-        "pinyin": "le",
-        "punct": false
-       },
-       {
-        "hanzi": "两",
-        "pinyin": "liǎng",
-        "punct": false
-       },
-       {
-        "hanzi": "个",
-        "pinyin": "gè",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Comprei duas."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Quanto custa cada maçã?",
-      "options": [
-       "2 kuai",
-       "5 kuai",
-       "3 kuai"
-      ],
-      "answer": 2,
-      "explain": "三块钱一个: três kuai cada."
-     },
-     {
-      "prompt": "Quantas maçãs foram compradas?",
-      "options": [
-       "Uma",
-       "Duas",
-       "Três"
-      ],
-      "answer": 1,
-      "explain": "买了两个: comprou duas."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p3",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "昨天",
-        "pinyin": "zuó tiān",
-        "punct": false
-       },
-       {
-        "hanzi": "下雨",
-        "pinyin": "xià yǔ",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "没有",
-        "pinyin": "méi yǒu",
-        "punct": false
-       },
-       {
-        "hanzi": "去",
-        "pinyin": "qù",
-        "punct": false
-       },
-       {
-        "hanzi": "学校",
-        "pinyin": "xué xiào",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Ontem choveu e eu não fui à escola."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "今天",
-        "pinyin": "jīn tiān",
-        "punct": false
-       },
-       {
-        "hanzi": "不",
-        "pinyin": "bù",
-        "punct": false
-       },
-       {
-        "hanzi": "下雨",
-        "pinyin": "xià yǔ",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "天气",
-        "pinyin": "tiān qì",
-        "punct": false
-       },
-       {
-        "hanzi": "很",
-        "pinyin": "hěn",
-        "punct": false
-       },
-       {
-        "hanzi": "好",
-        "pinyin": "hǎo",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Hoje não chove e o tempo está bom."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "去",
-        "pinyin": "qù",
-        "punct": false
-       },
-       {
-        "hanzi": "学校",
-        "pinyin": "xué xiào",
-        "punct": false
-       },
-       {
-        "hanzi": "上课",
-        "pinyin": "shàng kè",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Vou à escola para ter aula."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Como estava o tempo ontem?",
-      "options": [
-       "Ensolarado",
-       "Chuvoso",
-       "Com neve"
-      ],
-      "answer": 1,
-      "explain": "昨天下雨: ontem choveu."
-     },
-     {
-      "prompt": "Aonde o narrador vai hoje?",
-      "options": [
-       "À escola",
-       "Ao hospital",
-       "Ao cinema"
-      ],
+  "exercises": [
+    {
+      "id": "h1-ex1",
+      "pointId": "h1-verbos-auxiliares",
+      "prompt": "我___说汉语。",
+      "options": ["会", "是", "在", "有"],
       "answer": 0,
-      "explain": "去学校上课: vai à escola."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p4",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "的",
-        "pinyin": "de",
-        "punct": false
-       },
-       {
-        "hanzi": "妹妹",
-        "pinyin": "mèi mei",
-        "punct": false
-       },
-       {
-        "hanzi": "十",
-        "pinyin": "shí",
-        "punct": false
-       },
-       {
-        "hanzi": "岁",
-        "pinyin": "suì",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "是",
-        "pinyin": "shì",
-        "punct": false
-       },
-       {
-        "hanzi": "小学生",
-        "pinyin": "xiǎo xué shēng",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "A minha irmã mais nova tem dez anos e é aluna do ensino fundamental."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "她",
-        "pinyin": "tā",
-        "punct": false
-       },
-       {
-        "hanzi": "喜欢",
-        "pinyin": "xǐ huan",
-        "punct": false
-       },
-       {
-        "hanzi": "唱",
-        "pinyin": "chàng",
-        "punct": false
-       },
-       {
-        "hanzi": "歌",
-        "pinyin": "gē",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "也",
-        "pinyin": "yě",
-        "punct": false
-       },
-       {
-        "hanzi": "喜欢",
-        "pinyin": "xǐ huan",
-        "punct": false
-       },
-       {
-        "hanzi": "看",
-        "pinyin": "kàn",
-        "punct": false
-       },
-       {
-        "hanzi": "电视",
-        "pinyin": "diàn shì",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Ela gosta de cantar e também de assistir TV."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Quantos anos tem a irmã?",
-      "options": [
-       "Doze",
-       "Oito",
-       "Dez"
-      ],
-      "answer": 2,
-      "explain": "十岁: dez anos."
-     },
-     {
-      "prompt": "De que a irmã gosta?",
-      "options": [
-       "Cantar e assistir TV",
-       "Ler livros",
-       "Jogar no computador"
-      ],
+      "explain": "会 indica capacidade aprendida: eu sei falar chinês."
+    },
+    {
+      "id": "h1-ex2",
+      "pointId": "h1-adv-tempo",
+      "prompt": "他___看书。",
+      "options": ["在", "是", "有", "和"],
       "answer": 0,
-      "explain": "喜欢唱歌，也喜欢看电视."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p5",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "现在",
-        "pinyin": "xiàn zài",
-        "punct": false
-       },
-       {
-        "hanzi": "是",
-        "pinyin": "shì",
-        "punct": false
-       },
-       {
-        "hanzi": "早上",
-        "pinyin": "zǎo shang",
-        "punct": false
-       },
-       {
-        "hanzi": "七",
-        "pinyin": "qī",
-        "punct": false
-       },
-       {
-        "hanzi": "点",
-        "pinyin": "diǎn",
-        "punct": false
-       },
-       {
-        "hanzi": "半",
-        "pinyin": "bàn",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Agora são sete e meia da manhã."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "爸爸",
-        "pinyin": "bà ba",
-        "punct": false
-       },
-       {
-        "hanzi": "在",
-        "pinyin": "zài",
-        "punct": false
-       },
-       {
-        "hanzi": "吃",
-        "pinyin": "chī",
-        "punct": false
-       },
-       {
-        "hanzi": "早饭",
-        "pinyin": "zǎo fàn",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "在",
-        "pinyin": "zài",
-        "punct": false
-       },
-       {
-        "hanzi": "喝",
-        "pinyin": "hē",
-        "punct": false
-       },
-       {
-        "hanzi": "牛奶",
-        "pinyin": "niú nǎi",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "O papai está tomando café da manhã e eu estou bebendo leite."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "妈妈",
-        "pinyin": "mā ma",
-        "punct": false
-       },
-       {
-        "hanzi": "还",
-        "pinyin": "hái",
-        "punct": false
-       },
-       {
-        "hanzi": "在",
-        "pinyin": "zài",
-        "punct": false
-       },
-       {
-        "hanzi": "睡觉",
-        "pinyin": "shuì jiào",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "A mamãe ainda está dormindo."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Que horas são?",
-      "options": [
-       "7:00",
-       "8:30",
-       "7:30"
-      ],
-      "answer": 2,
-      "explain": "七点半 é sete e meia."
-     },
-     {
-      "prompt": "Quem ainda dorme?",
-      "options": [
-       "A mamãe",
-       "O papai",
-       "O narrador"
-      ],
+      "explain": "在 antes do verbo marca a ação em curso: ele está lendo."
+    },
+    {
+      "id": "h1-ex3",
+      "pointId": "h1-frase-shi",
+      "prompt": "这___我的书。",
+      "options": ["是", "有", "在", "去"],
       "answer": 0,
-      "explain": "妈妈还在睡觉."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p6",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "的",
-        "pinyin": "de",
-        "punct": false
-       },
-       {
-        "hanzi": "朋友",
-        "pinyin": "péng you",
-        "punct": false
-       },
-       {
-        "hanzi": "是",
-        "pinyin": "shì",
-        "punct": false
-       },
-       {
-        "hanzi": "医生",
-        "pinyin": "yī shēng",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "他",
-        "pinyin": "tā",
-        "punct": false
-       },
-       {
-        "hanzi": "在",
-        "pinyin": "zài",
-        "punct": false
-       },
-       {
-        "hanzi": "医院",
-        "pinyin": "yī yuàn",
-        "punct": false
-       },
-       {
-        "hanzi": "工作",
-        "pinyin": "gōng zuò",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "O meu amigo é médico e trabalha no hospital."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "他",
-        "pinyin": "tā",
-        "punct": false
-       },
-       {
-        "hanzi": "很",
-        "pinyin": "hěn",
-        "punct": false
-       },
-       {
-        "hanzi": "忙",
-        "pinyin": "máng",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "星期天",
-        "pinyin": "xīng qī tiān",
-        "punct": false
-       },
-       {
-        "hanzi": "也",
-        "pinyin": "yě",
-        "punct": false
-       },
-       {
-        "hanzi": "工作",
-        "pinyin": "gōng zuò",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Ele é muito ocupado e trabalha até aos domingos."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Qual é a profissão do amigo?",
-      "options": [
-       "Médico",
-       "Professor",
-       "Estudante"
-      ],
+      "explain": "是 liga as duas partes da frase: isto é o meu livro."
+    },
+    {
+      "id": "h1-ex4",
+      "pointId": "h1-frase-cunzai",
+      "prompt": "桌子上___一本书。",
+      "options": ["有", "去", "来", "在"],
       "answer": 0,
-      "explain": "朋友是医生."
-     },
-     {
-      "prompt": "Onde ele trabalha?",
-      "options": [
-       "Na escola",
-       "Na empresa",
-       "No hospital"
-      ],
-      "answer": 2,
-      "explain": "在医院工作."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p7",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "想",
-        "pinyin": "xiǎng",
-        "punct": false
-       },
-       {
-        "hanzi": "去",
-        "pinyin": "qù",
-        "punct": false
-       },
-       {
-        "hanzi": "超市",
-        "pinyin": "chāo shì",
-        "punct": false
-       },
-       {
-        "hanzi": "买",
-        "pinyin": "mǎi",
-        "punct": false
-       },
-       {
-        "hanzi": "东西",
-        "pinyin": "dōng xi",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Quero ir ao supermercado fazer compras."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "要",
-        "pinyin": "yào",
-        "punct": false
-       },
-       {
-        "hanzi": "买",
-        "pinyin": "mǎi",
-        "punct": false
-       },
-       {
-        "hanzi": "面包",
-        "pinyin": "miàn bāo",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "鸡蛋",
-        "pinyin": "jī dàn",
-        "punct": false
-       },
-       {
-        "hanzi": "和",
-        "pinyin": "hé",
-        "punct": false
-       },
-       {
-        "hanzi": "牛奶",
-        "pinyin": "niú nǎi",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Vou comprar pão, ovos e leite."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "O que o narrador NÃO vai comprar?",
-      "options": [
-       "Pão",
-       "Arroz",
-       "Leite"
-      ],
-      "answer": 1,
-      "explain": "A lista tem pão, ovos e leite; arroz não aparece."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p8",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "他",
-        "pinyin": "tā",
-        "punct": false
-       },
-       {
-        "hanzi": "坐",
-        "pinyin": "zuò",
-        "punct": false
-       },
-       {
-        "hanzi": "火车",
-        "pinyin": "huǒ chē",
-        "punct": false
-       },
-       {
-        "hanzi": "去",
-        "pinyin": "qù",
-        "punct": false
-       },
-       {
-        "hanzi": "学校",
-        "pinyin": "xué xiào",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "要",
-        "pinyin": "yào",
-        "punct": false
-       },
-       {
-        "hanzi": "两",
-        "pinyin": "liǎng",
-        "punct": false
-       },
-       {
-        "hanzi": "个",
-        "pinyin": "gè",
-        "punct": false
-       },
-       {
-        "hanzi": "小时",
-        "pinyin": "xiǎo shí",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Ele vai à escola de trem, e leva duas horas."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "他",
-        "pinyin": "tā",
-        "punct": false
-       },
-       {
-        "hanzi": "觉得",
-        "pinyin": "jué de",
-        "punct": false
-       },
-       {
-        "hanzi": "汉字",
-        "pinyin": "Hàn zì",
-        "punct": false
-       },
-       {
-        "hanzi": "很",
-        "pinyin": "hěn",
-        "punct": false
-       },
-       {
-        "hanzi": "好看",
-        "pinyin": "hǎo kàn",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Ele acha os caracteres chineses muito bonitos."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Como ele vai à escola?",
-      "options": [
-       "De táxi",
-       "De avião",
-       "De trem"
-      ],
-      "answer": 2,
-      "explain": "坐火车: de trem."
-     },
-     {
-      "prompt": "Quantas horas leva a viagem?",
-      "options": [
-       "Uma",
-       "Duas",
-       "Quatro"
-      ],
-      "answer": 1,
-      "explain": "两个小时: duas horas."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p9",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "你",
-        "pinyin": "nǐ",
-        "punct": false
-       },
-       {
-        "hanzi": "吃",
-        "pinyin": "chī",
-        "punct": false
-       },
-       {
-        "hanzi": "饭",
-        "pinyin": "fàn",
-        "punct": false
-       },
-       {
-        "hanzi": "了",
-        "pinyin": "le",
-        "punct": false
-       },
-       {
-        "hanzi": "吗",
-        "pinyin": "ma",
-        "punct": false
-       },
-       {
-        "hanzi": "？",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Você já comeu?"
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "吃",
-        "pinyin": "chī",
-        "punct": false
-       },
-       {
-        "hanzi": "了",
-        "pinyin": "le",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "吃",
-        "pinyin": "chī",
-        "punct": false
-       },
-       {
-        "hanzi": "了",
-        "pinyin": "le",
-        "punct": false
-       },
-       {
-        "hanzi": "饺子",
-        "pinyin": "jiǎo zi",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Já, comi jiaozi."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "O que a pessoa comeu?",
-      "options": [
-       "Baozi",
-       "Macarrão",
-       "Jiaozi"
-      ],
-      "answer": 2,
-      "explain": "吃了饺子: comeu jiaozi."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p10",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "家",
-        "pinyin": "jiā",
-        "punct": false
-       },
-       {
-        "hanzi": "有",
-        "pinyin": "yǒu",
-        "punct": false
-       },
-       {
-        "hanzi": "一",
-        "pinyin": "yī",
-        "punct": false
-       },
-       {
-        "hanzi": "只",
-        "pinyin": "zhī",
-        "punct": false
-       },
-       {
-        "hanzi": "猫",
-        "pinyin": "māo",
-        "punct": false
-       },
-       {
-        "hanzi": "和",
-        "pinyin": "hé",
-        "punct": false
-       },
-       {
-        "hanzi": "一",
-        "pinyin": "yī",
-        "punct": false
-       },
-       {
-        "hanzi": "只",
-        "pinyin": "zhī",
-        "punct": false
-       },
-       {
-        "hanzi": "狗",
-        "pinyin": "gǒu",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Na minha casa há um gato e um cachorro."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "猫",
-        "pinyin": "māo",
-        "punct": false
-       },
-       {
-        "hanzi": "很",
-        "pinyin": "hěn",
-        "punct": false
-       },
-       {
-        "hanzi": "小",
-        "pinyin": "xiǎo",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "狗",
-        "pinyin": "gǒu",
-        "punct": false
-       },
-       {
-        "hanzi": "很",
-        "pinyin": "hěn",
-        "punct": false
-       },
-       {
-        "hanzi": "大",
-        "pinyin": "dà",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "O gato é pequeno e o cachorro é grande."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "喜欢",
-        "pinyin": "xǐ huan",
-        "punct": false
-       },
-       {
-        "hanzi": "猫",
-        "pinyin": "māo",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "弟弟",
-        "pinyin": "dì di",
-        "punct": false
-       },
-       {
-        "hanzi": "喜欢",
-        "pinyin": "xǐ huan",
-        "punct": false
-       },
-       {
-        "hanzi": "狗",
-        "pinyin": "gǒu",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Eu gosto do gato e o meu irmão mais novo gosta do cachorro."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Quem gosta do cachorro?",
-      "options": [
-       "O narrador",
-       "O irmão mais novo",
-       "A mamãe"
-      ],
-      "answer": 1,
-      "explain": "弟弟喜欢狗."
-     },
-     {
-      "prompt": "Qual é o maior?",
-      "options": [
-       "Iguais",
-       "O gato",
-       "O cachorro"
-      ],
-      "answer": 2,
-      "explain": "狗很大, 猫很小."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p11",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "是",
-        "pinyin": "shì",
-        "punct": false
-       },
-       {
-        "hanzi": "大学生",
-        "pinyin": "dà xué shēng",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "学",
-        "pinyin": "xué",
-        "punct": false
-       },
-       {
-        "hanzi": "中文",
-        "pinyin": "Zhōng wén",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Sou universitário e estudo chinês."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "的",
-        "pinyin": "de",
-        "punct": false
-       },
-       {
-        "hanzi": "老师",
-        "pinyin": "lǎo shī",
-        "punct": false
-       },
-       {
-        "hanzi": "是",
-        "pinyin": "shì",
-        "punct": false
-       },
-       {
-        "hanzi": "中国",
-        "pinyin": "Zhōng guó",
-        "punct": false
-       },
-       {
-        "hanzi": "人",
-        "pinyin": "rén",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "O meu professor é chinês."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "她",
-        "pinyin": "tā",
-        "punct": false
-       },
-       {
-        "hanzi": "的",
-        "pinyin": "de",
-        "punct": false
-       },
-       {
-        "hanzi": "汉语",
-        "pinyin": "Hàn yǔ",
-        "punct": false
-       },
-       {
-        "hanzi": "很",
-        "pinyin": "hěn",
-        "punct": false
-       },
-       {
-        "hanzi": "好",
-        "pinyin": "hǎo",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "O chinês dela é muito bom."
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "O que o narrador estuda?",
-      "options": [
-       "Matemática",
-       "Inglês",
-       "Chinês"
-      ],
-      "answer": 2,
-      "explain": "我学中文."
-     },
-     {
-      "prompt": "De que país é a professora?",
-      "options": [
-       "China",
-       "Brasil",
-       "Estados Unidos"
-      ],
+      "explain": "有 indica existência: há um livro em cima da mesa."
+    },
+    {
+      "id": "h1-ex5",
+      "pointId": "h1-prep-zai",
+      "prompt": "他___中国学习。",
+      "options": ["在", "是", "和", "有"],
       "answer": 0,
-      "explain": "老师是中国人."
-     }
-    ]
-   },
-   {
-    "id": "hsk1-p12",
-    "sentences": [
-     {
-      "tokens": [
-       {
-        "hanzi": "明天",
-        "pinyin": "míng tiān",
-        "punct": false
-       },
-       {
-        "hanzi": "我",
-        "pinyin": "wǒ",
-        "punct": false
-       },
-       {
-        "hanzi": "要",
-        "pinyin": "yào",
-        "punct": false
-       },
-       {
-        "hanzi": "上班",
-        "pinyin": "shàng bān",
-        "punct": false
-       },
-       {
-        "hanzi": "，",
-        "pinyin": "",
-        "punct": true
-       },
-       {
-        "hanzi": "不",
-        "pinyin": "bù",
-        "punct": false
-       },
-       {
-        "hanzi": "能",
-        "pinyin": "néng",
-        "punct": false
-       },
-       {
-        "hanzi": "去",
-        "pinyin": "qù",
-        "punct": false
-       },
-       {
-        "hanzi": "看",
-        "pinyin": "kàn",
-        "punct": false
-       },
-       {
-        "hanzi": "电影",
-        "pinyin": "diàn yǐng",
-        "punct": false
-       },
-       {
-        "hanzi": "。",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Amanhã tenho de trabalhar e não posso ir ao cinema."
-     },
-     {
-      "tokens": [
-       {
-        "hanzi": "星期天",
-        "pinyin": "xīng qī tiān",
-        "punct": false
-       },
-       {
-        "hanzi": "你",
-        "pinyin": "nǐ",
-        "punct": false
-       },
-       {
-        "hanzi": "想",
-        "pinyin": "xiǎng",
-        "punct": false
-       },
-       {
-        "hanzi": "去",
-        "pinyin": "qù",
-        "punct": false
-       },
-       {
-        "hanzi": "吗",
-        "pinyin": "ma",
-        "punct": false
-       },
-       {
-        "hanzi": "？",
-        "pinyin": "",
-        "punct": true
-       }
-      ],
-      "ptbr": "Você quer ir no domingo?"
-     }
-    ],
-    "questions": [
-     {
-      "prompt": "Por que o narrador não pode ir amanhã?",
-      "options": [
-       "Tem de trabalhar",
-       "Está doente",
-       "Vai chover"
-      ],
+      "explain": "在 + lugar vem antes do verbo: ele estuda na China."
+    },
+    {
+      "id": "h1-ex6",
+      "pointId": "h1-conj-he",
+      "prompt": "我___朋友去书店。",
+      "options": ["和", "对", "在", "也"],
       "answer": 0,
-      "explain": "要上班: tem de trabalhar."
-     }
-    ]
-   }
-  ],
-  "cloze": [
-   {
-    "id": "hsk1-c0",
-    "tokens": [
-     {
-      "hanzi": "你",
-      "pinyin": "nǐ",
-      "punct": false
-     },
-     {
-      "hanzi": "好",
-      "pinyin": "hǎo",
-      "punct": false
-     },
-     {
-      "hanzi": "，",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "好",
-      "pinyin": "hǎo",
-      "punct": false
-     },
-     {
-      "hanzi": "，",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "你",
-      "pinyin": "nǐ",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "？",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Olá, estou bem, e você?",
-    "options": [
-     "吗",
-     "呢",
-     "吧",
-     "了"
-    ],
-    "answer": 1,
-    "explain": "呢 devolve a pergunta: 你呢？ = e você?",
-    "grammar": "呢 (partícula de retorno)"
-   },
-   {
-    "id": "hsk1-c1",
-    "tokens": [
-     {
-      "hanzi": "你",
-      "pinyin": "nǐ",
-      "punct": false
-     },
-     {
-      "hanzi": "会",
-      "pinyin": "huì",
-      "punct": false
-     },
-     {
-      "hanzi": "说",
-      "pinyin": "shuō",
-      "punct": false
-     },
-     {
-      "hanzi": "汉语",
-      "pinyin": "Hàn yǔ",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "？",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Você sabe falar chinês?",
-    "options": [
-     "的",
-     "和",
-     "吗",
-     "都"
-    ],
-    "answer": 2,
-    "explain": "吗 no fim da frase forma uma pergunta de sim ou não.",
-    "grammar": "吗 (pergunta sim/não)"
-   },
-   {
-    "id": "hsk1-c2",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "书",
-      "pinyin": "shū",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Este é o meu livro.",
-    "options": [
-     "吧",
-     "在",
-     "和",
-     "的"
-    ],
-    "answer": 3,
-    "explain": "的 liga o possuidor ao objeto: 我的书.",
-    "grammar": "的 (posse)"
-   },
-   {
-    "id": "hsk1-c3",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "学校",
-      "pinyin": "xué xiào",
-      "punct": false
-     },
-     {
-      "hanzi": "学习",
-      "pinyin": "xué xí",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu estudo na escola.",
-    "options": [
-     "在",
-     "的",
-     "吗",
-     "很"
-    ],
-    "answer": 0,
-    "explain": "在 + lugar indica onde a ação acontece.",
-    "grammar": "在 (lugar)"
-   },
-   {
-    "id": "hsk1-c4",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "昨天",
-      "pinyin": "zuó tiān",
-      "punct": false
-     },
-     {
-      "hanzi": "吃",
-      "pinyin": "chī",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "饺子",
-      "pinyin": "jiǎo zi",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Ontem eu comi jiaozi.",
-    "options": [
-     "吗",
-     "和",
-     "很",
-     "了"
-    ],
-    "answer": 3,
-    "explain": "了 depois do verbo indica ação concluída.",
-    "grammar": "了 (ação concluída)"
-   },
-   {
-    "id": "hsk1-c5",
-    "tokens": [
-     {
-      "hanzi": "爸爸",
-      "pinyin": "bà ba",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "妈妈",
-      "pinyin": "mā ma",
-      "punct": false
-     },
-     {
-      "hanzi": "都",
-      "pinyin": "dōu",
-      "punct": false
-     },
-     {
-      "hanzi": "在",
-      "pinyin": "zài",
-      "punct": false
-     },
-     {
-      "hanzi": "家",
-      "pinyin": "jiā",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "O papai e a mamãe estão ambos em casa.",
-    "options": [
-     "不",
-     "也",
-     "吧",
-     "和"
-    ],
-    "answer": 3,
-    "explain": "和 liga dois substantivos: 爸爸和妈妈.",
-    "grammar": "和 (e)"
-   },
-   {
-    "id": "hsk1-c6",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "学生",
-      "pinyin": "xué shēng",
-      "punct": false
-     },
-     {
-      "hanzi": "，",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "他",
-      "pinyin": "tā",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "学生",
-      "pinyin": "xué shēng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu sou estudante e ele também é estudante.",
-    "options": [
-     "和",
-     "吗",
-     "的",
-     "也"
-    ],
-    "answer": 3,
-    "explain": "也 vem antes do verbo e significa também.",
-    "grammar": "也 (também)"
-   },
-   {
-    "id": "hsk1-c7",
-    "tokens": [
-     {
-      "hanzi": "我们",
-      "pinyin": "wǒ men",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "是",
-      "pinyin": "shì",
-      "punct": false
-     },
-     {
-      "hanzi": "学生",
-      "pinyin": "xué shēng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Nós somos todos estudantes.",
-    "options": [
-     "在",
-     "吗",
-     "个",
-     "都"
-    ],
-    "answer": 3,
-    "explain": "都 vem antes do verbo e resume o sujeito: 我们都是.",
-    "grammar": "都 (todos)"
-   },
-   {
-    "id": "hsk1-c8",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "哥哥",
-      "pinyin": "gē ge",
-      "punct": false
-     },
-     {
-      "hanzi": "，",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "有",
-      "pinyin": "yǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "姐姐",
-      "pinyin": "jiě jie",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Não tenho irmão mais velho; tenho irmã mais velha.",
-    "options": [
-     "不",
-     "也",
-     "没有",
-     "很"
-    ],
-    "answer": 2,
-    "explain": "A negação de 有 é 没有, nunca 不有.",
-    "grammar": "没有 (negação de 有)"
-   },
-   {
-    "id": "hsk1-c9",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "家",
-      "pinyin": "jiā",
-      "punct": false
-     },
-     {
-      "hanzi": "有",
-      "pinyin": "yǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "两",
-      "pinyin": "liǎng",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "猫",
-      "pinyin": "māo",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Na minha casa há dois gatos.",
-    "options": [
-     "本",
-     "件",
-     "块",
-     "只"
-    ],
-    "answer": 3,
-    "explain": "Animais pequenos usam o classificador 只.",
-    "grammar": "classificador 只 (animais)"
-   },
-   {
-    "id": "hsk1-c10",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "衣服",
-      "pinyin": "yī fu",
-      "punct": false
-     },
-     {
-      "hanzi": "很",
-      "pinyin": "hěn",
-      "punct": false
-     },
-     {
-      "hanzi": "漂亮",
-      "pinyin": "piào liang",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Esta roupa é muito bonita.",
-    "options": [
-     "本",
-     "口",
-     "件",
-     "只"
-    ],
-    "answer": 2,
-    "explain": "Roupas usam o classificador 件.",
-    "grammar": "classificador 件 (roupas)"
-   },
-   {
-    "id": "hsk1-c11",
-    "tokens": [
-     {
-      "hanzi": "这",
-      "pinyin": "zhè",
-      "punct": false
-     },
-     {
-      "hanzi": "个",
-      "pinyin": "gè",
-      "punct": false
-     },
-     {
-      "hanzi": "菜",
-      "pinyin": "cài",
-      "punct": false
-     },
-     {
-      "hanzi": "太",
-      "pinyin": "tài",
-      "punct": false
-     },
-     {
-      "hanzi": "好吃",
-      "pinyin": "hǎo chī",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "！",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Este prato está gostoso demais!",
-    "options": [
-     "吗",
-     "的",
-     "和",
-     "了"
-    ],
-    "answer": 3,
-    "explain": "太 + adjetivo costuma terminar com 了.",
-    "grammar": "太…了 (grau)"
-   },
-   {
-    "id": "hsk1-c12",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "的",
-      "pinyin": "de",
-      "punct": false
-     },
-     {
-      "hanzi": "妈妈",
-      "pinyin": "mā ma",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "忙",
-      "pinyin": "máng",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "A minha mãe é muito ocupada.",
-    "options": [
-     "和",
-     "很",
-     "个",
-     "吧"
-    ],
-    "answer": 1,
-    "explain": "Predicado adjetival leva 很 antes do adjetivo.",
-    "grammar": "很 (grau)"
-   },
-   {
-    "id": "hsk1-c13",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "家",
-      "pinyin": "jiā",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "一",
-      "pinyin": "yī",
-      "punct": false
-     },
-     {
-      "hanzi": "只",
-      "pinyin": "zhī",
-      "punct": false
-     },
-     {
-      "hanzi": "狗",
-      "pinyin": "gǒu",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Na minha casa há um cachorro.",
-    "options": [
-     "是",
-     "很",
-     "有",
-     "和"
-    ],
-    "answer": 2,
-    "explain": "有 indica que algo existe ou é possuído.",
-    "grammar": "有 (existência/posse)"
-   },
-   {
-    "id": "hsk1-c14",
-    "tokens": [
-     {
-      "hanzi": "我",
-      "pinyin": "wǒ",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "中国",
-      "pinyin": "Zhōng guó",
-      "punct": false
-     },
-     {
-      "hanzi": "人",
-      "pinyin": "rén",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Eu sou chinês.",
-    "options": [
-     "有",
-     "是",
-     "在",
-     "很"
-    ],
-    "answer": 1,
-    "explain": "是 liga o sujeito à sua identidade.",
-    "grammar": "是 (identidade)"
-   },
-   {
-    "id": "hsk1-c15",
-    "tokens": [
-     {
-      "hanzi": "弟弟",
-      "pinyin": "dì di",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "看",
-      "pinyin": "kàn",
-      "punct": false
-     },
-     {
-      "hanzi": "电视",
-      "pinyin": "diàn shì",
-      "punct": false
-     },
-     {
-      "hanzi": "呢",
-      "pinyin": "ne",
-      "punct": false
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "O meu irmão mais novo está assistindo TV.",
-    "options": [
-     "的",
-     "吗",
-     "和",
-     "在"
-    ],
-    "answer": 3,
-    "explain": "在 antes do verbo marca ação em curso, com 呢 no fim.",
-    "grammar": "在…呢 (ação em curso)"
-   },
-   {
-    "id": "hsk1-c16",
-    "tokens": [
-     {
-      "hanzi": "好",
-      "pinyin": "hǎo",
-      "punct": false
-     },
-     {
-      "hanzi": "，",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "我们",
-      "pinyin": "wǒ men",
-      "punct": false
-     },
-     {
-      "hanzi": "去",
-      "pinyin": "qù",
-      "punct": false
-     },
-     {
-      "hanzi": "吃",
-      "pinyin": "chī",
-      "punct": false
-     },
-     {
-      "hanzi": "饭",
-      "pinyin": "fàn",
-      "punct": false
-     },
-     {
-      "hanzi": "＿",
-      "pinyin": "",
-      "punct": true
-     },
-     {
-      "hanzi": "。",
-      "pinyin": "",
-      "punct": true
-     }
-    ],
-    "ptbr": "Está bem, vamos comer.",
-    "options": [
-     "和",
-     "吧",
-     "很",
-     "个"
-    ],
-    "answer": 1,
-    "explain": "吧 no fim da frase expressa sugestão.",
-    "grammar": "吧 (sugestão)"
-   }
+      "explain": "和 liga duas pessoas: eu e um amigo."
+    },
+    {
+      "id": "h1-ex7",
+      "pointId": "h1-part-le",
+      "prompt": "我吃___早饭。",
+      "options": ["了", "吗", "呢", "的"],
+      "answer": 0,
+      "explain": "了 marca a ação concluída: eu tomei o café da manhã."
+    },
+    {
+      "id": "h1-ex8",
+      "pointId": "h1-part-modais",
+      "prompt": "你是老师___？",
+      "options": ["吗", "呢", "的", "了"],
+      "answer": 0,
+      "explain": "吗 fecha a pergunta de sim/não."
+    },
+    {
+      "id": "h1-ex9",
+      "pointId": "h1-part-modais",
+      "prompt": "我很好，你___？",
+      "options": ["呢", "吗", "吧", "了"],
+      "answer": 0,
+      "explain": "呢 devolve a pergunta: e você?"
+    },
+    {
+      "id": "h1-ex10",
+      "pointId": "h1-part-modais",
+      "prompt": "我们走___。",
+      "options": ["吧", "吗", "呢", "的"],
+      "answer": 0,
+      "explain": "吧 propõe a ação: vamos."
+    },
+    {
+      "id": "h1-ex11",
+      "pointId": "h1-adv-grau",
+      "prompt": "他___高。",
+      "options": ["很", "是", "在", "有"],
+      "answer": 0,
+      "explain": "很 antes do adjetivo: ele é alto."
+    },
+    {
+      "id": "h1-ex12",
+      "pointId": "h1-adv-negacao",
+      "prompt": "我___是老师。",
+      "options": ["不", "没", "别", "太"],
+      "answer": 0,
+      "explain": "不 nega o verbo 是: eu não sou professor."
+    },
+    {
+      "id": "h1-ex13",
+      "pointId": "h1-adv-negacao",
+      "prompt": "我___有哥哥。",
+      "options": ["没", "不", "别", "再"],
+      "answer": 0,
+      "explain": "没 nega o verbo 有: eu não tenho irmão mais velho."
+    },
+    {
+      "id": "h1-ex14",
+      "pointId": "h1-adv-zai",
+      "prompt": "请___给我一杯茶。",
+      "options": ["再", "都", "很", "太"],
+      "answer": 0,
+      "explain": "再 = mais uma vez: por favor, me dê mais um chá."
+    },
+    {
+      "id": "h1-ex15",
+      "pointId": "h1-adv-hai-ye",
+      "prompt": "我___是学生。",
+      "options": ["也", "太", "很", "再"],
+      "answer": 0,
+      "explain": "也 = também: eu também sou estudante."
+    },
+    {
+      "id": "h1-ex16",
+      "pointId": "h1-tempo",
+      "prompt": "我___二十岁。",
+      "options": ["今年", "每天", "上午", "什么"],
+      "answer": 0,
+      "explain": "今年 = este ano; a idade usa 岁."
+    },
+    {
+      "id": "h1-ex17",
+      "pointId": "h1-tempo",
+      "prompt": "现在八点___。",
+      "options": ["半", "岁", "号", "分"],
+      "answer": 0,
+      "explain": "半 = meia hora: oito e meia."
+    },
+    {
+      "id": "h1-ex18",
+      "pointId": "h1-classificadores",
+      "prompt": "我家有四___人。",
+      "options": ["口", "本", "杯", "件"],
+      "answer": 0,
+      "explain": "口 conta pessoas da família."
+    },
+    {
+      "id": "h1-ex19",
+      "pointId": "h1-classificadores",
+      "prompt": "我买了两___书。",
+      "options": ["本", "口", "杯", "件"],
+      "answer": 0,
+      "explain": "本 conta livros."
+    },
+    {
+      "id": "h1-ex20",
+      "pointId": "h1-classificadores",
+      "prompt": "请给我一___茶。",
+      "options": ["杯", "本", "口", "件"],
+      "answer": 0,
+      "explain": "杯 conta copos e xícaras."
+    },
+    {
+      "id": "h1-ex21",
+      "pointId": "h1-prefixos",
+      "prompt": "我是___一个。",
+      "options": ["第", "小", "们", "边"],
+      "answer": 0,
+      "explain": "第 + número forma o ordinal: eu sou o primeiro."
+    },
+    {
+      "id": "h1-ex22",
+      "pointId": "h1-sufixos",
+      "prompt": "学___都很高兴。",
+      "options": ["们", "边", "第", "小"],
+      "answer": 0,
+      "explain": "们 forma o plural de pessoas: os estudantes estão felizes."
+    },
+    {
+      "id": "h1-ex23",
+      "pointId": "h1-numeros",
+      "prompt": "我有两___块钱。",
+      "options": ["百", "半", "点", "岁"],
+      "answer": 0,
+      "explain": "两百 = duzentos."
+    },
+    {
+      "id": "h1-ex24",
+      "pointId": "h1-adv-dou",
+      "prompt": "这些菜___很好吃。",
+      "options": ["都", "太", "真", "很"],
+      "answer": 0,
+      "explain": "都 inclui todos os itens citados: todos estes pratos são gostosos."
+    }
   ]
- }
 }

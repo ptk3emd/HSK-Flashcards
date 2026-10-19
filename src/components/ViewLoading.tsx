@@ -61,17 +61,17 @@ export const InlineLoadingSkeleton: React.FC<{ label: string }> = ({ label }) =>
   </Loading>
 );
 
-/** Two story ledgers: the shape shared by the Learn area and its stories section. */
-const StorySheets: React.FC = () => (
-  <>{[0, 1].map(level => <Sheet key={level} className="overflow-hidden">
+/** The Learn grammar ledger: a level header with its point rows. */
+const GrammarSheets: React.FC = () => (
+  <Sheet className="overflow-hidden">
     <Bar className="h-5 w-20 m-5" />
-    <Rows count={3} index={false} />
-  </Sheet>)}</>
+    <Rows count={6} index={false} />
+  </Sheet>
 );
 
-export const StoriesSkeleton: React.FC = () => (
-  <Loading label="Carregando histórias">
-    <div className="space-y-4"><StorySheets /></div>
+export const GrammarSkeleton: React.FC = () => (
+  <Loading label="Carregando a gramática">
+    <GrammarSheets />
   </Loading>
 );
 
@@ -80,7 +80,7 @@ export const LearnSkeleton: React.FC = () => (
     <div className="w-full max-w-3xl mx-auto space-y-4">
       <Bar className="h-7 w-36" />
       <Bar className="h-11 w-60" />
-      <StorySheets />
+      <GrammarSheets />
     </div>
   </Loading>
 );

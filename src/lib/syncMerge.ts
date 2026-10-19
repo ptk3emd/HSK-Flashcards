@@ -1,12 +1,12 @@
-import { Card, DeckConfig, ExamAttempt, FSRSOptions } from '../types/card';
+import { Card, DeckConfig, FSRSOptions, QuizAttempt } from '../types/card';
 
 /** The study data one student keeps in the cloud: the shape of a user_progress row. */
 export interface RemoteProgress {
   cards: Card[];
   deck_config: DeckConfig | null;
   fsrs_options: FSRSOptions | null;
-  stories_read: string[];
-  exam_attempts: ExamAttempt[];
+  grammar_studied: string[];
+  quiz_attempts: QuizAttempt[];
   updated_at?: string;
 }
 
@@ -49,14 +49,15 @@ export function mergeCards(local: Card[], remote: Card[]): Card[] {
   return remoteById.size > 0 ? [...merged, ...remoteById.values()] : merged;
 }
 
-/** Exam attempts from both sides, once each, newest first. */
-export function mergeAttempts(local: ExamAttempt[], remote: ExamAttempt[]): ExamAttempt[] {
-  const byId = new Map<string, ExamAttempt>();
+/** Quiz attempts from both sides, once each, newest first. */
+export function mergeAttempts(local: QuizAttempt[], remote: QuizAttempt[]): QuizAttempt[] {
+  const byId = new Map<string, QuizAttempt>();
   for (const a of [...local, ...remote]) if (!byId.has(a.id)) byId.set(a.id, a);
   return [...byId.values()].sort((a, b) => time(b.finishedAt) - time(a.finishedAt));
 }
 
-export function mergeStories(local: string[], remote: string[]): string[] {
+/** Ids kept on either side, once each (grammar points already studied). */
+export function mergeIds(local: string[], remote: string[]): string[] {
   return Array.from(new Set([...local, ...remote]));
 }
 
@@ -74,9 +75,9 @@ export function parseRemoteProgress(row: unknown): RemoteProgress | null {
     cards,
     deck_config: isObj(r.deck_config) ? (r.deck_config as DeckConfig) : null,
     fsrs_options: isObj(r.fsrs_options) ? (r.fsrs_options as FSRSOptions) : null,
-    stories_read: Array.isArray(r.stories_read) ? r.stories_read.filter((s): s is string => typeof s === 'string') : [],
-    exam_attempts: Array.isArray(r.exam_attempts)
-      ? (r.exam_attempts.filter((a) => isObj(a) && typeof (a as ExamAttempt).id === 'string') as ExamAttempt[])
+    grammar_studied: Array.isArray(r.grammar_studied) ? r.grammar_studied.filter((s): s is string => typeof s === 'string') : [],
+    quiz_attempts: Array.isArray(r.quiz_attempts)
+      ? (r.quiz_attempts.filter((a) => isObj(a) && typeof (a as QuizAttempt).id === 'string') as QuizAttempt[])
       : [],
     updated_at: typeof r.updated_at === 'string' ? r.updated_at : undefined,
   };

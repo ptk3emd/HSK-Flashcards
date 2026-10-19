@@ -1,0 +1,1789 @@
+{
+  "grammar": [
+    {
+      "category": "Concessão e hipótese extrema",
+      "points": [
+        {
+          "id": "h5-napa",
+          "text": "哪怕……也……",
+          "explanation": "哪怕 = mesmo que, ainda que; apresenta uma hipótese extrema e é mais coloquial que 即使. A oração principal leva 也/都: 哪怕再累，我也要完成。",
+          "structure": "哪怕 + hipótese extrema + 也/都 + resultado",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "哪怕", "pinyin": "nǎ pà", "punct": false },
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "忙", "pinyin": "máng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "每天", "pinyin": "měi tiān", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "锻炼", "pinyin": "duàn liàn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Por mais ocupado que esteja, ele se exercita todos os dias."
+            },
+            {
+              "tokens": [
+                { "hanzi": "哪怕", "pinyin": "nǎ pà", "punct": false },
+                { "hanzi": "失败", "pinyin": "shī bài", "punct": false },
+                { "hanzi": "十次", "pinyin": "shí cì", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "不", "pinyin": "bú", "punct": false },
+                { "hanzi": "放弃", "pinyin": "fàng qì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Mesmo se falhar dez vezes, não vou desistir."
+            },
+            {
+              "tokens": [
+                { "hanzi": "哪怕", "pinyin": "nǎ pà", "punct": false },
+                { "hanzi": "下雨", "pinyin": "xià yǔ", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "比赛", "pinyin": "bǐ sài", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "不会", "pinyin": "bú huì", "punct": false },
+                { "hanzi": "取消", "pinyin": "qǔ xiāo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Mesmo se chover, a partida não será cancelada."
+            }
+          ]
+        },
+        {
+          "id": "h5-wanyi",
+          "text": "万一",
+          "explanation": "万一 = se por acaso (hipótese ruim e pouco provável); costuma sugerir precaução: 带把伞吧，万一下雨呢。",
+          "structure": "万一 + hipótese ruim + precaução",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "带", "pinyin": "dài", "punct": false },
+                { "hanzi": "把", "pinyin": "bǎ", "punct": false },
+                { "hanzi": "伞", "pinyin": "sǎn", "punct": false },
+                { "hanzi": "吧", "pinyin": "ba", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "万一", "pinyin": "wàn yī", "punct": false },
+                { "hanzi": "下雨", "pinyin": "xià yǔ", "punct": false },
+                { "hanzi": "呢", "pinyin": "ne", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Leve um guarda-chuva, vai que chove."
+            },
+            {
+              "tokens": [
+                { "hanzi": "万一", "pinyin": "wàn yī", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "迟到", "pinyin": "chí dào", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "你们", "pinyin": "nǐ men", "punct": false },
+                { "hanzi": "先", "pinyin": "xiān", "punct": false },
+                { "hanzi": "开始", "pinyin": "kāi shǐ", "punct": false },
+                { "hanzi": "吧", "pinyin": "ba", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Se por acaso eu me atrasar, comecem sem mim."
+            },
+            {
+              "tokens": [
+                { "hanzi": "带上", "pinyin": "dài shàng", "punct": false },
+                { "hanzi": "手机", "pinyin": "shǒu jī", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "万一", "pinyin": "wàn yī", "punct": false },
+                { "hanzi": "有事", "pinyin": "yǒu shì", "punct": false },
+                { "hanzi": "可以", "pinyin": "kě yǐ", "punct": false },
+                { "hanzi": "联系", "pinyin": "lián xì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Leve o celular; se houver algum problema, você pode me contatar."
+            }
+          ]
+        },
+        {
+          "id": "h5-chufei",
+          "text": "除非……否则/才……",
+          "explanation": "除非 = a menos que, só se (condição única). Costuma vir com 否则 (senão) ou 才 (só então): 除非你道歉，否则她不会原谅你。",
+          "structure": "除非 + condição única + 否则/才 + resultado",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "除非", "pinyin": "chú fēi", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "道歉", "pinyin": "dào qiàn", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "否则", "pinyin": "fǒu zé", "punct": false },
+                { "hanzi": "她", "pinyin": "tā", "punct": false },
+                { "hanzi": "不会", "pinyin": "bú huì", "punct": false },
+                { "hanzi": "原谅", "pinyin": "yuán liàng", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "A menos que você peça desculpas, ela não vai te perdoar."
+            },
+            {
+              "tokens": [
+                { "hanzi": "除非", "pinyin": "chú fēi", "punct": false },
+                { "hanzi": "下雨", "pinyin": "xià yǔ", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "否则", "pinyin": "fǒu zé", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "每天", "pinyin": "měi tiān", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "散步", "pinyin": "sàn bù", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "A não ser que chova, eu caminho todos os dias."
+            },
+            {
+              "tokens": [
+                { "hanzi": "除非", "pinyin": "chú fēi", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "同意", "pinyin": "tóng yì", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "才", "pinyin": "cái", "punct": false },
+                { "hanzi": "签", "pinyin": "qiān", "punct": false },
+                { "hanzi": "合同", "pinyin": "hé tong", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Só assino o contrato se você concordar."
+            }
+          ]
+        },
+        {
+          "id": "h5-zaiye",
+          "text": "再……也/都……",
+          "explanation": "再 + adjetivo/verbo + 也/都 = não importa o quão..., mesmo assim...: 再忙也要吃饭。",
+          "structure": "再 + condição + 也/都 + resultado",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "忙", "pinyin": "máng", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "吃饭", "pinyin": "chī fàn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não importa o quanto esteja ocupado, é preciso comer."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这", "pinyin": "zhè", "punct": false },
+                { "hanzi": "件", "pinyin": "jiàn", "punct": false },
+                { "hanzi": "衣服", "pinyin": "yī fu", "punct": false },
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "贵", "pinyin": "guì", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "买", "pinyin": "mǎi", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Por mais cara que esta roupa seja, eu vou comprar."
+            },
+            {
+              "tokens": [
+                { "hanzi": "问题", "pinyin": "wèn tí", "punct": false },
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "难", "pinyin": "nán", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "解决", "pinyin": "jiě jué", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Por mais difícil que seja o problema, temos que resolvê-lo."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Condição e encadeamento",
+      "points": [
+        {
+          "id": "h5-fanshi",
+          "text": "凡是……都……",
+          "explanation": "凡是 = todos os que, tudo o que; faz uma generalização completa, com 都 na oração principal: 凡是学过汉语的人都知道这个字。",
+          "structure": "凡是 + grupo/condição + 都 + resultado",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "凡是", "pinyin": "fán shì", "punct": false },
+                { "hanzi": "参加", "pinyin": "cān jiā", "punct": false },
+                { "hanzi": "比赛", "pinyin": "bǐ sài", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "人", "pinyin": "rén", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "签名", "pinyin": "qiān míng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Todos os que participam da competição precisam assinar."
+            },
+            {
+              "tokens": [
+                { "hanzi": "凡是", "pinyin": "fán shì", "punct": false },
+                { "hanzi": "贵", "pinyin": "guì", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "东西", "pinyin": "dōng xi", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "不一定", "pinyin": "bù yí dìng", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nem tudo que é caro é necessariamente bom."
+            },
+            {
+              "tokens": [
+                { "hanzi": "凡是", "pinyin": "fán shì", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "建议", "pinyin": "jiàn yì", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "大家", "pinyin": "dà jiā", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "愿意", "pinyin": "yuàn yì", "punct": false },
+                { "hanzi": "听", "pinyin": "tīng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Todos gostam de ouvir as sugestões dele."
+            }
+          ]
+        },
+        {
+          "id": "h5-shengde",
+          "text": "省得",
+          "explanation": "省得 = para evitar, para não ter que (ação preventiva): 多穿点衣服，省得感冒。",
+          "structure": "ação preventiva + 省得 + problema",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "多", "pinyin": "duō", "punct": false },
+                { "hanzi": "穿", "pinyin": "chuān", "punct": false },
+                { "hanzi": "点", "pinyin": "diǎn", "punct": false },
+                { "hanzi": "衣服", "pinyin": "yī fu", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "省得", "pinyin": "shěng de", "punct": false },
+                { "hanzi": "感冒", "pinyin": "gǎn mào", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Vista mais roupa para não pegar um resfriado."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "现在", "pinyin": "xiàn zài", "punct": false },
+                { "hanzi": "出发", "pinyin": "chū fā", "punct": false },
+                { "hanzi": "吧", "pinyin": "ba", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "省得", "pinyin": "shěng de", "punct": false },
+                { "hanzi": "迟到", "pinyin": "chí dào", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Vamos sair agora para não nos atrasarmos."
+            },
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "把", "pinyin": "bǎ", "punct": false },
+                { "hanzi": "地址", "pinyin": "dì zhǐ", "punct": false },
+                { "hanzi": "记下来", "pinyin": "jì xià lái", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "省得", "pinyin": "shěng de", "punct": false },
+                { "hanzi": "忘", "pinyin": "wàng", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Anote o endereço para não esquecer."
+            }
+          ]
+        },
+        {
+          "id": "h5-yidan",
+          "text": "一旦",
+          "explanation": "一旦 = assim que, uma vez que (hipótese com consequência forte): 一旦开始，就不要停。",
+          "structure": "一旦 + condição + resultado",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "一旦", "pinyin": "yí dàn", "punct": false },
+                { "hanzi": "开始", "pinyin": "kāi shǐ", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "就", "pinyin": "jiù", "punct": false },
+                { "hanzi": "不要", "pinyin": "bú yào", "punct": false },
+                { "hanzi": "停", "pinyin": "tíng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Uma vez começado, não pare."
+            },
+            {
+              "tokens": [
+                { "hanzi": "一旦", "pinyin": "yí dàn", "punct": false },
+                { "hanzi": "错过", "pinyin": "cuò guò", "punct": false },
+                { "hanzi": "这次", "pinyin": "zhè cì", "punct": false },
+                { "hanzi": "机会", "pinyin": "jī huì", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "就", "pinyin": "jiù", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "难", "pinyin": "nán", "punct": false },
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Uma vez perdida esta oportunidade, será difícil ela voltar."
+            },
+            {
+              "tokens": [
+                { "hanzi": "一旦", "pinyin": "yí dàn", "punct": false },
+                { "hanzi": "决定", "pinyin": "jué dìng", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "就", "pinyin": "jiù", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "坚持", "pinyin": "jiān chí", "punct": false },
+                { "hanzi": "到底", "pinyin": "dào dǐ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Uma vez decidido, é preciso persistir até o fim."
+            }
+          ]
+        },
+        {
+          "id": "h5-bujin",
+          "text": "不仅……还/也……",
+          "explanation": "不仅 = não só (mais escrito que 不但); a segunda parte vem com 还/也/而且: 他不仅会说汉语，还会写汉字。",
+          "structure": "不仅 + A + 还/也 + B",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "不仅", "pinyin": "bù jǐn", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "说", "pinyin": "shuō", "punct": false },
+                { "hanzi": "汉语", "pinyin": "hàn yǔ", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "还", "pinyin": "hái", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "写", "pinyin": "xiě", "punct": false },
+                { "hanzi": "汉字", "pinyin": "hàn zì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele não só fala chinês, mas também escreve hanzi."
+            },
+            {
+              "tokens": [
+                { "hanzi": "她", "pinyin": "tā", "punct": false },
+                { "hanzi": "不仅", "pinyin": "bù jǐn", "punct": false },
+                { "hanzi": "长得", "pinyin": "zhǎng de", "punct": false },
+                { "hanzi": "漂亮", "pinyin": "piào liang", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "工作", "pinyin": "gōng zuò", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "努力", "pinyin": "nǔ lì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ela não é apenas bonita; também trabalha muito."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这家", "pinyin": "zhè jiā", "punct": false },
+                { "hanzi": "饭馆", "pinyin": "fàn guǎn", "punct": false },
+                { "hanzi": "不仅", "pinyin": "bù jǐn", "punct": false },
+                { "hanzi": "便宜", "pinyin": "pián yi", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "味道", "pinyin": "wèi dào", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "很好", "pinyin": "hěn hǎo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Este restaurante não é só barato; a comida também é muito boa."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Advérbios",
+      "points": [
+        {
+          "id": "h5-pianpian",
+          "text": "偏偏",
+          "explanation": "偏偏 = justamente, por coincidência ou teimosia (contraria a expectativa): 我打电话找他，偏偏他不在家。",
+          "structure": "偏偏 + fato que contraria a expectativa",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "打电话", "pinyin": "dǎ diàn huà", "punct": false },
+                { "hanzi": "找", "pinyin": "zhǎo", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "偏偏", "pinyin": "piān piān", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "不在", "pinyin": "bú zài", "punct": false },
+                { "hanzi": "家", "pinyin": "jiā", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Liguei para ele, mas justamente ele não estava em casa."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "不", "pinyin": "bù", "punct": false },
+                { "hanzi": "想", "pinyin": "xiǎng", "punct": false },
+                { "hanzi": "见", "pinyin": "jiàn", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "偏偏", "pinyin": "piān piān", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "车站", "pinyin": "chē zhàn", "punct": false },
+                { "hanzi": "遇见", "pinyin": "yù jiàn", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu não queria vê-lo, mas o encontrei justamente na estação."
+            },
+            {
+              "tokens": [
+                { "hanzi": "大家", "pinyin": "dà jiā", "punct": false },
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "做", "pinyin": "zuò", "punct": false },
+                { "hanzi": "这道题", "pinyin": "zhè dào tí", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "偏偏", "pinyin": "piān piān", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "不会", "pinyin": "bú huì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Todos sabem fazer esta questão; justamente ele não sabe."
+            }
+          ]
+        },
+        {
+          "id": "h5-bijing",
+          "text": "毕竟",
+          "explanation": "毕竟 = afinal de contas, no fim (razão que explica a situação): 他毕竟是个孩子，别对他要求太高。",
+          "structure": "毕竟 + fato + razão/conclusão",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "毕竟", "pinyin": "bì jìng", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "个", "pinyin": "ge", "punct": false },
+                { "hanzi": "孩子", "pinyin": "hái zi", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "别", "pinyin": "bié", "punct": false },
+                { "hanzi": "对", "pinyin": "duì", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "要求", "pinyin": "yāo qiú", "punct": false },
+                { "hanzi": "太", "pinyin": "tài", "punct": false },
+                { "hanzi": "高", "pinyin": "gāo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Afinal, ele é só uma criança; não exija demais dele."
+            },
+            {
+              "tokens": [
+                { "hanzi": "毕竟", "pinyin": "bì jìng", "punct": false },
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "认识", "pinyin": "rèn shi", "punct": false },
+                { "hanzi": "十年", "pinyin": "shí nián", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "了解", "pinyin": "liǎo jiě", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Afinal, nos conhecemos há dez anos; eu o entendo."
+            },
+            {
+              "tokens": [
+                { "hanzi": "她", "pinyin": "tā", "punct": false },
+                { "hanzi": "毕竟", "pinyin": "bì jìng", "punct": false },
+                { "hanzi": "经验", "pinyin": "jīng yàn", "punct": false },
+                { "hanzi": "少", "pinyin": "shǎo", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "需要", "pinyin": "xū yào", "punct": false },
+                { "hanzi": "多", "pinyin": "duō", "punct": false },
+                { "hanzi": "练习", "pinyin": "liàn xí", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Afinal, ela tem pouca experiência e precisa praticar mais."
+            }
+          ]
+        },
+        {
+          "id": "h5-guoran",
+          "text": "果然",
+          "explanation": "果然 = realmente, de fato (confirma uma previsão): 天气预报说下雨，果然下了。",
+          "structure": "previsão + 果然 + confirmação",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "天气预报", "pinyin": "tiān qì yù bào", "punct": false },
+                { "hanzi": "说", "pinyin": "shuō", "punct": false },
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "下雨", "pinyin": "xià yǔ", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "果然", "pinyin": "guǒ rán", "punct": false },
+                { "hanzi": "下", "pinyin": "xià", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "A previsão dizia que choveria hoje, e de fato choveu."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "说", "pinyin": "shuō", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "帮忙", "pinyin": "bāng máng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "第二天", "pinyin": "dì èr tiān", "punct": false },
+                { "hanzi": "果然", "pinyin": "guǒ rán", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele disse que viria ajudar; no dia seguinte, de fato apareceu."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这本书", "pinyin": "zhè běn shū", "punct": false },
+                { "hanzi": "果然", "pinyin": "guǒ rán", "punct": false },
+                { "hanzi": "像", "pinyin": "xiàng", "punct": false },
+                { "hanzi": "大家", "pinyin": "dà jiā", "punct": false },
+                { "hanzi": "说", "pinyin": "shuō", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "那么", "pinyin": "nà me", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Este livro é, como todos diziam, realmente bom."
+            }
+          ]
+        },
+        {
+          "id": "h5-genben",
+          "text": "根本",
+          "explanation": "根本 = de jeito nenhum, totalmente (reforça negativas); também pode significar fundamental: 他根本不知道这件事。",
+          "structure": "根本 + 不/没 + verbo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "根本", "pinyin": "gēn běn", "punct": false },
+                { "hanzi": "不", "pinyin": "bù", "punct": false },
+                { "hanzi": "知道", "pinyin": "zhī dào", "punct": false },
+                { "hanzi": "这件事", "pinyin": "zhè jiàn shì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele não sabe disso de jeito nenhum."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "根本", "pinyin": "gēn běn", "punct": false },
+                { "hanzi": "没", "pinyin": "méi", "punct": false },
+                { "hanzi": "想到", "pinyin": "xiǎng dào", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu nem sequer imaginei que ele viria."
+            },
+            {
+              "tokens": [
+                { "hanzi": "问题", "pinyin": "wèn tí", "punct": false },
+                { "hanzi": "根本", "pinyin": "gēn běn", "punct": false },
+                { "hanzi": "没", "pinyin": "méi", "punct": false },
+                { "hanzi": "解决", "pinyin": "jiě jué", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "O problema não foi resolvido de forma alguma."
+            }
+          ]
+        },
+        {
+          "id": "h5-cengjing",
+          "text": "曾经",
+          "explanation": "曾经 = outrora, uma vez (experiência do passado; mais escrito que usar só 过): 我曾经去过日本。",
+          "structure": "曾经 + verbo (+ 过)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "曾经", "pinyin": "céng jīng", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "过", "pinyin": "guo", "punct": false },
+                { "hanzi": "日本", "pinyin": "Rì běn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu já fui ao Japão uma vez."
+            },
+            {
+              "tokens": [
+                { "hanzi": "她", "pinyin": "tā", "punct": false },
+                { "hanzi": "曾经", "pinyin": "céng jīng", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "同事", "pinyin": "tóng shì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ela foi minha colega de trabalho."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这里", "pinyin": "zhè lǐ", "punct": false },
+                { "hanzi": "曾经", "pinyin": "céng jīng", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "一片", "pinyin": "yí piàn", "punct": false },
+                { "hanzi": "农田", "pinyin": "nóng tián", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Aqui já foi uma plantação."
+            }
+          ]
+        },
+        {
+          "id": "h5-nande",
+          "text": "难免",
+          "explanation": "难免 = é difícil evitar, é inevitável: 第一次上台，难免会紧张。",
+          "structure": "situação + 难免 + consequência inevitável",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "第一次", "pinyin": "dì yī cì", "punct": false },
+                { "hanzi": "上台", "pinyin": "shàng tái", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "难免", "pinyin": "nán miǎn", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "紧张", "pinyin": "jǐn zhāng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Na primeira vez no palco, é inevitável ficar nervoso."
+            },
+            {
+              "tokens": [
+                { "hanzi": "生活", "pinyin": "shēng huó", "punct": false },
+                { "hanzi": "中", "pinyin": "zhōng", "punct": false },
+                { "hanzi": "难免", "pinyin": "nán miǎn", "punct": false },
+                { "hanzi": "遇到", "pinyin": "yù dào", "punct": false },
+                { "hanzi": "困难", "pinyin": "kùn nan", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Na vida, é inevitável encontrar dificuldades."
+            },
+            {
+              "tokens": [
+                { "hanzi": "大家", "pinyin": "dà jiā", "punct": false },
+                { "hanzi": "意见", "pinyin": "yì jiàn", "punct": false },
+                { "hanzi": "不同", "pinyin": "bù tóng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "难免", "pinyin": "nán miǎn", "punct": false },
+                { "hanzi": "会", "pinyin": "huì", "punct": false },
+                { "hanzi": "有", "pinyin": "yǒu", "punct": false },
+                { "hanzi": "争论", "pinyin": "zhēng lùn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Quando as opiniões divergem, é inevitável haver discussões."
+            }
+          ]
+        },
+        {
+          "id": "h5-guaibude",
+          "text": "怪不得",
+          "explanation": "怪不得 = não é de admirar, agora entendo por que (depois de descobrir a causa): 怪不得他没来，原来他生病了。",
+          "structure": "怪不得 + constatação (+ 原来 ...)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "怪不得", "pinyin": "guài bu de", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "没", "pinyin": "méi", "punct": false },
+                { "hanzi": "来", "pinyin": "lái", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "原来", "pinyin": "yuán lái", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "生病", "pinyin": "shēng bìng", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não é de admirar que ele não tenha vindo: ele ficou doente."
+            },
+            {
+              "tokens": [
+                { "hanzi": "怪不得", "pinyin": "guài bu de", "punct": false },
+                { "hanzi": "屋子", "pinyin": "wū zi", "punct": false },
+                { "hanzi": "这么", "pinyin": "zhè me", "punct": false },
+                { "hanzi": "冷", "pinyin": "lěng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "窗户", "pinyin": "chuāng hu", "punct": false },
+                { "hanzi": "开着", "pinyin": "kāi zhe", "punct": false },
+                { "hanzi": "呢", "pinyin": "ne", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não é de admirar que o quarto esteja tão frio: a janela está aberta."
+            },
+            {
+              "tokens": [
+                { "hanzi": "怪不得", "pinyin": "guài bu de", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "这么", "pinyin": "zhè me", "punct": false },
+                { "hanzi": "高兴", "pinyin": "gāo xìng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "考试", "pinyin": "kǎo shì", "punct": false },
+                { "hanzi": "得", "pinyin": "dé", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "满分", "pinyin": "mǎn fēn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não é de admirar que ele esteja tão feliz: tirou nota máxima na prova."
+            }
+          ]
+        },
+        {
+          "id": "h5-fenbie",
+          "text": "分别",
+          "explanation": "分别 = respectivamente, separadamente; também pode indicar despedida: 他们分别来自北京和上海。",
+          "structure": "A 和 B + 分别 + verbo",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "他们", "pinyin": "tā men", "punct": false },
+                { "hanzi": "分别", "pinyin": "fēn bié", "punct": false },
+                { "hanzi": "来自", "pinyin": "lái zì", "punct": false },
+                { "hanzi": "北京", "pinyin": "Běi jīng", "punct": false },
+                { "hanzi": "和", "pinyin": "hé", "punct": false },
+                { "hanzi": "上海", "pinyin": "Shàng hǎi", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eles vêm de Pequim e Xangai, respectivamente."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "分别", "pinyin": "fēn bié", "punct": false },
+                { "hanzi": "住", "pinyin": "zhù", "punct": false },
+                { "hanzi": "在", "pinyin": "zài", "punct": false },
+                { "hanzi": "三楼", "pinyin": "sān lóu", "punct": false },
+                { "hanzi": "和", "pinyin": "hé", "punct": false },
+                { "hanzi": "四楼", "pinyin": "sì lóu", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Moramos no terceiro e no quarto andar, respectivamente."
+            },
+            {
+              "tokens": [
+                { "hanzi": "请", "pinyin": "qǐng", "punct": false },
+                { "hanzi": "大家", "pinyin": "dà jiā", "punct": false },
+                { "hanzi": "分别", "pinyin": "fēn bié", "punct": false },
+                { "hanzi": "写下", "pinyin": "xiě xià", "punct": false },
+                { "hanzi": "自己", "pinyin": "zì jǐ", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "名字", "pinyin": "míng zi", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Por favor, cada um escreva o próprio nome."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Ênfase, retórica e avaliação",
+      "points": [
+        {
+          "id": "h5-nandao",
+          "text": "难道……吗",
+          "explanation": "难道 = por acaso (pergunta retórica que espera a resposta oposta): 难道你不想去吗？ = você não quer ir, é?",
+          "structure": "难道 + pergunta + 吗",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "难道", "pinyin": "nán dào", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "不", "pinyin": "bù", "punct": false },
+                { "hanzi": "想", "pinyin": "xiǎng", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Você não quer ir, é mesmo?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "难道", "pinyin": "nán dào", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "忘", "pinyin": "wàng", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "约定", "pinyin": "yuē dìng", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Por acaso você esqueceu o nosso combinado?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "这么", "pinyin": "zhè me", "punct": false },
+                { "hanzi": "简单", "pinyin": "jiǎn dān", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "题", "pinyin": "tí", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "难道", "pinyin": "nán dào", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "不会", "pinyin": "bú huì", "punct": false },
+                { "hanzi": "做", "pinyin": "zuò", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Uma questão tão simples e você também não sabe fazer?"
+            }
+          ]
+        },
+        {
+          "id": "h5-hebi",
+          "text": "何必",
+          "explanation": "何必 = por que se dar o trabalho (não vale a pena); pergunta retórica, muitas vezes com 呢: 事情已经过去了，何必生气呢？",
+          "structure": "何必 + ação desnecessária (+ 呢)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "事情", "pinyin": "shì qing", "punct": false },
+                { "hanzi": "已经", "pinyin": "yǐ jīng", "punct": false },
+                { "hanzi": "过去", "pinyin": "guò qù", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "何必", "pinyin": "hé bì", "punct": false },
+                { "hanzi": "生气", "pinyin": "shēng qì", "punct": false },
+                { "hanzi": "呢", "pinyin": "ne", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "O assunto já passou; por que ficar com raiva?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "走", "pinyin": "zǒu", "punct": false },
+                { "hanzi": "几步", "pinyin": "jǐ bù", "punct": false },
+                { "hanzi": "就", "pinyin": "jiù", "punct": false },
+                { "hanzi": "到", "pinyin": "dào", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "何必", "pinyin": "hé bì", "punct": false },
+                { "hanzi": "打车", "pinyin": "dǎ chē", "punct": false },
+                { "hanzi": "呢", "pinyin": "ne", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Andando alguns passos já chegamos; por que pegar táxi?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "都", "pinyin": "dōu", "punct": false },
+                { "hanzi": "是", "pinyin": "shì", "punct": false },
+                { "hanzi": "朋友", "pinyin": "péng you", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "何必", "pinyin": "hé bì", "punct": false },
+                { "hanzi": "这么", "pinyin": "zhè me", "punct": false },
+                { "hanzi": "客气", "pinyin": "kè qi", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Somos todos amigos; por que tanta cerimônia?"
+            }
+          ]
+        },
+        {
+          "id": "h5-bushi-ma",
+          "text": "不是……吗",
+          "explanation": "不是……吗 = não é...? (confirmação retórica de algo que o falante já sabe): 你不是去过中国吗？",
+          "structure": "不是 + informação conhecida + 吗",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "不是", "pinyin": "bú shì", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "过", "pinyin": "guo", "punct": false },
+                { "hanzi": "中国", "pinyin": "Zhōng guó", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Você não esteve na China?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "这", "pinyin": "zhè", "punct": false },
+                { "hanzi": "不是", "pinyin": "bú shì", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "最", "pinyin": "zuì", "punct": false },
+                { "hanzi": "喜欢", "pinyin": "xǐ huan", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "歌", "pinyin": "gē", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não é esta a sua música preferida?"
+            },
+            {
+              "tokens": [
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "不是", "pinyin": "bú shì", "punct": false },
+                { "hanzi": "约好", "pinyin": "yuē hǎo", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "吗", "pinyin": "ma", "punct": false },
+                { "hanzi": "？", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não tínhamos combinado?"
+            }
+          ]
+        },
+        {
+          "id": "h5-duokui",
+          "text": "多亏",
+          "explanation": "多亏 = graças a (pessoa, sorte ou fator decisivo), sempre com resultado positivo: 多亏你帮忙，我才找到这份工作。",
+          "structure": "多亏 + pessoa/fator (+ 才 ...)",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "多亏", "pinyin": "duō kuī", "punct": false },
+                { "hanzi": "你", "pinyin": "nǐ", "punct": false },
+                { "hanzi": "帮忙", "pinyin": "bāng máng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "才", "pinyin": "cái", "punct": false },
+                { "hanzi": "找到", "pinyin": "zhǎo dào", "punct": false },
+                { "hanzi": "这份", "pinyin": "zhè fèn", "punct": false },
+                { "hanzi": "工作", "pinyin": "gōng zuò", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Graças à sua ajuda, eu consegui encontrar este emprego."
+            },
+            {
+              "tokens": [
+                { "hanzi": "多亏", "pinyin": "duō kuī", "punct": false },
+                { "hanzi": "带", "pinyin": "dài", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "伞", "pinyin": "sǎn", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "不然", "pinyin": "bù rán", "punct": false },
+                { "hanzi": "就", "pinyin": "jiù", "punct": false },
+                { "hanzi": "淋湿", "pinyin": "lín shī", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Graças a ter trazido o guarda-chuva, não me molhei."
+            },
+            {
+              "tokens": [
+                { "hanzi": "这次", "pinyin": "zhè cì", "punct": false },
+                { "hanzi": "比赛", "pinyin": "bǐ sài", "punct": false },
+                { "hanzi": "能", "pinyin": "néng", "punct": false },
+                { "hanzi": "赢", "pinyin": "yíng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "多亏", "pinyin": "duō kuī", "punct": false },
+                { "hanzi": "大家", "pinyin": "dà jiā", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "努力", "pinyin": "nǔ lì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Poder ganhar esta competição foi graças ao esforço de todos."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Preposições e conectores",
+      "points": [
+        {
+          "id": "h5-zhiyu",
+          "text": "至于",
+          "explanation": "至于 = quanto a, já sobre (introduz um novo tópico, muitas vezes contrastante): 至于费用问题，我们再讨论。",
+          "structure": "至于 + novo tópico + comentário",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "明天", "pinyin": "míng tiān", "punct": false },
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "爬山", "pinyin": "pá shān", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "至于", "pinyin": "zhì yú", "punct": false },
+                { "hanzi": "几点", "pinyin": "jǐ diǎn", "punct": false },
+                { "hanzi": "出发", "pinyin": "chū fā", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "还", "pinyin": "hái", "punct": false },
+                { "hanzi": "没", "pinyin": "méi", "punct": false },
+                { "hanzi": "决定", "pinyin": "jué dìng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Amanhã vamos escalar a montanha; quanto ao horário de saída, ainda não decidimos."
+            },
+            {
+              "tokens": [
+                { "hanzi": "至于", "pinyin": "zhì yú", "punct": false },
+                { "hanzi": "费用", "pinyin": "fèi yong", "punct": false },
+                { "hanzi": "问题", "pinyin": "wèn tí", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "下次", "pinyin": "xià cì", "punct": false },
+                { "hanzi": "再", "pinyin": "zài", "punct": false },
+                { "hanzi": "讨论", "pinyin": "tǎo lùn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Quanto à questão dos custos, vamos discutir na próxima vez."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "只", "pinyin": "zhǐ", "punct": false },
+                { "hanzi": "知道", "pinyin": "zhī dào", "punct": false },
+                { "hanzi": "她", "pinyin": "tā", "punct": false },
+                { "hanzi": "姓", "pinyin": "xìng", "punct": false },
+                { "hanzi": "王", "pinyin": "Wáng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "至于", "pinyin": "zhì yú", "punct": false },
+                { "hanzi": "名字", "pinyin": "míng zi", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "不", "pinyin": "bù", "punct": false },
+                { "hanzi": "清楚", "pinyin": "qīng chu", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Só sei que o sobrenome dela é Wang; quanto ao nome, não tenho certeza."
+            }
+          ]
+        },
+        {
+          "id": "h5-zicong",
+          "text": "自从",
+          "explanation": "自从 = desde (que), a partir de; indica o início de uma mudança: 自从学了汉语，他更喜欢中国了。",
+          "structure": "自从 + momento/evento + mudança",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "自从", "pinyin": "zì cóng", "punct": false },
+                { "hanzi": "学", "pinyin": "xué", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "汉语", "pinyin": "hàn yǔ", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "更", "pinyin": "gèng", "punct": false },
+                { "hanzi": "喜欢", "pinyin": "xǐ huan", "punct": false },
+                { "hanzi": "中国", "pinyin": "Zhōng guó", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Desde que começou a estudar chinês, ele gosta ainda mais da China."
+            },
+            {
+              "tokens": [
+                { "hanzi": "自从", "pinyin": "zì cóng", "punct": false },
+                { "hanzi": "搬家", "pinyin": "bān jiā", "punct": false },
+                { "hanzi": "以后", "pinyin": "yǐ hòu", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "很少", "pinyin": "hěn shǎo", "punct": false },
+                { "hanzi": "见面", "pinyin": "jiàn miàn", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Desde que nos mudamos, nos vemos raramente."
+            },
+            {
+              "tokens": [
+                { "hanzi": "自从", "pinyin": "zì cóng", "punct": false },
+                { "hanzi": "那次", "pinyin": "nà cì", "punct": false },
+                { "hanzi": "生病", "pinyin": "shēng bìng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "开始", "pinyin": "kāi shǐ", "punct": false },
+                { "hanzi": "注意", "pinyin": "zhù yì", "punct": false },
+                { "hanzi": "健康", "pinyin": "jiàn kāng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Desde aquela doença, ele passou a cuidar da saúde."
+            }
+          ]
+        },
+        {
+          "id": "h5-nalaishuo",
+          "text": "拿……来说",
+          "explanation": "拿……来说 = tomando... como exemplo: 拿我来说，每天早上六点就起床。",
+          "structure": "拿 + exemplo + 来说 + comentário",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "拿", "pinyin": "ná", "punct": false },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "来说", "pinyin": "lái shuō", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "每天", "pinyin": "měi tiān", "punct": false },
+                { "hanzi": "早上", "pinyin": "zǎo shang", "punct": false },
+                { "hanzi": "六点", "pinyin": "liù diǎn", "punct": false },
+                { "hanzi": "就", "pinyin": "jiù", "punct": false },
+                { "hanzi": "起床", "pinyin": "qǐ chuáng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Tomando a mim como exemplo: acordo às seis todos os dias."
+            },
+            {
+              "tokens": [
+                { "hanzi": "拿", "pinyin": "ná", "punct": false },
+                { "hanzi": "这家", "pinyin": "zhè jiā", "punct": false },
+                { "hanzi": "饭馆", "pinyin": "fàn guǎn", "punct": false },
+                { "hanzi": "来说", "pinyin": "lái shuō", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "服务", "pinyin": "fú wù", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "价格", "pinyin": "jià gé", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "便宜", "pinyin": "pián yi", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Tomando este restaurante como exemplo: bom atendimento e preço baixo."
+            },
+            {
+              "tokens": [
+                { "hanzi": "拿", "pinyin": "ná", "punct": false },
+                { "hanzi": "学", "pinyin": "xué", "punct": false },
+                { "hanzi": "外语", "pinyin": "wài yǔ", "punct": false },
+                { "hanzi": "来说", "pinyin": "lái shuō", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "多", "pinyin": "duō", "punct": false },
+                { "hanzi": "练习", "pinyin": "liàn xí", "punct": false },
+                { "hanzi": "最", "pinyin": "zuì", "punct": false },
+                { "hanzi": "重要", "pinyin": "zhòng yào", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "No caso de aprender idiomas, praticar muito é o mais importante."
+            }
+          ]
+        },
+        {
+          "id": "h5-chenzhe",
+          "text": "趁 / 趁着",
+          "explanation": "趁 = aproveitar (uma oportunidade ou momento favorável): 趁天气好，我们去散步吧。",
+          "structure": "趁(着) + momento + ação",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "趁", "pinyin": "chèn", "punct": false },
+                { "hanzi": "天气", "pinyin": "tiān qì", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我们", "pinyin": "wǒ men", "punct": false },
+                { "hanzi": "去", "pinyin": "qù", "punct": false },
+                { "hanzi": "散步", "pinyin": "sàn bù", "punct": false },
+                { "hanzi": "吧", "pinyin": "ba", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Aproveitando o bom tempo, vamos caminhar."
+            },
+            {
+              "tokens": [
+                { "hanzi": "趁", "pinyin": "chèn", "punct": false },
+                { "hanzi": "年轻", "pinyin": "nián qīng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "多", "pinyin": "duō", "punct": false },
+                { "hanzi": "出去", "pinyin": "chū qù", "punct": false },
+                { "hanzi": "走走", "pinyin": "zǒu zou", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Enquanto se é jovem, aproveite para sair e conhecer lugares."
+            },
+            {
+              "tokens": [
+                { "hanzi": "趁着", "pinyin": "chèn zhe", "punct": false },
+                { "hanzi": "周末", "pinyin": "zhōu mò", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "把", "pinyin": "bǎ", "punct": false },
+                { "hanzi": "房间", "pinyin": "fáng jiān", "punct": false },
+                { "hanzi": "收拾", "pinyin": "shōu shi", "punct": false },
+                { "hanzi": "一下", "pinyin": "yí xià", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Aproveite o fim de semana para arrumar o quarto."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Complementos verbais",
+      "points": [
+        {
+          "id": "h5-qilai",
+          "text": "动词 + 起来",
+          "explanation": "起来 depois do verbo indica início e continuação da ação; com adjetivo ou verbos de percepção, expressa avaliação: 笑起来 (começar a rir) · 看起来 (parecer).",
+          "structure": "verbo/adjetivo + 起来",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "这道菜", "pinyin": "zhè dào cài", "punct": false },
+                { "hanzi": "看起来", "pinyin": "kàn qǐ lái", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "好吃", "pinyin": "hǎo chī", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Este prato parece muito gostoso."
+            },
+            {
+              "tokens": [
+                { "hanzi": "听到", "pinyin": "tīng dào", "punct": false },
+                { "hanzi": "这个", "pinyin": "zhè ge", "punct": false },
+                { "hanzi": "消息", "pinyin": "xiāo xi", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "她", "pinyin": "tā", "punct": false },
+                { "hanzi": "马上", "pinyin": "mǎ shàng", "punct": false },
+                { "hanzi": "哭", "pinyin": "kū", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "起来", "pinyin": "qǐ lái", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ao ouvir a notícia, ela começou a chorar na hora."
+            },
+            {
+              "tokens": [
+                { "hanzi": "天气", "pinyin": "tiān qì", "punct": false },
+                { "hanzi": "冷", "pinyin": "lěng", "punct": false },
+                { "hanzi": "起来", "pinyin": "qǐ lái", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "多", "pinyin": "duō", "punct": false },
+                { "hanzi": "穿", "pinyin": "chuān", "punct": false },
+                { "hanzi": "衣服", "pinyin": "yī fu", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "O tempo está ficando frio; é preciso agasalhar-se mais."
+            }
+          ]
+        },
+        {
+          "id": "h5-xiaqu",
+          "text": "动词 + 下去",
+          "explanation": "下去 = continuar (ação que segue adiante a partir daqui): 别打断他，让他说下去。",
+          "structure": "verbo + 下去",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "虽然", "pinyin": "suī rán", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "难", "pinyin": "nán", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "但", "pinyin": "dàn", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "还是", "pinyin": "hái shi", "punct": false },
+                { "hanzi": "要", "pinyin": "yào", "punct": false },
+                { "hanzi": "坚持", "pinyin": "jiān chí", "punct": false },
+                { "hanzi": "下去", "pinyin": "xià qù", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Embora seja difícil, ele ainda quer continuar insistindo."
+            },
+            {
+              "tokens": [
+                { "hanzi": "别", "pinyin": "bié", "punct": false },
+                { "hanzi": "打断", "pinyin": "dǎ duàn", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "让", "pinyin": "ràng", "punct": false },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "说", "pinyin": "shuō", "punct": false },
+                { "hanzi": "下去", "pinyin": "xià qù", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não o interrompa; deixe-o continuar falando."
+            },
+            {
+              "tokens": [
+                { "hanzi": "希望", "pinyin": "xī wàng", "punct": false },
+                { "hanzi": "你们", "pinyin": "nǐ men", "punct": false },
+                { "hanzi": "把", "pinyin": "bǎ", "punct": false },
+                { "hanzi": "这个", "pinyin": "zhè ge", "punct": false },
+                { "hanzi": "传统", "pinyin": "chuán tǒng", "punct": false },
+                { "hanzi": "传", "pinyin": "chuán", "punct": false },
+                { "hanzi": "下去", "pinyin": "xià qù", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Espero que vocês transmitam esta tradição adiante."
+            }
+          ]
+        },
+        {
+          "id": "h5-buliao",
+          "text": "动词 + 不了",
+          "explanation": "不了 = não conseguir, não ser possível (possibilidade negada): 今天太忙，我看不了电影。",
+          "structure": "verbo + 不了",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "今天", "pinyin": "jīn tiān", "punct": false },
+                { "hanzi": "太", "pinyin": "tài", "punct": false },
+                { "hanzi": "忙", "pinyin": "máng", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "看不了", "pinyin": "kàn bu liǎo", "punct": false },
+                { "hanzi": "电影", "pinyin": "diàn yǐng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Hoje estou ocupado demais; não consigo ver o filme."
+            },
+            {
+              "tokens": [
+                { "hanzi": "东西", "pinyin": "dōng xi", "punct": false },
+                { "hanzi": "太", "pinyin": "tài", "punct": false },
+                { "hanzi": "多", "pinyin": "duō", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "一个人", "pinyin": "yí ge rén", "punct": false },
+                { "hanzi": "拿不了", "pinyin": "ná bu liǎo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "São coisas demais; eu sozinho não consigo carregar."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "一辈子", "pinyin": "yí bèi zi", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "忘不了", "pinyin": "wàng bu liǎo", "punct": false },
+                { "hanzi": "这件事", "pinyin": "zhè jiàn shì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nunca na vida vou conseguir esquecer isso."
+            }
+          ]
+        },
+        {
+          "id": "h5-chulai",
+          "text": "动词 + 出来",
+          "explanation": "出来 = sair; no sentido figurado, descobrir ou perceber algo: 我看出来了，他不高兴。",
+          "structure": "verbo + 出来",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "看出来", "pinyin": "kàn chū lái", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "不", "pinyin": "bù", "punct": false },
+                { "hanzi": "高兴", "pinyin": "gāo xìng", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Eu percebi: ele não está contente."
+            },
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "想不出来", "pinyin": "xiǎng bu chū lái", "punct": false },
+                { "hanzi": "好", "pinyin": "hǎo", "punct": false },
+                { "hanzi": "办法", "pinyin": "bàn fǎ", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Não consigo pensar em uma boa solução."
+            },
+            {
+              "tokens": [
+                { "hanzi": "谁", "pinyin": "shéi", "punct": false },
+                { "hanzi": "拿走", "pinyin": "ná zǒu", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "书", "pinyin": "shū", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "已经", "pinyin": "yǐ jīng", "punct": false },
+                { "hanzi": "查出来", "pinyin": "chá chū lái", "punct": false },
+                { "hanzi": "了", "pinyin": "le", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Quem levou o livro já foi descoberto."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "category": "Expressões fixas",
+      "points": [
+        {
+          "id": "h5-haoburongyi",
+          "text": "好不容易",
+          "explanation": "好不容易 = com muito custo, depois de muito esforço; costuma vir com 才: 我好不容易才买到这张票。",
+          "structure": "好不容易 + 才 + resultado",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "我", "pinyin": "wǒ", "punct": false },
+                { "hanzi": "好不容易", "pinyin": "hǎo bù róng yì", "punct": false },
+                { "hanzi": "才", "pinyin": "cái", "punct": false },
+                { "hanzi": "买到", "pinyin": "mǎi dào", "punct": false },
+                { "hanzi": "这张", "pinyin": "zhè zhāng", "punct": false },
+                { "hanzi": "票", "pinyin": "piào", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Consegui comprar este ingresso com muito custo."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "好不容易", "pinyin": "hǎo bù róng yì", "punct": false },
+                { "hanzi": "才", "pinyin": "cái", "punct": false },
+                { "hanzi": "找到", "pinyin": "zhǎo dào", "punct": false },
+                { "hanzi": "一份", "pinyin": "yí fèn", "punct": false },
+                { "hanzi": "满意", "pinyin": "mǎn yì", "punct": false },
+                { "hanzi": "的", "pinyin": "de", "punct": false },
+                { "hanzi": "工作", "pinyin": "gōng zuò", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele encontrou com muito custo um trabalho satisfatório."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "好不容易", "pinyin": "hǎo bù róng yì", "punct": false },
+                { "hanzi": "才", "pinyin": "cái", "punct": false },
+                { "hanzi": "把", "pinyin": "bǎ", "punct": false },
+                { "hanzi": "行李", "pinyin": "xíng li", "punct": false },
+                { "hanzi": "搬", "pinyin": "bān", "punct": false },
+                { "hanzi": "上楼", "pinyin": "shàng lóu", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele subiu a bagagem escada acima com muito esforço."
+            }
+          ]
+        },
+        {
+          "id": "h5-buyongshuo",
+          "text": "不用说",
+          "explanation": "不用说 = nem é preciso dizer, claro que: 不用说，他肯定同意。",
+          "structure": "不用说 + conclusão óbvia",
+          "examples": [
+            {
+              "tokens": [
+                { "hanzi": "不用说", "pinyin": "bú yòng shuō", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "肯定", "pinyin": "kěn dìng", "punct": false },
+                { "hanzi": "同意", "pinyin": "tóng yì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nem é preciso dizer: ele com certeza vai concordar."
+            },
+            {
+              "tokens": [
+                { "hanzi": "不用说", "pinyin": "bú yòng shuō", "punct": false },
+                { "hanzi": "孩子", "pinyin": "hái zi", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "连", "pinyin": "lián", "punct": false },
+                { "hanzi": "大人", "pinyin": "dà rén", "punct": false },
+                { "hanzi": "也", "pinyin": "yě", "punct": false },
+                { "hanzi": "很", "pinyin": "hěn", "punct": false },
+                { "hanzi": "喜欢", "pinyin": "xǐ huan", "punct": false },
+                { "hanzi": "这个", "pinyin": "zhè ge", "punct": false },
+                { "hanzi": "游戏", "pinyin": "yóu xì", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Nem se fala das crianças: até os adultos gostam muito deste jogo."
+            },
+            {
+              "tokens": [
+                { "hanzi": "他", "pinyin": "tā", "punct": false },
+                { "hanzi": "这么", "pinyin": "zhè me", "punct": false },
+                { "hanzi": "努力", "pinyin": "nǔ lì", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "不用说", "pinyin": "bú yòng shuō", "punct": false },
+                { "hanzi": "，", "pinyin": "", "punct": true },
+                { "hanzi": "成绩", "pinyin": "chéng jì", "punct": false },
+                { "hanzi": "一定", "pinyin": "yí dìng", "punct": false },
+                { "hanzi": "很好", "pinyin": "hěn hǎo", "punct": false },
+                { "hanzi": "。", "pinyin": "", "punct": true }
+              ],
+              "ptbr": "Ele se esforça tanto que, nem é preciso dizer, as notas são ótimas."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "id": "h5-ex1",
+      "pointId": "h5-napa",
+      "prompt": "___再难，我们也要坚持下去。",
+      "options": ["哪怕", "虽然", "因此", "只有"],
+      "answer": 0,
+      "explain": "哪怕...也... = mesmo que (hipótese extrema)."
+    },
+    {
+      "id": "h5-ex2",
+      "pointId": "h5-wanyi",
+      "prompt": "带把伞吧，___下雨呢。",
+      "options": ["万一", "无论", "既然", "幸亏"],
+      "answer": 0,
+      "explain": "万一 = se por acaso (hipótese ruim pouco provável)."
+    },
+    {
+      "id": "h5-ex3",
+      "pointId": "h5-chufei",
+      "prompt": "___你道歉，否则她不会原谅你。",
+      "options": ["除非", "即使", "既然", "不管"],
+      "answer": 0,
+      "explain": "除非...否则... = a menos que... senão..."
+    },
+    {
+      "id": "h5-ex4",
+      "pointId": "h5-zaiye",
+      "prompt": "再忙，他每天___要锻炼一个小时。",
+      "options": ["也", "才", "就", "刚"],
+      "answer": 0,
+      "explain": "再...也/都... = não importa o quanto... mesmo assim..."
+    },
+    {
+      "id": "h5-ex5",
+      "pointId": "h5-fanshi",
+      "prompt": "___参加比赛的人，都要签名。",
+      "options": ["凡是", "即使", "既然", "尽管"],
+      "answer": 0,
+      "explain": "凡是...都... = todos os que... (generalização)."
+    },
+    {
+      "id": "h5-ex6",
+      "pointId": "h5-shengde",
+      "prompt": "多穿点衣服，___感冒。",
+      "options": ["省得", "因为", "于是", "甚至"],
+      "answer": 0,
+      "explain": "省得 = para evitar, para não ter que."
+    },
+    {
+      "id": "h5-ex7",
+      "pointId": "h5-yidan",
+      "prompt": "___开始，就不能停下。",
+      "options": ["一旦", "一直", "一面", "一定"],
+      "answer": 0,
+      "explain": "一旦 = assim que, uma vez que."
+    },
+    {
+      "id": "h5-ex8",
+      "pointId": "h5-bujin",
+      "prompt": "他___会唱歌，还会跳舞。",
+      "options": ["不仅", "既然", "尽管", "由于"],
+      "answer": 0,
+      "explain": "不仅...还... = não só... mas também..."
+    },
+    {
+      "id": "h5-ex9",
+      "pointId": "h5-pianpian",
+      "prompt": "我不想见他，___在车站遇见了他。",
+      "options": ["偏偏", "果然", "幸亏", "随便"],
+      "answer": 0,
+      "explain": "偏偏 = justamente (contraria a expectativa)."
+    },
+    {
+      "id": "h5-ex10",
+      "pointId": "h5-bijing",
+      "prompt": "他___是个孩子，别对他要求太高。",
+      "options": ["毕竟", "竟然", "果然", "难道"],
+      "answer": 0,
+      "explain": "毕竟 = afinal de contas (razão que explica)."
+    },
+    {
+      "id": "h5-ex11",
+      "pointId": "h5-guoran",
+      "prompt": "天气预报说今天下雨，___下了。",
+      "options": ["果然", "突然", "当然", "虽然"],
+      "answer": 0,
+      "explain": "果然 confirma uma previsão: de fato."
+    },
+    {
+      "id": "h5-ex12",
+      "pointId": "h5-genben",
+      "prompt": "我___没想到他会迟到。",
+      "options": ["根本", "差点儿", "果然", "原来"],
+      "answer": 0,
+      "explain": "根本 + 没 = nem de longe, totalmente não."
+    },
+    {
+      "id": "h5-ex13",
+      "pointId": "h5-cengjing",
+      "prompt": "她___是我的同事，后来去了别的公司。",
+      "options": ["曾经", "已经", "正在", "总是"],
+      "answer": 0,
+      "explain": "曾经 = outrora, em um período passado."
+    },
+    {
+      "id": "h5-ex14",
+      "pointId": "h5-nande",
+      "prompt": "第一次上台，___会紧张。",
+      "options": ["难免", "免得", "难道", "难怪"],
+      "answer": 0,
+      "explain": "难免 = é inevitável."
+    },
+    {
+      "id": "h5-ex15",
+      "pointId": "h5-guaibude",
+      "prompt": "___他没来，原来他生病了。",
+      "options": ["怪不得", "恨不得", "巴不得", "舍不得"],
+      "answer": 0,
+      "explain": "怪不得 = agora entendo por que (descobriu a causa)."
+    },
+    {
+      "id": "h5-ex16",
+      "pointId": "h5-fenbie",
+      "prompt": "他们___来自北京和上海。",
+      "options": ["分别", "一起", "互相", "共同"],
+      "answer": 0,
+      "explain": "分别 = respectivamente."
+    },
+    {
+      "id": "h5-ex17",
+      "pointId": "h5-nandao",
+      "prompt": "这么简单的事，___你也不会做吗？",
+      "options": ["难道", "到底", "究竟", "何必"],
+      "answer": 0,
+      "explain": "难道...吗 = pergunta retórica (por acaso)."
+    },
+    {
+      "id": "h5-ex18",
+      "pointId": "h5-hebi",
+      "prompt": "事情已经过去了，___生气呢？",
+      "options": ["何必", "不必", "未必", "哪怕"],
+      "answer": 0,
+      "explain": "何必...呢 = por que se dar o trabalho (não vale a pena)."
+    },
+    {
+      "id": "h5-ex19",
+      "pointId": "h5-bushi-ma",
+      "prompt": "这___你最喜欢的歌吗？我常听你唱。",
+      "options": ["不是", "不管", "不但", "不过"],
+      "answer": 0,
+      "explain": "不是...吗 = confirmação retórica de algo conhecido."
+    },
+    {
+      "id": "h5-ex20",
+      "pointId": "h5-duokui",
+      "prompt": "这次比赛能赢，___大家的努力。",
+      "options": ["多亏", "虽然", "即使", "不管"],
+      "answer": 0,
+      "explain": "多亏 = graças a (fator decisivo), com resultado positivo."
+    },
+    {
+      "id": "h5-ex21",
+      "pointId": "h5-zhiyu",
+      "prompt": "我只知道他姓李，___叫什么，我不清楚。",
+      "options": ["至于", "关于", "对于", "由于"],
+      "answer": 0,
+      "explain": "至于 = quanto a (novo tópico)."
+    },
+    {
+      "id": "h5-ex22",
+      "pointId": "h5-zicong",
+      "prompt": "___学了汉语，他更喜欢中国了。",
+      "options": ["自从", "随着", "从", "自"],
+      "answer": 0,
+      "explain": "自从 = desde (que), marca o início de uma mudança."
+    },
+    {
+      "id": "h5-ex23",
+      "pointId": "h5-nalaishuo",
+      "prompt": "___这件事来说，大家做得都不错。",
+      "options": ["拿", "把", "被", "让"],
+      "answer": 0,
+      "explain": "拿...来说 = tomando... como exemplo."
+    },
+    {
+      "id": "h5-ex24",
+      "pointId": "h5-chenzhe",
+      "prompt": "___天气好，我们出去走走吧。",
+      "options": ["趁", "当", "在", "对"],
+      "answer": 0,
+      "explain": "趁 = aproveitar o momento favorável."
+    },
+    {
+      "id": "h5-ex25",
+      "pointId": "h5-qilai",
+      "prompt": "这道菜看___很好吃。",
+      "options": ["起来", "下去", "出来", "上来"],
+      "answer": 0,
+      "explain": "看起来 = parecer (avaliação com 起来)."
+    },
+    {
+      "id": "h5-ex26",
+      "pointId": "h5-xiaqu",
+      "prompt": "虽然很难，但他还是要坚持___。",
+      "options": ["下去", "起来", "出来", "上来"],
+      "answer": 0,
+      "explain": "坚持 + 下去 = continuar insistindo."
+    },
+    {
+      "id": "h5-ex27",
+      "pointId": "h5-buliao",
+      "prompt": "东西太多，我一个人拿___。",
+      "options": ["不了", "得完", "起来", "下去"],
+      "answer": 0,
+      "explain": "拿不了 = não consigo carregar (possibilidade negada)."
+    },
+    {
+      "id": "h5-ex28",
+      "pointId": "h5-chulai",
+      "prompt": "我看___了，他今天不高兴。",
+      "options": ["出来", "起来", "下去", "过来"],
+      "answer": 0,
+      "explain": "看出来 = perceber, notar."
+    },
+    {
+      "id": "h5-ex29",
+      "pointId": "h5-haoburongyi",
+      "prompt": "他___才把行李搬上楼。",
+      "options": ["好不容易", "差点儿", "果然", "万一"],
+      "answer": 0,
+      "explain": "好不容易才 = com muito custo, depois de muito esforço."
+    },
+    {
+      "id": "h5-ex30",
+      "pointId": "h5-buyongshuo",
+      "prompt": "___，他肯定会同意的。",
+      "options": ["不用说", "说不好", "说不定", "说不准"],
+      "answer": 0,
+      "explain": "不用说 = nem é preciso dizer, claro que."
+    },
+    {
+      "id": "h5-ex31",
+      "pointId": "h5-bijing",
+      "prompt": "别怪他了，他___还小。",
+      "options": ["毕竟", "究竟", "到底", "竟然"],
+      "answer": 0,
+      "explain": "毕竟 = afinal de contas (justifica a tolerância)."
+    },
+    {
+      "id": "h5-ex32",
+      "pointId": "h5-wanyi",
+      "prompt": "出门带点现金吧，___手机没电。",
+      "options": ["万一", "即使", "虽然", "因为"],
+      "answer": 0,
+      "explain": "万一 = se por acaso (precaução contra algo indesejado)."
+    }
+  ]
+}

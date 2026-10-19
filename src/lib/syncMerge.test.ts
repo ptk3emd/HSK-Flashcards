@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Card } from '../types/card';
-import { isTouched, mergeAttempts, mergeCards, parseRemoteProgress } from './syncMerge';
+import { isTouched, mergeAttempts, mergeCards, mergeIds, parseRemoteProgress } from './syncMerge';
 
 const card = (id: string, extra: Partial<Card> = {}): Card => ({
   id, hanzi: id, pinyin: '', ptbr: '', level: 'HSK 1',
@@ -35,16 +35,20 @@ test('only touched cards are worth syncing', () => {
   assert.equal(isTouched(card('a', { mnemonic: 'x' })), true);
 });
 
-test('exam attempts are merged once each, newest first', () => {
-  const a = { id: '1', level: 'HSK 1', finishedAt: '2026-10-01T00:00:00Z', correct: { listening: 1, reading: 1 }, total: { listening: 2, reading: 2 } };
+test('quiz attempts are merged once each, newest first', () => {
+  const a = { id: '1', level: 'HSK 1', finishedAt: '2026-10-01T00:00:00Z', correct: 3, total: 5 };
   const b = { ...a, id: '2', finishedAt: '2026-10-05T00:00:00Z' };
   assert.deepEqual(mergeAttempts([a], [a, b]).map((x) => x.id), ['2', '1']);
 });
 
+test('studied grammar points from both sides are kept once each', () => {
+  assert.deepEqual(mergeIds(['g1', 'g2'], ['g2', 'g3']), ['g1', 'g2', 'g3']);
+});
+
 test('a malformed server row cannot inject bad cards', () => {
-  const parsed = parseRemoteProgress({ cards: [card('a'), { id: 3 }, null, 'x'], stories_read: ['s', 4], deck_config: [] });
+  const parsed = parseRemoteProgress({ cards: [card('a'), { id: 3 }, null, 'x'], grammar_studied: ['g', 4], deck_config: [] });
   assert.equal(parsed?.cards.length, 1);
-  assert.deepEqual(parsed?.stories_read, ['s']);
+  assert.deepEqual(parsed?.grammar_studied, ['g']);
   assert.equal(parsed?.deck_config, null);
   assert.equal(parseRemoteProgress(null), null);
 });
