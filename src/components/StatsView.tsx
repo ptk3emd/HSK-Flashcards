@@ -1,10 +1,10 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, FSRSOptions, DeckConfig, ReviewLog } from '../types/card';
 import { loadReviewLogs } from '../lib/storage';
-import { calculateRetrievability } from '../lib/fsrs';
 import { LEVEL_NUMERALS } from '../data/defaultDecks';
 import { COURSE, levelLabel } from '../lib/course';
 import { RetentionCalibration } from './RetentionCalibration';
+import { MemoryField } from './MemoryField';
 import { ChevronDown } from 'lucide-react';
 
 interface StatsViewProps {
@@ -22,7 +22,6 @@ export const StatsView: React.FC<StatsViewProps> = ({
 }) => {
   const [timeRange, setTimeRange] = useState<TimeRange>('all');
   const [retentionTab, setRetentionTab] = useState<'curve' | 'history' | 'buttons' | 'calibration'>('curve');
-  const [hoveredPoint, setHoveredPoint] = useState<{ day: number; retention: number } | null>(null);
 
   const targetRetention = fsrsOptions?.request_retention ?? 0.90;
 
@@ -224,96 +223,6 @@ export const StatsView: React.FC<StatsViewProps> = ({
       }));
   }, [cards]);
 
-  // FSRS forgetting curve, from the same function the scheduler uses
-  const curveStability = Math.max(1, avgStabilityNum || 5);
-  const forgettingCurvePoints = useMemo(() => {
-    const maxDay = Math.min(60, Math.max(30, Math.round(curveStability * 2.5)));
-    const points: { day: number; retention: number }[] = [];
-
-    for (let d = 0; d <= maxDay; d += Math.max(1, Math.floor(maxDay / 30))) {
-      const r = calculateRetrievability(d, curveStability);
-      points.push({ day: d, retention: Math.max(0, Math.min(1, r)) });
-    }
-    return { maxDay, points };
-  }, [curveStability]);
-
-  // SVG chart drawn at the container's real width: one unit is one pixel, so axis
-  // labels keep their size on a phone instead of shrinking with the drawing
-  const chartBoxRef = useRef<HTMLDivElement>(null);
-  const [chartWidth, setChartWidth] = useState(560);
-  useEffect(() => {
-    const el = chartBoxRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(([entry]) => {
-      const width = Math.round(entry.contentRect.width);
-      if (width > 0) setChartWidth(Math.max(280, width));
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [retentionTab]);
-  const chartHeight = 200;
-  const padLeft = 40;
-  const padRight = 20;
-  const padTop = 20;
-  const padBottom = 30;
-  const graphW = chartWidth - padLeft - padRight;
-  const graphH = chartHeight - padTop - padBottom;
-
-  // Convert (day, retention) to SVG coordinates
-  const getSvgCoordinates = (day: number, ret: number) => {
-    const x = padLeft + (day / forgettingCurvePoints.maxDay) * graphW;
-    const y = padTop + (1 - ret) * graphH;
-    return { x, y };
-  };
-
-  const curveSvgPath = useMemo(() => {
-    const pts = forgettingCurvePoints.points.map(p => getSvgCoordinates(p.day, p.retention));
-    if (pts.length === 0) return '';
-    return pts.reduce((acc, p, i) => (i === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`), '');
-  }, [forgettingCurvePoints, chartWidth]);
-
-  const curveSvgArea = useMemo(() => {
-    if (!curveSvgPath) return '';
-    const lastPt = getSvgCoordinates(forgettingCurvePoints.maxDay, forgettingCurvePoints.points[forgettingCurvePoints.points.length - 1]?.retention ?? 0);
-    const firstPt = getSvgCoordinates(0, 1);
-    const bottomY = padTop + graphH;
-    return `${curveSvgPath} L ${lastPt.x} ${bottomY} L ${firstPt.x} ${bottomY} Z`;
-  }, [curveSvgPath, forgettingCurvePoints, chartWidth]);
-
-  const targetLineY = padTop + (1 - targetRetention) * graphH;
-
-  // The marked points on the curve. The whole chart picks among them: tap or drag anywhere
-  // selects the nearest one, and as a slider the arrow keys step through them.
-  const keyPoints = useMemo(
-    () =>
-      forgettingCurvePoints.points.filter(
-        (_, idx) => idx % Math.max(1, Math.floor(forgettingCurvePoints.points.length / 8)) === 0
-      ),
-    [forgettingCurvePoints]
-  );
-
-  const pointNearest = (e: React.PointerEvent<SVGSVGElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * chartWidth;
-    let best = keyPoints[0];
-    for (const p of keyPoints) {
-      if (Math.abs(getSvgCoordinates(p.day, p.retention).x - x) < Math.abs(getSvgCoordinates(best.day, best.retention).x - x)) best = p;
-    }
-    return best;
-  };
-
-  const handleChartKeyDown = (e: React.KeyboardEvent<SVGSVGElement>) => {
-    const idx = hoveredPoint ? keyPoints.findIndex((p) => p.day === hoveredPoint.day) : -1;
-    let next = idx;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = Math.min(keyPoints.length - 1, idx + 1);
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = Math.max(0, idx - 1);
-    else if (e.key === 'Home') next = 0;
-    else if (e.key === 'End') next = keyPoints.length - 1;
-    else return;
-    e.preventDefault();
-    setHoveredPoint(keyPoints[Math.max(0, next)]);
-  };
-
   // Daily retention trend (last 14 active days)
   const dailyHistory = useMemo(() => {
     const dayMap = new Map<string, { total: number; positive: number }>();
@@ -427,193 +336,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
         {/* Tab 1: FSRS Forgetting Curve */}
         {retentionTab === 'curve' && (
           <div className="space-y-5">
-            {avgStabilityNum > 0 && (
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ink-secondary">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-3 h-0.5 bg-red-500 rounded-full" aria-hidden="true" />
-                  R(t)
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="w-3 border-t border-dashed border-emerald-500" aria-hidden="true" />
-                  alvo {Math.round(targetRetention * 100)}%
-                </span>
-                <span className="ml-auto tabular">S = {decimal(avgStability)} d</span>
-              </div>
-            )}
-
-            {/* SVG Interactive Chart */}
-            <div
-              ref={chartBoxRef}
-              className={`relative ${avgStabilityNum > 0 ? '' : 'hidden'}`}
-            >
-              <p id="retention-curve-summary" className="sr-only">
-                {`Curva de retenção estimada para estabilidade de ${avgStability} dias: ${forgettingCurvePoints.points
-                  .filter((_, i, arr) => i === 0 || i === arr.length - 1 || i === Math.floor(arr.length / 2))
-                  .map(p => `${Math.round(p.retention * 100)}% no dia ${p.day}`)
-                  .join(', ')}. Alvo de ${Math.round(targetRetention * 100)}%. Use as setas para percorrer os dias.`}
-              </p>
-              <svg
-                viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-                className="w-full h-auto overflow-visible cursor-crosshair rounded-lg"
-                style={{ touchAction: 'pan-y' }}
-                role="slider"
-                tabIndex={0}
-                aria-label="Curva de retenção"
-                aria-describedby="retention-curve-summary"
-                aria-valuemin={0}
-                aria-valuemax={forgettingCurvePoints.maxDay}
-                aria-valuenow={hoveredPoint?.day ?? 0}
-                aria-valuetext={
-                  hoveredPoint
-                    ? `Dia ${hoveredPoint.day}: ${Math.round(hoveredPoint.retention * 100)}% de retenção`
-                    : 'Nenhum dia selecionado'
-                }
-                onKeyDown={handleChartKeyDown}
-                onFocus={() => setHoveredPoint((p) => p ?? keyPoints[0] ?? null)}
-                onBlur={() => setHoveredPoint(null)}
-                onPointerDown={(e) => setHoveredPoint(pointNearest(e))}
-                onPointerMove={(e) => {
-                  // Mouse: follow the cursor. Touch and pen: follow while pressed (a horizontal drag)
-                  if (e.pointerType === 'mouse' || e.buttons !== 0) setHoveredPoint(pointNearest(e));
-                }}
-                onPointerLeave={(e) => {
-                  if (e.pointerType === 'mouse') setHoveredPoint(null);
-                }}
-              >
-                {/* Horizontal Grid lines */}
-                {[1.0, 0.9, 0.75, 0.5, 0.25].map(ret => {
-                  const y = padTop + (1 - ret) * graphH;
-                  return (
-                    <g key={ret}>
-                      <line
-                        x1={padLeft}
-                        y1={y}
-                        x2={chartWidth - padRight}
-                        y2={y}
-                        style={{ stroke: 'var(--chart-grid)' }}
-                        strokeWidth="1"
-                      />
-                      <text
-                        x={padLeft - 6}
-                        y={y + 3}
-                        textAnchor="end"
-                        fontSize="12"
-                        style={{ fill: 'var(--chart-label)' }}
-                        fontWeight="600"
-                      >
-                        {Math.round(ret * 100)}%
-                      </text>
-                    </g>
-                  );
-                })}
-
-                {/* Target Retention Threshold Line */}
-                <line
-                  x1={padLeft}
-                  y1={targetLineY}
-                  x2={chartWidth - padRight}
-                  y2={targetLineY}
-                  style={{ stroke: 'var(--chart-target)' }}
-                  strokeWidth="1.5"
-                  strokeDasharray="4 4"
-                />
-
-                {/* Area Gradient under curve */}
-                <defs>
-                  <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" style={{ stopColor: 'var(--chart-curve)', stopOpacity: 0.3 }} />
-                    <stop offset="100%" style={{ stopColor: 'var(--chart-curve)', stopOpacity: 0 }} />
-                  </linearGradient>
-                </defs>
-                <path d={curveSvgArea} fill="url(#curveGradient)" />
-
-                {/* Main Curve Line */}
-                <path
-                  d={curveSvgPath}
-                  fill="none"
-                  style={{ stroke: 'var(--chart-curve)' }}
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-
-                {/* Vertical Day Grid Labels */}
-                {[...new Set([0, 7, 14, 21, 30, forgettingCurvePoints.maxDay])].map(day => {
-                  if (day > forgettingCurvePoints.maxDay) return null;
-                  const x = padLeft + (day / forgettingCurvePoints.maxDay) * graphW;
-                  return (
-                    <g key={day}>
-                      <line
-                        x1={x}
-                        y1={padTop + graphH}
-                        x2={x}
-                        y2={padTop + graphH + 4}
-                        style={{ stroke: 'var(--chart-tick)' }}
-                        strokeWidth="1"
-                      />
-                      <text
-                        x={x}
-                        y={padTop + graphH + 16}
-                        textAnchor="middle"
-                        fontSize="12"
-                        style={{ fill: 'var(--chart-label)' }}
-                        fontWeight="600"
-                      >
-                        {day}d
-                      </text>
-                    </g>
-                  );
-                })}
-
-                {/* Marked points on the curve; the chart itself handles selection */}
-                {keyPoints.map(p => {
-                    const coords = getSvgCoordinates(p.day, p.retention);
-                    const isHovered = hoveredPoint?.day === p.day;
-                    return (
-                      <g key={p.day} aria-hidden="true">
-                        {isHovered && (
-                          <line
-                            x1={coords.x}
-                            y1={padTop}
-                            x2={coords.x}
-                            y2={padTop + graphH}
-                            style={{ stroke: 'var(--chart-tick)' }}
-                            strokeWidth="1"
-                            strokeDasharray="3 3"
-                          />
-                        )}
-                        <circle
-                          cx={coords.x}
-                          cy={coords.y}
-                          r={isHovered ? 6 : 3.5}
-                          style={{ fill: 'var(--chart-curve)', stroke: isHovered ? 'var(--color-focus)' : 'var(--chart-point-ring)' }}
-                          strokeWidth="2"
-                          className="transition-all"
-                        />
-                      </g>
-                    );
-                  })}
-              </svg>
-
-              {/* Tooltip on Hover */}
-              {hoveredPoint && (
-                <div
-                  aria-hidden="true"
-                  className="glass-field !rounded-lg absolute top-0 right-0 px-2.5 py-1 text-xs tabular shadow-sm"
-                >
-                  <span className="ink-secondary">Dia {hoveredPoint.day}</span>{' '}
-                  <span className="font-semibold text-red-700 dark:text-red-300">
-                    {Math.round(hoveredPoint.retention * 100)}%
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {avgStabilityNum === 0 && (
-              <p className="flex h-[200px] items-center justify-center px-6 text-center text-sm ink-secondary">
-                A curva aparece depois da primeira revisão.
-              </p>
-            )}
-
+            <MemoryField cards={cards} targetRetention={targetRetention} />
             <p className="text-xs ink-tertiary">
               <code className="font-mono">R(t) = (1 + 19/81 · t/S)^−0.5</code>
             </p>
