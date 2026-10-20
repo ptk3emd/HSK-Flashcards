@@ -228,6 +228,9 @@ The acrylic radius is 28px — the study card's radius, carried unchanged onto e
 ### Study Seal (signature)
 - After each graded answer a 60px lacquer seal presses onto the card's top-right corner: seal red ground, cream inset ring, one serif character for the rating (再/难/好/易), rotated −8°, on a 140ms press (scale 1.7 → 0.94 → 1). The session-complete state stamps 完 on the glass instead.
 
+### Memory Field (signature)
+- The Retenção sheet's Curva tab: every studied word drawn on a canvas as a point on its own FSRS curve, x the days since its last review on a log scale (0d to 730d), y its recall chance, the scale opening just below the target so the field never squeezes into a top band (words under the floor rest on it, labelled "≤"). Points above the target are ink at 55%, points below are the chart curve red; the average-stability curve runs behind at 35% and the target is the dashed chart green. A "Hoje / 7 d / 30 d / 60 d" slider slides every word down its own curve, with one readout line (words below the target, mean recall). On first view the words fall from 100% into place over 1.4s on a cubic ease-out; the loop runs only while something moves and is instant under reduced motion. Hovering or dragging picks the nearest word and shows it in a dense glass tip (serif character, pinyin, recall, S).
+
 ### Study Card & Dock (signature)
 - The original material: the acrylic card holds hanzi, pinyin and translation with elastic type; the pill dock (999px, `--glass-pill` glass) carries the translation on the back and fades out on the front rather than unmounting, so the card never shifts.
 
