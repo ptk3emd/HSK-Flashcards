@@ -8,6 +8,7 @@
 import { VoiceGenderPreference } from '../types/card';
 import { STORAGE_KEYS } from './storage';
 import { COURSE } from './course';
+import { isNeuralURI, speakNeural, stopNeuralSpeech } from './neuralVoice';
 
 export interface SpeechOptions {
   rate?: number;
@@ -201,6 +202,7 @@ export function speakChinese(
 
   // Cancel any active speech to avoid queue buildup
   window.speechSynthesis.cancel();
+  stopNeuralSpeech();
 
   // Strip HTML / markup
   const clean = text.replace(/<[^>]*>/g, '').trim();
@@ -227,6 +229,23 @@ export function speakChinese(
   // Clamp rate between 0.5 and 1.6
   const finalRate = Math.min(Math.max(rate, 0.5), 1.6);
 
+  if (isNeuralURI(voiceURI)) {
+    // Neural voice first; any miss (not installed, inference error) falls back to the system voices
+    void speakNeural(clean, voiceURI, finalRate).then((played) => {
+      if (!played) speakWithSystemVoice(clean, finalRate, gender, '', pitch);
+    });
+    return;
+  }
+  speakWithSystemVoice(clean, finalRate, gender, voiceURI, pitch);
+}
+
+function speakWithSystemVoice(
+  clean: string,
+  finalRate: number,
+  gender: VoiceGenderPreference,
+  voiceURI: string,
+  pitch: number
+): void {
   const utterance = new SpeechSynthesisUtterance(clean);
   utterance.lang = COURSE.lang;
   utterance.rate = finalRate;

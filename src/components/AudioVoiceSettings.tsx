@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, Play } from 'lucide-react';
+import { Volume2, Play, Download, Check, Trash2, Loader2 } from 'lucide-react';
 import { DeckConfig, VoiceGenderPreference } from '../types/card';
 import {
   speakChinese,
@@ -8,6 +8,13 @@ import {
   detectVoiceGender,
 } from '../lib/speech';
 import { COURSE } from '../lib/course';
+import {
+  NEURAL_PREFIX,
+  getNeuralVoices,
+  getInstalledNeuralVoices,
+  installNeuralVoice,
+  removeNeuralVoice,
+} from '../lib/neuralVoice';
 
 interface AudioVoiceSettingsProps {
   deckConfig: DeckConfig;
@@ -33,6 +40,48 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [isPlayingTest, setIsPlayingTest] = useState(false);
   const [sampleText, setSampleText] = useState(COURSE.voiceSample);
+  const neuralVoices = getNeuralVoices();
+  const [installed, setInstalled] = useState<Set<string>>(new Set());
+  const [downloading, setDownloading] = useState<{ id: string; fraction: number } | null>(null);
+  const [neuralError, setNeuralError] = useState('');
+
+  useEffect(() => {
+    if (neuralVoices.length === 0) return;
+    let alive = true;
+    getInstalledNeuralVoices().then((set) => alive && setInstalled(new Set(set)));
+    return () => {
+      alive = false;
+    };
+  }, [neuralVoices.length]);
+
+  const selectNeural = (id: string, gender: VoiceGenderPreference) =>
+    onUpdateDeckConfig({ ...deckConfig, speechVoiceURI: NEURAL_PREFIX + id, speechVoiceGender: gender });
+
+  const handleInstall = async (id: string, gender: VoiceGenderPreference) => {
+    setNeuralError('');
+    setDownloading({ id, fraction: 0 });
+    try {
+      await installNeuralVoice(id, (fraction) => setDownloading({ id, fraction }));
+      setInstalled((prev) => new Set(prev).add(id));
+      selectNeural(id, gender);
+    } catch {
+      setNeuralError('Não foi possível baixar a voz. Verifique a conexão e tente de novo.');
+    } finally {
+      setDownloading(null);
+    }
+  };
+
+  const handleRemove = async (id: string) => {
+    await removeNeuralVoice(id).catch(() => undefined);
+    setInstalled((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+    if (deckConfig.speechVoiceURI === NEURAL_PREFIX + id) {
+      onUpdateDeckConfig({ ...deckConfig, speechVoiceURI: '' });
+    }
+  };
 
   // Load and subscribe to voices
   useEffect(() => {
@@ -58,7 +107,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
     let nextVoiceURI = deckConfig.speechVoiceURI || '';
 
     // If changing gender and the currently selected voice doesn't match the new gender, auto-pick a matching voice
-    if (gender !== 'auto' && voices.length > 0) {
+    if (gender !== 'auto' && voices.length > 0 && !deckConfig.speechVoiceURI?.startsWith(NEURAL_PREFIX)) {
       const matchingVoice = voices.find((v) => detectVoiceGender(v) === gender);
       if (matchingVoice) {
         nextVoiceURI = matchingVoice.voiceURI;
@@ -193,12 +242,78 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
           </div>
         </div>
 
+        {neuralVoices.length > 0 && (
+          <div className="py-3 space-y-2">
+            <span className="text-sm">Voz neural (offline após baixar)</span>
+            {neuralVoices.map((nv) => {
+              const isInstalled = installed.has(nv.id);
+              const isActive = deckConfig.speechVoiceURI === NEURAL_PREFIX + nv.id;
+              const isBusy = downloading?.id === nv.id;
+              const gender: VoiceGenderPreference = nv.gender;
+              return (
+                <div key={nv.id} className="flex items-center justify-between gap-3">
+                  <span className="text-sm">
+                    {nv.label}{' '}
+                    <span className="ink-tertiary">
+                      {nv.gender === 'female' ? 'feminina' : 'masculina'}, {nv.sizeMB} MB
+                    </span>
+                  </span>
+                  <div className="flex items-center gap-1">
+                    {isInstalled ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => selectNeural(nv.id, gender)}
+                          aria-pressed={isActive}
+                          className={segment(isActive)}
+                        >
+                          {isActive ? (
+                            <span className="flex items-center gap-1.5">
+                              <Check aria-hidden="true" className="w-3.5 h-3.5" />
+                              Em uso
+                            </span>
+                          ) : (
+                            'Usar'
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleRemove(nv.id)}
+                          aria-label={`Remover voz ${nv.label}`}
+                          className="size-10 rounded-xl flex items-center justify-center cursor-pointer ink-secondary hover:text-[var(--text-fg)]"
+                        >
+                          <Trash2 aria-hidden="true" className="w-4 h-4" />
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleInstall(nv.id, gender)}
+                        disabled={downloading !== null}
+                        className="min-h-10 px-3 rounded-xl text-sm font-medium flex items-center gap-1.5 cursor-pointer bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14] disabled:opacity-50"
+                      >
+                        {isBusy ? (
+                          <Loader2 aria-hidden="true" className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Download aria-hidden="true" className="w-3.5 h-3.5" />
+                        )}
+                        <span className="tabular">{isBusy ? `${Math.round(downloading.fraction * 100)}%` : 'Baixar'}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            {neuralError && <p role="alert" className="text-sm text-red-600">{neuralError}</p>}
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-3">
           <label htmlFor="voice-uri" className="text-sm shrink-0">Voz do sistema</label>
           {voices.length > 0 ? (
             <select
               id="voice-uri"
-              value={deckConfig.speechVoiceURI || ''}
+              value={deckConfig.speechVoiceURI?.startsWith(NEURAL_PREFIX) ? '' : deckConfig.speechVoiceURI || ''}
               onChange={(e) => handleVoiceURIChange(e.target.value)}
               className="sm:max-w-xs w-full min-h-11 px-3 rounded-xl text-sm glass-field cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
             >
