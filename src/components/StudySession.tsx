@@ -21,7 +21,8 @@ import { usePrefetched } from './usePrefetched';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
 import { StudyOptionsSettings } from './StudyOptionsSettings';
 import { useNow } from './useNow';
-import { todayKey } from '../lib/studyPlan';
+import { capDueForPlan, effectiveDailyLimits, studyDayKey, todayKey } from '../lib/studyPlan';
+import { balanceDue, reviewLoadByDay } from '../lib/loadBalance';
 import '../styles/study-session.css';
 
 // The writing pad carries hanzi-writer; it loads on its own and is fetched ahead once this view mounts
@@ -41,6 +42,8 @@ interface StudySessionProps {
   onUpdateDeckConfig?: (config: DeckConfig) => void;
   startFreePractice?: boolean;
   startAhead?: boolean;
+  /** Last study day (YYYY-MM-DD) an ahead session pulls cards from; unbounded when missing */
+  aheadUntil?: string | null;
   onExit: () => void;
 }
 
@@ -70,6 +73,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
   onUpdateDeckConfig,
   startFreePractice = false,
   startAhead = false,
+  aheadUntil = null,
   onExit,
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -150,8 +154,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
   }, [sessionCards, isolatedLevel, deckConfig.activeLevels]);
 
   const remainingLimits = useMemo(
-    () => remainingDailyLimits(deckConfig, usage),
-    [deckConfig.dailyNewLimit, deckConfig.dailyReviewLimit, usage]
+    () => remainingDailyLimits(effectiveDailyLimits(deckConfig), usage),
+    [deckConfig.dailyNewLimit, deckConfig.dailyReviewLimit, deckConfig.studyPlan, usage]
   );
 
   // A card already answered in this session must not come back as "ahead" just because
@@ -188,15 +192,32 @@ export const StudySession: React.FC<StudySessionProps> = ({
       .sort((left, right) => left.retrievability - right.retrievability)
       .map(({ card }) => card);
     const newCards = activeLevelCards.filter((card) => card.state === 0);
+    // Ahead: future cards up to the chosen day, the ones closest to being forgotten first
     const futureCards = activeLevelCards
       .filter(
         (card) =>
           !reviewedIds.has(card.id) &&
           !reviewedTodayIds.has(card.id) &&
           Number.isFinite(Date.parse(card.due)) &&
-          Date.parse(card.due) > nowDate.getTime()
+          Date.parse(card.due) > nowDate.getTime() &&
+          (!aheadUntil || studyDayKey(new Date(card.due), deckConfig.studyDayStartHour) <= aheadUntil)
       )
-      .sort((left, right) => Date.parse(left.due) - Date.parse(right.due));
+      .map((card) => ({
+        card,
+        retrievability: card.last_review
+          ? calculateRetrievability(
+              elapsedDaysSince(card.last_review, nowDate),
+              card.stability,
+              fsrsOptions.w
+            )
+          : 1,
+      }))
+      .sort(
+        (left, right) =>
+          left.retrievability - right.retrievability ||
+          Date.parse(left.card.due) - Date.parse(right.card.due)
+      )
+      .map(({ card }) => card);
     const reviews = freePractice ? reviewsDue : reviewsDue.slice(0, remainingLimits.reviews);
     const fresh = freePractice ? newCards : newCards.slice(0, remainingLimits.newCards);
     const queue = studyAhead ? futureCards : [...learningDue, ...reviews, ...fresh];
@@ -220,6 +241,8 @@ export const StudySession: React.FC<StudySessionProps> = ({
     reviewedTodayIds,
     studyAhead,
     studyDay,
+    aheadUntil,
+    deckConfig.studyDayStartHour,
   ]);
 
   const dueQueue = queueCounts.queue;
@@ -299,7 +322,23 @@ export const StudySession: React.FC<StudySessionProps> = ({
       if (!currentCard) return;
 
       const nowDate = new Date();
-      const updatedCard = scheduleCard(currentCard, rating, nowDate, fsrsOptions);
+      // FSRS, then spread onto the least loaded nearby day, then the exam-date cap
+      const scheduled = scheduleCard(currentCard, rating, nowDate, fsrsOptions);
+      const balanced = balanceDue(
+        scheduled,
+        reviewLoadByDay(sessionCards, deckConfig.studyDayStartHour),
+        nowDate,
+        deckConfig.studyDayStartHour,
+        fsrsOptions.maximum_interval
+      );
+      const updatedCard = capDueForPlan(
+        balanced,
+        deckConfig.studyPlan,
+        deckConfig.activeLevels,
+        nowDate,
+        fsrsOptions.w,
+        deckConfig.studyDayStartHour
+      );
 
       const log: ReviewLog = {
         cardId: currentCard.id,
@@ -329,7 +368,15 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
       setIsFlipped(false);
     },
-    [currentCard, fsrsOptions, sessionCards, onUpdateCards, deckConfig.studyDayStartHour]
+    [
+      currentCard,
+      fsrsOptions,
+      sessionCards,
+      onUpdateCards,
+      deckConfig.studyDayStartHour,
+      deckConfig.studyPlan,
+      deckConfig.activeLevels,
+    ]
   );
 
   // The answered card leaves in the direction of its grade, the same directions the swipe
