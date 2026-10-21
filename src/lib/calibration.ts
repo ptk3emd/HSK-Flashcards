@@ -48,13 +48,13 @@ function addToCell(cell: CalibrationCell, predicted: number, recalled: boolean):
  * state before that review. New and learning cards have no meaningful memory state
  * yet, so they return null.
  */
-export function predictedRecall(log: ReviewLog): number | null {
+export function predictedRecall(log: ReviewLog, weights?: number[]): number | null {
   const snapshot = log.previousCardSnapshot;
   if (!snapshot || !snapshot.last_review) return null;
   if (snapshot.state !== 2 && snapshot.state !== 3) return null;
 
   const elapsed = elapsedDaysSince(snapshot.last_review, new Date(log.reviewTime));
-  const predicted = calculateRetrievability(elapsed, snapshot.stability);
+  const predicted = calculateRetrievability(elapsed, snapshot.stability, weights);
   return Number.isFinite(predicted) ? predicted : null;
 }
 
@@ -75,12 +75,12 @@ export function cellPredicted(cell: CalibrationCell): number | null {
  * Groups reviews by day and by predicted-recall bin, so each cell compares the
  * recall rate that actually happened against the rate FSRS expected.
  */
-export function buildCalibration(logs: ReviewLog[], maxDays = 14): CalibrationData {
+export function buildCalibration(logs: ReviewLog[], maxDays = 14, weights?: number[]): CalibrationData {
   const rowsByDay = new Map<string, CalibrationRow>();
   const total = emptyCell();
 
   for (const log of logs) {
-    const predicted = predictedRecall(log);
+    const predicted = predictedRecall(log, weights);
     if (predicted === null) continue;
 
     const day = new Date(log.reviewTime).toISOString().slice(0, 10);

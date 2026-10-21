@@ -1,40 +1,123 @@
 import { Card, CardState, FSRSOptions, Rating } from '../types/card';
 
-// Official standard FSRS weights (FSRS-4.5 / v5 / v6-7 formulation)
+/** Default FSRS-6 parameters (21 weights). */
 export const DEFAULT_FSRS_WEIGHTS: number[] = [
-  0.4072, 1.1829, 3.1262, 15.4722, 7.2102, 0.5316, 1.0651, 0.0234, 1.616, 0.1544,
-  1.0824, 1.9813, 0.0953, 0.2975, 2.2042, 0.2407, 2.9466, 0.5034, 0.6567
+  0.212, 1.2931, 2.3065, 8.2956, 6.4133, 0.8334, 3.0194, 0.001, 1.8722, 0.1666,
+  0.796, 1.4835, 0.0614, 0.2629, 1.6483, 0.6014, 1.8729, 0.5425, 0.0912, 0.0658,
+  0.1542,
 ];
+
+/** The 19 weights used by the legacy FSRS-5 engine. */
+export const DEFAULT_FSRS5_WEIGHTS: number[] = [
+  0.4072, 1.1829, 3.1262, 15.4722, 7.2102, 0.5316, 1.0651, 0.0234, 1.616, 0.1544,
+  1.0824, 1.9813, 0.0953, 0.2975, 2.2042, 0.2407, 2.9466, 0.5034, 0.6567,
+];
+
+export const FSRS5_DEFAULT_DECAY = 0.5;
+export const FSRS6_DEFAULT_DECAY = 0.1542;
 
 export const DEFAULT_FSRS_OPTIONS: FSRSOptions = {
   request_retention: 0.90,
   maximum_interval: 36500,
-  w: DEFAULT_FSRS_WEIGHTS,
+  w: [...DEFAULT_FSRS_WEIGHTS],
   enable_fuzz: false,
+  fsrsVersion: 6,
+};
+
+export const DEFAULT_FSRS5_OPTIONS: FSRSOptions = {
+  request_retention: 0.90,
+  maximum_interval: 36500,
+  w: [...DEFAULT_FSRS5_WEIGHTS],
+  enable_fuzz: false,
+  fsrsVersion: 5,
 };
 
 export const WEIGHTS_COUNT = DEFAULT_FSRS_WEIGHTS.length;
+export const FSRS5_WEIGHTS_COUNT = DEFAULT_FSRS5_WEIGHTS.length;
 export const RETENTION_MIN = 0.7;
 export const RETENTION_MAX = 0.99;
 export const MAX_INTERVAL_LIMIT = 36500;
 
+export const S_MIN = 0.001;
+export const S_MAX = 36500;
+export const INIT_S_MAX = 100;
+
 // Anki's default: a card that lapses this many times is flagged as a leech.
 export const LEECH_THRESHOLD = 8;
 
-const FACTOR = 19 / 81;
-const DECAY = 0.5;
+const ENABLE_SHORT_TERM = true;
+const LEARNING_STEP_MINUTES = 10;
+const HARD_STEP_MINUTES = Math.round(LEARNING_STEP_MINUTES * 1.5);
 const DAY_MS = 1000 * 60 * 60 * 24;
+
+/**
+ * Safe ranges for the 21 FSRS-6 weights. w19 accepts 0 because the 19-to-21
+ * migration appends [0, 0.5]: 0 neutralises the new stability exponent and
+ * 0.5 reproduces the FSRS-5 forgetting curve.
+ */
+export const WEIGHT_RANGES: ReadonlyArray<readonly [number, number]> = [
+  [S_MIN, INIT_S_MAX],
+  [S_MIN, INIT_S_MAX],
+  [S_MIN, INIT_S_MAX],
+  [S_MIN, INIT_S_MAX],
+  [1, 10],
+  [0.001, 4],
+  [0.001, 4],
+  [0.001, 0.75],
+  [0, 4.5],
+  [0, 0.8],
+  [0.001, 3.5],
+  [0.001, 5],
+  [0.001, 0.25],
+  [0.001, 0.9],
+  [0, 4],
+  [0, 1],
+  [1, 6],
+  [0, 2],
+  [0, 2],
+  [0, 0.8],
+  [0.1, 0.8],
+];
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
+function roundTo(value: number, decimals: number): number {
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+}
+
+function computeDecayFactor(w: number[]): { decay: number; factor: number } {
+  const decay = -w[20];
+  const factor = roundTo(Math.exp(Math.log(0.9) / decay) - 1, 8);
+  return { decay, factor };
+}
+
+/** Parameters of the forgetting curve for the given weights, for display and charts. */
+export function getForgettingCurveParams(weights?: number[]): { decay: number; factor: number } {
+  return computeDecayFactor(resolveWeights(weights));
+}
+
+function forgettingCurve(elapsedDays: number, stability: number, w: number[]): number {
+  const { decay, factor } = computeDecayFactor(w);
+  return roundTo(Math.pow(1 + (factor * elapsedDays) / stability, decay), 8);
+}
+
 /**
- * Whole days elapsed between the last review and `now`, as used by the scheduler.
+ * Exact fractional days between the last review and `now`, used by the stats
+ * curves. The scheduler uses whole UTC calendar days, like ts-fsrs.
  */
 export function elapsedDaysSince(lastReview: string, now: Date): number {
-  const diffTime = Math.max(0, now.getTime() - new Date(lastReview).getTime());
-  return Math.max(0, Math.floor(diffTime / DAY_MS));
+  const diff = now.getTime() - new Date(lastReview).getTime();
+  return Number.isFinite(diff) ? Math.max(0, diff / DAY_MS) : 0;
+}
+
+function calendarDaysBetween(last: Date, now: Date): number {
+  const utc1 = Date.UTC(last.getUTCFullYear(), last.getUTCMonth(), last.getUTCDate());
+  const utc2 = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+  if (!Number.isFinite(utc1) || !Number.isFinite(utc2)) return 0;
+  return Math.max(0, Math.floor((utc2 - utc1) / DAY_MS));
 }
 
 /**
@@ -51,59 +134,102 @@ export function isLeech(card: Card): boolean {
   return card.lapses >= LEECH_THRESHOLD;
 }
 
+function weightValidationError(values: unknown): string | null {
+  if (!Array.isArray(values)) return `Use ${WEIGHTS_COUNT} números separados por vírgula.`;
+  if (values.length !== WEIGHTS_COUNT) {
+    return `Use ${WEIGHTS_COUNT} pesos (FSRS-6); recebi ${values.length}.`;
+  }
+  for (let i = 0; i < values.length; i += 1) {
+    const value = values[i];
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+      return `O peso ${i + 1} não é um número válido.`;
+    }
+    const [min, max] = WEIGHT_RANGES[i];
+    if (value < min || value > max) {
+      return `Peso ${i + 1} fora da faixa: use entre ${min} e ${max}.`;
+    }
+  }
+  return null;
+}
+
 /**
- * A weight set is usable when it has WEIGHTS_COUNT finite numbers and the first four
- * (initial stabilities per rating) are positive; otherwise scheduling produces NaN.
+ * A weight set is usable when it has 21 finite numbers inside the FSRS-6 ranges.
  */
 export function isValidWeights(values: unknown): values is number[] {
-  if (!Array.isArray(values) || values.length !== WEIGHTS_COUNT) return false;
+  return weightValidationError(values) === null;
+}
+
+/**
+ * Legacy FSRS-5 sets keep their old contract: 19 finite numbers, positive initial stabilities.
+ */
+export function isValidLegacyWeights(values: unknown): values is number[] {
+  if (!Array.isArray(values) || values.length !== FSRS5_WEIGHTS_COUNT) return false;
   return values.every((v, i) => typeof v === 'number' && Number.isFinite(v) && (i >= 4 || v > 0));
 }
 
 /**
- * Parses a user-entered list of FSRS weights (comma, space or newline separated).
- * Returns null when the text is not a valid weight set.
+ * Parses a user-entered list of FSRS-6 weights (comma, space or newline separated).
  */
-export function parseWeights(text: string): number[] | null {
+export function parseWeights(text: string): { weights: number[] | null; error: string | null } {
   const values = text.split(/[\s,;]+/).filter(Boolean).map(Number);
-  return isValidWeights(values) ? values : null;
+  const error = weightValidationError(values);
+  return { weights: error === null ? values : null, error };
 }
 
 /**
- * Retrievability calculation: R(t, S)
+ * Resolves a stored set to 21 weights. Legacy 19-weight sets get [0, 0.5]
+ * appended, which keeps the FSRS-5 forgetting curve.
  */
-export function calculateRetrievability(elapsedDays: number, stability: number): number {
-  if (stability <= 0) return 0;
-  return Math.pow(1 + FACTOR * (elapsedDays / stability), -DECAY);
+export function resolveWeights(w?: number[]): number[] {
+  if (isValidWeights(w)) return w;
+  if (isValidLegacyWeights(w)) return [...w, 0, FSRS5_DEFAULT_DECAY];
+  return DEFAULT_FSRS_WEIGHTS;
 }
 
 /**
- * Initial stability for first rating G (1..4)
+ * Converts a legacy FSRS-5 option set to FSRS-6 without touching the cards.
+ * Legacy custom weights are clamped to the new safe ranges.
  */
+export function migrateToFSRS6(options: FSRSOptions): FSRSOptions {
+  if (isValidWeights(options.w)) {
+    return { ...options, fsrsVersion: 6 };
+  }
+  const legacy = isValidLegacyWeights(options.w) ? options.w : DEFAULT_FSRS5_WEIGHTS;
+  const migrated = legacy.map((value, i) => clamp(value, WEIGHT_RANGES[i][0], WEIGHT_RANGES[i][1]));
+  migrated.push(0, FSRS5_DEFAULT_DECAY);
+  return { ...options, w: migrated, fsrsVersion: 6 };
+}
+
+/**
+ * Retrievability calculation: R(t, S) = (1 + factor * t / S)^decay.
+ */
+export function calculateRetrievability(
+  elapsedDays: number,
+  stability: number,
+  weights?: number[]
+): number {
+  if (!Number.isFinite(elapsedDays) || !Number.isFinite(stability) || stability <= 0) return 0;
+  const w = resolveWeights(weights);
+  return forgettingCurve(Math.max(0, elapsedDays), stability, w);
+}
+
 function initStability(rating: Rating, w: number[]): number {
-  return Math.max(0.1, w[rating - 1]);
+  return Math.max(w[rating - 1], 0.1);
 }
 
-/**
- * Initial difficulty for first rating G (1..4)
- */
 function initDifficulty(rating: Rating, w: number[]): number {
-  const d0 = w[4] - Math.exp(w[5] * (rating - 1)) + 1;
-  return clamp(d0, 1, 10);
+  const d0 = w[4] - Math.exp((rating - 1) * w[5]) + 1;
+  return roundTo(d0, 8);
 }
 
-/**
- * Next difficulty calculation with mean reversion
- */
 function nextDifficulty(d: number, rating: Rating, w: number[]): number {
-  const nextD = d - w[6] * (rating - 3);
-  const meanReversion = w[7] * initDifficulty(3, w) + (1 - w[7]) * nextD;
+  const delta = -w[6] * (rating - 3);
+  const damped = roundTo((delta * (10 - d)) / 9, 8);
+  const next = d + damped;
+  const meanReversion = roundTo(w[7] * initDifficulty(4, w) + (1 - w[7]) * next, 8);
   return clamp(meanReversion, 1, 10);
 }
 
-/**
- * Stability after recall (ratings 2, 3, 4)
- */
 function nextRecallStability(
   d: number,
   s: number,
@@ -122,36 +248,75 @@ function nextRecallStability(
         (Math.exp(w[10] * (1 - r)) - 1) *
         hardPenalty *
         easyBonus);
-  return Math.max(0.1, newS);
+  return roundTo(clamp(newS, S_MIN, S_MAX), 8);
 }
 
-/**
- * Stability after forgetting (rating 1 = Again)
- */
-function nextForgetStability(
-  d: number,
-  s: number,
-  r: number,
-  w: number[]
-): number {
-  const newS =
+function nextForgetStability(d: number, s: number, r: number, w: number[]): number {
+  const formula =
     w[11] *
     Math.pow(d, -w[12]) *
     (Math.pow(s + 1, w[13]) - 1) *
     Math.exp(w[14] * (1 - r));
-  return clamp(newS, 0.1, s);
+  const sAfterFail = roundTo(clamp(formula, S_MIN, S_MAX), 8);
+  const cap = roundTo(s / Math.exp(w[17] * w[18]), 8);
+  return clamp(cap, S_MIN, sAfterFail);
+}
+
+function nextShortTermStability(s: number, rating: Rating, w: number[]): number {
+  const sinc = Math.pow(s, -w[19]) * Math.exp(w[17] * (rating - 3 + w[18]));
+  const masked = rating >= 2 ? Math.max(sinc, 1) : sinc;
+  return roundTo(clamp(s * masked, S_MIN, S_MAX), 8);
+}
+
+interface MemoryState {
+  difficulty: number;
+  stability: number;
+}
+
+function nextMemoryState(
+  memory: MemoryState,
+  elapsedDays: number,
+  rating: Rating,
+  w: number[],
+  retrievability?: number
+): MemoryState {
+  if (memory.difficulty === 0 && memory.stability === 0) {
+    return {
+      difficulty: clamp(initDifficulty(rating, w), 1, 10),
+      stability: initStability(rating, w),
+    };
+  }
+
+  const r = retrievability ?? forgettingCurve(elapsedDays, memory.stability, w);
+  let stability: number;
+
+  if (elapsedDays === 0 && ENABLE_SHORT_TERM) {
+    stability = nextShortTermStability(memory.stability, rating, w);
+  } else if (rating === 1) {
+    stability = nextForgetStability(memory.difficulty, memory.stability, r, w);
+  } else {
+    stability = nextRecallStability(memory.difficulty, memory.stability, r, rating, w);
+  }
+
+  return {
+    difficulty: nextDifficulty(memory.difficulty, rating, w),
+    stability,
+  };
 }
 
 /**
- * Calculate interval in days for a given stability and request retention
+ * Calculate interval in days for a given stability and request retention.
  */
 export function calculateInterval(
   stability: number,
   requestRetention: number,
-  maxInterval: number
+  maxInterval: number,
+  weights?: number[]
 ): number {
-  const interval = (stability / FACTOR) * (Math.pow(requestRetention, -1 / DECAY) - 1);
-  return Math.min(Math.max(1, Math.round(interval)), maxInterval);
+  const w = resolveWeights(weights);
+  const { decay, factor } = computeDecayFactor(w);
+  const intervalModifier = roundTo((Math.pow(requestRetention, 1 / decay) - 1) / factor, 8);
+  return Math.min(Math.max(1, Math.round(stability * intervalModifier)), maxInterval);
 }
 
 export interface NextCardPrediction {
@@ -160,17 +325,99 @@ export interface NextCardPrediction {
   intervalText: string;
 }
 
-/**
- * Computes how a card will evolve given a specific rating (1, 2, 3, or 4).
- */
-export function scheduleCard(
-  card: Card,
-  rating: Rating,
-  now: Date = new Date(),
-  options: FSRSOptions = DEFAULT_FSRS_OPTIONS
-): Card {
-  const { w, maximum_interval } = options;
-  const request_retention = retentionForCard(card, options);
+function addDays(now: Date, days: number): Date {
+  return new Date(now.getTime() + days * DAY_MS);
+}
+
+function addMinutes(now: Date, minutes: number): Date {
+  return new Date(now.getTime() + minutes * 60 * 1000);
+}
+
+function scheduleFSRS6(card: Card, rating: Rating, now: Date, options: FSRSOptions): Card {
+  const w = resolveWeights(options.w);
+  const requestRetention = retentionForCard(card, options);
+  const isNew = card.state === 0;
+  const elapsedDays =
+    !isNew && card.last_review ? calendarDaysBetween(new Date(card.last_review), now) : 0;
+  const validMemory =
+    !isNew && card.difficulty >= 1 && card.stability >= S_MIN && card.stability <= S_MAX;
+  const memory: MemoryState = validMemory
+    ? { difficulty: card.difficulty, stability: card.stability }
+    : { difficulty: 0, stability: 0 };
+  const retrievability = validMemory
+    ? forgettingCurve(elapsedDays, card.stability, w)
+    : undefined;
+
+  let nextState: CardState;
+  let nextMemory: MemoryState;
+  let scheduledDays: number;
+  let due: Date;
+
+  if (card.state === 2 && validMemory) {
+    if (rating === 1) {
+      nextMemory = nextMemoryState(memory, elapsedDays, rating, w, retrievability);
+      nextState = 3;
+      scheduledDays = 0;
+      due = addMinutes(now, LEARNING_STEP_MINUTES);
+    } else {
+      const hardState = nextMemoryState(memory, elapsedDays, 2, w, retrievability);
+      const goodState = nextMemoryState(memory, elapsedDays, 3, w, retrievability);
+      const easyState = nextMemoryState(memory, elapsedDays, 4, w, retrievability);
+
+      let hard = calculateInterval(hardState.stability, requestRetention, options.maximum_interval, w);
+      const goodBeforeOrder = calculateInterval(
+        goodState.stability,
+        requestRetention,
+        options.maximum_interval,
+        w
+      );
+      hard = Math.min(hard, goodBeforeOrder);
+      const good = Math.max(goodBeforeOrder, hard + 1);
+      const easy = Math.max(
+        calculateInterval(easyState.stability, requestRetention, options.maximum_interval, w),
+        good + 1
+      );
+
+      scheduledDays = rating === 2 ? hard : rating === 3 ? good : easy;
+      nextMemory = rating === 2 ? hardState : rating === 3 ? goodState : easyState;
+      nextState = 2;
+      due = addDays(now, scheduledDays);
+    }
+  } else {
+    nextMemory = nextMemoryState(memory, elapsedDays, rating, w, retrievability);
+    if (rating <= 2) {
+      nextState = card.state === 3 ? 3 : 1;
+      scheduledDays = 0;
+      due = addMinutes(now, rating === 1 ? LEARNING_STEP_MINUTES : HARD_STEP_MINUTES);
+    } else {
+      nextState = 2;
+      scheduledDays = calculateInterval(
+        nextMemory.stability,
+        requestRetention,
+        options.maximum_interval,
+        w
+      );
+      due = addDays(now, scheduledDays);
+    }
+  }
+
+  return {
+    ...card,
+    state: nextState,
+    due: due.toISOString(),
+    stability: nextMemory.stability,
+    difficulty: nextMemory.difficulty,
+    elapsed_days: elapsedDays,
+    scheduled_days: scheduledDays,
+    reps: card.reps + 1,
+    lapses: card.state === 2 && rating === 1 ? card.lapses + 1 : card.lapses,
+    last_review: now.toISOString(),
+  };
+}
+
+function scheduleFSRS5(card: Card, rating: Rating, now: Date, options: FSRSOptions): Card {
+  const w = isValidLegacyWeights(options.w) ? options.w : DEFAULT_FSRS5_WEIGHTS;
+  const requestRetention = retentionForCard(card, options);
   const isNew = card.state === 0;
 
   let newD = card.difficulty;
@@ -180,66 +427,80 @@ export function scheduleCard(
   let elapsedDays = 0;
 
   if (card.last_review) {
-    elapsedDays = elapsedDaysSince(card.last_review, now);
+    elapsedDays = Math.floor(elapsedDaysSince(card.last_review, now));
   }
 
-  const retrievability = isNew ? 1 : calculateRetrievability(elapsedDays, card.stability);
+  const retrievability = isNew
+    ? 1
+    : calculateRetrievability(elapsedDays, card.stability, w);
 
   if (isNew) {
-    newD = initDifficulty(rating, w);
+    newD = clamp(initDifficulty(rating, w), 1, 10);
     newS = initStability(rating, w);
 
     if (rating === 1) {
-      // Again
-      newState = 1; // Learning
-      scheduledDays = 0; // due today in 10 minutes
+      newState = 1;
+      scheduledDays = 0;
     } else if (rating === 2) {
-      // Hard
-      newState = 1; // Learning
+      newState = 1;
       scheduledDays = 0;
     } else if (rating === 3) {
-      // Good
-      newState = 2; // Review
-      scheduledDays = calculateInterval(newS, request_retention, maximum_interval);
+      newState = 2;
+      scheduledDays = calculateInterval(newS, requestRetention, options.maximum_interval, w);
     } else {
-      // Easy
-      newState = 2; // Review
-      scheduledDays = calculateInterval(newS * 1.3, request_retention, maximum_interval);
+      newState = 2;
+      scheduledDays = calculateInterval(
+        newS * 1.3,
+        requestRetention,
+        options.maximum_interval,
+        w
+      );
     }
   } else {
-    // Review or Learning/Relearning
-    newD = nextDifficulty(card.difficulty, rating, w);
+    const nextD = card.difficulty - w[6] * (rating - 3);
+    newD = clamp(w[7] * initDifficulty(3, w) + (1 - w[7]) * nextD, 1, 10);
 
     if (rating === 1) {
-      // Again (lapse)
-      newS = nextForgetStability(newD, card.stability, retrievability, w);
-      newState = 3; // Relearning
-      scheduledDays = 0; // due today
+      const formula =
+        w[11] *
+        Math.pow(newD, -w[12]) *
+        (Math.pow(card.stability + 1, w[13]) - 1) *
+        Math.exp(w[14] * (1 - retrievability));
+      newS = clamp(formula, 0.1, card.stability);
+      newState = 3;
+      scheduledDays = 0;
     } else {
-      // Hard, Good, Easy
-      newS = nextRecallStability(newD, card.stability, retrievability, rating, w);
-      newState = 2; // Review
-      scheduledDays = calculateInterval(newS, request_retention, maximum_interval);
+      const hardPenalty = rating === 2 ? w[15] : 1;
+      const easyBonus = rating === 4 ? w[16] : 1;
+      const formula =
+        card.stability *
+        (1 +
+          Math.exp(w[8]) *
+            (11 - newD) *
+            Math.pow(card.stability, -w[9]) *
+            (Math.exp(w[10] * (1 - retrievability)) - 1) *
+            hardPenalty *
+            easyBonus);
+      newS = Math.max(0.1, formula);
+      newState = 2;
+      scheduledDays = calculateInterval(newS, requestRetention, options.maximum_interval, w);
       if (rating === 2) {
-        // Hard interval is slightly less
         scheduledDays = Math.max(1, Math.round(scheduledDays * 0.8));
       }
     }
   }
 
-  // Calculate new due date
-  const newDueDate = new Date(now);
+  const due = new Date(now);
   if (scheduledDays === 0) {
-    // 10 minutes from now (represented as ISO timestamp)
-    newDueDate.setMinutes(newDueDate.getMinutes() + (rating === 1 ? 10 : 15));
+    due.setMinutes(due.getMinutes() + (rating === 1 ? 10 : 15));
   } else {
-    newDueDate.setDate(newDueDate.getDate() + scheduledDays);
+    due.setDate(due.getDate() + scheduledDays);
   }
 
   return {
     ...card,
     state: newState,
-    due: newDueDate.toISOString(),
+    due: due.toISOString(),
     stability: Number(newS.toFixed(4)),
     difficulty: Number(newD.toFixed(4)),
     elapsed_days: elapsedDays,
@@ -251,10 +512,35 @@ export function scheduleCard(
 }
 
 /**
+ * Computes how a card will evolve given a specific rating (1, 2, 3, or 4).
+ * FSRS-6 is the default; a stored fsrsVersion 5 keeps the legacy engine.
+ */
+export function scheduleCard(
+  card: Card,
+  rating: Rating,
+  now: Date = new Date(),
+  options: FSRSOptions = DEFAULT_FSRS_OPTIONS
+): Card {
+  const version =
+    options.fsrsVersion ?? (options.w.length === FSRS5_WEIGHTS_COUNT ? 5 : 6);
+  if (version === 5) return scheduleFSRS5(card, rating, now, options);
+  return scheduleFSRS6(card, rating, now, options);
+}
+
+/**
  * Format interval into human readable text for Anki buttons (< 10m, 1d, 3d, etc.)
  */
-export function formatIntervalPreview(scheduledDays: number, isShortStep: boolean): string {
+export function formatIntervalPreview(
+  scheduledDays: number,
+  isShortStep: boolean,
+  due?: string,
+  now?: Date
+): string {
   if (isShortStep || scheduledDays === 0) {
+    if (due && now) {
+      const minutes = Math.max(1, Math.round((new Date(due).getTime() - now.getTime()) / 60000));
+      return `${minutes}m`;
+    }
     return '< 10m';
   }
   if (scheduledDays === 1) {
@@ -286,7 +572,7 @@ export function predictNextIntervals(
     const nextCard = scheduleCard(card, rating, now, options);
     const isShortStep = nextCard.scheduled_days === 0;
     result[rating] = {
-      text: formatIntervalPreview(nextCard.scheduled_days, isShortStep),
+      text: formatIntervalPreview(nextCard.scheduled_days, isShortStep, nextCard.due, now),
       nextCard,
     };
   });

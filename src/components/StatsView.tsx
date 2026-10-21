@@ -3,6 +3,7 @@ import { Card, FSRSOptions, DeckConfig, ReviewLog } from '../types/card';
 import { loadReviewLogs } from '../lib/storage';
 import { LEVEL_NUMERALS } from '../data/defaultDecks';
 import { COURSE, levelLabel } from '../lib/course';
+import { getForgettingCurveParams, resolveWeights } from '../lib/fsrs';
 import { RetentionCalibration } from './RetentionCalibration';
 import { MemoryField } from './MemoryField';
 import { ChevronDown } from 'lucide-react';
@@ -24,6 +25,11 @@ export const StatsView: React.FC<StatsViewProps> = ({
   const [retentionTab, setRetentionTab] = useState<'curve' | 'history' | 'buttons' | 'calibration'>('curve');
 
   const targetRetention = fsrsOptions?.request_retention ?? 0.90;
+  const fsrsWeights = useMemo(() => resolveWeights(fsrsOptions?.w), [fsrsOptions?.w]);
+  const { decay: fsrsDecay, factor: fsrsFactor } = useMemo(
+    () => getForgettingCurveParams(fsrsWeights),
+    [fsrsWeights]
+  );
 
   // Load review logs from persistent storage
   const allLogs: ReviewLog[] = useMemo(() => {
@@ -87,8 +93,8 @@ export const StatsView: React.FC<StatsViewProps> = ({
     return counts;
   }, [filteredLogs]);
 
-  // Positive reviews: Good (3) and Easy (4)
-  const positiveReviews = buttonCounts[3] + buttonCounts[4];
+  // Positive reviews: Hard (2), Good (3) and Easy (4)
+  const positiveReviews = buttonCounts[2] + buttonCounts[3] + buttonCounts[4];
   const trueRetentionRate = totalReviews > 0
     ? Math.round((positiveReviews / totalReviews) * 100)
     : null;
@@ -96,14 +102,14 @@ export const StatsView: React.FC<StatsViewProps> = ({
   // Mature vs Young true retention
   const matureLogs = filteredLogs.filter(l => (l.previousCardSnapshot?.scheduled_days ?? 0) >= 21);
   const matureRetention = matureLogs.length > 0
-    ? Math.round((matureLogs.filter(l => l.rating >= 3).length / matureLogs.length) * 100)
+    ? Math.round((matureLogs.filter(l => l.rating >= 2).length / matureLogs.length) * 100)
     : null;
 
   const youngLogs = filteredLogs.filter(
     l => l.state === 2 && (l.previousCardSnapshot?.scheduled_days ?? 0) < 21
   );
   const youngRetention = youngLogs.length > 0
-    ? Math.round((youngLogs.filter(l => l.rating >= 3).length / youngLogs.length) * 100)
+    ? Math.round((youngLogs.filter(l => l.rating >= 2).length / youngLogs.length) * 100)
     : null;
 
   // Study Streaks & Days Active Calculation
@@ -230,7 +236,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
       const day = new Date(log.reviewTime).toISOString().slice(0, 10);
       const curr = dayMap.get(day) || { total: 0, positive: 0 };
       curr.total++;
-      if (log.rating >= 3) curr.positive++;
+      if (log.rating >= 2) curr.positive++;
       dayMap.set(day, curr);
     });
 
@@ -336,9 +342,11 @@ export const StatsView: React.FC<StatsViewProps> = ({
         {/* Tab 1: FSRS Forgetting Curve */}
         {retentionTab === 'curve' && (
           <div className="space-y-5">
-            <MemoryField cards={cards} targetRetention={targetRetention} />
+            <MemoryField cards={cards} targetRetention={targetRetention} weights={fsrsWeights} />
             <p className="text-xs ink-tertiary">
-              <code className="font-mono">R(t) = (1 + 19/81 · t/S)^−0.5</code>
+              <code className="font-mono">
+                R(t) = (1 + {fsrsFactor.toFixed(4)} · t/S)^{fsrsDecay.toFixed(4)}
+              </code>
             </p>
           </div>
         )}
@@ -414,7 +422,7 @@ export const StatsView: React.FC<StatsViewProps> = ({
 
         {/* Tab 4: Calibration of predicted vs real recall */}
         {retentionTab === 'calibration' && (
-          <RetentionCalibration logs={filteredLogs} />
+          <RetentionCalibration logs={filteredLogs} weights={fsrsWeights} />
         )}
       </section>
 

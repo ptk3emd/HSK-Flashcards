@@ -50,19 +50,31 @@ export interface ReviewLog {
   previousCardSnapshot: Card;
 }
 
+/** FSRS generation that produced the stored weights. 5 is the legacy engine. */
+export type FSRSVersion = 5 | 6;
+
 export interface FSRSOptions {
   request_retention: number; // default 0.90
   maximum_interval: number; // default 36500
-  w: number[]; // 19 weights
+  w: number[]; // 21 weights for FSRS-6, 19 for the legacy FSRS-5 engine
   enable_fuzz: boolean;
   retention_by_level?: Record<string, number>; // Per-HSK-level override of request_retention
+  fsrsVersion?: FSRSVersion; // Missing on old rows; treated as 6 when the weights are 21 long
 }
 
 export type VoiceGenderPreference = 'female' | 'male' | 'auto';
 
+export interface StudyPlan {
+  targetDate: string; // YYYY-MM-DD, local calendar day
+  targetRetention: number; // 0.7 - 0.99
+  enabled: boolean;
+  updatedAt: string; // ISO date, used when merging devices
+}
+
 export interface DeckConfig {
   dailyNewLimit: number;
   dailyReviewLimit: number;
+  studyDayStartHour: number; // 0-23, local hour when the study day and its limits roll over
   autoPlayAudio: boolean;
   speechSpeed: number; // 0.5 - 1.5
   speechVoiceGender: VoiceGenderPreference; // 'female' | 'male' | 'auto'
@@ -72,6 +84,7 @@ export interface DeckConfig {
   hideAnswerButtons: boolean; // Answer with gestures only
   twoButtonGrading: boolean; // Only "Novamente" and "Bom"; "Difícil" and "Fácil" are off
   gestures: GestureMap; // What each gesture on the study card does
+  studyPlan?: StudyPlan;
 }
 
 /** Gestures recognised on the card in the study session */

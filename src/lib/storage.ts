@@ -1,14 +1,18 @@
 import { Card, DeckConfig, FSRSOptions, QuizAttempt, ReviewLog } from '../types/card';
 import {
+  DEFAULT_FSRS5_WEIGHTS,
   DEFAULT_FSRS_OPTIONS,
+  DEFAULT_FSRS_WEIGHTS,
   MAX_INTERVAL_LIMIT,
   RETENTION_MAX,
   RETENTION_MIN,
+  isValidLegacyWeights,
   isValidWeights,
 } from './fsrs';
 import { loadDefaultCards, loadNativeLevelCards, levelOfNativeId } from '../data/defaultDecks';
 import { DEFAULT_GESTURES, sanitizeGestures } from './gestures';
 import { ACTIVE_COURSE } from './courseId';
+import { sanitizeStudyDayStartHour, sanitizeStudyPlan } from './studyPlan';
 
 /**
  * Every app-owned localStorage key in one place: persistence and the Anki backup
@@ -39,6 +43,17 @@ function courseKeys(): { [K in keyof typeof BASE_KEYS]: string } {
 }
 
 export const STORAGE_KEYS = courseKeys();
+
+/** Explicit app-owned keys only; fail rather than silently export unreadable user data. */
+export function readUserBackup(storage: Pick<Storage, 'getItem'>): Record<string, unknown> {
+  return Object.fromEntries(
+    Object.values(STORAGE_KEYS).flatMap((key) => {
+      const value = storage.getItem(key);
+      if (value === null) return [];
+      return [[key, value]];
+    })
+  );
+}
 
 const MAX_QUIZ_ATTEMPTS = 20; // per level
 
@@ -119,10 +134,51 @@ export function loadSyncOutbox(): OutboxEntry[] {
   }
 }
 
+/**
+ * Only the last operation per review matters. Collapsing an answer and its undo (or a redo)
+ * keeps the queue bounded without leaving the server in the opposite state.
+ */
+export function compactSyncOutbox(entries: OutboxEntry[]): OutboxEntry[] {
+  const lastIndex = new Map<string, number>();
+  entries.forEach((entry, index) => {
+    lastIndex.set(`${entry.cardId}|${entry.reviewedAt}`, index);
+  });
+  return entries.filter(
+    (entry, index) => lastIndex.get(`${entry.cardId}|${entry.reviewedAt}`) === index
+  );
+}
+
+function outboxIdentity(entry: OutboxEntry): string {
+  return `${entry.op}|${entry.cardId}|${entry.reviewedAt}`;
+}
+
+/**
+ * Drops exactly the entries a successful request carried. Looking at the operation too means
+ * an undo queued while its answer was in flight is not mistaken for the answer.
+ */
+export function dropSentOutboxEntries(
+  queue: OutboxEntry[],
+  sent: OutboxEntry[]
+): OutboxEntry[] {
+  const remaining = new Map<string, number>();
+  for (const entry of sent) {
+    const key = outboxIdentity(entry);
+    remaining.set(key, (remaining.get(key) ?? 0) + 1);
+  }
+  return queue.filter((entry) => {
+    const key = outboxIdentity(entry);
+    const count = remaining.get(key) ?? 0;
+    if (count === 0) return true;
+    remaining.set(key, count - 1);
+    return false;
+  });
+}
+
 export function saveSyncOutbox(entries: OutboxEntry[]): void {
   try {
-    if (entries.length === 0) localStorage.removeItem(ACCOUNT_KEYS.syncOutbox);
-    else localStorage.setItem(ACCOUNT_KEYS.syncOutbox, JSON.stringify(entries.slice(-MAX_OUTBOX)));
+    const pending = compactSyncOutbox(entries);
+    if (pending.length === 0) localStorage.removeItem(ACCOUNT_KEYS.syncOutbox);
+    else localStorage.setItem(ACCOUNT_KEYS.syncOutbox, JSON.stringify(pending.slice(-MAX_OUTBOX)));
   } catch (e) {
     console.error('Failed to save the sync queue', e);
   }
@@ -142,6 +198,7 @@ export { loadNativeLevelCards };
 export const DEFAULT_DECK_CONFIG: DeckConfig = {
   dailyNewLimit: 20,
   dailyReviewLimit: 100,
+  studyDayStartHour: 0,
   autoPlayAudio: true,
   speechSpeed: 0.85,
   speechVoiceGender: 'auto',
@@ -353,7 +410,13 @@ export function loadDeckConfig(): DeckConfig {
     const raw = localStorage.getItem(STORAGE_KEYS.settings);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return { ...DEFAULT_DECK_CONFIG, ...parsed, gestures: sanitizeGestures(parsed?.gestures) };
+      return {
+        ...DEFAULT_DECK_CONFIG,
+        ...parsed,
+        studyDayStartHour: sanitizeStudyDayStartHour(parsed?.studyDayStartHour),
+        gestures: sanitizeGestures(parsed?.gestures),
+        studyPlan: sanitizeStudyPlan(parsed?.studyPlan),
+      };
     }
   } catch (e) {
     console.error(e);
@@ -400,14 +463,30 @@ export function sanitizeFSRSOptions(raw: unknown): FSRSOptions {
     }
   }
 
+  // The weight count is the source of truth: 21 weights mean FSRS-6, 19 mean
+  // legacy FSRS-5. We never migrate here; the UI asks for a backup first.
+  let fsrsVersion: 5 | 6;
+  let weights: number[];
+  if (isValidWeights(source.w)) {
+    fsrsVersion = 6;
+    weights = [...source.w];
+  } else if (isValidLegacyWeights(source.w)) {
+    fsrsVersion = 5;
+    weights = [...source.w];
+  } else {
+    fsrsVersion = source.fsrsVersion === 5 ? 5 : 6;
+    weights = fsrsVersion === 5 ? [...DEFAULT_FSRS5_WEIGHTS] : [...DEFAULT_FSRS_WEIGHTS];
+  }
+
   return {
     request_retention: isRetention(source.request_retention)
       ? source.request_retention
       : base.request_retention,
     maximum_interval: validMaxInterval ? Math.round(maxInterval as number) : base.maximum_interval,
-    w: isValidWeights(source.w) ? [...source.w] : [...base.w],
+    w: weights,
     enable_fuzz: base.enable_fuzz,
     retention_by_level: retentionByLevel,
+    fsrsVersion,
   };
 }
 
@@ -436,7 +515,8 @@ export function loadReviewLogs(): ReviewLog[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.reviewLogs);
     if (raw) {
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch (e) {
     console.error(e);
@@ -459,15 +539,23 @@ export function pushReviewLog(log: ReviewLog): void {
   emitLocalChange({ kind: 'review', log });
 }
 
-export function popReviewLog(): ReviewLog | null {
+/**
+ * Removes the newest log. When `expected` is given, only that exact review can be removed:
+ * another tab (or a later session) may have written a newer log on the shared device.
+ */
+export function popReviewLog(
+  expected?: Pick<ReviewLog, 'cardId' | 'reviewTime'>
+): ReviewLog | null {
   const current = loadReviewLogs();
-  const last = current.pop();
-  if (last) {
-    saveReviewLogs(current);
-    emitLocalChange({ kind: 'undo', log: last });
-    return last;
+  const last = current[current.length - 1];
+  if (!last) return null;
+  if (expected && (last.cardId !== expected.cardId || last.reviewTime !== expected.reviewTime)) {
+    return null;
   }
-  return null;
+  current.pop();
+  saveReviewLogs(current);
+  emitLocalChange({ kind: 'undo', log: last });
+  return last;
 }
 
 const isCount = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);

@@ -5,12 +5,14 @@ import { Card, CardState, DeckConfig } from '../types/card';
 import { speakChinese } from '../lib/speech';
 import { COURSE, levelLabel } from '../lib/course';
 import { ALL_HSK_LEVELS, loadNativeLevelCards } from '../data/defaultDecks';
-import { Search, Volume2, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, Save, Lightbulb } from 'lucide-react';
+import { Search, Volume2, RotateCcw, Loader2, PenTool, X, Ban, PlayCircle, Save, Lightbulb, CalendarDays } from 'lucide-react';
 import { isLeech } from '../lib/fsrs';
+import { isDateKey, studyDayKey, studyDayStartForDateKey, todayKey } from '../lib/studyPlan';
 import { MandarinCardView } from './MandarinCardView';
 import { ViewLoading } from './ViewLoading';
 import { usePrefetched } from './usePrefetched';
 import { HanziDrawSearch } from './HanziDrawSearch';
+import { useNow } from './useNow';
 
 // The writing pad carries hanzi-writer; it loads on its own and is fetched ahead once this view mounts
 const STATE_LABELS: Record<CardState, string> = { 0: 'Novo', 1: 'Aprendendo', 2: 'Revisão', 3: 'Reaprendendo' };
@@ -41,6 +43,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   const [selectedState, setSelectedState] = useState<string>('all');
   const [previewCard, setPreviewCard] = useState<Card | null>(null);
   const [isPreviewFlipped, setIsPreviewFlipped] = useState(false);
+  const [dueDraft, setDueDraft] = useState('');
   const [isLoadingLevel, setIsLoadingLevel] = useState(false);
   const [writingCard, setWritingCard] = useState<Card | null>(null);
   const [mnemonicDraft, setMnemonicDraft] = useState('');
@@ -55,6 +58,9 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   useDialogFocus(writingDialogRef, writingCard !== null, closeWriting);
 
   const isLight = theme === 'light';
+  const now = useNow();
+  const studyDayStartHour = deckConfig?.studyDayStartHour ?? 0;
+  const today = todayKey(now, studyDayStartHour);
 
   // Fetched as soon as this view mounts, so the pad opens instantly when asked for
   const HanziWritingCanvas = usePrefetched(loadWritingCanvas) ?? HanziWritingCanvasLazy;
@@ -175,6 +181,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
   const openPreview = (card: Card) => {
     setPreviewCard(card);
     setMnemonicDraft(card.mnemonic ?? '');
+    setDueDraft(studyDayKey(new Date(card.due), studyDayStartHour));
     setIsPreviewFlipped(false);
   };
 
@@ -185,6 +192,14 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
 
   const handleToggleSuspend = (card: Card) => {
     updatePreviewCard({ ...card, suspended: !card.suspended });
+  };
+
+  const handleReschedule = () => {
+    if (!previewCard || !isDateKey(dueDraft) || dueDraft < today) return;
+    updatePreviewCard({
+      ...previewCard,
+      due: studyDayStartForDateKey(dueDraft, studyDayStartHour).toISOString(),
+    });
   };
 
   const handleSaveMnemonic = () => {
@@ -210,6 +225,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
     onUpdateCard(reset);
     if (previewCard?.id === card.id) {
       setPreviewCard(reset);
+      setDueDraft(studyDayKey(new Date(reset.due), studyDayStartHour));
     }
   };
 
@@ -500,6 +516,40 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                   </button>
                 </div>
               </div>
+
+              {previewCard.state !== 0 && (
+                <div className="w-full rounded-xl border border-black/10 dark:border-white/10 p-3 space-y-2">
+                  <label
+                    htmlFor="reschedule-date"
+                    className="flex items-center gap-1.5 text-xs font-semibold opacity-80"
+                  >
+                    <CalendarDays className="w-3.5 h-3.5 text-red-600 dark:text-red-300" />
+                    Reagendar revisão
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      id="reschedule-date"
+                      type="date"
+                      min={today}
+                      value={dueDraft}
+                      onChange={(e) => setDueDraft(e.target.value)}
+                      className="glass-field min-h-10 flex-1 px-3 text-xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleReschedule}
+                      disabled={
+                        !isDateKey(dueDraft) ||
+                        dueDraft < today ||
+                        dueDraft === studyDayKey(new Date(previewCard.due), studyDayStartHour)
+                      }
+                      className="min-h-10 px-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Aplicar
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="w-full flex flex-col items-center gap-3 pt-3 border-t border-black/10 dark:border-white/10">
                 <span className="text-[11px] opacity-60">Toque no cartão para virar</span>

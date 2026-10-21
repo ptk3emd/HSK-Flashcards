@@ -61,6 +61,29 @@ export const StudyOptionsSettings: React.FC<StudyOptionsSettingsProps> = ({
           </label>
         ))}
       </div>
+      <div className="flex items-center justify-between gap-4 py-3 border-t border-[var(--separator)]">
+        <label htmlFor="study-day-start" className="min-w-0 cursor-pointer">
+          <span className="block text-sm">Início do dia de estudo</span>
+          <span className="block text-xs ink-tertiary">Limites e plano reiniciam neste horário</span>
+        </label>
+        <select
+          id="study-day-start"
+          value={deckConfig.studyDayStartHour}
+          onChange={(e) =>
+            onUpdateDeckConfig({
+              ...deckConfig,
+              studyDayStartHour: Number(e.target.value),
+            })
+          }
+          className="min-h-11 px-3 rounded-xl glass-field text-sm tabular cursor-pointer"
+        >
+          {Array.from({ length: 24 }, (_, hour) => (
+            <option key={hour} value={hour}>
+              {hour === 0 ? 'Meia-noite' : `${hour}:00`}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="pt-4 border-t border-[var(--separator)]">
         <GestureSettings deckConfig={deckConfig} onUpdateDeckConfig={onUpdateDeckConfig} theme={theme} />
       </div>

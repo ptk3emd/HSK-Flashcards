@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Card } from '../types/card';
-import { calculateRetrievability } from '../lib/fsrs';
+import { calculateRetrievability, resolveWeights } from '../lib/fsrs';
 import { COURSE } from '../lib/course';
 
 interface MemoryFieldProps {
   cards: Card[];
   targetRetention: number;
+  weights?: number[];
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -26,8 +27,9 @@ const reducedMotion = () =>
  * its own curve, so the field shows which words drop below the target if nothing is reviewed.
  * Drawn on a canvas, so the full vocabulary moves at frame rate.
  */
-export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention }) => {
+export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention, weights }) => {
   const [ahead, setAhead] = useState(0);
+  const curveWeights = useMemo(() => resolveWeights(weights), [weights]);
   const [hover, setHover] = useState<Hover>(null);
   const [width, setWidth] = useState(560);
 
@@ -55,11 +57,11 @@ export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention
     // further rest on its floor instead of the field squeezing into a thin top band
     let minNow = 1;
     for (let i = 0; i < list.length; i++) {
-      minNow = Math.min(minNow, calculateRetrievability(elapsed[i], stability[i]));
+      minNow = Math.min(minNow, calculateRetrievability(elapsed[i], stability[i], curveWeights));
     }
     const floor = Math.max(0, Math.floor(Math.min(targetRetention - 0.3, minNow - 0.05) * 10) / 10);
     return { list, elapsed, stability, avgS, maxDay, floor };
-  }, [cards, targetRetention]);
+  }, [cards, targetRetention, curveWeights]);
 
   const count = field.list.length;
 
@@ -73,12 +75,12 @@ export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention
     let below = 0;
     let sum = 0;
     for (let i = 0; i < count; i++) {
-      const r = calculateRetrievability(field.elapsed[i] + ahead, field.stability[i]);
+      const r = calculateRetrievability(field.elapsed[i] + ahead, field.stability[i], curveWeights);
       sum += r;
       if (r < targetRetention) below++;
     }
     return { below, mean: count > 0 ? sum / count : 0 };
-  }, [field, count, ahead, targetRetention]);
+  }, [field, count, ahead, targetRetention, curveWeights]);
 
   useEffect(() => {
     const el = boxRef.current;
@@ -161,7 +163,7 @@ export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention
       for (let i = 0; i <= 80; i++) {
         const t = Math.expm1((i / 80) * Math.log1p(field.maxDay));
         const x = xOf(t);
-        const r = calculateRetrievability(t, field.avgS);
+        const r = calculateRetrievability(t, field.avgS, curveWeights);
         if (i === 0) ctx.moveTo(x, yOf(r));
         else ctx.lineTo(x, yOf(r));
         if (r <= field.floor) break;
@@ -187,7 +189,7 @@ export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention
     const fading = new Path2D();
     for (let i = 0; i < count; i++) {
       const t = field.elapsed[i] * intro + shown;
-      const r = calculateRetrievability(t, field.stability[i]);
+      const r = calculateRetrievability(t, field.stability[i], curveWeights);
       const x = xOf(t);
       const y = yOf(r);
       const path = r < targetRetention ? fading : held;
@@ -204,7 +206,7 @@ export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention
 
     if (hover && hover.index < count) {
       const t = field.elapsed[hover.index] * intro + shown;
-      const r = calculateRetrievability(t, field.stability[hover.index]);
+      const r = calculateRetrievability(t, field.stability[hover.index], curveWeights);
       ctx.beginPath();
       ctx.arc(xOf(t), yOf(r), 6, 0, Math.PI * 2);
       ctx.fillStyle = r < targetRetention ? curve : ink;
@@ -279,7 +281,7 @@ export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention
     for (let i = 0; i < count; i++) {
       const t = field.elapsed[i] + ahead;
       const dx = xOf(t) - px;
-      const dy = yOf(calculateRetrievability(t, field.stability[i])) - py;
+      const dy = yOf(calculateRetrievability(t, field.stability[i], curveWeights)) - py;
       const d = dx * dx + dy * dy;
       if (d < bestD) {
         bestD = d;
@@ -291,7 +293,7 @@ export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention
       return;
     }
     const t = field.elapsed[best] + ahead;
-    setHover({ index: best, x: xOf(t), y: yOf(calculateRetrievability(t, field.stability[best])) });
+    setHover({ index: best, x: xOf(t), y: yOf(calculateRetrievability(t, field.stability[best], curveWeights)) });
   };
 
   if (count === 0) {
@@ -305,7 +307,7 @@ export const MemoryField: React.FC<MemoryFieldProps> = ({ cards, targetRetention
   const pct = (r: number) => `${Math.round(r * 100)}%`;
   const hoverCard = hover ? field.list[hover.index] : null;
   const hoverR = hover
-    ? calculateRetrievability(field.elapsed[hover.index] + ahead, field.stability[hover.index])
+    ? calculateRetrievability(field.elapsed[hover.index] + ahead, field.stability[hover.index], curveWeights)
     : 0;
   const when = ahead === 0 ? 'Hoje' : `Em ${ahead} d`;
 

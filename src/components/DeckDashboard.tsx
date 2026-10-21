@@ -1,26 +1,35 @@
 import React, { useMemo, useState } from 'react';
-import { Card, DeckConfig } from '../types/card';
+import { Card, DeckConfig, FSRSOptions } from '../types/card';
 import { ALL_HSK_LEVELS, HSK_LEVEL_INFO, LEVEL_NUMERALS, loadNativeLevelCards } from '../data/defaultDecks';
 import { COURSE, levelLabel } from '../lib/course';
+import { loadReviewLogs } from '../lib/storage';
+import { dailyUsage, remainingDailyLimits, reviewedCardIdsOnDay } from '../lib/dailyUsage';
 import { BrandMark } from './BrandHeader';
 import { CourseSwitch } from './CourseSwitch';
+import { StudyPlanner } from './StudyPlanner';
+import { useNow } from './useNow';
 import { Play, Loader2 } from 'lucide-react';
 
 interface DeckDashboardProps {
   cards: Card[];
   deckConfig: DeckConfig;
+  fsrsOptions: FSRSOptions;
   onUpdateDeckConfig: (config: DeckConfig) => void;
-  onStartStudy: (isolatedLevel?: string | null) => void;
+  onStartStudy: (isolatedLevel?: string | null, freePractice?: boolean, ahead?: boolean) => void;
   onAddCards: (newCards: Card[]) => void;
+  onRequestMigration: () => void;
   onNavigateTab?: (tab: 'study' | 'decks' | 'browser' | 'stats' | 'settings') => void;
 }
 
 export const DeckDashboard: React.FC<DeckDashboardProps> = ({
   cards,
   deckConfig,
+  fsrsOptions,
   onUpdateDeckConfig,
   onStartStudy,
   onAddCards,
+  onRequestMigration,
+  onNavigateTab,
 }) => {
   const [loadingLevel, setLoadingLevel] = useState<string | null>(null);
 
@@ -29,26 +38,50 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
     return cards.filter(c => deckConfig.activeLevels.includes(c.level) && !c.suspended);
   }, [cards, deckConfig.activeLevels]);
 
-  const now = new Date();
+  const now = useNow();
 
-  const dueCount = useMemo(() => {
-    return activeLevelCards.filter(c => {
-      if (c.state === 0) return true;
-      return new Date(c.due) <= now;
-    }).length;
-  }, [activeLevelCards, now]);
+  const counts = useMemo(() => {
+    const current = now;
+    const newCards = activeLevelCards.filter((card) => card.state === 0);
+    const learningDue = activeLevelCards.filter(
+      (card) => (card.state === 1 || card.state === 3) && new Date(card.due) <= current
+    );
+    const reviewsDue = activeLevelCards.filter(
+      (card) => card.state === 2 && new Date(card.due) <= current
+    );
+    const logs = loadReviewLogs();
+    const reviewedToday = reviewedCardIdsOnDay(logs, current, deckConfig.studyDayStartHour);
+    const futureCards = activeLevelCards.filter(
+      (card) =>
+        !reviewedToday.has(card.id) &&
+        Number.isFinite(Date.parse(card.due)) &&
+        Date.parse(card.due) > current.getTime()
+    );
+    const limits = remainingDailyLimits(
+      deckConfig,
+      dailyUsage(logs, current, deckConfig.studyDayStartHour)
+    );
+    const plannedNew = Math.min(newCards.length, limits.newCards);
+    const plannedReviews = Math.min(reviewsDue.length, limits.reviews);
+    return {
+      dueCount: learningDue.length + plannedNew + plannedReviews,
+      newCount: plannedNew,
+      learningCount: learningDue.length,
+      reviewCount: plannedReviews,
+      rawCount: newCards.length + learningDue.length + reviewsDue.length,
+      futureCount: futureCards.length,
+    };
+  }, [
+    activeLevelCards,
+    deckConfig.dailyNewLimit,
+    deckConfig.dailyReviewLimit,
+    deckConfig.studyDayStartHour,
+    now,
+  ]);
 
-  const newCount = useMemo(() => {
-    return activeLevelCards.filter(c => c.state === 0).length;
-  }, [activeLevelCards]);
-
-  const learningCount = useMemo(() => {
-    return activeLevelCards.filter(c => c.state === 1 || c.state === 3).length;
-  }, [activeLevelCards]);
-
-  const reviewCount = useMemo(() => {
-    return activeLevelCards.filter(c => c.state === 2).length;
-  }, [activeLevelCards]);
+  const { dueCount, newCount, learningCount, reviewCount, rawCount, futureCount } = counts;
+  const startBeyondLimits = dueCount === 0 && rawCount > 0;
+  const startAhead = dueCount === 0 && rawCount === 0 && futureCount > 0;
 
 
   const handleToggleOrActivateLevel = async (lvl: string) => {
@@ -130,16 +163,34 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
           <span aria-hidden="true"> · </span>
           <span className="font-semibold text-emerald-700 dark:text-emerald-300">{reviewCount}</span> revisão
         </p>
+        {rawCount > dueCount && (
+          <p className="mt-1 text-xs ink-tertiary">Limites diários aplicados.</p>
+        )}
         <button
           type="button"
-          onClick={() => onStartStudy(null)}
-          disabled={dueCount === 0}
+          onClick={() => onStartStudy(null, startBeyondLimits, startAhead)}
+          disabled={rawCount === 0 && futureCount === 0}
           className="mt-6 w-full min-h-14 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-semibold text-base flex items-center justify-center gap-2 cursor-pointer transition-colors active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Play className="w-4 h-4 fill-current" aria-hidden="true" />
-          {dueCount === 0 ? 'Nada para hoje' : 'Estudar'}
+          {startAhead
+            ? 'Estudar adiantado'
+            : rawCount === 0
+            ? 'Nada para hoje'
+            : startBeyondLimits
+            ? 'Praticar além do limite'
+            : 'Estudar'}
         </button>
       </section>
+
+      <StudyPlanner
+        cards={cards}
+        deckConfig={deckConfig}
+        fsrsOptions={fsrsOptions}
+        onUpdateDeckConfig={onUpdateDeckConfig}
+        onRequestMigration={onRequestMigration}
+        onOpenSettings={() => onNavigateTab?.('settings')}
+      />
 
       {/* Levels as a ledger: hanzi numeral, state, count, a hairline of progress */}
       <section className="sheet overflow-hidden" aria-labelledby="levels-heading">

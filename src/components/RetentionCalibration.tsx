@@ -10,6 +10,7 @@ import {
 
 interface RetentionCalibrationProps {
   logs: ReviewLog[];
+  weights?: number[];
 }
 
 const MIN_SAMPLE = 5; // Cells with fewer reviews are shown without colour
@@ -37,8 +38,8 @@ function cellTone(cell: CalibrationCell): string {
   return 'bg-emerald-600/70 text-white';
 }
 
-export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs }) => {
-  const data = useMemo(() => buildCalibration(logs), [logs]);
+export const RetentionCalibration: React.FC<RetentionCalibrationProps> = ({ logs, weights }) => {
+  const data = useMemo(() => buildCalibration(logs, 14, weights), [logs, weights]);
 
   const subtleText = 'text-black/60 dark:text-white/60';
   const totalRate = cellRate(data.total);

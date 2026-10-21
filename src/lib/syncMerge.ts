@@ -1,4 +1,5 @@
 import { Card, DeckConfig, FSRSOptions, QuizAttempt } from '../types/card';
+import { mergeStudyPlan, sanitizeStudyDayStartHour } from './studyPlan';
 
 /** The study data one student keeps in the cloud: the shape of a user_progress row. */
 export interface RemoteProgress {
@@ -59,6 +60,26 @@ export function mergeAttempts(local: QuizAttempt[], remote: QuizAttempt[]): Quiz
 /** Ids kept on either side, once each (grammar points already studied). */
 export function mergeIds(local: string[], remote: string[]): string[] {
   return Array.from(new Set([...local, ...remote]));
+}
+
+/**
+ * Never lets an older client downgrade the scheduler. A FSRS-5 copy may come from a
+ * device that has not updated yet; only an equal or newer version wins.
+ */
+export function preferNewerFSRS(local: FSRSOptions, remote: FSRSOptions): FSRSOptions {
+  return (remote.fsrsVersion ?? 6) >= (local.fsrsVersion ?? 6) ? remote : local;
+}
+
+export function mergeDeckConfig(local: DeckConfig, remote: DeckConfig): DeckConfig {
+  const merged = { ...local, ...remote };
+  return {
+    ...merged,
+    studyDayStartHour: sanitizeStudyDayStartHour(
+      merged.studyDayStartHour,
+      sanitizeStudyDayStartHour(local.studyDayStartHour)
+    ),
+    studyPlan: mergeStudyPlan(local.studyPlan, remote.studyPlan),
+  };
 }
 
 /** Checks a row from the server before it can touch local data. */

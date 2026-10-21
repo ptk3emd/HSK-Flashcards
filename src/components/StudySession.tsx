@@ -5,8 +5,14 @@ import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGes
 import { GESTURES, GRADE_ACTIONS, effectiveActionLabel, isActionAvailable } from '../lib/gestures';
 import { MandarinCardView } from './MandarinCardView';
 import { StudyToolbar } from './StudyToolbar';
-import { predictNextIntervals, scheduleCard } from '../lib/fsrs';
-import { pushReviewLog, popReviewLog } from '../lib/storage';
+import { calculateRetrievability, elapsedDaysSince, predictNextIntervals, scheduleCard } from '../lib/fsrs';
+import { loadReviewLogs, pushReviewLog, popReviewLog } from '../lib/storage';
+import {
+  DailyUsage,
+  dailyUsage,
+  remainingDailyLimits,
+  reviewedCardIdsOnDay,
+} from '../lib/dailyUsage';
 import { speakChinese } from '../lib/speech';
 import { COURSE, levelLabel } from '../lib/course';
 import { loadNativeLevelCards } from '../data/defaultDecks';
@@ -14,6 +20,8 @@ import { ViewLoading } from './ViewLoading';
 import { usePrefetched } from './usePrefetched';
 import { AudioVoiceSettings } from './AudioVoiceSettings';
 import { StudyOptionsSettings } from './StudyOptionsSettings';
+import { useNow } from './useNow';
+import { todayKey } from '../lib/studyPlan';
 import '../styles/study-session.css';
 
 // The writing pad carries hanzi-writer; it loads on its own and is fetched ahead once this view mounts
@@ -31,6 +39,8 @@ interface StudySessionProps {
   onToggleTheme: () => void;
   onUpdateCards: (updatedCards: Card[]) => void;
   onUpdateDeckConfig?: (config: DeckConfig) => void;
+  startFreePractice?: boolean;
+  startAhead?: boolean;
   onExit: () => void;
 }
 
@@ -58,17 +68,31 @@ export const StudySession: React.FC<StudySessionProps> = ({
   onToggleTheme,
   onUpdateCards,
   onUpdateDeckConfig,
+  startFreePractice = false,
+  startAhead = false,
   onExit,
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [freePractice, setFreePractice] = useState(startFreePractice);
+  // Forced mode: pull future-scheduled cards instead of waiting for their day
+  const [studyAhead, setStudyAhead] = useState(startAhead);
+  const [usage, setUsage] = useState<DailyUsage>(() =>
+    dailyUsage(loadReviewLogs(), new Date(), deckConfig.studyDayStartHour)
+  );
   const [sessionCards, setSessionCards] = useState<Card[]>(cards);
-  const [canUndo, setCanUndo] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showWritingPad, setShowWritingPad] = useState(false);
   const [showVoiceSettingsModal, setShowVoiceSettingsModal] = useState(false);
   const [reviewedInSession, setReviewedInSession] = useState(0);
   // The grade of every card answered in this session, in order: the steps of the progress ladder
   const [sessionGrades, setSessionGrades] = useState<Rating[]>([]);
+  // The exact log behind each ladder step, so undo can never remove another tab's answer
+  const [sessionLogRefs, setSessionLogRefs] = useState<
+    Pick<ReviewLog, 'cardId' | 'reviewTime'>[]
+  >([]);
+  const canUndo = sessionGrades.length > 0;
+  const now = useNow();
+  const studyDay = todayKey(now, deckConfig.studyDayStartHour);
   // The seal pressed onto the card that is leaving, named by its grade
   const [stamp, setStamp] = useState<Rating | null>(null);
   const [loadingLevel, setLoadingLevel] = useState<string | null>(null);
@@ -94,7 +118,22 @@ export const StudySession: React.FC<StudySessionProps> = ({
   useEffect(() => {
     setReviewedInSession(0);
     setSessionGrades([]);
+    setSessionLogRefs([]);
+    setStudyAhead(false);
   }, [isolatedLevel]);
+
+  useEffect(() => {
+    setFreePractice(startFreePractice);
+  }, [startFreePractice]);
+
+  useEffect(() => {
+    setStudyAhead(startAhead && !startFreePractice);
+  }, [startAhead, startFreePractice]);
+
+  // The daily limits restart when the study day rolls over, even with the session open
+  useEffect(() => {
+    setUsage(dailyUsage(loadReviewLogs(), new Date(), deckConfig.studyDayStartHour));
+  }, [studyDay, deckConfig.studyDayStartHour]);
 
   useEffect(() => {
     setSessionCards(cards);
@@ -110,37 +149,84 @@ export const StudySession: React.FC<StudySessionProps> = ({
     return unsuspended.filter(c => deckConfig.activeLevels.includes(c.level));
   }, [sessionCards, isolatedLevel, deckConfig.activeLevels]);
 
-  const dueQueue = useMemo(() => {
+  const remainingLimits = useMemo(
+    () => remainingDailyLimits(deckConfig, usage),
+    [deckConfig.dailyNewLimit, deckConfig.dailyReviewLimit, usage]
+  );
+
+  // A card already answered in this session must not come back as "ahead" just because
+  // its new due date is still in the future.
+  const reviewedIds = useMemo(
+    () => new Set(sessionLogRefs.map((entry) => entry.cardId)),
+    [sessionLogRefs]
+  );
+  // Cards already answered earlier today should not come back through "study ahead"
+  const reviewedTodayIds = useMemo(
+    () => reviewedCardIdsOnDay(loadReviewLogs(), now, deckConfig.studyDayStartHour),
+    [deckConfig.studyDayStartHour, studyDay]
+  );
+
+  const queueCounts = useMemo(() => {
     const nowDate = new Date();
-    
-    // Learning & relearning cards due
-    const learningDue = activeLevelCards.filter(c => 
-      (c.state === 1 || c.state === 3) && new Date(c.due) <= nowDate
-    );
+    const learningDue = activeLevelCards
+      .filter(
+        (card) => (card.state === 1 || card.state === 3) && new Date(card.due) <= nowDate
+      )
+      .sort((left, right) => Date.parse(left.due) - Date.parse(right.due));
+    const reviewsDue = activeLevelCards
+      .filter((card) => card.state === 2 && new Date(card.due) <= nowDate)
+      .map((card) => ({
+        card,
+        retrievability: card.last_review
+          ? calculateRetrievability(
+              elapsedDaysSince(card.last_review, nowDate),
+              card.stability,
+              fsrsOptions.w
+            )
+          : 0,
+      }))
+      .sort((left, right) => left.retrievability - right.retrievability)
+      .map(({ card }) => card);
+    const newCards = activeLevelCards.filter((card) => card.state === 0);
+    const futureCards = activeLevelCards
+      .filter(
+        (card) =>
+          !reviewedIds.has(card.id) &&
+          !reviewedTodayIds.has(card.id) &&
+          Number.isFinite(Date.parse(card.due)) &&
+          Date.parse(card.due) > nowDate.getTime()
+      )
+      .sort((left, right) => Date.parse(left.due) - Date.parse(right.due));
+    const reviews = freePractice ? reviewsDue : reviewsDue.slice(0, remainingLimits.reviews);
+    const fresh = freePractice ? newCards : newCards.slice(0, remainingLimits.newCards);
+    const queue = studyAhead ? futureCards : [...learningDue, ...reviews, ...fresh];
 
-    // Review cards due
-    const reviewsDue = activeLevelCards.filter(c => 
-      c.state === 2 && new Date(c.due) <= nowDate
-    );
+    return {
+      queue,
+      newCount: queue.filter((card) => card.state === 0).length,
+      learningCount: queue.filter((card) => card.state === 1 || card.state === 3).length,
+      reviewCount: queue.filter((card) => card.state === 2).length,
+      rawCount: studyAhead
+        ? queue.length
+        : learningDue.length + reviewsDue.length + newCards.length,
+      futureCount: futureCards.length,
+    };
+  }, [
+    activeLevelCards,
+    freePractice,
+    remainingLimits,
+    fsrsOptions.w,
+    reviewedIds,
+    reviewedTodayIds,
+    studyAhead,
+    studyDay,
+  ]);
 
-    // New cards
-    const newCards = activeLevelCards.filter(c => c.state === 0);
-
-    return [...learningDue, ...reviewsDue, ...newCards];
-  }, [activeLevelCards]);
-
-  const newCount = useMemo(
-    () => activeLevelCards.filter(c => c.state === 0).length,
-    [activeLevelCards]
-  );
-  const learningCount = useMemo(
-    () => activeLevelCards.filter(c => c.state === 1 || c.state === 3).length,
-    [activeLevelCards]
-  );
-  const reviewCount = useMemo(
-    () => activeLevelCards.filter(c => c.state === 2 && new Date(c.due) <= new Date()).length,
-    [activeLevelCards]
-  );
+  const dueQueue = queueCounts.queue;
+  const newCount = queueCounts.newCount;
+  const learningCount = queueCounts.learningCount;
+  const reviewCount = queueCounts.reviewCount;
+  const rawRemainingCount = queueCounts.rawCount;
 
   const remainingCount = dueQueue.length;
   const totalSessionCount = reviewedInSession + remainingCount;
@@ -152,6 +238,9 @@ export const StudySession: React.FC<StudySessionProps> = ({
       : 0;
 
   const currentCard = dueQueue[0] || null;
+  const hiddenByLimits = Math.max(0, rawRemainingCount - remainingCount);
+  const limitsReached =
+    !freePractice && !studyAhead && remainingCount === 0 && hiddenByLimits > 0;
 
   // Dialogs keep focus inside while open, close on Escape and return focus to their trigger
   const writingDialogRef = useRef<HTMLDivElement>(null);
@@ -226,17 +315,21 @@ export const StudySession: React.FC<StudySessionProps> = ({
         previousCardSnapshot: { ...currentCard },
       };
       pushReviewLog(log);
-      setCanUndo(true);
+      setUsage(dailyUsage(loadReviewLogs(), nowDate, deckConfig.studyDayStartHour));
 
       const newCardList = sessionCards.map(c => (c.id === currentCard.id ? updatedCard : c));
       setSessionCards(newCardList);
       onUpdateCards(newCardList);
       setReviewedInSession(prev => prev + 1);
       setSessionGrades(prev => [...prev, rating]);
+      setSessionLogRefs(prev => [
+        ...prev,
+        { cardId: log.cardId, reviewTime: log.reviewTime },
+      ]);
 
       setIsFlipped(false);
     },
-    [currentCard, fsrsOptions, sessionCards, onUpdateCards]
+    [currentCard, fsrsOptions, sessionCards, onUpdateCards, deckConfig.studyDayStartHour]
   );
 
   // The answered card leaves in the direction of its grade, the same directions the swipe
@@ -307,22 +400,34 @@ export const StudySession: React.FC<StudySessionProps> = ({
   );
 
   const handleUndo = useCallback(() => {
-    if (exitingRef.current) return; // the grade leaving now has not been applied yet
-    const lastLog = popReviewLog();
-    if (!lastLog) {
-      setCanUndo(false);
-      return;
-    }
+    // The grade leaving now has not been recorded yet
+    if (exitingRef.current || sessionGrades.length === 0) return;
+    const expected = sessionLogRefs[sessionLogRefs.length - 1];
+    const lastLog = expected ? popReviewLog(expected) : null;
+    if (!lastLog) return;
 
-    const reverted = sessionCards.map(c => 
+    const reverted = sessionCards.map(c =>
       c.id === lastLog.cardId ? lastLog.previousCardSnapshot : c
     );
+    setUsage(dailyUsage(loadReviewLogs(), new Date(), deckConfig.studyDayStartHour));
     setSessionCards(reverted);
     onUpdateCards(reverted);
     setReviewedInSession(prev => Math.max(0, prev - 1));
     setSessionGrades(prev => prev.slice(0, -1));
+    setSessionLogRefs(prev => prev.slice(0, -1));
     setIsFlipped(false);
-  }, [sessionCards, onUpdateCards]);
+  }, [
+    sessionCards,
+    sessionGrades.length,
+    sessionLogRefs,
+    onUpdateCards,
+    deckConfig.studyDayStartHour,
+  ]);
+
+  const startAheadSession = () => {
+    setIsFlipped(false);
+    setStudyAhead(true);
+  };
 
   const handleSuspendCurrent = useCallback(() => {
     if (!currentCard || exitingRef.current) return;
@@ -750,23 +855,60 @@ export const StudySession: React.FC<StudySessionProps> = ({
                   <span lang={COURSE.lang}>{COURSE.doneMark}</span>
                 </div>
                 <h2 id="study-done-title" className="study-done-title">
-                  {isolatedLevel ? `${levelLabel(isolatedLevel)} em dia` : 'Sessão concluída'}
+                  {limitsReached
+                    ? 'Limites de hoje concluídos'
+                    : isolatedLevel
+                    ? `${levelLabel(isolatedLevel)} em dia`
+                    : 'Sessão concluída'}
                 </h2>
                 <p className="study-done-summary tabular-nums">
                   {reviewedInSession > 0
                     ? `${reviewedInSession} ${reviewedInSession === 1 ? 'cartão revisado' : 'cartões revisados'} nesta sessão.`
                     : 'Nenhum cartão agendado para agora.'}
+                  {limitsReached && (
+                    <>
+                      {' '}
+                      {hiddenByLimits} {hiddenByLimits === 1 ? 'cartão ficou' : 'cartões ficaram'} fora
+                      dos limites diários.
+                    </>
+                  )}
                 </p>
                 <div className="study-done-actions">
+                  {limitsReached && (
+                    <button
+                      type="button"
+                      onClick={() => setFreePractice(true)}
+                      className="study-done-primary"
+                    >
+                      Praticar além do limite
+                    </button>
+                  )}
+                  {!limitsReached && !studyAhead && queueCounts.futureCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={startAheadSession}
+                      className={isolatedLevel ? 'study-done-secondary' : 'study-done-primary'}
+                    >
+                      Estudar adiantado
+                    </button>
+                  )}
                   {isolatedLevel && (
-                    <button type="button" onClick={() => handleSwitchLevel(null)} className="study-done-primary">
+                    <button
+                      type="button"
+                      onClick={() => handleSwitchLevel(null)}
+                      className={limitsReached ? 'study-done-secondary' : 'study-done-primary'}
+                    >
                       Estudar todos os níveis
                     </button>
                   )}
                   <button
                     type="button"
                     onClick={onExit}
-                    className={isolatedLevel ? 'study-done-secondary' : 'study-done-primary'}
+                    className={
+                      (isolatedLevel || limitsReached || (!studyAhead && queueCounts.futureCount > 0))
+                        ? 'study-done-secondary'
+                        : 'study-done-primary'
+                    }
                   >
                     Voltar ao painel
                   </button>

@@ -13,6 +13,7 @@ import {
 interface FSRSSettingsProps {
   fsrsOptions: FSRSOptions;
   onUpdateFSRSOptions: (options: FSRSOptions) => void;
+  onRequestMigration?: () => void;
   theme: 'dark' | 'light';
 }
 
@@ -25,6 +26,7 @@ const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
 export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
   fsrsOptions,
   onUpdateFSRSOptions,
+  onRequestMigration,
   theme,
 }) => {
   const levelRetention = fsrsOptions.retention_by_level ?? {};
@@ -71,21 +73,40 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
 
   const applyWeights = () => {
     const parsed = parseWeights(weightsDraft);
-    if (!parsed) {
-      setWeightsError(
-        `${WEIGHTS_COUNT} números separados por vírgula; os quatro primeiros positivos.`
-      );
+    if (!parsed.weights) {
+      setWeightsError(parsed.error ?? `Use ${WEIGHTS_COUNT} pesos FSRS-6.`);
       return;
     }
-    onUpdateFSRSOptions({ ...fsrsOptions, w: parsed });
+    onUpdateFSRSOptions({ ...fsrsOptions, w: parsed.weights, fsrsVersion: 6 });
   };
 
   const restoreWeights = () => {
-    onUpdateFSRSOptions({ ...fsrsOptions, w: [...DEFAULT_FSRS_OPTIONS.w] });
+    onUpdateFSRSOptions({
+      ...fsrsOptions,
+      w: [...DEFAULT_FSRS_OPTIONS.w],
+      fsrsVersion: 6,
+    });
   };
 
   return (
     <div className="ledger border-t border-[var(--separator)]">
+      {fsrsOptions.fsrsVersion === 5 && (
+        <div className="py-3 space-y-2">
+          <p className="text-sm leading-relaxed">
+            Motor FSRS-5 (legado). O planejador por prazo fica desativado até a atualização.
+          </p>
+          {onRequestMigration && (
+            <button
+              type="button"
+              onClick={onRequestMigration}
+              className="min-h-10 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer transition-colors"
+            >
+              Atualizar para FSRS-6
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="py-3 space-y-2">
         <div className="flex items-center justify-between gap-4">
           <label htmlFor="retention-global" className="text-sm">Retenção desejada</label>
@@ -181,39 +202,41 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
         />
       </div>
 
-      <details className="group py-1">
-        <summary className="flex items-center justify-between min-h-11 cursor-pointer list-none text-sm select-none [&::-webkit-details-marker]:hidden">
-          Pesos FSRS
-          <ChevronDown aria-hidden="true" className="w-4 h-4 ink-tertiary transition-transform group-open:rotate-180" />
-        </summary>
-        <div className="pb-3 space-y-2">
-          <textarea
-            rows={3}
-            value={weightsDraft}
-            onChange={(e) => setWeightsDraft(e.target.value)}
-            spellCheck={false}
-            aria-label="Pesos FSRS"
-            className={`${fieldClass} w-full py-2 text-xs font-mono resize-y`}
-          />
-          {weightsError && <p className="text-xs text-red-700 dark:text-red-300">{weightsError}</p>}
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={applyWeights}
-              className="min-h-10 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer transition-colors"
-            >
-              Aplicar
-            </button>
-            <button
-              type="button"
-              onClick={restoreWeights}
-              className="min-h-10 px-3.5 rounded-xl font-medium text-sm cursor-pointer transition-colors ink-secondary hover:text-[var(--text-fg)]"
-            >
-              Padrão
-            </button>
+      {fsrsOptions.fsrsVersion !== 5 && (
+        <details className="group py-1">
+          <summary className="flex items-center justify-between min-h-11 cursor-pointer list-none text-sm select-none [&::-webkit-details-marker]:hidden">
+            Pesos FSRS-6
+            <ChevronDown aria-hidden="true" className="w-4 h-4 ink-tertiary transition-transform group-open:rotate-180" />
+          </summary>
+          <div className="pb-3 space-y-2">
+            <textarea
+              rows={3}
+              value={weightsDraft}
+              onChange={(e) => setWeightsDraft(e.target.value)}
+              spellCheck={false}
+              aria-label="Pesos FSRS-6"
+              className={`${fieldClass} w-full py-2 text-xs font-mono resize-y`}
+            />
+            {weightsError && <p className="text-xs text-red-700 dark:text-red-300">{weightsError}</p>}
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={applyWeights}
+                className="min-h-10 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer transition-colors"
+              >
+                Aplicar
+              </button>
+              <button
+                type="button"
+                onClick={restoreWeights}
+                className="min-h-10 px-3.5 rounded-xl font-medium text-sm cursor-pointer transition-colors ink-secondary hover:text-[var(--text-fg)]"
+              >
+                Padrão
+              </button>
+            </div>
           </div>
-        </div>
-      </details>
+        </details>
+      )}
     </div>
   );
 };

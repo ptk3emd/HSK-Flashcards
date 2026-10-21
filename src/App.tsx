@@ -18,6 +18,7 @@ import {
   saveAuthSkipped,
 } from './lib/storage';
 import { CloudSync, Session, SyncStatus, getSupabase, isCloudEnabled } from './lib/sync';
+import { migrateToFSRS6 } from './lib/fsrs';
 import { parseUserProfile } from './lib/profile';
 import { AuthScreen } from './components/AuthScreen';
 import { CourseSwitch } from './components/CourseSwitch';
@@ -30,6 +31,7 @@ import { ViewLoading, DecksSkeleton } from './components/ViewLoading';
 import { AudioVoiceSettings } from './components/AudioVoiceSettings';
 import { AnkiExportSettings } from './components/AnkiExportSettings';
 import { FSRSSettings } from './components/FSRSSettings';
+import { FSRSMigrationDialog } from './components/FSRSMigrationDialog';
 import { StudyOptionsSettings } from './components/StudyOptionsSettings';
 import { useSystemBarHidden } from './components/useSystemBarHidden';
 import { usePrefetched } from './components/usePrefetched';
@@ -65,9 +67,13 @@ export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
   const [deckConfig, setDeckConfig] = useState<DeckConfig>(loadDeckConfig());
   const [fsrsOptions, setFSRSOptions] = useState<FSRSOptions>(loadFSRSOptions());
+  const [fsrsMigrationOpen, setFSRSMigrationOpen] = useState(false);
+  const migrationPrompted = useRef(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(getStoredTheme());
   const [activeTab, setActiveTab] = useState<'study' | 'decks' | 'browser' | 'learn' | 'stats' | 'settings'>('decks');
   const [isolatedStudyLevel, setIsolatedStudyLevel] = useState<string | null>(null);
+  const [studyStartsFree, setStudyStartsFree] = useState(false);
+  const [studyStartsAhead, setStudyStartsAhead] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Cloud account: off entirely when the build has no Supabase key
@@ -164,14 +170,51 @@ export default function App() {
     saveFSRSOptions(options);
   };
 
+  useEffect(() => {
+    if (!isLoaded || fsrsOptions.fsrsVersion !== 5 || migrationPrompted.current) return;
+    let dismissed = false;
+    try {
+      dismissed = window.sessionStorage.getItem('fsrs6-migration-dismissed') === '1';
+    } catch {
+      // Storage can be unavailable; showing the prompt is still safe.
+    }
+    if (dismissed) return;
+    migrationPrompted.current = true;
+    setFSRSMigrationOpen(true);
+  }, [isLoaded, fsrsOptions.fsrsVersion]);
+
+  useEffect(() => {
+    if (fsrsOptions.fsrsVersion !== 5) setFSRSMigrationOpen(false);
+  }, [fsrsOptions.fsrsVersion]);
+
+  const handleCloseFSRSMigration = () => {
+    try {
+      window.sessionStorage.setItem('fsrs6-migration-dismissed', '1');
+    } catch {
+      // Ignore storage failures.
+    }
+    setFSRSMigrationOpen(false);
+  };
+
+  const handleMigrateFSRS = () => {
+    handleUpdateFSRSOptions(migrateToFSRS6(fsrsOptions));
+    setFSRSMigrationOpen(false);
+  };
+
   const handleToggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme);
     saveStoredTheme(nextTheme);
   };
 
-  const handleStartStudy = (isolatedLevel?: string | null) => {
+  const handleStartStudy = (
+    isolatedLevel?: string | null,
+    freePractice = false,
+    ahead = false
+  ) => {
     setIsolatedStudyLevel(isolatedLevel || null);
+    setStudyStartsFree(freePractice);
+    setStudyStartsAhead(ahead && !freePractice);
     setActiveTab('study');
   };
 
@@ -231,7 +274,13 @@ export default function App() {
         onToggleTheme={handleToggleTheme}
         onUpdateCards={handleUpdateCards}
         onUpdateDeckConfig={handleUpdateDeckConfig}
-        onExit={() => setActiveTab('decks')}
+        startFreePractice={studyStartsFree}
+        startAhead={studyStartsAhead}
+        onExit={() => {
+          setStudyStartsFree(false);
+          setStudyStartsAhead(false);
+          setActiveTab('decks');
+        }}
       />
     );
   }
@@ -250,9 +299,11 @@ export default function App() {
           <DeckDashboard
             cards={cards}
             deckConfig={deckConfig}
+            fsrsOptions={fsrsOptions}
             onUpdateDeckConfig={handleUpdateDeckConfig}
             onStartStudy={handleStartStudy}
             onAddCards={handleAddCards}
+            onRequestMigration={() => setFSRSMigrationOpen(true)}
             onNavigateTab={setActiveTab}
           />
         )}
@@ -336,6 +387,7 @@ export default function App() {
               <FSRSSettings
                 fsrsOptions={fsrsOptions}
                 onUpdateFSRSOptions={handleUpdateFSRSOptions}
+                onRequestMigration={() => setFSRSMigrationOpen(true)}
                 theme={theme}
               />
 
@@ -393,6 +445,12 @@ export default function App() {
           </div>
         )}
       </main>
+
+      <FSRSMigrationDialog
+        open={fsrsMigrationOpen}
+        onClose={handleCloseFSRSMigration}
+        onMigrate={handleMigrateFSRS}
+      />
 
       {/* Floating bottom bar, in the cards' glass */}
       <nav

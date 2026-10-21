@@ -54,14 +54,7 @@ export function buildAnkiCsv(cards: Card[], logs: ReviewLog[]): string {
     '#columns:Frente,Verso,Tags,Baralho,ID,DadosUsuario', ...rows].join('\r\n') + '\r\n';
 }
 
-/** Explicit app-owned keys only; fail rather than silently export unreadable user data. */
-export function readUserBackup(storage: Pick<Storage, 'getItem'>): Record<string, unknown> {
-  return Object.fromEntries(Object.values(STORAGE_KEYS).flatMap(key => {
-    const value = storage.getItem(key);
-    if (value === null) return [];
-    return [[key, value]];
-  }));
-}
+export { readUserBackup } from './storage';
 
 /**
  * The saved review history, or an empty list when this device never saved any.

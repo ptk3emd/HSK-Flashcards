@@ -4,6 +4,7 @@ import {
   LocalChange,
   OutboxEntry,
   STORAGE_KEYS,
+  dropSentOutboxEntries,
   loadDeckConfig,
   loadFSRSOptions,
   loadGrammarStudied,
@@ -16,7 +17,15 @@ import {
   saveSyncOutbox,
 } from './storage';
 import { ACTIVE_COURSE } from './courseId';
-import { isTouched, mergeAttempts, mergeCards, mergeIds, parseRemoteProgress } from './syncMerge';
+import {
+  isTouched,
+  mergeAttempts,
+  mergeCards,
+  mergeDeckConfig,
+  mergeIds,
+  parseRemoteProgress,
+  preferNewerFSRS,
+} from './syncMerge';
 
 /**
  * Cloud copy of the study data in Supabase. The app keeps working from localStorage;
@@ -122,8 +131,12 @@ export class CloudSync {
     if (remote) {
       const cards = mergeCards(local.cards, remote.cards);
       // Settings follow the account once it has any: the last device to save them wins
-      const deckConfig = remote.deck_config ? { ...local.deckConfig, ...remote.deck_config } : local.deckConfig;
-      const fsrsOptions = remote.fsrs_options ? sanitizeFSRSOptions(remote.fsrs_options) : local.fsrsOptions;
+      const deckConfig = remote.deck_config
+        ? mergeDeckConfig(local.deckConfig, remote.deck_config)
+        : local.deckConfig;
+      const fsrsOptions = remote.fsrs_options
+        ? preferNewerFSRS(local.fsrsOptions, sanitizeFSRSOptions(remote.fsrs_options))
+        : local.fsrsOptions;
       writeLocal(STORAGE_KEYS.cards, cards);
       writeLocal(STORAGE_KEYS.settings, deckConfig);
       writeLocal(STORAGE_KEYS.fsrs, fsrsOptions);
@@ -229,8 +242,9 @@ export class CloudSync {
           console.error('Failed to send reviews', error);
           break;
         }
-        // Re-read: answers may have been queued while this request was in flight
-        queue = loadSyncOutbox().slice(run.length);
+        // Re-read: answers may have been queued while this request was in flight. Remove
+        // exactly what was sent, so an undo queued meanwhile is never dropped by accident.
+        queue = dropSentOutboxEntries(loadSyncOutbox(), run);
         saveSyncOutbox(queue);
       }
     } finally {
