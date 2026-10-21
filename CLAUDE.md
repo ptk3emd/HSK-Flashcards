@@ -88,6 +88,7 @@ npm run seed:it
     │   ├── RetentionCalibration.tsx # Calibração da retenção prevista × real
     │   ├── SettingsModal.tsx       # Configurações gerais (FSRS, retenção alvo, áudio, tema)
     │   ├── StatsView.tsx           # Painel de estatísticas, curva FSRS e projeção de revisões
+    │   ├── StudyPlanner.tsx        # Objetivo: níveis, data da prova, ritmo e tempo por dia
     │   ├── StudySession, StudyToolbar  # Sessão: cartões, fila, escada de progresso e atalhos
     │   └── ViewLoading.tsx         # Esqueletos de carregamento das abas
     │
@@ -105,8 +106,12 @@ npm run seed:it
     │   ├── authMessages.ts         # Mensagens de erro de autenticação em pt-BR
     │   ├── calibration.ts          # Retenção prevista × real (usada na calibração)
     │   ├── course.ts, courseId.ts  # Config por curso (textos, meta, exportação) e curso ativo
-    │   ├── fsrs.ts                 # Implementação matemática do algoritmo FSRS
+    │   ├── dailyUsage.ts           # Uso do dia (novos e revisões já feitos) e limites restantes
+    │   ├── fsrs.ts                 # Implementação matemática do algoritmo FSRS (FSRS-6, testes contra ts-fsrs)
     │   ├── gestures.ts             # Mapa de gestos da sessão de estudo
+    │   ├── loadBalance.ts          # Espalha cada revisão para o dia menos cheio dentro do fuzz
+    │   ├── planner.ts, planner.worker.ts  # Simulação do plano e do Objetivo (novos/dia, tempo, maduras)
+    │   ├── studyPlan.ts            # Plano/Objetivo: datas do dia de estudo, limites aplicados, teto pela prova
     │   ├── handwriting.ts          # Comparação de traços para a busca por desenho
     │   ├── learn.ts                # Histórias, simulados e banco de questões da aba Aprender
     │   ├── passwordPolicy.ts       # Regras de senha do cadastro (com testes)

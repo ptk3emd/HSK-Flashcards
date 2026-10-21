@@ -19,6 +19,7 @@ import {
 } from './lib/storage';
 import { CloudSync, Session, SyncStatus, getSupabase, isCloudEnabled } from './lib/sync';
 import { migrateToFSRS6 } from './lib/fsrs';
+import { effectiveFSRSOptions, isGoalPlan } from './lib/studyPlan';
 import { parseUserProfile } from './lib/profile';
 import { AuthScreen } from './components/AuthScreen';
 import { CourseSwitch } from './components/CourseSwitch';
@@ -74,6 +75,7 @@ export default function App() {
   const [isolatedStudyLevel, setIsolatedStudyLevel] = useState<string | null>(null);
   const [studyStartsFree, setStudyStartsFree] = useState(false);
   const [studyStartsAhead, setStudyStartsAhead] = useState(false);
+  const [studyAheadUntil, setStudyAheadUntil] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Cloud account: off entirely when the build has no Supabase key
@@ -210,11 +212,13 @@ export default function App() {
   const handleStartStudy = (
     isolatedLevel?: string | null,
     freePractice = false,
-    ahead = false
+    ahead = false,
+    aheadUntil: string | null = null
   ) => {
     setIsolatedStudyLevel(isolatedLevel || null);
     setStudyStartsFree(freePractice);
     setStudyStartsAhead(ahead && !freePractice);
+    setStudyAheadUntil(ahead && !freePractice ? aheadUntil : null);
     setActiveTab('study');
   };
 
@@ -266,7 +270,7 @@ export default function App() {
       <StudySession
         cards={cards}
         deckConfig={deckConfig}
-        fsrsOptions={fsrsOptions}
+        fsrsOptions={effectiveFSRSOptions(fsrsOptions, deckConfig)}
         theme={theme}
         isolatedLevel={isolatedStudyLevel}
         onSelectIsolatedLevel={setIsolatedStudyLevel}
@@ -276,9 +280,11 @@ export default function App() {
         onUpdateDeckConfig={handleUpdateDeckConfig}
         startFreePractice={studyStartsFree}
         startAhead={studyStartsAhead}
+        aheadUntil={studyAheadUntil}
         onExit={() => {
           setStudyStartsFree(false);
           setStudyStartsAhead(false);
+          setStudyAheadUntil(null);
           setActiveTab('decks');
         }}
       />
@@ -417,6 +423,12 @@ export default function App() {
                     />
                   </div>
                 ))}
+                {isGoalPlan(deckConfig.studyPlan) && deckConfig.studyPlan.applied && (
+                  <p className="py-3 text-xs ink-tertiary">
+                    Com o objetivo ativo, valem {deckConfig.studyPlan.applied.newPerDay} novos e até{' '}
+                    {deckConfig.studyPlan.applied.reviewsPerDay} revisões por dia, recalculados a cada dia.
+                  </p>
+                )}
               </div>
             </section>
 

@@ -1,10 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { DeckConfig, StudyPlan } from '../types/card';
+import { Card, DeckConfig, StudyPlan } from '../types/card';
+import { DEFAULT_FSRS_OPTIONS } from './fsrs';
 import {
   addDaysToKey,
+  capDueForPlan,
   createStudyPlan,
   dateKeyOf,
+  effectiveDailyLimits,
+  MAX_INTENSIVE_MINUTES,
   daysBetweenKeys,
   mergeStudyPlan,
   parseDateKey,
@@ -99,4 +103,56 @@ test('deck settings merge without losing the newer local plan', () => {
   const merged = mergeDeckConfig(local, remote);
   assert.equal(merged.dailyNewLimit, 50);
   assert.deepEqual(merged.studyPlan, local.studyPlan);
+});
+
+test('a goal plan keeps its fields and the applied limits replace the settings', () => {
+  const raw = {
+    targetDate: '2026-12-20',
+    targetRetention: 0.9,
+    enabled: true,
+    updatedAt: '2026-10-20T12:00:00.000Z',
+    levels: ['HSK 1', 'HSK 1', 7],
+    pace: 'intensive',
+    minutesPerDay: 9999,
+    applied: { date: '2026-10-20', newPerDay: 30, reviewsPerDay: 400, retention: 0.95 },
+  };
+  const plan = sanitizeStudyPlan(raw);
+  assert.ok(plan);
+  assert.deepEqual(plan.levels, ['HSK 1']);
+  assert.equal(plan.pace, 'intensive');
+  assert.equal(plan.minutesPerDay, MAX_INTENSIVE_MINUTES);
+  assert.equal(plan.goal, 'mature');
+  const limits = effectiveDailyLimits({ dailyNewLimit: 20, dailyReviewLimit: 100, studyPlan: plan });
+  assert.deepEqual(limits, { dailyNewLimit: 30, dailyReviewLimit: 400 });
+  assert.deepEqual(effectiveDailyLimits({ dailyNewLimit: 20, dailyReviewLimit: 100 }), {
+    dailyNewLimit: 20,
+    dailyReviewLimit: 100,
+  });
+});
+
+test('a review falling after the exam with low recall then is pulled to the day before it', () => {
+  const now = new Date(2026, 9, 20, 12, 0, 0);
+  const plan = createStudyPlan('2026-11-10', 0.9, now, { levels: ['HSK 1'], pace: 'dynamic', minutesPerDay: 45 });
+  const card: Card = {
+    id: 'a',
+    hanzi: '字',
+    pinyin: 'zi',
+    ptbr: 'palavra',
+    level: 'HSK 1',
+    state: 2,
+    due: new Date(2026, 11, 20, 12).toISOString(),
+    stability: 10,
+    difficulty: 5,
+    elapsed_days: 0,
+    scheduled_days: 61,
+    reps: 3,
+    lapses: 0,
+    last_review: now.toISOString(),
+  };
+  const capped = capDueForPlan(card, plan, ['HSK 1'], now, DEFAULT_FSRS_OPTIONS.w, 0);
+  assert.equal(studyDayKey(new Date(capped.due)), '2026-11-09');
+  const strong = { ...card, stability: 2000 };
+  assert.equal(capDueForPlan(strong, plan, ['HSK 1'], now, DEFAULT_FSRS_OPTIONS.w, 0), strong);
+  const other = { ...card, level: 'HSK 2' };
+  assert.equal(capDueForPlan(other, plan, ['HSK 1'], now, DEFAULT_FSRS_OPTIONS.w, 0), other);
 });

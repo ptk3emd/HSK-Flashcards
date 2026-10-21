@@ -64,11 +64,27 @@ export interface FSRSOptions {
 
 export type VoiceGenderPreference = 'female' | 'male' | 'auto';
 
+export type StudyPlanPace = 'dynamic' | 'intensive';
+export type StudyPlanGoal = 'retention' | 'mature';
+
+/** Daily limits the planner solved for, written back so the study queue can follow them */
+export interface StudyPlanApplied {
+  date: string; // YYYY-MM-DD study day the solution was computed for
+  newPerDay: number;
+  reviewsPerDay: number;
+  retention: number; // request retention used for the plan's levels (raised in intensive mode)
+}
+
 export interface StudyPlan {
-  targetDate: string; // YYYY-MM-DD, local calendar day
+  targetDate: string; // YYYY-MM-DD, local calendar day; also the exam date
   targetRetention: number; // 0.7 - 0.99
   enabled: boolean;
   updatedAt: string; // ISO date, used when merging devices
+  levels?: string[]; // Levels of the goal; missing on old plans, which use the active levels
+  pace?: StudyPlanPace; // Missing on old plans: they only evaluate the current limits
+  minutesPerDay?: number; // Time budget that bounds new cards and reviews
+  goal?: StudyPlanGoal; // 'mature': every word with an interval of 21 days or more on the date
+  applied?: StudyPlanApplied;
 }
 
 export interface DeckConfig {

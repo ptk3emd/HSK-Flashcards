@@ -4,24 +4,33 @@ import {
   CalendarDays,
   CheckCircle2,
   Loader2,
+  FastForward,
   Pencil,
   RefreshCw,
   X,
 } from 'lucide-react';
-import { Card, DeckConfig, FSRSOptions, StudyPlan } from '../types/card';
+import { Card, DeckConfig, FSRSOptions, StudyPlan, StudyPlanApplied, StudyPlanPace } from '../types/card';
 import {
   addDaysToKey,
   createStudyPlan,
   DEFAULT_STUDY_PLAN_DAYS,
+  DEFAULT_STUDY_PLAN_MINUTES,
   DEFAULT_STUDY_PLAN_RETENTION,
   isDateKey,
+  isGoalPlan,
+  MAX_DYNAMIC_MINUTES,
+  MAX_INTENSIVE_MINUTES,
   MAX_STUDY_PLAN_DAYS,
+  MIN_STUDY_PLAN_MINUTES,
+  planLevels,
   STUDY_PLAN_RETENTION_MAX,
   STUDY_PLAN_RETENTION_MIN,
   todayKey,
 } from '../lib/studyPlan';
 import { loadReviewLogs } from '../lib/storage';
 import { useNow } from './useNow';
+import { ALL_HSK_LEVELS } from '../data/defaultDecks';
+import { levelLabel } from '../lib/course';
 import type { PlannerInput, PlannerResult } from '../lib/planner';
 
 interface StudyPlannerProps {
@@ -31,6 +40,8 @@ interface StudyPlannerProps {
   onUpdateDeckConfig: (config: DeckConfig) => void;
   onRequestMigration: () => void;
   onOpenSettings: () => void;
+  /** Starts an ahead session up to the given study day: the intensive reinforcement */
+  onReinforce: (until: string) => void;
 }
 
 interface WorkerResponse {
@@ -145,6 +156,109 @@ const PlannerMetrics: React.FC<{ result: PlannerResult; onOpenSettings: () => vo
   );
 };
 
+const goalVerdict = (result: PlannerResult): string => {
+  const goal = result.goal;
+  if (!goal) return verdict(result);
+  if (result.feasible) {
+    return `Cabe no prazo: cerca de ${percent(result.matureShare)} das palavras maduras na data.`;
+  }
+  if (goal.neededMinutesPerDay) {
+    return `Não cabe em ${goal.minutesPerDay} min por dia: precisa de cerca de ${goal.neededMinutesPerDay} min.`;
+  }
+  return 'O prazo é curto demais para as palavras amadurecerem. Escolha uma data mais distante.';
+};
+
+const GoalMetrics: React.FC<{
+  result: PlannerResult;
+  onReinforce?: () => void;
+}> = ({ result, onReinforce }) => {
+  const goal = result.goal;
+  if (!goal) return null;
+  const good = result.feasible;
+  const rows: { label: string; value: string; detail?: string }[] = [
+    {
+      label: 'Hoje',
+      value: `${goal.newToday} novos`,
+      detail: `até ${goal.reviewsPerDay} revisões · faltam ~${goal.minutesToday} min`,
+    },
+    {
+      label: 'Ritmo',
+      value: `${goal.newPerDay} novos/dia`,
+      detail: `pico de ~${goal.peakMinutes} min · ${goal.minutesPerDay} min disponíveis`,
+    },
+    {
+      label: 'Maduras na data',
+      value: percent(result.matureShare),
+      detail: `retenção prevista ${percent(result.retention)}`,
+    },
+    {
+      label: goal.pace === 'intensive' ? 'Retenção do intensivo' : 'Retenção do agendador',
+      value: percent(goal.retention),
+      detail: goal.paceMeasured
+        ? `seu ritmo: ${number(goal.secondsPerNew)} s por novo, ${number(goal.secondsPerReview)} s por revisão`
+        : 'ritmo padrão até haver histórico suficiente',
+    },
+  ];
+  return (
+    <div className="mt-4 space-y-4">
+      <div
+        className={`flex items-start gap-2.5 rounded-xl border px-3.5 py-3 ${
+          good
+            ? 'border-emerald-600/25 bg-emerald-600/10 text-emerald-900 dark:text-emerald-100'
+            : 'border-amber-600/25 bg-amber-500/10 text-amber-950 dark:text-amber-100'
+        }`}
+        role="status"
+        aria-live="polite"
+      >
+        {good ? (
+          <CheckCircle2 className="mt-0.5 w-4 h-4 shrink-0" aria-hidden="true" />
+        ) : (
+          <AlertTriangle className="mt-0.5 w-4 h-4 shrink-0" aria-hidden="true" />
+        )}
+        <p className="text-sm leading-snug">{goalVerdict(result)}</p>
+      </div>
+      <ul className="ledger border-y border-[var(--separator)]">
+        {rows.map((row) => (
+          <li key={row.label} className="flex items-center gap-4 py-2.5">
+            <span className="flex-1 min-w-0">
+              <span className="block text-sm font-medium">{row.label}</span>
+              {row.detail && <span className="block text-xs ink-tertiary tabular">{row.detail}</span>}
+            </span>
+            <span className="tabular text-base font-semibold text-right">{row.value}</span>
+          </li>
+        ))}
+      </ul>
+      {goal.pace === 'intensive' && onReinforce && (
+        <button
+          type="button"
+          onClick={onReinforce}
+          className="w-full min-h-11 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14]"
+        >
+          <FastForward className="w-4 h-4" aria-hidden="true" />
+          Reforço: adiantar os próximos 3 dias
+        </button>
+      )}
+    </div>
+  );
+};
+
+const sameApplied = (left: StudyPlanApplied | undefined, right: StudyPlanApplied) =>
+  !!left &&
+  left.date === right.date &&
+  left.newPerDay === right.newPerDay &&
+  left.reviewsPerDay === right.reviewsPerDay &&
+  left.retention === right.retention;
+
+const appliedFrom = (result: PlannerResult): StudyPlanApplied | undefined =>
+  result.goal
+    ? {
+        date: result.today,
+        newPerDay: result.goal.newToday,
+        reviewsPerDay: result.goal.reviewsPerDay,
+        retention: result.goal.retention,
+      }
+    : undefined;
+
 export const StudyPlanner: React.FC<StudyPlannerProps> = ({
   cards,
   deckConfig,
@@ -152,11 +266,16 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
   onUpdateDeckConfig,
   onRequestMigration,
   onOpenSettings,
+  onReinforce,
 }) => {
   const activePlan = deckConfig.studyPlan?.enabled ? deckConfig.studyPlan : undefined;
   const activeCards = useMemo(
     () => cards.filter((card) => deckConfig.activeLevels.includes(card.level) && !card.suspended),
     [cards, deckConfig.activeLevels]
+  );
+  const loadedLevels = useMemo(
+    () => ALL_HSK_LEVELS.filter((level) => cards.some((card) => card.level === level)),
+    [cards]
   );
   const now = useNow();
   const today = todayKey(now, deckConfig.studyDayStartHour);
@@ -167,6 +286,18 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
   const [draftDate, setDraftDate] = useState(activePlan?.targetDate ?? defaultDate);
   const [draftRetention, setDraftRetention] = useState(
     activePlan?.targetRetention ?? DEFAULT_STUDY_PLAN_RETENTION
+  );
+  const [draftLevels, setDraftLevels] = useState<string[]>(
+    activePlan ? planLevels(activePlan, deckConfig.activeLevels) : deckConfig.activeLevels
+  );
+  const [draftPace, setDraftPace] = useState<StudyPlanPace>(activePlan?.pace ?? 'dynamic');
+  const [draftMinutes, setDraftMinutes] = useState(
+    activePlan?.minutesPerDay ?? DEFAULT_STUDY_PLAN_MINUTES
+  );
+  const maxMinutes = draftPace === 'intensive' ? MAX_INTENSIVE_MINUTES : MAX_DYNAMIC_MINUTES;
+  const draftCards = useMemo(
+    () => cards.filter((card) => draftLevels.includes(card.level) && !card.suspended),
+    [cards, draftLevels]
   );
   const [result, setResult] = useState<PlannerResult | null>(null);
   const [resultPlan, setResultPlan] = useState<StudyPlan | null>(null);
@@ -192,7 +323,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
   const requestPlan = useCallback(
     (plan: StudyPlan) => {
       const input: PlannerInput = {
-        cards: activeCards,
+        cards: isGoalPlan(plan) ? cards : activeCards,
         deckConfig,
         fsrsOptions,
         logs: loadReviewLogs(),
@@ -254,7 +385,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
       }
       workerRef.current.postMessage({ id: request, input });
     },
-    [activeCards, deckConfig, fsrsOptions]
+    [activeCards, cards, deckConfig, fsrsOptions]
   );
 
   useEffect(() => {
@@ -267,8 +398,12 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
       activePlan.updatedAt,
       activePlan.targetDate,
       activePlan.targetRetention,
+      activePlan.pace ?? '',
+      activePlan.minutesPerDay ?? 0,
+      (activePlan.levels ?? []).join(','),
       today,
       activeCards.length,
+      cards.length,
       deckConfig.dailyNewLimit,
       deckConfig.dailyReviewLimit,
       deckConfig.studyDayStartHour,
@@ -286,6 +421,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
     mode,
     activePlan,
     activeCards.length,
+    cards.length,
     today,
     deckConfig.dailyNewLimit,
     deckConfig.dailyReviewLimit,
@@ -300,13 +436,55 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
   ]);
 
   const validity =
-    isDateKey(draftDate) && draftDate >= today && draftDate <= maxDate && activeCards.length > 0;
+    isDateKey(draftDate) && draftDate > today && draftDate <= maxDate && draftCards.length > 0;
   const previewReady =
     !!result &&
     !loading &&
     !!resultPlan &&
     resultPlan.targetDate === draftDate &&
-    resultPlan.targetRetention === draftRetention;
+    resultPlan.targetRetention === draftRetention &&
+    resultPlan.pace === draftPace &&
+    resultPlan.minutesPerDay === draftMinutes &&
+    (resultPlan.levels ?? []).join(',') === draftLevels.join(',');
+
+  // A goal follows the solved limits: every fresh solution for the saved plan is written back,
+  // so the study queue picks up today's numbers (and tomorrow's, when the plan reruns)
+  useEffect(() => {
+    if (!activePlan || !isGoalPlan(activePlan) || !result || loading) return;
+    if (!resultPlan || resultPlan.updatedAt !== activePlan.updatedAt) return;
+    const applied = appliedFrom(result);
+    if (!applied || sameApplied(activePlan.applied, applied)) return;
+    skipAutoRef.current = true;
+    onUpdateDeckConfig({ ...deckConfig, studyPlan: { ...activePlan, applied } });
+  }, [result, resultPlan, loading, activePlan, deckConfig, onUpdateDeckConfig]);
+
+  const goalDraft = () =>
+    createStudyPlan(draftDate, draftRetention, new Date(), {
+      levels: draftLevels,
+      pace: draftPace,
+      minutesPerDay: draftMinutes,
+    });
+
+  const toggleLevel = (level: string) => {
+    setDraftLevels((current) =>
+      current.includes(level)
+        ? current.filter((item) => item !== level)
+        : ALL_HSK_LEVELS.filter((item) => item === level || current.includes(item))
+    );
+    resetPreview();
+  };
+
+  const handlePace = (pace: StudyPlanPace) => {
+    setDraftPace(pace);
+    const cap = pace === 'intensive' ? MAX_INTENSIVE_MINUTES : MAX_DYNAMIC_MINUTES;
+    setDraftMinutes((minutes) => Math.min(minutes, cap));
+    resetPreview();
+  };
+
+  const handleMinutes = (minutes: number) => {
+    setDraftMinutes(minutes);
+    resetPreview();
+  };
 
   const resetPreview = () => {
     requestRef.current += 1;
@@ -329,14 +507,16 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
 
   const handleCalculate = () => {
     if (!validity) return;
-    requestPlan(createStudyPlan(draftDate, draftRetention));
+    requestPlan(goalDraft());
   };
 
   const handleSave = () => {
-    if (!previewReady) return;
-    const plan = createStudyPlan(draftDate, draftRetention);
+    if (!previewReady || !result || !resultPlan) return;
+    const applied = appliedFrom(result);
+    const plan: StudyPlan = { ...resultPlan, updatedAt: new Date().toISOString(), ...(applied ? { applied } : {}) };
     skipAutoRef.current = true;
     onUpdateDeckConfig({ ...deckConfig, studyPlan: plan });
+    setResultPlan(plan);
     setMode('summary');
   };
 
@@ -344,6 +524,9 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
     if (!activePlan) return;
     setDraftDate(activePlan.targetDate);
     setDraftRetention(activePlan.targetRetention);
+    setDraftLevels(planLevels(activePlan, deckConfig.activeLevels));
+    setDraftPace(activePlan.pace ?? 'dynamic');
+    setDraftMinutes(activePlan.minutesPerDay ?? DEFAULT_STUDY_PLAN_MINUTES);
     resetPreview();
     setMode('form');
   };
@@ -397,13 +580,25 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
           {showSummary && activePlan ? (
             <p className="mt-1 text-lg font-semibold">Até {formatDate(activePlan.targetDate)}</p>
           ) : (
-            <p className="mt-1 text-lg font-semibold">Escolha uma data, veja se cabe</p>
+            <p className="mt-1 text-lg font-semibold">Objetivo: níveis, prazo e tempo por dia</p>
           )}
-          <p className="mt-1 text-xs ink-secondary tabular">
-            {activeCards.length} {activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}
-            <span aria-hidden="true"> · </span>
-            {deckConfig.dailyNewLimit} novos e {deckConfig.dailyReviewLimit} revisões por dia
-          </p>
+          {showSummary && isGoalPlan(activePlan) ? (
+            <p className="mt-1 text-xs ink-secondary tabular">
+              {planLevels(activePlan, deckConfig.activeLevels).map(levelLabel).join(', ')}
+              <span aria-hidden="true"> · </span>
+              {activePlan.pace === 'intensive' ? 'Intensivo' : 'Dinâmico'}, {activePlan.minutesPerDay} min por dia
+            </p>
+          ) : showSummary ? (
+            <p className="mt-1 text-xs ink-secondary tabular">
+              {activeCards.length} {activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}
+              <span aria-hidden="true"> · </span>
+              {deckConfig.dailyNewLimit} novos e {deckConfig.dailyReviewLimit} revisões por dia
+            </p>
+          ) : (
+            <p className="mt-1 text-xs ink-secondary tabular">
+              {draftCards.length} {draftCards.length === 1 ? 'palavra' : 'palavras'} no objetivo
+            </p>
+          )}
         </div>
         {showSummary ? (
           <button
@@ -425,7 +620,15 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
             <span>Retenção alvo {percent(activePlan?.targetRetention ?? 0.9)}</span>
             <span aria-hidden="true">·</span>
             <span>
-              {activeCards.filter((card) => card.state === 0).length} novos restantes
+              {(isGoalPlan(activePlan)
+                ? cards.filter(
+                    (card) =>
+                      !card.suspended &&
+                      planLevels(activePlan, deckConfig.activeLevels).includes(card.level)
+                  )
+                : activeCards
+              ).filter((card) => card.state === 0).length}{' '}
+              novos restantes
             </span>
           </div>
 
@@ -448,7 +651,15 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
               </button>
             </div>
           )}
-          {result && <PlannerMetrics result={result} onOpenSettings={onOpenSettings} />}
+          {result &&
+            (result.goal ? (
+              <GoalMetrics
+                result={result}
+                onReinforce={() => onReinforce(addDaysToKey(today, 3))}
+              />
+            ) : (
+              <PlannerMetrics result={result} onOpenSettings={onOpenSettings} />
+            ))}
 
           <div className="mt-5 flex flex-wrap items-center gap-2">
             <button
@@ -464,9 +675,35 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
       ) : (
         <>
           <div className="mt-5 grid gap-4">
+            <div className="space-y-2">
+              <span id="study-plan-levels" className="text-sm font-medium">
+                Níveis
+              </span>
+              <div role="group" aria-labelledby="study-plan-levels" className="flex flex-wrap gap-1.5">
+                {loadedLevels.map((level) => {
+                  const on = draftLevels.includes(level);
+                  return (
+                    <button
+                      key={level}
+                      type="button"
+                      onClick={() => toggleLevel(level)}
+                      aria-pressed={on}
+                      className={`min-h-10 px-3 rounded-xl text-sm font-medium cursor-pointer transition-colors ${
+                        on
+                          ? 'bg-red-600 text-white'
+                          : 'bg-black/[0.05] dark:bg-white/[0.08] ink-secondary hover:text-[var(--text-fg)]'
+                      }`}
+                    >
+                      {levelLabel(level)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="flex items-center justify-between gap-4">
               <label htmlFor="study-plan-date" className="text-sm font-medium">
-                Data alvo
+                Data da prova
               </label>
               <input
                 id="study-plan-date"
@@ -476,6 +713,62 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
                 value={draftDate}
                 onChange={(event) => handleDate(event.target.value)}
                 className="min-h-11 px-3 rounded-xl text-sm font-semibold tabular glass-field focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span id="study-plan-pace" className="text-sm font-medium">
+                Ritmo
+              </span>
+              <div role="group" aria-labelledby="study-plan-pace" className="flex gap-0.5 p-0.5 rounded-xl bg-black/[0.05] dark:bg-white/[0.07]">
+                {(
+                  [
+                    { id: 'dynamic', label: 'Dinâmico' },
+                    { id: 'intensive', label: 'Intensivo' },
+                  ] as const
+                ).map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handlePace(option.id)}
+                    aria-pressed={draftPace === option.id}
+                    className={`min-h-10 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
+                      draftPace === option.id
+                        ? 'bg-white text-ink shadow-sm dark:bg-white/20 dark:text-white'
+                        : 'ink-secondary hover:text-[var(--text-fg)]'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+              <p className="w-full text-xs ink-tertiary">
+                {draftPace === 'intensive'
+                  ? 'Introduz as palavras o quanto antes e sobe a retenção até onde o tempo deixa.'
+                  : 'O mínimo de novas por dia que ainda amadurece tudo no prazo.'}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-4">
+                <label htmlFor="study-plan-minutes" className="text-sm font-medium">
+                  Tempo por dia
+                </label>
+                <span className="tabular text-sm font-semibold">
+                  {draftMinutes >= 60
+                    ? `${Math.floor(draftMinutes / 60)} h${draftMinutes % 60 ? ` ${draftMinutes % 60} min` : ''}`
+                    : `${draftMinutes} min`}
+                </span>
+              </div>
+              <input
+                id="study-plan-minutes"
+                type="range"
+                min={MIN_STUDY_PLAN_MINUTES}
+                max={maxMinutes}
+                step={5}
+                value={draftMinutes}
+                onChange={(event) => handleMinutes(Number(event.target.value))}
+                className="w-full accent-red-600 cursor-pointer"
               />
             </div>
 
@@ -499,7 +792,8 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
             </div>
 
             <p className="text-xs ink-tertiary">
-              A previsão usa seus limites diários e seu histórico. Cartões suspensos ficam fora.
+              O plano usa seu histórico e define os limites diários; perto da prova, as revisões
+              são puxadas para antes dela. Cartões suspensos ficam fora.
             </p>
 
             <button
@@ -515,8 +809,8 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
               )}
               {loading ? 'Simulando...' : 'Calcular previsão'}
             </button>
-            {!activeCards.length && (
-              <p className="text-xs ink-tertiary">Ative um nível com cartões para calcular o plano.</p>
+            {!draftCards.length && (
+              <p className="text-xs ink-tertiary">Escolha um nível com cartões para calcular o plano.</p>
             )}
           </div>
 
@@ -534,7 +828,12 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
             </div>
           )}
 
-          {result && <PlannerMetrics result={result} onOpenSettings={onOpenSettings} />}
+          {result &&
+            (result.goal ? (
+              <GoalMetrics result={result} />
+            ) : (
+              <PlannerMetrics result={result} onOpenSettings={onOpenSettings} />
+            ))}
 
           <div className="mt-5 flex items-center gap-2">
             {activePlan && (
@@ -552,7 +851,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
               disabled={!previewReady}
               className="ml-auto min-h-10 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {activePlan ? 'Salvar alterações' : 'Salvar plano'}
+              {activePlan ? 'Salvar alterações' : 'Começar objetivo'}
             </button>
           </div>
         </>

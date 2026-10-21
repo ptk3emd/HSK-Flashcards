@@ -8,14 +8,20 @@ import { BrandMark } from './BrandHeader';
 import { CourseSwitch } from './CourseSwitch';
 import { StudyPlanner } from './StudyPlanner';
 import { useNow } from './useNow';
-import { Play, Loader2 } from 'lucide-react';
+import { addDaysToKey, effectiveDailyLimits, isDateKey, studyDayKey, todayKey } from '../lib/studyPlan';
+import { Play, Loader2, FastForward } from 'lucide-react';
 
 interface DeckDashboardProps {
   cards: Card[];
   deckConfig: DeckConfig;
   fsrsOptions: FSRSOptions;
   onUpdateDeckConfig: (config: DeckConfig) => void;
-  onStartStudy: (isolatedLevel?: string | null, freePractice?: boolean, ahead?: boolean) => void;
+  onStartStudy: (
+    isolatedLevel?: string | null,
+    freePractice?: boolean,
+    ahead?: boolean,
+    aheadUntil?: string | null
+  ) => void;
   onAddCards: (newCards: Card[]) => void;
   onRequestMigration: () => void;
   onNavigateTab?: (tab: 'study' | 'decks' | 'browser' | 'stats' | 'settings') => void;
@@ -58,7 +64,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
         Date.parse(card.due) > current.getTime()
     );
     const limits = remainingDailyLimits(
-      deckConfig,
+      effectiveDailyLimits(deckConfig),
       dailyUsage(logs, current, deckConfig.studyDayStartHour)
     );
     const plannedNew = Math.min(newCards.length, limits.newCards);
@@ -70,16 +76,29 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
       reviewCount: plannedReviews,
       rawCount: newCards.length + learningDue.length + reviewsDue.length,
       futureCount: futureCards.length,
+      futureDays: futureCards.map((card) =>
+        studyDayKey(new Date(card.due), deckConfig.studyDayStartHour)
+      ),
     };
   }, [
     activeLevelCards,
     deckConfig.dailyNewLimit,
     deckConfig.dailyReviewLimit,
     deckConfig.studyDayStartHour,
+    deckConfig.studyPlan,
     now,
   ]);
 
-  const { dueCount, newCount, learningCount, reviewCount, rawCount, futureCount } = counts;
+  const { dueCount, newCount, learningCount, reviewCount, rawCount, futureCount, futureDays } = counts;
+  const today = todayKey(now, deckConfig.studyDayStartHour);
+  const [aheadUntil, setAheadUntil] = useState(() => addDaysToKey(today, 1));
+  const aheadValid = isDateKey(aheadUntil) && aheadUntil > today;
+  const aheadCount = aheadValid ? futureDays.filter((day) => day <= aheadUntil).length : 0;
+  const aheadPresets = [
+    { days: 1, label: 'Amanhã' },
+    { days: 3, label: '3 d' },
+    { days: 7, label: '7 d' },
+  ];
   const startBeyondLimits = dueCount === 0 && rawCount > 0;
   const startAhead = dueCount === 0 && rawCount === 0 && futureCount > 0;
 
@@ -181,6 +200,57 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
             ? 'Praticar além do limite'
             : 'Estudar'}
         </button>
+
+        {/* Ahead: pull reviews due up to a chosen day, the most forgotten first */}
+        {futureCount > 0 && (
+          <div className="mt-5 pt-4 border-t border-[var(--separator)] space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <label htmlFor="ahead-until" className="text-sm font-medium mr-auto">
+                Adiantar até
+              </label>
+              <div role="group" aria-label="Atalhos" className="flex gap-0.5 p-0.5 rounded-xl bg-black/[0.05] dark:bg-white/[0.07]">
+                {aheadPresets.map((preset) => {
+                  const key = addDaysToKey(today, preset.days);
+                  const active = aheadUntil === key;
+                  return (
+                    <button
+                      key={preset.days}
+                      type="button"
+                      onClick={() => setAheadUntil(key)}
+                      aria-pressed={active}
+                      className={`min-h-10 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
+                        active
+                          ? 'bg-white text-ink shadow-sm dark:bg-white/20 dark:text-white'
+                          : 'ink-secondary hover:text-[var(--text-fg)]'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <input
+                id="ahead-until"
+                type="date"
+                min={addDaysToKey(today, 1)}
+                value={aheadUntil}
+                onChange={(event) => setAheadUntil(event.target.value)}
+                className="min-h-11 px-3 rounded-xl text-sm tabular glass-field focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => onStartStudy(null, false, true, aheadUntil)}
+              disabled={aheadCount === 0}
+              className="w-full min-h-11 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14] disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <FastForward className="w-4 h-4" aria-hidden="true" />
+              {aheadCount === 0
+                ? 'Nada até essa data'
+                : `Adiantar ${aheadCount} ${aheadCount === 1 ? 'revisão' : 'revisões'}`}
+            </button>
+          </div>
+        )}
       </section>
 
       <StudyPlanner
@@ -190,6 +260,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
         onUpdateDeckConfig={onUpdateDeckConfig}
         onRequestMigration={onRequestMigration}
         onOpenSettings={() => onNavigateTab?.('settings')}
+        onReinforce={(until) => onStartStudy(null, false, true, until)}
       />
 
       {/* Levels as a ledger: hanzi numeral, state, count, a hairline of progress */}
