@@ -1,4 +1,4 @@
-import { createClient, Session, SupabaseClient } from '@supabase/supabase-js';
+import { Session, SupabaseClient } from '@supabase/supabase-js';
 import { Card, DeckConfig, FSRSOptions, ReviewLog } from '../types/card';
 import {
   LocalChange,
@@ -33,19 +33,7 @@ import {
  * (user_progress, review_logs), and signing in on another device merges both copies.
  * Without a publishable key at build time the whole feature stays off.
  */
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://iyxolajfrjgqpazvonwm.supabase.co';
-const SUPABASE_KEY: string | undefined = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-export const isCloudEnabled = Boolean(SUPABASE_KEY);
-
-let client: SupabaseClient | null = null;
-export function getSupabase(): SupabaseClient | null {
-  if (!SUPABASE_KEY) return null;
-  client ??= createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
-  });
-  return client;
-}
+export { getSupabase, isCloudEnabled } from './supabaseClient';
 
 /** PostgREST and Postgres errors for a column that does not exist yet. */
 function isMissingCourseColumn(error: { code?: string; message?: string }): boolean {

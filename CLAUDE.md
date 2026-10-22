@@ -13,7 +13,7 @@ Aplicação web progressiva (SPA) de flashcards com repetição espaçada modern
 
 O curso ativo fica em `src/lib/courseId.ts` (lido uma vez; trocar de curso recarrega o app) e tudo o que difere entre eles em `src/lib/course.ts`: `COURSE` (marca, textos, meta da página, nomes de exportação), `levelLabel` e `applyCourseToDocument()`, que aplica título, meta description/og, favicon e theme-color. Cada curso tem as próprias chaves no `localStorage` (os estrangeiros usam o prefixo do curso: `fr_`, `it_`). As paletas vivem em `src/styles/course-fr.css` e `course-it.css`, sob `html.course-fr` e `html.course-it`, e remapeiam a escala `red` do Tailwind para a cor de cada curso.
 
-O vocabulário estrangeiro fica em `src/data/fr/` e `src/data/it/`, e o Supabase recebe o mesmo conteúdo por `npm run seed:fr` e `npm run seed:it` (`scripts/seed-course.ts`; aceita `-- --dry-run` para conferir sem gravar). As histórias e os simulados da aba Aprender ficam em `src/data/learn/` (`hsk1.json`, `hsk2.json`).
+O vocabulário vem das tabelas `hsk_cards`, `fr_cards` e `it_cards` do Supabase e é lido em runtime por `src/lib/vocabulary.ts`; os JSON em `src/data/` são o fallback offline. Uma tabela vazia (como a italiana hoje) também cai no JSON. `npm run seed:hsk`, `seed:fr` e `seed:it` (`scripts/`; aceitam `-- --dry-run`) populam as tabelas a partir dos JSON. As histórias e os simulados da aba Aprender ficam em `src/data/learn/` (`hsk1.json`, `hsk2.json`).
 
 - **Algoritmo FSRS nativo**: Cálculo de estabilidade, dificuldade e retrievabilidade baseado no FSRS (Free Spaced Repetition Scheduler).
 - **Recursos principais**: Sessão de estudos com botões de resposta e barra de progresso, lousa de escrita de ideogramas (Hanzi canvas), sintetizador de voz (Web Speech API TTS), navegador/filtro de cartões (busca por Hanzi, Pinyin e tradução) e painel estatístico com curva de retenção, projeção de revisões e histórico.
@@ -118,6 +118,8 @@ npm run seed:it
     │   ├── profile.ts              # Perfil do aluno na nuvem
     │   ├── speech.ts               # Utilitários de síntese de voz (TTS Web Speech API)
     │   ├── storage.ts              # Persistência e sincronização via localStorage
+    │   ├── supabaseClient.ts       # Cliente Supabase (chave publicável)
+    │   ├── vocabulary.ts, vocabularyMerge.ts # Vocabulário do Supabase e ajuste do baralho local
     │   └── sync.ts, syncMerge.ts   # Sincronização com o Supabase e mescla (com testes)
     │
     ├── styles/             # Temas: mandarin-card.css, study-session.css, course-fr.css, course-it.css

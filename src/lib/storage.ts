@@ -9,10 +9,18 @@ import {
   isValidLegacyWeights,
   isValidWeights,
 } from './fsrs';
-import { loadDefaultCards, loadNativeLevelCards, levelOfNativeId } from '../data/defaultDecks';
+import {
+  loadDefaultCards,
+  loadNativeLevelCards,
+  loadNativeLevelCardsFrom,
+  levelOfNativeId,
+} from '../data/defaultDecks';
 import { DEFAULT_GESTURES, sanitizeGestures } from './gestures';
 import { ACTIVE_COURSE } from './courseId';
 import { sanitizeStudyDayStartHour, sanitizeStudyPlan } from './studyPlan';
+import { isCloudEnabled } from './supabaseClient';
+import { isNativeCardId } from './vocabulary';
+import { reconcileCardVocabulary } from './vocabularyMerge';
 
 /**
  * Every app-owned localStorage key in one place: persistence and the Anki backup
@@ -248,15 +256,53 @@ export function loadStoredCards(): Card[] | null {
 
 /**
  * The saved deck. On first run, loads the HSK 1 and HSK 2 defaults and saves them.
+ * When the Supabase vocabulary can be read, the saved deck follows it before anything else.
  */
 export async function loadCards(): Promise<Card[]> {
   const stored = loadStoredCards();
-  if (stored) return refreshNativeContent(stored);
+  if (stored) {
+    const reconciled = await reconcileVocabulary(stored);
+    if (reconciled) {
+      if (reconciled.changed) saveCards(reconciled.cards);
+      // The remote list is the source of truth: never let the bundled text overwrite it
+      saveContentVersion();
+      return reconciled.cards;
+    }
+    return refreshNativeContent(stored);
+  }
 
   const defaults = await loadDefaultCards();
   saveCards(defaults);
   saveContentVersion();
   return defaults;
+}
+
+/**
+ * Updates, adds and drops words so the saved deck matches the Supabase list of every
+ * level it already holds. Returns null when no level could be read from the remote list,
+ * leaving the caller with the bundled-content migration.
+ */
+async function reconcileVocabulary(
+  cards: Card[]
+): Promise<{ cards: Card[]; changed: boolean } | null> {
+  if (!isCloudEnabled) return null;
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return null;
+
+  const levels = Array.from(
+    new Set(cards.filter((card) => isNativeCardId(card.id, ACTIVE_COURSE)).map((card) => card.level))
+  );
+  if (levels.length === 0) return null;
+
+  const loaded = await Promise.all(
+    levels.map(async (level) => ({ level, ...(await loadNativeLevelCardsFrom(level)) }))
+  );
+  const remoteByLevel = new Map<string, Card[]>();
+  for (const entry of loaded) {
+    if (entry.source === 'remote') remoteByLevel.set(entry.level, entry.cards);
+  }
+  if (remoteByLevel.size === 0) return null;
+
+  return reconcileCardVocabulary(cards, remoteByLevel, ACTIVE_COURSE);
 }
 
 function saveContentVersion(): void {

@@ -1,6 +1,7 @@
 import { Card } from '../types/card';
 import { COURSE } from '../lib/course';
 import type { CourseId } from '../lib/courseId';
+import { loadRemoteLevelCards, type VocabularySource } from '../lib/vocabulary';
 
 export const ALL_HSK_LEVELS = [
   'HSK 1',
@@ -56,11 +57,28 @@ const LEVEL_FILES: Record<string, Record<CourseId, () => Promise<LevelModule>>> 
   'HSK 7-9': { zh: () => import('./hsk7_9.json'), fr: () => import('./fr/fr7_9.json'), it: () => import('./it/it7_9.json') },
 };
 
-/** The native cards of one level, in the active course. */
-export async function loadNativeLevelCards(level: string): Promise<Card[]> {
+/** The bundled cards of one level, in the active course. */
+async function loadBundledLevelCards(level: string): Promise<Card[]> {
   const files = LEVEL_FILES[level];
   if (!files) return [];
   return (await files[COURSE.id]()).default as Card[];
+}
+
+/**
+ * The native cards of one level: the Supabase list when it is available (the source of
+ * truth), otherwise the bundled file. `source` tells the caller which one answered.
+ */
+export async function loadNativeLevelCardsFrom(
+  level: string
+): Promise<{ cards: Card[]; source: VocabularySource }> {
+  const remote = await loadRemoteLevelCards(level);
+  if (remote !== null) return { cards: remote, source: 'remote' };
+  return { cards: await loadBundledLevelCards(level), source: 'bundled' };
+}
+
+/** The native cards of one level, in the active course. */
+export async function loadNativeLevelCards(level: string): Promise<Card[]> {
+  return (await loadNativeLevelCardsFrom(level)).cards;
 }
 
 /** The first deck a new student gets: levels 1 and 2. */
