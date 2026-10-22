@@ -9,11 +9,11 @@ Guia de contexto e arquitetura para desenvolvimento no projeto.
 Aplicação web progressiva (SPA) de flashcards com repetição espaçada moderna, em três cursos:
 - **Lóutī Mandarim** (`zh`): vocabulário oficial HSK 3.0 (HSK 1 a 7–9), com hanzi, pinyin, escrita, ordem dos traços e aba Aprender.
 - **Palier Français** (`fr`): o mesmo vocabulário nos mesmos níveis, com o equivalente francês na frente do cartão (adaptação cultural onde cabe), sem hanzi. Paleta marinière (bleu de France, écru, selo de cera vermelho) e Garamond.
-- **Scalino Italiano** (`it`): o mesmo vocabulário nos mesmos níveis, com o equivalente italiano, sem hanzi. Paleta pietra e cipreste (verde, selo de cera verde) e Bodoni.
+- **Scalino Italiano** (`it`): a lista francesa traduzida para o italiano, com os mesmos ids, níveis e ordem (`F-00001` → `I-00001`), sem hanzi. Paleta pietra e cipreste (verde, selo de cera verde) e Bodoni.
 
 O curso ativo fica em `src/lib/courseId.ts` (lido uma vez; trocar de curso recarrega o app) e tudo o que difere entre eles em `src/lib/course.ts`: `COURSE` (marca, textos, meta da página, nomes de exportação), `levelLabel` e `applyCourseToDocument()`, que aplica título, meta description/og, favicon e theme-color. Cada curso tem as próprias chaves no `localStorage` (os estrangeiros usam o prefixo do curso: `fr_`, `it_`). As paletas vivem em `src/styles/course-fr.css` e `course-it.css`, sob `html.course-fr` e `html.course-it`, e remapeiam a escala `red` do Tailwind para a cor de cada curso.
 
-O vocabulário vem das tabelas `hsk_cards`, `fr_cards` e `it_cards` do Supabase e é lido em runtime por `src/lib/vocabulary.ts`; os JSON em `src/data/` são o fallback offline. Uma tabela vazia (como a italiana hoje) também cai no JSON. `npm run seed:hsk`, `seed:fr` e `seed:it` (`scripts/`; aceitam `-- --dry-run`) populam as tabelas a partir dos JSON. As histórias e os simulados da aba Aprender ficam em `src/data/learn/` (`hsk1.json`, `hsk2.json`).
+O vocabulário vem das tabelas `hsk_cards`, `fr_cards` e `it_cards` do Supabase e é lido em runtime por `src/lib/vocabulary.ts`; os JSON em `src/data/` são o fallback offline. Uma tabela vazia também cai no JSON, para o app seguir funcionando antes do seed ou sem rede. `npm run seed:hsk` e `npm run seed:fr` (`scripts/seed-*.ts`; aceitam `-- --dry-run`) populam o mandarim e o francês a partir dos JSON. O italiano não é mais semeado pelo JSON antigo: `npm run sync:it` (`scripts/sync-it-from-fr.ts`) reconstrói `it_cards` como tradução de `fr_cards`, usando o mapa `scripts/it-from-fr.json`; `-- --write` aplica e `-- --sync-progress` copia o progresso do francês para o italiano. O antigo `seed:it` foi removido; se precisar refazer o italiano, use `sync:it`. As histórias e os simulados da aba Aprender ficam em `src/data/learn/` (`hsk1.json`, `hsk2.json`).
 
 - **Algoritmo FSRS nativo**: Cálculo de estabilidade, dificuldade e retrievabilidade baseado no FSRS (Free Spaced Repetition Scheduler).
 - **Recursos principais**: Sessão de estudos com botões de resposta e barra de progresso, lousa de escrita de ideogramas (Hanzi canvas), sintetizador de voz (Web Speech API TTS), navegador/filtro de cartões (busca por Hanzi, Pinyin e tradução) e painel estatístico com curva de retenção, projeção de revisões e histórico.
@@ -50,7 +50,11 @@ npm run clean
 # Enviar o vocabulário ao Supabase (requer as chaves; aceita `-- --dry-run`)
 npm run seed:hsk
 npm run seed:fr
-npm run seed:it
+
+# Reconstruir o italiano como tradução do francês (dry run por padrão)
+npm run sync:it
+npm run sync:it -- --write
+npm run sync:it -- --write --sync-progress
 ```
 
 ---
@@ -64,7 +68,7 @@ npm run seed:it
 ├── package.json            # Dependências e scripts npm
 ├── tsconfig.json           # Configuração do TypeScript
 ├── vite.config.ts          # Configuração do Vite com plugin Tailwind e React
-├── scripts/                # Utilitários Node: seeds (hsk/fr/it) e build-glyph-index
+├── scripts/                # Seeds (hsk/fr), sync-it-from-fr.ts, mapa it-from-fr.json e build-glyph-index
 ├── supabase/migrations/    # Migrações SQL (cartões e progresso, com RLS)
 └── src/
     ├── App.tsx             # Componente raiz, controle de abas e estado global
@@ -97,7 +101,7 @@ npm run seed:it
     │   ├── hsk1.json a hsk7_9.json # Datasets oficiais de vocabulário HSK
     │   ├── learn/                  # Histórias e simulados da aba Aprender (hsk1, hsk2)
     │   ├── fr/fr1.json a fr7_9.json # Curso de francês: mesmos ids (F-xxxxx), mesmos níveis
-    │   ├── it/it1.json a it7_9.json # Curso de italiano: mesmos ids (I-xxxxx), mesmos níveis
+    │   ├── it/it1.json a it7_9.json # Italiano: it1–it4 são tradução do francês (I-xxxxx); it5–7_9 vazios
     │   ├── glyphIndex.json         # Índice de pixels para a busca por desenho
     │   └── hskParser.ts            # Parser para importação de CSV/TSV
     │

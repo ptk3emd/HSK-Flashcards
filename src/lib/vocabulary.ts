@@ -6,7 +6,7 @@ import { getSupabase, isCloudEnabled } from './supabaseClient';
 /**
  * The vocabulary lives in Supabase (hsk_cards, fr_cards, it_cards) so the deck always
  * follows the list edited there. The bundled JSON is only the fallback: no key at build
- * time, offline, or a course table with no words yet (the Italian one, for now).
+ * time, offline, or a course table with no words yet.
  */
 export type VocabularySource = 'remote' | 'bundled';
 
