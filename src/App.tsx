@@ -20,6 +20,7 @@ import {
 import { CloudSync, Session, SyncStatus, getSupabase, isCloudEnabled } from './lib/sync';
 import { migrateToFSRS6 } from './lib/fsrs';
 import { effectiveFSRSOptions, isGoalPlan } from './lib/studyPlan';
+import { withViewTransition } from './lib/viewTransition';
 import { parseUserProfile } from './lib/profile';
 import { AuthScreen } from './components/AuthScreen';
 import { CourseSwitch } from './components/CourseSwitch';
@@ -215,11 +216,14 @@ export default function App() {
     ahead = false,
     aheadUntil: string | null = null
   ) => {
-    setIsolatedStudyLevel(isolatedLevel || null);
-    setStudyStartsFree(freePractice);
-    setStudyStartsAhead(ahead && !freePractice);
-    setStudyAheadUntil(ahead && !freePractice ? aheadUntil : null);
-    setActiveTab('study');
+    // The next card on the dashboard's stack lifts off and becomes the study card
+    withViewTransition(() => {
+      setIsolatedStudyLevel(isolatedLevel || null);
+      setStudyStartsFree(freePractice);
+      setStudyStartsAhead(ahead && !freePractice);
+      setStudyAheadUntil(ahead && !freePractice ? aheadUntil : null);
+      setActiveTab('study');
+    });
   };
 
   const handleUpdateSingleCard = (updated: Card) => {
@@ -281,12 +285,15 @@ export default function App() {
         startFreePractice={studyStartsFree}
         startAhead={studyStartsAhead}
         aheadUntil={studyAheadUntil}
-        onExit={() => {
-          setStudyStartsFree(false);
-          setStudyStartsAhead(false);
-          setStudyAheadUntil(null);
-          setActiveTab('decks');
-        }}
+        onExit={() =>
+          // And back: the card on screen settles onto the top of the stack
+          withViewTransition(() => {
+            setStudyStartsFree(false);
+            setStudyStartsAhead(false);
+            setStudyAheadUntil(null);
+            setActiveTab('decks');
+          })
+        }
       />
     );
   }

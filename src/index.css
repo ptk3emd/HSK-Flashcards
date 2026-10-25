@@ -261,3 +261,158 @@ input[type='range']::-moz-range-thumb {
 }
 
 .loading-placeholder[data-paused] .skeleton::after { animation-play-state: paused; }
+
+/*
+   Today's stack: the day's cards as acrylic cards piled on the Hoje sheet. The layers under
+   the top show their edge, tinted by what they are; the top card holds the next word and
+   morphs into the study card through a View Transition (same name on both screens).
+*/
+@layer components {
+  .today-stack {
+    --stack-w: 104px;
+    --stack-h: 132px;
+    --stack-step: 4px;
+    position: relative;
+    width: var(--stack-w);
+    height: calc(var(--stack-h) + 14 * var(--stack-step));
+    perspective: 700px;
+    flex-shrink: 0;
+  }
+  @media (min-width: 640px) {
+    .today-stack {
+      --stack-w: 136px;
+      --stack-h: 172px;
+      --stack-step: 5px;
+    }
+  }
+  .today-stack-tilt {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: rotateX(var(--tilt-x, 7deg)) rotateY(var(--tilt-y, -9deg));
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .today-stack-layer,
+  .today-stack-top {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--stack-w);
+    height: var(--stack-h);
+    border-radius: 18px;
+  }
+  /* A card under the top: solid acrylic, pushed down and back, its lower edge tinted */
+  .today-stack-layer {
+    --edge: var(--text-tertiary);
+    background:
+      linear-gradient(to top, var(--edge) 0 3px, transparent 3px),
+      var(--glass-solid);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 0 0 1px var(--separator);
+    transform:
+      translate3d(0, calc(var(--depth) * var(--stack-step)), calc(var(--depth) * -6px))
+      rotate(var(--skew, 0deg));
+    opacity: calc(1 - var(--depth) * 0.035);
+  }
+  .today-stack-layer[data-kind='learning'] { --edge: var(--state-learning, var(--color-red-600)); }
+  .today-stack-layer[data-kind='review'] { --edge: var(--color-emerald-500); }
+  .today-stack-layer[data-kind='new'] { --edge: var(--color-blue-500); }
+  .night_mode .today-stack-layer {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 1px var(--separator);
+  }
+  .night_mode .today-stack-layer[data-kind='review'] { --edge: var(--color-emerald-400); }
+  .night_mode .today-stack-layer[data-kind='new'] { --edge: var(--color-blue-400); }
+
+  /* The top card: the study card's own glass, in miniature */
+  .today-stack-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    container-type: inline-size;
+    background: var(--glass-surface);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+    box-shadow: var(--glass-highlight);
+    color: var(--text-fg);
+    view-transition-name: study-card;
+    cursor: pointer;
+    transform: translateZ(2px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .today-stack-top:disabled { cursor: default; }
+  .today-stack:hover .today-stack-top:not(:disabled) {
+    transform: translate3d(0, -6px, 12px);
+  }
+  .today-stack-word {
+    font-family: var(--font-hanzi);
+    font-weight: 500;
+    line-height: 1.1;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  .today-stack-word[data-size='xl'] { font-size: 36cqi; }
+  .today-stack-word[data-size='lg'] { font-size: 24cqi; }
+  .today-stack-word[data-size='md'] { font-size: 15cqi; }
+  .today-stack-word[data-size='sm'] { font-size: 11cqi; }
+  .today-stack-empty {
+    view-transition-name: none;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: inset 0 0 0 1px var(--separator);
+    cursor: default;
+  }
+  .today-stack-seal {
+    display: grid;
+    place-items: center;
+    width: 44%;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    background: var(--color-red-600);
+    color: #f4eee3;
+    font-family: var(--font-hanzi);
+    font-size: 24cqi;
+    transform: rotate(-8deg);
+    box-shadow: inset 0 0 0 2px var(--color-red-600), inset 0 0 0 3.5px rgba(244, 238, 227, 0.9);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .today-stack-tilt,
+  .today-stack-top { transition: none; }
+  .today-stack-tilt { transform: rotateX(7deg) rotateY(-9deg); }
+  .today-stack:hover .today-stack-top:not(:disabled) { transform: translateZ(2px); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .today-stack-top:not(.today-stack-empty) {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* The study card on screen carries the same name, so starting a session opens the top card */
+.study-tactile-card .mandarin-card { view-transition-name: study-card; }
+
+/* The lift: the card grows on the rise curve while the screens cross-fade under it */
+::view-transition-group(study-card) {
+  animation-duration: 460ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* The small card hands over early, so its scaled-up text never ghosts behind the new one */
+::view-transition-old(study-card) {
+  animation: study-card-out 140ms ease-out both;
+  height: 100%;
+  object-fit: cover;
+}
+::view-transition-new(study-card) {
+  animation: study-card-in 320ms cubic-bezier(0.16, 1, 0.3, 1) 60ms both;
+  height: 100%;
+  object-fit: cover;
+}
+@keyframes study-card-out { to { opacity: 0; } }
+@keyframes study-card-in { from { opacity: 0; } }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 240ms;
+}
