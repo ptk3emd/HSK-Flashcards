@@ -7,6 +7,8 @@ import { dailyUsage, remainingDailyLimits, reviewedCardIdsOnDay } from '../lib/d
 import { BrandMark } from './BrandHeader';
 import { CourseSwitch } from './CourseSwitch';
 import { StudyPlanner } from './StudyPlanner';
+import { TodayStack } from './TodayStack';
+import { calculateRetrievability, elapsedDaysSince } from '../lib/fsrs';
 import { useNow } from './useNow';
 import { addDaysToKey, effectiveDailyLimits, isDateKey, studyDayKey, todayKey } from '../lib/studyPlan';
 import { Play, Loader2, FastForward } from 'lucide-react';
@@ -69,7 +71,25 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
     );
     const plannedNew = Math.min(newCards.length, limits.newCards);
     const plannedReviews = Math.min(reviewsDue.length, limits.reviews);
+    // The card the session opens with, in the session's own order: learning by due time,
+    // then reviews closest to being forgotten, then new cards; ahead sessions take the
+    // most forgotten future card
+    const recall = (card: Card) =>
+      card.last_review
+        ? calculateRetrievability(elapsedDaysSince(card.last_review, current), card.stability, fsrsOptions.w)
+        : 1;
+    const byRecall = (list: Card[]) =>
+      list.map((card) => ({ card, r: recall(card) })).sort((a, b) => a.r - b.r).map(({ card }) => card);
+    const firstLearning = [...learningDue].sort((a, b) => Date.parse(a.due) - Date.parse(b.due))[0];
+    const beyond = learningDue.length + plannedNew + plannedReviews === 0;
+    const nextCard =
+      firstLearning ??
+      ((beyond || plannedReviews > 0) && reviewsDue.length > 0 ? byRecall(reviewsDue)[0] : undefined) ??
+      newCards[0] ??
+      byRecall(futureCards)[0] ??
+      null;
     return {
+      nextCard,
       dueCount: learningDue.length + plannedNew + plannedReviews,
       newCount: plannedNew,
       learningCount: learningDue.length,
@@ -86,10 +106,11 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
     deckConfig.dailyReviewLimit,
     deckConfig.studyDayStartHour,
     deckConfig.studyPlan,
+    fsrsOptions.w,
     now,
   ]);
 
-  const { dueCount, newCount, learningCount, reviewCount, rawCount, futureCount, futureDays } = counts;
+  const { dueCount, newCount, learningCount, reviewCount, rawCount, futureCount, futureDays, nextCard } = counts;
   const today = todayKey(now, deckConfig.studyDayStartHour);
   const [aheadUntil, setAheadUntil] = useState(() => addDaysToKey(today, 1));
   const aheadValid = isDateKey(aheadUntil) && aheadUntil > today;
@@ -168,23 +189,41 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
 
       {/* Today: the count and the one action that matters */}
       <section className="sheet px-6 pt-6 pb-6 sm:px-8 sm:pt-8" aria-labelledby="today-heading">
-        <h1 id="today-heading" className="text-sm font-medium ink-secondary">
-          Hoje
-        </h1>
-        <p className="mt-2 flex items-baseline gap-2">
-          <span className="hanzi-index tabular text-6xl sm:text-7xl">{dueCount}</span>
-          <span className="text-base ink-secondary">{dueCount === 1 ? 'cartão' : 'cartões'}</span>
-        </p>
-        <p className="mt-3 text-sm tabular ink-secondary">
-          <span className="font-semibold text-blue-700 dark:text-blue-300">{newCount}</span> novos
-          <span aria-hidden="true"> · </span>
-          <span className="state-learning font-semibold text-red-700 dark:text-red-300">{learningCount}</span> aprendendo
-          <span aria-hidden="true"> · </span>
-          <span className="font-semibold text-emerald-700 dark:text-emerald-300">{reviewCount}</span> revisão
-        </p>
-        {rawCount > dueCount && (
-          <p className="mt-1 text-xs ink-tertiary">Limites diários aplicados.</p>
-        )}
+        <div className="flex items-start gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 id="today-heading" className="text-sm font-medium ink-secondary">
+              Hoje
+            </h1>
+            <p className="mt-2 flex items-baseline gap-2">
+              <span className="hanzi-index tabular text-6xl sm:text-7xl">{dueCount}</span>
+              <span className="text-base ink-secondary">{dueCount === 1 ? 'cartão' : 'cartões'}</span>
+            </p>
+            <p className="mt-3 text-sm tabular ink-secondary leading-relaxed">
+              <span className="whitespace-nowrap">
+                <span className="font-semibold text-blue-700 dark:text-blue-300">{newCount}</span> novos
+              </span>
+              <span aria-hidden="true"> · </span>
+              <span className="whitespace-nowrap">
+                <span className="state-learning font-semibold text-red-700 dark:text-red-300">{learningCount}</span> aprendendo
+              </span>
+              <span aria-hidden="true"> · </span>
+              <span className="whitespace-nowrap">
+                <span className="font-semibold text-emerald-700 dark:text-emerald-300">{reviewCount}</span> revisão
+              </span>
+            </p>
+            {rawCount > dueCount && (
+              <p className="mt-1 text-xs ink-tertiary">Limites diários aplicados.</p>
+            )}
+          </div>
+          <TodayStack
+            nextCard={nextCard}
+            learning={learningCount}
+            reviews={reviewCount}
+            fresh={newCount}
+            disabled={rawCount === 0 && futureCount === 0}
+            onStart={() => onStartStudy(null, startBeyondLimits, startAhead)}
+          />
+        </div>
         <button
           type="button"
           onClick={() => onStartStudy(null, startBeyondLimits, startAhead)}
