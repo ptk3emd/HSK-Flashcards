@@ -48,8 +48,9 @@ interface StudySessionProps {
 }
 
 /**
- * The red seal the grade presses onto the card as it leaves: 再 难 好 易 in Mandarin, a wax seal
- * with E D B F (Encore, Difficile, Bien, Facile) in French. Decorative: the counter announces the grade.
+ * The seal the grade presses onto the card as it leaves: 再 难 好 易 in Mandarin, a wax seal
+ * with E D B F (Encore, Difficile, Bien, Facile) in French. Red, except Bom, a pass, in green.
+ * Decorative: the counter announces the grade.
  */
 const GradeSeal: React.FC<{ rating: Rating }> = ({ rating }) => (
   <div className="study-seal" data-grade={rating} aria-hidden="true">
