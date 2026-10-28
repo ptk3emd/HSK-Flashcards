@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-28T17:25:00Z",
+  "generatedAt": "2026-10-28T18:00:00Z",
   "title": "Design System: Lóutī Mandarim",
   "extensions": {
     "colorMeta": {
@@ -408,9 +408,9 @@
       "name": "Study Seal",
       "kind": "custom",
       "refersTo": "study-seal",
-      "description": "Lacquer stamp pressed after each graded answer: one serif hanzi inside a cream paper ring.",
-      "html": "<div class=\"ds-seal\" aria-hidden=\"true\">好</div>",
-      "css": ".ds-seal { width: 60px; height: 60px; display: grid; place-items: center; border-radius: 10px; background: #B3261E; color: #F4EEE3; box-shadow: inset 0 0 0 3px #B3261E, inset 0 0 0 5px rgba(244,238,227,0.9); font-family: 'Songti SC', 'STSong', 'Noto Serif CJK SC', 'Noto Serif SC', 'Yu Mincho', 'Mincho', serif; font-size: 34px; font-weight: 700; line-height: 1; transform: rotate(-8deg); animation: ds-seal-press 320ms cubic-bezier(0.3, 0, 0.2, 1) both; } @keyframes ds-seal-press { from { transform: scale(1.7) rotate(-14deg); opacity: 0; } 70% { transform: scale(0.94) rotate(-7deg); opacity: 1; } to { transform: rotate(-8deg); } } @media (prefers-reduced-motion: reduce) { .ds-seal { animation: none; } }"
+      "description": "88px semantic result seal: green check for Bom/Fácil, red cross for Novamente/Difícil; Portuguese label, white ring, 420ms fully visible before exit; static under reduced motion.",
+      "html": "<div class=\"ds-seal\" aria-hidden=\"true\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><path d=\"m5 12 4 4L19 6\"/></svg><span>Bom</span></div>",
+      "css": ".ds-seal { width:88px;height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:10px;border:2px solid white;background:#08783e;color:white;box-shadow:inset 0 0 0 4px #08783e,inset 0 0 0 6px rgba(255,255,255,.8),0 4px 12px rgba(0,0,0,.22);font:700 12px/1.2 system-ui; } .ds-seal svg {width:36px;height:36px;}"
     },
     {
       "name": "Password Checklist",
