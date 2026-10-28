@@ -55,11 +55,11 @@ const loadLearnView = () => import('./components/LearnView').then((m) => m.Learn
 const LearnViewLazy = lazy(() => loadLearnView().then((c) => ({ default: c })));
 
 const NAV_ITEMS = [
-  { tab: 'decks', label: 'Decks', Icon: Layers },
-  { tab: 'browser', label: 'Dicionário', Icon: Search },
-  { tab: 'learn', label: 'Aprender', Icon: GraduationCap },
-  { tab: 'stats', label: 'Estatísticas', Icon: BarChart3 },
-  { tab: 'settings', label: 'Configurações', Icon: Settings2 },
+  { tab: 'decks', label: 'Decks', shortLabel: 'Decks', Icon: Layers },
+  { tab: 'browser', label: 'Dicionário', shortLabel: 'Buscar', Icon: Search },
+  { tab: 'learn', label: 'Aprender', shortLabel: 'Aprender', Icon: GraduationCap },
+  { tab: 'stats', label: 'Estatísticas', shortLabel: 'Progresso', Icon: BarChart3 },
+  { tab: 'settings', label: 'Configurações', shortLabel: 'Ajustes', Icon: Settings2 },
 ] as const;
 
 // The Learn tab (HSK grammar lessons and practice) exists only in the Mandarin course
@@ -307,7 +307,7 @@ export default function App() {
       }`}
     >
       {/* Main Content Area without Topbar */}
-      <main className="max-w-5xl mx-auto px-4 pt-6 pb-28 sm:pb-28">
+      <main className="app-content max-w-5xl mx-auto px-4 pt-6 pb-28">
         {activeTab === 'decks' && (
           <DeckDashboard
             cards={cards}
@@ -355,7 +355,7 @@ export default function App() {
             <h1 className="px-2 pt-2 pb-1 text-2xl font-semibold tracking-tight">Configurações</h1>
 
             <section className="sheet px-5 sm:px-7 py-3" aria-labelledby="settings-course">
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="min-w-0">
                   <h2 id="settings-course" className="text-base font-semibold">Idioma de estudo</h2>
                   <p className="text-xs ink-tertiary">Cada idioma tem os próprios cartões e progresso.</p>
@@ -451,7 +451,7 @@ export default function App() {
                       type="button"
                       aria-pressed={theme === t}
                       onClick={() => theme !== t && handleToggleTheme()}
-                      className={`min-h-10 px-4 rounded-lg text-sm font-semibold cursor-pointer transition-colors ${
+                      className={`min-h-11 px-4 rounded-lg text-sm font-semibold cursor-pointer transition-colors ${
                         theme === t ? 'bg-white text-ink shadow-sm' : 'ink-secondary hover:text-[var(--text-fg)]'
                       }`}
                     >
@@ -474,9 +474,9 @@ export default function App() {
       {/* Floating bottom bar, in the cards' glass */}
       <nav
         aria-label="Principal"
-        className="sheet sheet-float rounded-2xl fixed bottom-4 left-1/2 -translate-x-1/2 z-40 px-2 py-2 flex items-center gap-1"
+        className="app-nav sheet sheet-float rounded-2xl fixed bottom-4 left-1/2 -translate-x-1/2 z-40 px-2 py-2 flex items-center gap-1"
       >
-        {COURSE_NAV.map(({ tab, label, Icon }) => {
+        {COURSE_NAV.map(({ tab, label, shortLabel, Icon }) => {
           const isCurrent = activeTab === tab;
           return (
             <button
@@ -485,12 +485,12 @@ export default function App() {
               aria-label={label}
               aria-current={isCurrent ? 'page' : undefined}
               onClick={() => setActiveTab(tab)}
-              className={`min-h-11 min-w-11 flex items-center justify-center gap-1.5 px-3 rounded-xl text-sm font-semibold cursor-pointer transition-colors ${
+              className={`min-h-11 min-w-0 flex-1 sm:flex-none flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 px-1 sm:px-3 py-1 rounded-xl text-sm font-semibold cursor-pointer transition-colors ${
                 isCurrent ? 'bg-red-600 text-white' : 'ink-secondary hover:text-[var(--text-fg)] hover:bg-black/5 dark:hover:bg-white/10'
               }`}
             >
               <Icon className="w-[18px] h-[18px]" aria-hidden="true" />
-              <span className="hidden sm:inline">{label}</span>
+              <span className="text-[10px] leading-tight sm:hidden">{shortLabel}</span><span className="hidden sm:inline">{label}</span>
             </button>
           );
         })}

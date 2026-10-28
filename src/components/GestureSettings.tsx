@@ -55,7 +55,7 @@ export const GestureSettings: React.FC<GestureSettingsProps> = ({ deckConfig, on
           onClick={() => onUpdateDeckConfig({ ...deckConfig, gestures: { ...DEFAULT_GESTURES } })}
           disabled={isDefault}
           aria-label="Restaurar padrão"
-          className="min-h-10 flex items-center gap-1.5 px-3 rounded-xl text-sm font-medium ink-secondary hover:text-[var(--text-fg)] cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="min-h-11 flex items-center gap-1.5 px-3 rounded-xl text-sm font-medium ink-secondary hover:text-[var(--text-fg)] cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           Padrão

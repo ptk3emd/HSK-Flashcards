@@ -1,0 +1,1223 @@
+[
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/BrandHeader.tsx",
+    "line": 34,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "AuthScreen.tsx",
+      "ChangePasswordScreen.tsx",
+      "DeckDashboard.tsx",
+      "SignUpScreen.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/CardBrowser.tsx",
+    "line": 156,
+    "snippet": "text-[…] class: 10px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/CardBrowser.tsx",
+    "line": 162,
+    "snippet": "text-[…] class: 10px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/CardBrowser.tsx",
+    "line": 168,
+    "snippet": "text-[…] class: 10px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/CardBrowser.tsx",
+    "line": 174,
+    "snippet": "text-[…] class: 10px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/CardBrowser.tsx",
+    "line": 555,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/DeckDashboard.tsx",
+    "line": 186,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "App.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/GrammarPointView.tsx",
+    "line": 62,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "LearnView.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/HanziDrawSearch.tsx",
+    "line": 216,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "CardBrowser.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/HanziWritingCanvas.tsx",
+    "line": 220,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/HanziWritingCanvas.tsx",
+    "line": 329,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/HanziWritingCanvas.tsx",
+    "line": 342,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/HanziWritingCanvas.tsx",
+    "line": 352,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/HanziWritingCanvas.tsx",
+    "line": 362,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px"
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/RetentionCalibration.tsx",
+    "line": 117,
+    "snippet": "text-[…] class: 9px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "9px",
+    "importedBy": [
+      "StatsView.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/StrokeOrderDiagram.tsx",
+    "line": 317,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "HanziWritingCanvas.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/StrokeOrderDiagram.tsx",
+    "line": 427,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "HanziWritingCanvas.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/StudyPlanner.tsx",
+    "line": 126,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "DeckDashboard.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/StudyPlanner.tsx",
+    "line": 130,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "DeckDashboard.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/components/StudyPlanner.tsx",
+    "line": 134,
+    "snippet": "text-[…] class: 11px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "11px",
+    "importedBy": [
+      "DeckDashboard.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/index.css",
+    "line": 143,
+    "snippet": "Undocumented color rgba(0, 0, 0, 0.06) is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "rgba(0, 0, 0, 0.06)"
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/index.css",
+    "line": 209,
+    "snippet": "border-radius: 14px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "14px"
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/index.css",
+    "line": 302,
+    "snippet": "border-radius: 18px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "18px"
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/index.css",
+    "line": 370,
+    "snippet": "border-radius: 10px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "10px"
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 42,
+    "snippet": "Undocumented color rgba(60, 96, 179, 0.3) is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "rgba(60, 96, 179, 0.3)",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 46,
+    "snippet": "Undocumented color #b4232c is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#b4232c",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 48,
+    "snippet": "Undocumented color #ff8a8a is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#ff8a8a",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 61,
+    "snippet": "Undocumented color #ece5d6 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#ece5d6",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 61,
+    "snippet": "Undocumented color #d9d0bd is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#d9d0bd",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 85,
+    "snippet": "Undocumented color #0a1226 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#0a1226",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 94,
+    "snippet": "Undocumented color rgba(60, 96, 179, 0.38) is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "rgba(60, 96, 179, 0.38)",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 110,
+    "snippet": "font-size: clamp(24px, calc(100cqi * 2.2 / var(--text-length, 8)), 60px) !important has fluid endpoints 24px and 60px off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "24px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 116,
+    "snippet": "font-size: clamp(28px, calc(100cqi * 2.4 / var(--text-length, 8)), 76px) !important has fluid endpoint 76px off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "76px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 124,
+    "snippet": "Undocumented color #d4473f is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#d4473f",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 135,
+    "snippet": "Undocumented color #4fa477 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#4fa477",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 135,
+    "snippet": "Undocumented color #237a52 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#237a52",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 135,
+    "snippet": "Undocumented color #134a31 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#134a31",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 140,
+    "snippet": "Undocumented color #ecf8f0 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#ecf8f0",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-fr.css",
+    "line": 142,
+    "snippet": "font-size: 30px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "30px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 32,
+    "snippet": "Undocumented color rgba(63, 122, 85, 0.3) is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "rgba(63, 122, 85, 0.3)",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 36,
+    "snippet": "Undocumented color #b4232c is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#b4232c",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 38,
+    "snippet": "Undocumented color #ff8a8a is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#ff8a8a",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 42,
+    "snippet": "Undocumented color #ebe5d5 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#ebe5d5",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 51,
+    "snippet": "Undocumented color #e8e0cc is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#e8e0cc",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 51,
+    "snippet": "Undocumented color #d4c9ae is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#d4c9ae",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 75,
+    "snippet": "Undocumented color #0a130e is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#0a130e",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 84,
+    "snippet": "Undocumented color rgba(63, 122, 85, 0.36) is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "rgba(63, 122, 85, 0.36)",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 99,
+    "snippet": "font-size: clamp(24px, calc(100cqi * 2.2 / var(--text-length, 8)), 60px) !important has fluid endpoints 24px and 60px off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "24px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 105,
+    "snippet": "font-size: clamp(28px, calc(100cqi * 2.4 / var(--text-length, 8)), 76px) !important has fluid endpoint 76px off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "76px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 111,
+    "snippet": "Undocumented color #5b8f6a is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#5b8f6a",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 111,
+    "snippet": "Undocumented color #2e5e3e is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#2e5e3e",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 111,
+    "snippet": "Undocumented color #1b3a26 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#1b3a26",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 116,
+    "snippet": "Undocumented color #eef6ef is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#eef6ef",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 123,
+    "snippet": "Undocumented color #7cc28f is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#7cc28f",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 123,
+    "snippet": "Undocumented color #3f8f59 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#3f8f59",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 123,
+    "snippet": "Undocumented color #22593a is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#22593a",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/course-it.css",
+    "line": 129,
+    "snippet": "font-size: 30px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "30px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 90,
+    "snippet": "Undocumented color #fae6d4 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#fae6d4",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 90,
+    "snippet": "Undocumented color #e08285 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#e08285",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 90,
+    "snippet": "Undocumented color #c25258 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#c25258",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 239,
+    "snippet": "font-size: 13px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "13px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 343,
+    "snippet": "font-size: clamp(24px, 6vw, 44px) !important has fluid endpoints 24px and 44px off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "24px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 359,
+    "snippet": "font-size: clamp(24px, 7.75cqi, 44px) !important has fluid endpoints 24px and 44px off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "24px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 461,
+    "snippet": "font-size: 13px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "13px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 486,
+    "snippet": "border-radius: 14px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "14px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/mandarin-card.css",
+    "line": 512,
+    "snippet": "border-radius: 10px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "10px",
+    "importedBy": [
+      "index.css"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 20,
+    "snippet": "font-size: 14px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "14px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 54,
+    "snippet": "border-radius: 14px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "14px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 66,
+    "snippet": "font-size: 18px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "18px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 83,
+    "snippet": "font-size: 14px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "14px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 96,
+    "snippet": "font-size: 13px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "13px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 126,
+    "snippet": "border-radius: 1px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "1px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 135,
+    "snippet": "Undocumented color #B45309 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#B45309",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 139,
+    "snippet": "Undocumented color #FBBF24 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#FBBF24",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 140,
+    "snippet": "Undocumented color #34D399 is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#34D399",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 141,
+    "snippet": "Undocumented color #60A5FA is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#60A5FA",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 158,
+    "snippet": "border-radius: 10px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "10px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 163,
+    "snippet": "font-size: 34px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "34px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-color",
+    "name": "Color outside DESIGN.md",
+    "description": "A literal color is outside the DESIGN.md palette and sidecar tonal ramps. This may be legitimate, but it should be an intentional design-system addition rather than drift.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 172,
+    "snippet": "Undocumented color #1E6B4A is outside DESIGN.md colors",
+    "advisory": true,
+    "ignoreValue": "#1E6B4A",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 197,
+    "snippet": "font-size: 42px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "42px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 203,
+    "snippet": "font-size: clamp(24px, 6cqi, 32px) has fluid endpoints 24px and 32px off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "24px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 208,
+    "snippet": "font-size: 15px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "15px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-radius",
+    "name": "Radius outside DESIGN.md",
+    "description": "A border-radius value is outside the DESIGN.md rounded scale. Use a documented radius token or update the design system if the new shape is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 219,
+    "snippet": "border-radius: 14px is outside the DESIGN.md rounded scale",
+    "advisory": true,
+    "ignoreValue": "14px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  },
+  {
+    "antipattern": "design-system-font-size",
+    "name": "Font size outside DESIGN.md",
+    "description": "A literal font-size is off the type ramp documented in DESIGN.md typography. Use a documented size step or update the design system if the new step is intentional.",
+    "severity": "advisory",
+    "category": "quality",
+    "file": "/workspace/HSK-Flashcards/src/styles/study-session.css",
+    "line": 220,
+    "snippet": "font-size: 15px is off the DESIGN.md type ramp",
+    "advisory": true,
+    "ignoreValue": "15px",
+    "importedBy": [
+      "StudySession.tsx"
+    ]
+  }
+]

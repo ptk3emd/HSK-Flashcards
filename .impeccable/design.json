@@ -1,57 +1,359 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-16T19:42:55.079Z",
+  "generatedAt": "2026-10-28T17:25:00Z",
   "title": "Design System: Lóutī Mandarim",
   "extensions": {
     "colorMeta": {
-      "ground-rose": { "role": "neutral", "displayName": "Ground Rose", "canonical": "#d87679", "tonalRamp": ["oklch(15% 0.061 18.9)", "oklch(26% 0.080 18.9)", "oklch(38% 0.097 18.9)", "oklch(49% 0.114 18.9)", "oklch(61% 0.114 18.9)", "oklch(72% 0.097 18.9)", "oklch(84% 0.080 18.9)", "oklch(95% 0.025 18.9)"] },
-      "ground-night": { "role": "neutral", "displayName": "Ground Night", "canonical": "#160608", "tonalRamp": ["oklch(15% 0.016 12.0)", "oklch(26% 0.020 12.0)", "oklch(38% 0.024 12.0)", "oklch(49% 0.028 12.0)", "oklch(61% 0.028 12.0)", "oklch(72% 0.024 12.0)", "oklch(84% 0.020 12.0)", "oklch(95% 0.016 12.0)"] },
-      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#111113", "tonalRamp": ["oklch(15% 0.002 286.0)", "oklch(26% 0.003 286.0)", "oklch(38% 0.003 286.0)", "oklch(49% 0.004 286.0)", "oklch(61% 0.004 286.0)", "oklch(72% 0.003 286.0)", "oklch(84% 0.003 286.0)", "oklch(95% 0.002 286.0)"] },
-      "action-red": { "role": "primary", "displayName": "Seal Red", "canonical": "#B3261E", "tonalRamp": ["oklch(15% 0.062 28.7)", "oklch(26% 0.108 28.7)", "oklch(38% 0.142 28.7)", "oklch(49% 0.166 28.7)", "oklch(61% 0.166 28.7)", "oklch(72% 0.142 28.7)", "oklch(84% 0.091 28.7)", "oklch(95% 0.025 28.7)"] },
-      "action-red-deep": { "role": "primary", "displayName": "Seal Red Deep", "canonical": "#8F1E18", "tonalRamp": ["oklch(15% 0.062 28.4)", "oklch(26% 0.098 28.4)", "oklch(38% 0.119 28.4)", "oklch(49% 0.139 28.4)", "oklch(61% 0.139 28.4)", "oklch(72% 0.119 28.4)", "oklch(84% 0.091 28.4)", "oklch(95% 0.025 28.4)"] },
-      "system-red": { "role": "accent", "displayName": "System Red", "canonical": "#ff3b30", "tonalRamp": ["oklch(15% 0.062 28.7)", "oklch(26% 0.108 28.7)", "oklch(38% 0.155 28.7)", "oklch(49% 0.202 28.7)", "oklch(61% 0.216 28.7)", "oklch(72% 0.174 28.7)", "oklch(84% 0.091 28.7)", "oklch(95% 0.025 28.7)"] },
-      "focus-red": { "role": "accent", "displayName": "Focus Red", "canonical": "#ef4444", "tonalRamp": ["oklch(15% 0.061 25.3)", "oklch(26% 0.107 25.3)", "oklch(38% 0.154 25.3)", "oklch(49% 0.194 25.3)", "oklch(61% 0.194 25.3)", "oklch(72% 0.165 25.3)", "oklch(84% 0.091 25.3)", "oklch(95% 0.025 25.3)"] },
-      "seal-cream": { "role": "neutral", "displayName": "Seal Cream", "canonical": "#F4EEE3", "tonalRamp": ["oklch(15% 0.008 82.8)", "oklch(26% 0.011 82.8)", "oklch(38% 0.013 82.8)", "oklch(49% 0.015 82.8)", "oklch(61% 0.015 82.8)", "oklch(72% 0.013 82.8)", "oklch(84% 0.011 82.8)", "oklch(95% 0.008 82.8)"] },
-      "glass-surface": { "role": "neutral", "displayName": "Glass Surface", "canonical": "rgba(255, 248, 246, 0.46)" },
-      "glass-surface-night": { "role": "neutral", "displayName": "Glass Surface Night", "canonical": "rgba(36, 18, 20, 0.58)" },
-      "glass-field": { "role": "neutral", "displayName": "Glass Field", "canonical": "rgba(255, 252, 250, 0.58)" },
-      "glass-field-night": { "role": "neutral", "displayName": "Glass Field Night", "canonical": "rgba(12, 6, 7, 0.42)" },
-      "glass-solid": { "role": "neutral", "displayName": "Glass Solid", "canonical": "#fbf3f0", "tonalRamp": ["oklch(15% 0.005 41.9)", "oklch(26% 0.006 41.9)", "oklch(38% 0.008 41.9)", "oklch(49% 0.009 41.9)", "oklch(61% 0.009 41.9)", "oklch(72% 0.008 41.9)", "oklch(84% 0.006 41.9)", "oklch(95% 0.005 41.9)"] },
-      "glass-solid-night": { "role": "neutral", "displayName": "Glass Solid Night", "canonical": "#2a1417", "tonalRamp": ["oklch(15% 0.019 11.7)", "oklch(26% 0.024 11.7)", "oklch(38% 0.029 11.7)", "oklch(49% 0.034 11.7)", "oklch(61% 0.034 11.7)", "oklch(72% 0.029 11.7)", "oklch(84% 0.024 11.7)", "oklch(95% 0.019 11.7)"] },
-      "state-new": { "role": "state", "displayName": "New Blue", "canonical": "oklch(48.8% 0.243 264.376)", "tonalRamp": ["oklch(15% 0.104 264.4)", "oklch(26% 0.160 264.4)", "oklch(38% 0.193 264.4)", "oklch(49% 0.226 264.4)", "oklch(61% 0.212 264.4)", "oklch(72% 0.144 264.4)", "oklch(84% 0.081 264.4)", "oklch(95% 0.024 264.4)"] },
-      "state-new-night": { "role": "state", "displayName": "New Blue Night" },
-      "state-learning": { "role": "state", "displayName": "Learning Red", "canonical": "oklch(50.5% 0.213 27.518)", "tonalRamp": ["oklch(15% 0.062 27.5)", "oklch(26% 0.108 27.5)", "oklch(38% 0.155 27.5)", "oklch(49% 0.198 27.5)", "oklch(61% 0.198 27.5)", "oklch(72% 0.169 27.5)", "oklch(84% 0.091 27.5)", "oklch(95% 0.025 27.5)"] },
-      "state-learning-night": { "role": "state", "displayName": "Learning Red Night" },
-      "state-review": { "role": "state", "displayName": "Review Green", "canonical": "oklch(50.8% 0.118 165.612)", "tonalRamp": ["oklch(15% 0.032 165.6)", "oklch(26% 0.055 165.6)", "oklch(38% 0.079 165.6)", "oklch(49% 0.103 165.6)", "oklch(61% 0.110 165.6)", "oklch(72% 0.094 165.6)", "oklch(84% 0.078 165.6)", "oklch(95% 0.061 165.6)"] },
-      "state-review-night": { "role": "state", "displayName": "Review Green Night" },
-      "chart-target": { "role": "accent", "displayName": "Chart Target Green", "canonical": "#059669", "tonalRamp": ["oklch(15% 0.033 163.2)", "oklch(26% 0.057 163.2)", "oklch(38% 0.082 163.2)", "oklch(49% 0.106 163.2)", "oklch(61% 0.119 163.2)", "oklch(72% 0.101 163.2)", "oklch(84% 0.084 163.2)", "oklch(95% 0.066 163.2)"] },
-      "chart-target-night": { "role": "accent", "displayName": "Chart Target Green Night", "canonical": "#10b981", "tonalRamp": ["oklch(15% 0.033 162.5)", "oklch(26% 0.058 162.5)", "oklch(38% 0.083 162.5)", "oklch(49% 0.107 162.5)", "oklch(61% 0.132 162.5)", "oklch(72% 0.118 162.5)", "oklch(84% 0.098 162.5)", "oklch(95% 0.076 162.5)"] }
+      "ground-rose": {
+        "role": "neutral",
+        "displayName": "Ground Rose",
+        "canonical": "#d87679",
+        "tonalRamp": [
+          "oklch(15% 0.061 18.9)",
+          "oklch(26% 0.080 18.9)",
+          "oklch(38% 0.097 18.9)",
+          "oklch(49% 0.114 18.9)",
+          "oklch(61% 0.114 18.9)",
+          "oklch(72% 0.097 18.9)",
+          "oklch(84% 0.080 18.9)",
+          "oklch(95% 0.025 18.9)"
+        ]
+      },
+      "ground-night": {
+        "role": "neutral",
+        "displayName": "Ground Night",
+        "canonical": "#160608",
+        "tonalRamp": [
+          "oklch(15% 0.016 12.0)",
+          "oklch(26% 0.020 12.0)",
+          "oklch(38% 0.024 12.0)",
+          "oklch(49% 0.028 12.0)",
+          "oklch(61% 0.028 12.0)",
+          "oklch(72% 0.024 12.0)",
+          "oklch(84% 0.020 12.0)",
+          "oklch(95% 0.016 12.0)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#111113",
+        "tonalRamp": [
+          "oklch(15% 0.002 286.0)",
+          "oklch(26% 0.003 286.0)",
+          "oklch(38% 0.003 286.0)",
+          "oklch(49% 0.004 286.0)",
+          "oklch(61% 0.004 286.0)",
+          "oklch(72% 0.003 286.0)",
+          "oklch(84% 0.003 286.0)",
+          "oklch(95% 0.002 286.0)"
+        ]
+      },
+      "action-red": {
+        "role": "primary",
+        "displayName": "Seal Red",
+        "canonical": "#B3261E",
+        "tonalRamp": [
+          "oklch(15% 0.062 28.7)",
+          "oklch(26% 0.108 28.7)",
+          "oklch(38% 0.142 28.7)",
+          "oklch(49% 0.166 28.7)",
+          "oklch(61% 0.166 28.7)",
+          "oklch(72% 0.142 28.7)",
+          "oklch(84% 0.091 28.7)",
+          "oklch(95% 0.025 28.7)"
+        ]
+      },
+      "action-red-deep": {
+        "role": "primary",
+        "displayName": "Seal Red Deep",
+        "canonical": "#8F1E18",
+        "tonalRamp": [
+          "oklch(15% 0.062 28.4)",
+          "oklch(26% 0.098 28.4)",
+          "oklch(38% 0.119 28.4)",
+          "oklch(49% 0.139 28.4)",
+          "oklch(61% 0.139 28.4)",
+          "oklch(72% 0.119 28.4)",
+          "oklch(84% 0.091 28.4)",
+          "oklch(95% 0.025 28.4)"
+        ]
+      },
+      "system-red": {
+        "role": "accent",
+        "displayName": "System Red",
+        "canonical": "#ff3b30",
+        "tonalRamp": [
+          "oklch(15% 0.062 28.7)",
+          "oklch(26% 0.108 28.7)",
+          "oklch(38% 0.155 28.7)",
+          "oklch(49% 0.202 28.7)",
+          "oklch(61% 0.216 28.7)",
+          "oklch(72% 0.174 28.7)",
+          "oklch(84% 0.091 28.7)",
+          "oklch(95% 0.025 28.7)"
+        ]
+      },
+      "focus-red": {
+        "role": "accent",
+        "displayName": "Focus Red",
+        "canonical": "#ef4444",
+        "tonalRamp": [
+          "oklch(15% 0.061 25.3)",
+          "oklch(26% 0.107 25.3)",
+          "oklch(38% 0.154 25.3)",
+          "oklch(49% 0.194 25.3)",
+          "oklch(61% 0.194 25.3)",
+          "oklch(72% 0.165 25.3)",
+          "oklch(84% 0.091 25.3)",
+          "oklch(95% 0.025 25.3)"
+        ]
+      },
+      "seal-cream": {
+        "role": "neutral",
+        "displayName": "Seal Cream",
+        "canonical": "#F4EEE3",
+        "tonalRamp": [
+          "oklch(15% 0.008 82.8)",
+          "oklch(26% 0.011 82.8)",
+          "oklch(38% 0.013 82.8)",
+          "oklch(49% 0.015 82.8)",
+          "oklch(61% 0.015 82.8)",
+          "oklch(72% 0.013 82.8)",
+          "oklch(84% 0.011 82.8)",
+          "oklch(95% 0.008 82.8)"
+        ]
+      },
+      "glass-surface": {
+        "role": "neutral",
+        "displayName": "Glass Surface",
+        "canonical": "rgba(255, 248, 246, 0.46)"
+      },
+      "glass-surface-night": {
+        "role": "neutral",
+        "displayName": "Glass Surface Night",
+        "canonical": "rgba(36, 18, 20, 0.58)"
+      },
+      "glass-field": {
+        "role": "neutral",
+        "displayName": "Glass Field",
+        "canonical": "rgba(255, 252, 250, 0.58)"
+      },
+      "glass-field-night": {
+        "role": "neutral",
+        "displayName": "Glass Field Night",
+        "canonical": "rgba(12, 6, 7, 0.42)"
+      },
+      "glass-solid": {
+        "role": "neutral",
+        "displayName": "Glass Solid",
+        "canonical": "#fbf3f0",
+        "tonalRamp": [
+          "oklch(15% 0.005 41.9)",
+          "oklch(26% 0.006 41.9)",
+          "oklch(38% 0.008 41.9)",
+          "oklch(49% 0.009 41.9)",
+          "oklch(61% 0.009 41.9)",
+          "oklch(72% 0.008 41.9)",
+          "oklch(84% 0.006 41.9)",
+          "oklch(95% 0.005 41.9)"
+        ]
+      },
+      "glass-solid-night": {
+        "role": "neutral",
+        "displayName": "Glass Solid Night",
+        "canonical": "#2a1417",
+        "tonalRamp": [
+          "oklch(15% 0.019 11.7)",
+          "oklch(26% 0.024 11.7)",
+          "oklch(38% 0.029 11.7)",
+          "oklch(49% 0.034 11.7)",
+          "oklch(61% 0.034 11.7)",
+          "oklch(72% 0.029 11.7)",
+          "oklch(84% 0.024 11.7)",
+          "oklch(95% 0.019 11.7)"
+        ]
+      },
+      "state-new": {
+        "role": "state",
+        "displayName": "New Blue",
+        "canonical": "oklch(48.8% 0.243 264.376)",
+        "tonalRamp": [
+          "oklch(15% 0.104 264.4)",
+          "oklch(26% 0.160 264.4)",
+          "oklch(38% 0.193 264.4)",
+          "oklch(49% 0.226 264.4)",
+          "oklch(61% 0.212 264.4)",
+          "oklch(72% 0.144 264.4)",
+          "oklch(84% 0.081 264.4)",
+          "oklch(95% 0.024 264.4)"
+        ]
+      },
+      "state-new-night": {
+        "role": "state",
+        "displayName": "New Blue Night"
+      },
+      "state-learning": {
+        "role": "state",
+        "displayName": "Learning Red",
+        "canonical": "oklch(50.5% 0.213 27.518)",
+        "tonalRamp": [
+          "oklch(15% 0.062 27.5)",
+          "oklch(26% 0.108 27.5)",
+          "oklch(38% 0.155 27.5)",
+          "oklch(49% 0.198 27.5)",
+          "oklch(61% 0.198 27.5)",
+          "oklch(72% 0.169 27.5)",
+          "oklch(84% 0.091 27.5)",
+          "oklch(95% 0.025 27.5)"
+        ]
+      },
+      "state-learning-night": {
+        "role": "state",
+        "displayName": "Learning Red Night"
+      },
+      "state-review": {
+        "role": "state",
+        "displayName": "Review Green",
+        "canonical": "oklch(50.8% 0.118 165.612)",
+        "tonalRamp": [
+          "oklch(15% 0.032 165.6)",
+          "oklch(26% 0.055 165.6)",
+          "oklch(38% 0.079 165.6)",
+          "oklch(49% 0.103 165.6)",
+          "oklch(61% 0.110 165.6)",
+          "oklch(72% 0.094 165.6)",
+          "oklch(84% 0.078 165.6)",
+          "oklch(95% 0.061 165.6)"
+        ]
+      },
+      "state-review-night": {
+        "role": "state",
+        "displayName": "Review Green Night"
+      },
+      "chart-target": {
+        "role": "accent",
+        "displayName": "Chart Target Green",
+        "canonical": "#059669",
+        "tonalRamp": [
+          "oklch(15% 0.033 163.2)",
+          "oklch(26% 0.057 163.2)",
+          "oklch(38% 0.082 163.2)",
+          "oklch(49% 0.106 163.2)",
+          "oklch(61% 0.119 163.2)",
+          "oklch(72% 0.101 163.2)",
+          "oklch(84% 0.084 163.2)",
+          "oklch(95% 0.066 163.2)"
+        ]
+      },
+      "chart-target-night": {
+        "role": "accent",
+        "displayName": "Chart Target Green Night",
+        "canonical": "#10b981",
+        "tonalRamp": [
+          "oklch(15% 0.033 162.5)",
+          "oklch(26% 0.058 162.5)",
+          "oklch(38% 0.083 162.5)",
+          "oklch(49% 0.107 162.5)",
+          "oklch(61% 0.132 162.5)",
+          "oklch(72% 0.118 162.5)",
+          "oklch(84% 0.098 162.5)",
+          "oklch(95% 0.076 162.5)"
+        ]
+      }
     },
     "typographyMeta": {
-      "hanzi": { "displayName": "Hanzi Lead", "purpose": "Card characters and the hanzi-numeral index column; always the largest type on its surface." },
-      "display": { "displayName": "Pinyin / Display", "purpose": "Pinyin under the hanzi; translation line in the answer dock." },
-      "body": { "displayName": "Body", "purpose": "Every UI string: fields, labels, settings, account screens." },
-      "label": { "displayName": "Tracked Label", "purpose": "Uppercase legend for field groups; the wordmark tag at 11px / 0.2em." },
-      "mono": { "displayName": "Mono", "purpose": "Code and preformatted content inside cards." }
+      "hanzi": {
+        "displayName": "Hanzi Lead",
+        "purpose": "Card characters and the hanzi-numeral index column; always the largest type on its surface."
+      },
+      "display": {
+        "displayName": "Pinyin / Display",
+        "purpose": "Pinyin under the hanzi; translation line in the answer dock."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Every UI string: fields, labels, settings, account screens."
+      },
+      "label": {
+        "displayName": "Tracked Label",
+        "purpose": "Uppercase legend for field groups; the wordmark tag at 11px / 0.2em."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Code and preformatted content inside cards."
+      }
     },
     "shadows": [
-      { "name": "specular-insets", "value": "inset 0 1.5px 1px rgba(255,255,255,0.88), inset 0 -1px 1px rgba(255,255,255,0.38), inset 1px 0 1px rgba(255,255,255,0.48), inset -1px 0 1px rgba(255,255,255,0.48)", "purpose": "Standard glass edge on sheets, cards, dock and fields (day theme)." },
-      { "name": "specular-insets-night", "value": "inset 0 1.5px 1px rgba(255,255,255,0.28), inset 0 -1px 1px rgba(255,255,255,0.08), inset 1px 0 1px rgba(255,255,255,0.15), inset -1px 0 1px rgba(255,255,255,0.15)", "purpose": "Standard glass edge, night theme." },
-      { "name": "float", "value": "0 12px 32px rgba(0, 0, 0, 0.18)", "purpose": "The floating bottom bar — the system's only drop shadow." },
-      { "name": "seal-rings", "value": "inset 0 0 0 3px #B3261E, inset 0 0 0 5px rgba(244, 238, 227, 0.9)", "purpose": "Cream paper ring inside the study seal." },
-      { "name": "segment-pill", "value": "0 1px 2px rgb(0 0 0 / 0.05)", "purpose": "Active pill of segmented controls (Tailwind shadow-sm)." },
-      { "name": "field-ring", "value": "0 0 0 2px rgba(239, 68, 68, 0.6)", "purpose": "Keyboard focus ring on glass fields (instead of the global outline)." }
+      {
+        "name": "specular-insets",
+        "value": "inset 0 1.5px 1px rgba(255,255,255,0.88), inset 0 -1px 1px rgba(255,255,255,0.38), inset 1px 0 1px rgba(255,255,255,0.48), inset -1px 0 1px rgba(255,255,255,0.48)",
+        "purpose": "Standard glass edge on sheets, cards, dock and fields (day theme)."
+      },
+      {
+        "name": "specular-insets-night",
+        "value": "inset 0 1.5px 1px rgba(255,255,255,0.28), inset 0 -1px 1px rgba(255,255,255,0.08), inset 1px 0 1px rgba(255,255,255,0.15), inset -1px 0 1px rgba(255,255,255,0.15)",
+        "purpose": "Standard glass edge, night theme."
+      },
+      {
+        "name": "float",
+        "value": "0 12px 32px rgba(0, 0, 0, 0.18)",
+        "purpose": "The floating bottom bar — the system's only drop shadow."
+      },
+      {
+        "name": "seal-rings",
+        "value": "inset 0 0 0 3px #B3261E, inset 0 0 0 5px rgba(244, 238, 227, 0.9)",
+        "purpose": "Cream paper ring inside the study seal."
+      },
+      {
+        "name": "segment-pill",
+        "value": "0 1px 2px rgb(0 0 0 / 0.05)",
+        "purpose": "Active pill of segmented controls (Tailwind shadow-sm)."
+      },
+      {
+        "name": "field-ring",
+        "value": "0 0 0 2px rgba(239, 68, 68, 0.6)",
+        "purpose": "Keyboard focus ring on glass fields (instead of the global outline)."
+      }
     ],
     "motion": [
-      { "name": "ease-card", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Card and dock state transitions at 280ms (--anim-curve / --anim-time)." },
-      { "name": "ease-enter", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "View and overlay entrances at 200ms; ledger rows rise 8px over 300ms; ladder climb 420ms." },
-      { "name": "ease-sweep", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Skeleton specular sweep, 1.6s loop." },
-      { "name": "ease-press", "value": "cubic-bezier(0.3, 0, 0.2, 1)", "purpose": "Study seal press (140ms in-session, 320ms on session complete)." },
-      { "name": "duration-routine", "value": "150-200ms", "purpose": "Routine colour/background transitions; exits are left instant or faster." },
-      { "name": "stagger", "value": "30ms", "purpose": "Ledger row entrance delay, capped at 240ms." }
+      {
+        "name": "ease-card",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "Card and dock state transitions at 280ms (--anim-curve / --anim-time)."
+      },
+      {
+        "name": "ease-enter",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "View and overlay entrances at 200ms; ledger rows rise 8px over 300ms; ladder climb 420ms."
+      },
+      {
+        "name": "ease-sweep",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Skeleton specular sweep, 1.6s loop."
+      },
+      {
+        "name": "ease-press",
+        "value": "cubic-bezier(0.3, 0, 0.2, 1)",
+        "purpose": "Study seal press (140ms in-session, 320ms on session complete)."
+      },
+      {
+        "name": "duration-routine",
+        "value": "150-200ms",
+        "purpose": "Routine colour/background transitions; exits are left instant or faster."
+      },
+      {
+        "name": "stagger",
+        "value": "30ms",
+        "purpose": "Ledger row entrance delay, capped at 240ms."
+      }
     ],
     "breakpoints": [
-      { "name": "sm", "value": "640px", "purpose": "The only breakpoint in use: sign-up sheet widens, nav labels appear." }
+      {
+        "name": "sm",
+        "value": "640px",
+        "purpose": "The only breakpoint in use: sign-up sheet widens, nav labels appear."
+      }
     ]
   },
   "components": [
@@ -77,7 +379,7 @@
       "refersTo": "glass-field",
       "description": "Text/email/password input on the glass, 16px text with the red focus ring.",
       "html": "<input class=\"ds-input\" type=\"email\" placeholder=\"E-mail\" aria-label=\"E-mail\" />",
-      "css": ".ds-input { width: 100%; box-sizing: border-box; min-height: 48px; padding: 0 16px; border: 1px solid rgba(255,255,255,0.7); border-radius: 12px; background: rgba(255,252,250,0.58); -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); color: #111113; font: 400 16px/1.45 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; } .ds-input::placeholder { color: rgba(60,60,67,0.55); } .ds-input:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(239,68,68,0.6); }"
+      "css": ".ds-input { width: 100%; box-sizing: border-box; min-height: 48px; padding: 0 16px; border: 1px solid rgba(255,255,255,0.7); border-radius: 12px; background: rgba(255,252,250,0.58); -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); color: #111113; font: 400 16px/1.45 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; } .ds-input::placeholder { color: rgba(60,60,67,0.85); } .ds-input:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(239,68,68,0.6); }"
     },
     {
       "name": "Glass Sheet with Ledger",
@@ -127,7 +429,7 @@
   ],
   "narrative": {
     "northStar": "The Glass Ledger",
-    "overview": "Every screen stands in the same red room: a striped red ground — rose by day (#d87679 under a cream-to-crimson radial), ember at night (#160608 under a red glow) — and all work happens on frosted acrylic sheets laid over it. The material is the study card: a translucent surface, 30px blur at 180% saturation, with specular highlights inset along its edges in place of drop shadows. That card has spread outward — study, navigation, settings and the account screens are all the same glass, cut into sheets.\n\nThe sheets read as a ledger. One or two per screen, never framed panels inside them; rows run under hairlines with hanzi numerals as their index column (一 二 三 …), counts right-aligned in tabular figures. Red is the only accent hue, and it is also the ground and the action; the only other colors are three state tints that live on numbers. The account surface — sign-in, sign-up, change password, and the account sheet in Settings — extends the same world on a deliberately text-only key: labels, hairlines, values, and the crimson brand seal.\n\nThe personality is quiet, bookish and tactile. Two full themes are equal citizens and darkness follows the student's saved choice (the .night_mode class), never prefers-color-scheme. Motion is restrained — state changes at 150–200ms, entrances on a single rise curve — with every animation dropped under reduced motion and every glass surface falling back to solid under reduced transparency. No emojis, icons only from lucide-react, copy kept terse.",
+    "overview": "Every screen stands in the same red room: a striped red ground — rose by day (#d87679 under a cream-to-crimson radial), ember at night (#160608 under a red glow) — and all work happens on frosted acrylic sheets laid over it. The material is the study card: a translucent surface, 30px blur at 180% saturation, with specular highlights inset along its edges in place of drop shadows. That card has spread outward — study, navigation, settings and the account screens are all the same glass, cut into sheets.\n\nThe sheets read as a ledger. One or two per screen, never framed panels inside them; rows run under hairlines with hanzi numerals as their index column (一 二 三 …), counts right-aligned in tabular figures. Red is the only accent hue, and it is also the ground and the action; the only other colors are three state tints that live on numbers. The account surface — sign-in, sign-up, change password, and the account sheet in Settings — extends the same world on a deliberately text-only key: labels, hairlines, values, and the crimson brand seal.\n\nThe personality is quiet, bookish and tactile. Two full themes are equal citizens and darkness follows the student's saved choice (the .night_mode class), never prefers-color-scheme. Motion is restrained — state changes at 150–200ms, entrances on a single rise curve — with every animation dropped under reduced motion and every glass surface falling back to solid under reduced transparency. No emojis, icons only from lucide-react, copy kept terse. Mobile navigation keeps short labels visible. The planner opens as a compact disclosure, preserving edits when collapsed. Tertiary ink uses 85% alpha by day and 78% by night.",
     "keyCharacteristics": [
       "Frosted glass sheets over a striped red ground; depth is specular light, not shadow.",
       "Every material and ink token ships as a rose-daylight / ember-night pair.",
@@ -138,12 +440,36 @@
       "Touch-first: a 44px floor on controls, 56–60px study actions."
     ],
     "rules": [
-      { "name": "The One Red Rule", "body": "Red is the system's only accent hue: ground, action, selection, seal. No second decorative hue is introduced; the only other hues are the three state tints, and they belong to numbers.", "section": "colors" },
-      { "name": "The Two-Temperature Rule", "body": "Every material and ink token ships as a day/night pair. A new token without its night sibling is incomplete work.", "section": "colors" },
-      { "name": "The State-On-Numerals Rule", "body": "New blue, learning red and review green mark counts, tags and state marks only. They never tint buttons, headings, sheets or navigation.", "section": "colors" },
-      { "name": "The Hanzi Lead Rule", "body": "Anywhere a character appears it is set in the serif stack and is the largest element on its surface. Never set hanzi in the UI sans, and never use it as texture or watermark.", "section": "typography" },
-      { "name": "The Legend Rule", "body": "Uppercase tracked labels are structural, not ornamental: they legend a field group or tag the wordmark. They label the content that follows; they never introduce a heading.", "section": "typography" },
-      { "name": "The Light-Not-Shadow Rule", "body": "Ordinary sheets never take a drop shadow; their depth is the specular light on the glass edges. Only the floating bottom bar is allowed one shadow.", "section": "elevation" }
+      {
+        "name": "The One Red Rule",
+        "body": "Red is the system's only accent hue: ground, action, selection, seal. No second decorative hue is introduced; the only other hues are the three state tints, and they belong to numbers.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Temperature Rule",
+        "body": "Every material and ink token ships as a day/night pair. A new token without its night sibling is incomplete work.",
+        "section": "colors"
+      },
+      {
+        "name": "The State-On-Numerals Rule",
+        "body": "New blue, learning red and review green mark counts, tags and state marks only. They never tint buttons, headings, sheets or navigation.",
+        "section": "colors"
+      },
+      {
+        "name": "The Hanzi Lead Rule",
+        "body": "Anywhere a character appears it is set in the serif stack and is the largest element on its surface. Never set hanzi in the UI sans, and never use it as texture or watermark.",
+        "section": "typography"
+      },
+      {
+        "name": "The Legend Rule",
+        "body": "Uppercase tracked labels are structural, not ornamental: they legend a field group or tag the wordmark. They label the content that follows; they never introduce a heading.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light-Not-Shadow Rule",
+        "body": "Ordinary sheets never take a drop shadow; their depth is the specular light on the glass edges. Only the floating bottom bar is allowed one shadow.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do set every hanzi in the serif stack — card text and the numeral index column alike.",

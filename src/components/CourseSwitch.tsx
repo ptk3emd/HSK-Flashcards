@@ -25,7 +25,7 @@ export const CourseSwitch: React.FC<{ className?: string }> = ({ className = '' 
           aria-label={o.title}
           aria-pressed={current}
           onClick={() => switchCourse(o.id)}
-          className={`min-h-9 min-w-11 px-2.5 rounded-md text-sm font-semibold whitespace-nowrap cursor-pointer transition-colors ${
+          className={`min-h-11 min-w-11 px-2.5 rounded-md text-sm font-semibold whitespace-nowrap cursor-pointer transition-colors ${
             current ? 'bg-white text-ink shadow-sm' : 'ink-secondary hover:text-[var(--text-fg)]'
           }`}
         >

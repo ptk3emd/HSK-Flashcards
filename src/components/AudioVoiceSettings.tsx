@@ -166,7 +166,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
 
   const segmentGroup = 'flex gap-0.5 p-0.5 rounded-xl bg-black/[0.05] dark:bg-white/[0.07]';
   const segment = (active: boolean) =>
-    `min-h-10 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
+    `min-h-11 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
       active
         ? 'bg-white text-ink shadow-sm dark:bg-white/20 dark:text-white'
         : 'ink-secondary hover:text-[var(--text-fg)]'
@@ -180,7 +180,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
           type="button"
           onClick={handleTestAudio}
           disabled={isPlayingTest}
-          className="min-h-10 px-3.5 rounded-xl text-sm font-medium flex items-center gap-1.5 cursor-pointer transition-colors bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14] disabled:opacity-50"
+          className="min-h-11 px-3.5 rounded-xl text-sm font-medium flex items-center gap-1.5 cursor-pointer transition-colors bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14] disabled:opacity-50"
         >
           <Play aria-hidden="true" className={`w-3.5 h-3.5 fill-current ${isPlayingTest ? 'animate-pulse' : ''}`} />
           <span>{isPlayingTest ? 'Tocando' : 'Testar'}</span>
@@ -280,7 +280,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
                           type="button"
                           onClick={() => handleRemove(nv.id)}
                           aria-label={`Remover voz ${nv.label}`}
-                          className="size-10 rounded-xl flex items-center justify-center cursor-pointer ink-secondary hover:text-[var(--text-fg)]"
+                          className="size-11 rounded-xl flex items-center justify-center cursor-pointer ink-secondary hover:text-[var(--text-fg)]"
                         >
                           <Trash2 aria-hidden="true" className="w-4 h-4" />
                         </button>
@@ -290,7 +290,7 @@ export const AudioVoiceSettings: React.FC<AudioVoiceSettingsProps> = ({
                         type="button"
                         onClick={() => handleInstall(nv.id, gender)}
                         disabled={downloading !== null}
-                        className="min-h-10 px-3 rounded-xl text-sm font-medium flex items-center gap-1.5 cursor-pointer bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14] disabled:opacity-50"
+                        className="min-h-11 px-3 rounded-xl text-sm font-medium flex items-center gap-1.5 cursor-pointer bg-black/[0.05] hover:bg-black/[0.09] dark:bg-white/[0.08] dark:hover:bg-white/[0.14] disabled:opacity-50"
                       >
                         {isBusy ? (
                           <Loader2 aria-hidden="true" className="w-3.5 h-3.5 animate-spin" />

@@ -136,7 +136,7 @@ A one-hue world in two temperatures: red is the ground, the accent and the actio
 - **Ground Rose** (#d87679): light-theme ground base, under a radial gradient of #fae6d4 → #e08285 → #c25258 and 18/36px vertical stripes at very low alpha.
 - **Ground Night** (#160608): night ground base, under a red-glow radial and the same stripe rhythm; also the PWA background color.
 - **Ink** (#111113): UI text on light surfaces; the study card's own ink steps to a near-black #1d1d1f for card text.
-- **Text ramp**: secondary and tertiary inks are alpha forms — rgba(60, 60, 67, 0.78) / 0.55 by day, rgba(235, 235, 245, 0.78) / 0.55 by night.
+- **Text ramp**: secondary and tertiary inks are alpha forms — rgba(60, 60, 67, 0.78) / 0.85 by day, rgba(235, 235, 245, 0.78) / 0.78 by night.
 - **Hairline separator**: 1px rgba(60, 60, 67, 0.18) by day; rgba(84, 84, 88, 0.65) by night.
 - **Glass materials**: sheets sit at rgba(255, 248, 246, 0.46) day / rgba(36, 18, 20, 0.58) night under blur(30px) saturate(180%); fields lighten to rgba(255, 252, 250, 0.58) / rgba(12, 6, 7, 0.42) at blur(16px) saturate(160%); popovers densify to rgba(255, 252, 250, 0.84) / rgba(40, 20, 22, 0.8); the reduced-transparency fallback is solid #fbf3f0 / #2a1417.
 - **Seal Cream** (#F4EEE3): the glyph and paper-ring color inside the red brand seal.
@@ -176,7 +176,7 @@ A one-hue world in two temperatures: red is the ground, the accent and the actio
 
 A single centered column on every screen. The app shell is max-w-5xl (1024px) with px-4 (16px) gutters, pt-6 top padding, and pb-28 (112px) so the floating bar never covers content. Screens hold a max-w-2xl (672px) column; the account screens narrow to a single max-w-sm (384px) sheet, widening to max-w-md (448px) for the sign-up form at the sm breakpoint — the only breakpoint the app uses (640px).
 
-Sheets stack with 16px gaps and never nest framed panels. Sheet padding runs 24px (p-6) on account and form sheets, 20→28px (px-5, sm:px-7) on settings sheets; ledger rows breathe with 12px (py-3) separations and 10px in the account sheet's data list. The floating bottom bar hangs fixed at bottom-4 (16px), horizontally centered.
+Sheets stack with 16px gaps and never nest framed panels. Sheet padding runs 24px (p-6) on account and form sheets, 20→28px (px-5, sm:px-7) on settings sheets; ledger rows breathe with 12px (py-3) separations and 10px in the account sheet's data list. The floating bottom bar hangs 16px above the device safe area, horizontally centered. Below 640px it spans the viewport minus 32px gutters and uses short visible labels. The planner opens as a compact disclosure; its editable form appears on request. Below 420px, the day breakdown spans the full sheet width under the count and card stack.
 
 Touch is the base assumption: every interactive control holds a 44px floor (min-h-11), primary buttons run 48px (min-h-12), the dashboard CTA 56px (min-h-14), and the study session's reveal and grade buttons 60px.
 
@@ -220,7 +220,7 @@ The acrylic radius is 28px — the study card's radius, carried unchanged onto e
 - **Affordances:** password fields carry a right-side eye toggle (44px target); selects hide the native arrow for a lucide chevron; date inputs bind `color-scheme` to the theme.
 
 ### Navigation
-- **Bottom bar:** a fixed floating sheet (16px radius, glass plus the single shadow), five icon+label tabs; the active tab is a solid rose-red 44px pill with white text, inactive tabs are secondary ink with a faint hover fill; labels hide below the sm breakpoint.
+- **Bottom bar:** a fixed floating sheet (16px radius, glass plus the single shadow), five icon+label tabs; the active tab is a solid rose-red 44px pill with white text, inactive tabs are secondary ink with a faint hover fill; short labels remain visible below the sm breakpoint.
 
 ### Password Checklist (signature)
 - A live rule list under password fields: 12px rows, a lucide check in review green when passed, a hollow circle in secondary ink when not, topped by a 3px strength rule that fills red until the policy passes and turns emerald once it does. Its labels are the policy's own strings ("Pelo menos 8 caracteres", "Longe das senhas mais usadas", "Sem sequências como 1234 ou abcd", …), and the checklist announces progress to assistive tech.
