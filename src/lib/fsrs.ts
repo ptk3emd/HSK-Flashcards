@@ -372,11 +372,12 @@ function scheduleFSRS6(card: Card, rating: Rating, now: Date, options: FSRSOptio
         w
       );
       hard = Math.min(hard, goodBeforeOrder);
-      const good = Math.max(goodBeforeOrder, hard + 1);
-      const easy = Math.max(
+      // Ordering may collapse at the ceiling: never exceed the configured maximum.
+      const good = Math.min(options.maximum_interval, Math.max(goodBeforeOrder, hard + 1));
+      const easy = Math.min(options.maximum_interval, Math.max(
         calculateInterval(easyState.stability, requestRetention, options.maximum_interval, w),
         good + 1
-      );
+      ));
 
       scheduledDays = rating === 2 ? hard : rating === 3 ? good : easy;
       nextMemory = rating === 2 ? hardState : rating === 3 ? goodState : easyState;

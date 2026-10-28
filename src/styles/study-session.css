@@ -252,3 +252,30 @@
   .study-session .pinying.pinyin-stable,
   .study-session .mandarin-dock { transition: none; }
 }
+
+/* Graded feedback is semantic across courses: never inherit an Italian green failure seal. */
+html .study-session .study-seal[data-grade] {
+  --seal-fill: #b42318;
+  width: 88px;
+  height: 88px;
+  background: var(--seal-fill);
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow: inset 0 0 0 4px var(--seal-fill), inset 0 0 0 6px rgba(255,255,255,0.8), 0 4px 12px rgba(0,0,0,0.22);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  font-style: normal;
+  will-change: auto;
+}
+html .study-session .study-seal[data-grade='3'],
+html .study-session .study-seal[data-grade='4'] { --seal-fill: #08783e; }
+html .study-session.night_mode .study-seal[data-grade] { --seal-fill: #d32f2f; }
+html .study-session.night_mode .study-seal[data-grade='3'],
+html .study-session.night_mode .study-seal[data-grade='4'] { --seal-fill: #078342; }
+.study-seal-icon { width: 36px; height: 36px; }
+.study-seal-label { font: 700 12px/1.2 var(--font-text); }
+@media (prefers-reduced-motion: reduce) {
+  html .study-session .study-seal[data-grade] { animation: none; transform: none; }
+}

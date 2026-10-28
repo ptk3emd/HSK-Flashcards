@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
 import { flushSync } from 'react-dom';
+import { Check, X } from 'lucide-react';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGesture } from '../types/card';
 import { GESTURES, GRADE_ACTIONS, effectiveActionLabel, isActionAvailable } from '../lib/gestures';
@@ -48,13 +49,14 @@ interface StudySessionProps {
 }
 
 /**
- * The seal the grade presses onto the card as it leaves: 再 难 好 易 in Mandarin, a wax seal
- * with E D B F (Encore, Difficile, Bien, Facile) in French. Red, except Bom, a pass, in green.
+ * The grade stays visible before the card leaves: a check for Bom/Fácil,
+ * a cross for Novamente/Difícil, with an explicit Portuguese label across courses.
  * Decorative: the counter announces the grade.
  */
 const GradeSeal: React.FC<{ rating: Rating }> = ({ rating }) => (
   <div className="study-seal" data-grade={rating} aria-hidden="true">
-    <span lang={COURSE.lang}>{COURSE.sealMarks[rating]}</span>
+    {rating >= 3 ? <Check className="study-seal-icon" strokeWidth={3} /> : <X className="study-seal-icon" strokeWidth={3} />}
+    <span className="study-seal-label">{rating === 1 ? 'Novamente' : rating === 2 ? 'Difícil' : rating === 3 ? 'Bom' : 'Fácil'}</span>
   </div>
 );
 
@@ -382,7 +384,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
 
   // The answered card leaves in the direction of its grade, the same directions the swipe
   // gestures use: Novamente left, Bom right, Fácil up, Difícil down. It starts from wherever
-  // the card is (mid-swipe included), takes 160 ms, then the grade is applied and the next
+  // the card is (mid-swipe included), holds its seal for 420ms, exits in 160ms, then the grade is applied and the next
   // card makes its entrance. Input is held during the exit so a grade cannot land twice.
   const cardWrapperRef = useRef<HTMLDivElement>(null);
   const exitingRef = useRef(false);
@@ -406,7 +408,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
       if (exitingRef.current || !currentCard) return;
       const el = cardWrapperRef.current;
       const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-      if (!el || typeof el.animate !== 'function' || typeof DOMMatrixReadOnly === 'undefined' || reduceMotion) {
+      if (!el || typeof el.animate !== 'function' || typeof DOMMatrixReadOnly === 'undefined') {
         // Keep the same duplicate-input guard even when no animation is played.
         exitingRef.current = true;
         handleAnswer(rating);
@@ -422,14 +424,15 @@ export const StudySession: React.FC<StudySessionProps> = ({
       const matrix = new DOMMatrixReadOnly(from === 'none' ? undefined : from);
       const travelX = matrix.m41 + dx * Math.min(window.innerWidth * 0.16, 80);
       const travelY = matrix.m42 + dy * 48;
-      // The seal lands as the card starts to move; both are transform and opacity only.
+      // Hold the result at full opacity for 420ms before the 160ms exit.
       const rest = from === 'none' ? 'translate3d(0, 0, 0)' : from;
       const exit = el.animate(
-        [
-          { transform: rest, opacity: 1 },
-          { transform: `translate3d(${travelX}px, ${travelY}px, 0) `, opacity: 0 },
+        reduceMotion ? [{ opacity: 1 }, { opacity: 1 }] : [
+          { transform: rest, opacity: 1, offset: 0 },
+          { transform: rest, opacity: 1, offset: 420 / 580, easing: 'cubic-bezier(0.4, 0, 1, 1)' },
+          { transform: `translate3d(${travelX}px, ${travelY}px, 0) `, opacity: 0, offset: 1 },
         ],
-        { duration: 160, easing: 'cubic-bezier(0.4, 0, 1, 1)', fill: 'both' }
+        { duration: 580, easing: 'linear', fill: 'both' }
       );
       exitAnimationRef.current = exit;
       void exit.finished.then(() => {
@@ -816,6 +819,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
     >
       <h1 className="sr-only">Sessão de estudo</h1>
       <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {stamp ? `${stamp === 1 ? 'Novamente' : stamp === 2 ? 'Difícil' : stamp === 3 ? 'Bom' : 'Fácil'}. ` : ''}
         {isolatedLevel ? levelLabel(isolatedLevel) : 'Todos os ativos'}: {reviewedInSession} {reviewedInSession === 1 ? 'revisado' : 'revisados'} · {remainingCount} {remainingCount === 1 ? 'restante' : 'restantes'}
       </p>
 
