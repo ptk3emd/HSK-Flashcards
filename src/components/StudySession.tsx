@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo, useRef, lazy, Suspense } from 'react';
 import { flushSync } from 'react-dom';
-import { Check, X } from 'lucide-react';
+import { GradeStamp } from './GradeStamp';
 import { useDialogFocus } from './useDialogFocus';
 import { Card, DeckConfig, FSRSOptions, Rating, ReviewLog, StudyAction, StudyGesture } from '../types/card';
 import { GESTURES, GRADE_ACTIONS, effectiveActionLabel, isActionAvailable } from '../lib/gestures';
@@ -47,18 +47,6 @@ interface StudySessionProps {
   aheadUntil?: string | null;
   onExit: () => void;
 }
-
-/**
- * The grade stays visible before the card leaves: a check for Bom/Fácil,
- * a cross for Novamente/Difícil, with an explicit Portuguese label across courses.
- * Decorative: the counter announces the grade.
- */
-const GradeSeal: React.FC<{ rating: Rating }> = ({ rating }) => (
-  <div className="study-seal" data-grade={rating} aria-hidden="true">
-    {rating >= 3 ? <Check className="study-seal-icon" strokeWidth={3} /> : <X className="study-seal-icon" strokeWidth={3} />}
-    <span className="study-seal-label">{rating === 1 ? 'Novamente' : rating === 2 ? 'Difícil' : rating === 3 ? 'Bom' : 'Fácil'}</span>
-  </div>
-);
 
 /** Exit direction per grade (x, y): matches the swipe gestures' layout */
 const GRADE_EXIT: Record<Rating, [number, number]> = { 1: [-1, 0], 2: [0, 1], 3: [1, 0], 4: [0, -1] };
@@ -443,6 +431,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
         exit.cancel(); // Also release the transform if a same-card learning step stays due.
         exitingRef.current = false;
         setIsGrading(false);
+        setStamp(null); // A short learning queue may present the same card id again.
       }).catch(() => {
         // Cancellation is a navigation event, never an answer.
       });
@@ -648,7 +637,10 @@ export const StudySession: React.FC<StudySessionProps> = ({
     if (!g || g.id !== e.pointerId) return;
     const dx = e.clientX - g.x;
     const dy = e.clientY - g.y;
-    if (Math.max(Math.abs(dx), Math.abs(dy)) <= TAP_SLOP_PX) return;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) <= TAP_SLOP_PX) {
+      queueDrag(null); // Returning to the origin also withdraws the ink preview.
+      return;
+    }
     window.clearTimeout(longPressTimerRef.current); // moving is not a long press
     if (longPressFiredRef.current) return;
     const gesture = swipeGestureFor(dx, dy);
@@ -727,6 +719,12 @@ export const StudySession: React.FC<StudySessionProps> = ({
       ? 'bg-black/80 text-white'
       : 'bg-white/90 text-black';
   const dragDistance = drag ? Math.abs(drag.x) + Math.abs(drag.y) : 0;
+  // Resolve the configured action, not the direction: remapped gestures keep their meaning.
+  const previewRating: Rating | null = dragAction === 'again' ? 1 : dragAction === 'hard' ? 2
+    : dragAction === 'good' || (dragAction === 'revealOrGood' && isFlipped) ? 3
+    : dragAction === 'easy' ? 4 : null;
+  const stampProgress = Math.max(0, Math.min(1, (dragDistance - TAP_SLOP_PX) / (SWIPE_PX - TAP_SLOP_PX)));
+  const visibleStamp = stamp ?? previewRating;
   // Vertical swipes need the page to stop scrolling under the finger
   const usesVerticalSwipes = gestureMap.swipeUp !== 'none' || gestureMap.swipeDown !== 'none';
 
@@ -871,7 +869,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
           onPointerCancel={handlePointerCancel}
           onLostPointerCapture={handlePointerCancel}
         >
-          {dragLabel && (
+          {dragLabel && !previewRating && !stamp && (
             <div
               aria-hidden="true"
               className={`study-gesture-cue absolute top-2 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full text-sm font-bold ${dragTone}`}
@@ -879,6 +877,10 @@ export const StudySession: React.FC<StudySessionProps> = ({
             >
               {dragLabel}
             </div>
+          )}
+          {currentCard && visibleStamp && (stamp !== null || stampProgress > 0) && (
+            <GradeStamp key={stamp !== null ? 'confirmed' : 'preview'} rating={visibleStamp}
+              progress={stamp !== null ? 1 : stampProgress} confirmed={stamp !== null} />
           )}
           {currentCard ? (
             <div
@@ -898,7 +900,6 @@ export const StudySession: React.FC<StudySessionProps> = ({
                 card={currentCard}
                 isFlipped={isFlipped}
               />
-              {stamp && <GradeSeal rating={stamp} />}
             </div>
           ) : (
             <div className="mandarin-scene">
