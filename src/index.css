@@ -49,7 +49,7 @@
 input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
-  height: 1rem;
+  height: 44px;
   background: transparent;
   cursor: pointer;
 }
@@ -415,4 +415,23 @@ input[type='range']::-moz-range-thumb {
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 240ms;
+}
+
+/* Keep the floating navigation clear of device insets and reserve its full height. */
+@layer components {
+  .app-nav { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: calc(100% - 32px); }
+  .app-content { padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px)); }
+  @media (max-width: 419px) {
+    .today-summary > .today-stack { grid-column: 2; grid-row: 1; }
+    .today-summary .today-stack { --stack-w: 88px; --stack-h: 112px; --stack-step: 3px; }
+    .today-summary > :first-child > :first-child { align-self: center; }
+  }
+}
+
+@layer components {
+  .app-nav { width: calc(100% - 32px); }
+  @media (min-width: 640px) { .app-nav { width: max-content; } }
+  @media (max-width: 639px) {
+    input:not([type='range']):not([type='checkbox']):not([type='radio']), textarea, select { font-size: 16px; max-width: 100%; min-width: 0; }
+  }
 }

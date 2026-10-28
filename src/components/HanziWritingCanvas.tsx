@@ -201,7 +201,7 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
       : 'opacity-60';
 
   const toolButton =
-    'min-h-9 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 active:scale-95 bg-black/5 dark:bg-white/10 border-black/5 dark:border-white/10';
+    'min-h-11 px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 active:scale-95 bg-black/5 dark:bg-white/10 border-black/5 dark:border-white/10';
 
   return (
     <div
@@ -270,7 +270,7 @@ export const HanziWritingCanvas: React.FC<HanziWritingCanvasProps> = ({
                 type="button"
                 onClick={() => setSelectedCharIndex(idx)}
                 aria-pressed={isSelected}
-                className={`min-w-10 px-3 py-1 rounded-xl text-base font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                className={`min-w-11 px-3 py-1 rounded-xl text-base font-serif font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
                   isSelected
                     ? 'bg-red-600 text-white shadow-md'
                     : isLight

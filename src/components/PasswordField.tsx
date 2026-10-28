@@ -46,7 +46,7 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
           onClick={() => setVisible((current) => !current)}
           aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'}
           aria-pressed={visible}
-          className="absolute right-1 top-1/2 -translate-y-1/2 min-h-10 min-w-10 flex items-center justify-center rounded-lg ink-secondary hover:text-[var(--text-fg)] cursor-pointer"
+          className="absolute right-1 top-1/2 -translate-y-1/2 min-h-11 min-w-11 flex items-center justify-center rounded-lg ink-secondary hover:text-[var(--text-fg)] cursor-pointer"
         >
           {visible ? (
             <EyeOff className="w-[18px] h-[18px]" aria-hidden="true" />

@@ -99,7 +99,7 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
             <button
               type="button"
               onClick={onRequestMigration}
-              className="min-h-10 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer transition-colors"
+              className="min-h-11 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer transition-colors"
             >
               Atualizar para FSRS-6
             </button>
@@ -222,14 +222,14 @@ export const FSRSSettings: React.FC<FSRSSettingsProps> = ({
               <button
                 type="button"
                 onClick={applyWeights}
-                className="min-h-10 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer transition-colors"
+                className="min-h-11 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium text-sm cursor-pointer transition-colors"
               >
                 Aplicar
               </button>
               <button
                 type="button"
                 onClick={restoreWeights}
-                className="min-h-10 px-3.5 rounded-xl font-medium text-sm cursor-pointer transition-colors ink-secondary hover:text-[var(--text-fg)]"
+                className="min-h-11 px-3.5 rounded-xl font-medium text-sm cursor-pointer transition-colors ink-secondary hover:text-[var(--text-fg)]"
               >
                 Padrão
               </button>

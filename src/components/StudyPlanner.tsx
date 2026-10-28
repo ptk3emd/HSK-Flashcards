@@ -147,7 +147,7 @@ const PlannerMetrics: React.FC<{ result: PlannerResult; onOpenSettings: () => vo
         <button
           type="button"
           onClick={onOpenSettings}
-          className="ml-auto min-h-9 px-2.5 rounded-lg font-semibold text-red-700 dark:text-red-300 cursor-pointer hover:bg-red-600/10 transition-colors"
+          className="ml-auto min-h-11 px-2.5 rounded-lg font-semibold text-red-700 dark:text-red-300 cursor-pointer hover:bg-red-600/10 transition-colors"
         >
           Ajustar limites
         </button>
@@ -282,6 +282,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
   const defaultDate = addDaysToKey(today, DEFAULT_STUDY_PLAN_DAYS);
   const maxDate = addDaysToKey(today, MAX_STUDY_PLAN_DAYS);
 
+  const [expanded, setExpanded] = useState(false);
   const [mode, setMode] = useState<'summary' | 'form'>(activePlan ? 'summary' : 'form');
   const [draftDate, setDraftDate] = useState(activePlan?.targetDate ?? defaultDate);
   const [draftRetention, setDraftRetention] = useState(
@@ -549,7 +550,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
     return (
       <section className="sheet px-6 sm:px-8 py-6" aria-labelledby="study-plan-heading">
         <div className="flex items-center gap-2">
-          <h2 id="study-plan-heading" className="text-sm font-medium ink-secondary">
+          <h2 className="text-sm font-medium ink-secondary">
             Plano de estudo
           </h2>
           <CalendarDays className="w-4 h-4 ml-auto ink-tertiary" aria-hidden="true" />
@@ -572,9 +573,14 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
 
   return (
     <section className="sheet px-6 sm:px-8 py-6" aria-labelledby="study-plan-heading">
+      <button type="button" aria-expanded={expanded} aria-controls="study-plan-content" onClick={() => setExpanded(!expanded)} className="flex w-full min-h-11 items-center justify-between gap-3 text-left font-semibold cursor-pointer">
+        <span id="study-plan-heading">Plano de estudo{activePlan ? ` · Até ${formatDate(activePlan.targetDate)}` : ''}</span>
+        <span className="text-sm ink-secondary">{expanded ? 'Recolher' : activePlan ? 'Ver plano' : 'Criar objetivo'}</span>
+      </button>
+      <div id="study-plan-content" hidden={!expanded}>
       <div className="flex items-start gap-3">
         <div className="min-w-0">
-          <h2 id="study-plan-heading" className="text-sm font-medium ink-secondary">
+          <h2 className="text-sm font-medium ink-secondary">
             Plano de estudo
           </h2>
           {showSummary && activePlan ? (
@@ -605,7 +611,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
             type="button"
             onClick={handleEnd}
             aria-label="Encerrar plano"
-            className="size-9 shrink-0 rounded-full flex items-center justify-center cursor-pointer ink-tertiary hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            className="size-11 shrink-0 rounded-full flex items-center justify-center cursor-pointer ink-tertiary hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
             <X className="w-4 h-4" aria-hidden="true" />
           </button>
@@ -644,7 +650,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
               <button
                 type="button"
                 onClick={() => activePlan && requestPlan(activePlan)}
-                className="ml-auto flex items-center gap-1.5 min-h-9 px-2.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-black/5 dark:hover:bg-white/10"
+                className="ml-auto flex items-center gap-1.5 min-h-11 px-2.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-black/5 dark:hover:bg-white/10"
               >
                 <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
                 Tentar de novo
@@ -665,7 +671,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
             <button
               type="button"
               onClick={handleEdit}
-              className="min-h-10 px-3.5 rounded-xl border border-[var(--separator)] text-sm font-semibold cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors inline-flex items-center gap-1.5"
+              className="min-h-11 px-3.5 rounded-xl border border-[var(--separator)] text-sm font-semibold cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors inline-flex items-center gap-1.5"
             >
               <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
               Editar plano
@@ -688,7 +694,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
                       type="button"
                       onClick={() => toggleLevel(level)}
                       aria-pressed={on}
-                      className={`min-h-10 px-3 rounded-xl text-sm font-medium cursor-pointer transition-colors ${
+                      className={`min-h-11 px-3 rounded-xl text-sm font-medium cursor-pointer transition-colors ${
                         on
                           ? 'bg-red-600 text-white'
                           : 'bg-black/[0.05] dark:bg-white/[0.08] ink-secondary hover:text-[var(--text-fg)]'
@@ -701,7 +707,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
               <label htmlFor="study-plan-date" className="text-sm font-medium">
                 Data da prova
               </label>
@@ -732,7 +738,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
                     type="button"
                     onClick={() => handlePace(option.id)}
                     aria-pressed={draftPace === option.id}
-                    className={`min-h-10 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
+                    className={`min-h-11 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
                       draftPace === option.id
                         ? 'bg-white text-ink shadow-sm dark:bg-white/20 dark:text-white'
                         : 'ink-secondary hover:text-[var(--text-fg)]'
@@ -820,7 +826,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
               <button
                 type="button"
                 onClick={handleCalculate}
-                className="ml-auto flex items-center gap-1.5 min-h-9 px-2.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-black/5 dark:hover:bg-white/10"
+                className="ml-auto flex items-center gap-1.5 min-h-11 px-2.5 rounded-lg text-xs font-semibold cursor-pointer hover:bg-black/5 dark:hover:bg-white/10"
               >
                 <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
                 Tentar de novo
@@ -840,7 +846,7 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
               <button
                 type="button"
                 onClick={handleCancel}
-                className="min-h-10 px-3.5 rounded-xl text-sm font-semibold cursor-pointer ink-secondary hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                className="min-h-11 px-3.5 rounded-xl text-sm font-semibold cursor-pointer ink-secondary hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
               >
                 Cancelar
               </button>
@@ -849,13 +855,14 @@ export const StudyPlanner: React.FC<StudyPlannerProps> = ({
               type="button"
               onClick={handleSave}
               disabled={!previewReady}
-              className="ml-auto min-h-10 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="ml-auto min-h-11 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {activePlan ? 'Salvar alterações' : 'Começar objetivo'}
             </button>
           </div>
         </>
       )}
+      </div>
     </section>
   );
 };

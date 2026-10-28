@@ -39,6 +39,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
   onRequestMigration,
   onNavigateTab,
 }) => {
+  const [loadError, setLoadError] = useState<{ level: string; isolated: boolean } | null>(null);
   const [loadingLevel, setLoadingLevel] = useState<string | null>(null);
 
   // Suspended cards are not pending work, so they stay out of the study counts
@@ -128,6 +129,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
     const levelCards = cards.filter(c => c.level === lvl);
 
     if (levelCards.length === 0) {
+      setLoadError(null);
       setLoadingLevel(lvl);
       try {
         const nativeCards = await loadNativeLevelCards(lvl);
@@ -140,6 +142,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
         }
       } catch (e) {
         console.error('Failed to load native level', lvl, e);
+        setLoadError({ level: lvl, isolated: false });
       } finally {
         setLoadingLevel(null);
       }
@@ -161,6 +164,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
 
     const levelCards = cards.filter(c => c.level === lvl);
     if (levelCards.length === 0) {
+      setLoadError(null);
       setLoadingLevel(lvl);
       try {
         const nativeCards = await loadNativeLevelCards(lvl);
@@ -168,6 +172,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
         onStartStudy(lvl);
       } catch (err) {
         console.error('Failed to load level for isolated study', lvl, err);
+        setLoadError({ level: lvl, isolated: true });
       } finally {
         setLoadingLevel(null);
       }
@@ -179,18 +184,26 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4 animate-in fade-in duration-200">
+      {loadError && <div role="alert" className="sheet p-4 text-sm">
+        <p>Não foi possível carregar {levelLabel(loadError.level)}. Verifique sua conexão e tente novamente.</p>
+        <button type="button" disabled={loadingLevel !== null} className="mt-2 min-h-11 px-4 rounded-xl glass-field font-semibold cursor-pointer" onClick={() => loadError.isolated ? handleStudyIsolated(loadError.level) : handleToggleOrActivateLevel(loadError.level)}>Tentar novamente</button>
+        <button type="button" className="ml-2 min-h-11 px-4 rounded-xl font-semibold cursor-pointer" onClick={() => window.location.reload()}>Recarregar página</button>
+      </div>}
       {/* Brand lockup: the seal mark and the name, above the day's count */}
-      <div className="flex items-center gap-2.5 px-1">
-        <BrandMark className="size-6" />
-        <span className="hanzi-index text-lg font-semibold">{COURSE.brand}</span>
-        <span className="text-[11px] uppercase tracking-[0.2em] ink-tertiary">{COURSE.brandSub}</span>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-1">
+        <div className="flex items-center gap-2.5">
+          <BrandMark className="size-6" />
+          <span className="hanzi-index text-lg font-semibold">{COURSE.brand}</span>
+          <span className="text-[11px] uppercase tracking-[0.2em] ink-tertiary">{COURSE.brandSub}</span>
+        </div>
         <CourseSwitch className="ml-auto" />
       </div>
 
       {/* Today: the count and the one action that matters */}
       <section className="sheet px-6 pt-6 pb-6 sm:px-8 sm:pt-8" aria-labelledby="today-heading">
-        <div className="flex items-start gap-4">
-          <div className="flex-1 min-w-0">
+        <div className="today-summary grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-3">
+          <div className="contents min-[420px]:block min-w-0">
+            <div>
             <h1 id="today-heading" className="text-sm font-medium ink-secondary">
               Hoje
             </h1>
@@ -198,7 +211,8 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
               <span className="hanzi-index tabular text-6xl sm:text-7xl">{dueCount}</span>
               <span className="text-base ink-secondary">{dueCount === 1 ? 'cartão' : 'cartões'}</span>
             </p>
-            <p className="mt-3 text-sm tabular ink-secondary leading-relaxed">
+            </div>
+            <p className="mt-3 text-sm tabular ink-secondary leading-relaxed col-span-full min-[420px]:col-span-1">
               <span className="whitespace-nowrap">
                 <span className="font-semibold text-blue-700 dark:text-blue-300">{newCount}</span> novos
               </span>
@@ -212,7 +226,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
               </span>
             </p>
             {rawCount > dueCount && (
-              <p className="mt-1 text-xs ink-tertiary">Limites diários aplicados.</p>
+              <p className="text-xs ink-tertiary col-span-full min-[420px]:mt-1">Limites diários aplicados.</p>
             )}
           </div>
           <TodayStack
@@ -257,7 +271,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                       type="button"
                       onClick={() => setAheadUntil(key)}
                       aria-pressed={active}
-                      className={`min-h-10 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
+                      className={`min-h-11 px-3 rounded-[10px] text-sm font-medium cursor-pointer transition-colors ${
                         active
                           ? 'bg-white text-ink shadow-sm dark:bg-white/20 dark:text-white'
                           : 'ink-secondary hover:text-[var(--text-fg)]'
@@ -334,11 +348,11 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                   onClick={() => handleToggleOrActivateLevel(lvl)}
                   disabled={isLoading}
                   aria-pressed={isActive}
-                  className="flex-1 min-w-0 min-h-12 flex items-center gap-4 text-left cursor-pointer focus-visible:outline-none after:absolute after:inset-0 disabled:cursor-wait"
+                  className="flex-1 min-w-0 min-h-12 flex items-center gap-2 sm:gap-4 text-left cursor-pointer focus-visible:outline-none after:absolute after:inset-0 disabled:cursor-wait"
                 >
                   <span
                     aria-hidden="true"
-                    className={`hanzi-index w-14 whitespace-nowrap shrink-0 text-center transition-colors ${
+                    className={`hanzi-index w-9 sm:w-14 whitespace-nowrap shrink-0 text-center transition-colors ${
                       lvl === 'HSK 7-9' ? 'text-lg' : 'text-[28px]'
                     } ${isActive ? 'text-red-600 dark:text-red-400' : 'ink-tertiary'}`}
                   >
@@ -349,7 +363,7 @@ export const DeckDashboard: React.FC<DeckDashboardProps> = ({
                       <span className="font-semibold whitespace-nowrap">{levelLabel(lvl)}</span>
                       <span className="text-xs tabular ink-tertiary whitespace-nowrap">{formatCount(total)} no total</span>
                     </span>
-                    <span className="block text-xs tabular ink-secondary truncate">
+                    <span className="block text-xs tabular ink-secondary break-words">
                       +{formatCount(count)}
                       {isActive && !isLoading ? ' novas' : ` · ${stateLabel.toLowerCase()}`}
                     </span>

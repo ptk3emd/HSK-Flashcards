@@ -276,7 +276,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                 type="button"
                 onClick={() => setSearch('')}
                 aria-label="Limpar busca"
-                className="absolute right-1 top-1/2 -translate-y-1/2 size-9 rounded-lg flex items-center justify-center ink-tertiary hover:text-[var(--text-fg)] cursor-pointer"
+                className="absolute right-1 top-1/2 -translate-y-1/2 size-11 rounded-lg flex items-center justify-center ink-tertiary hover:text-[var(--text-fg)] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -299,7 +299,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
         </div>
 
         <div className="flex items-center gap-x-4 gap-y-2 flex-wrap text-sm">
-          <div role="group" aria-label="Campo da busca" className="flex items-center gap-1">
+          <div role="group" aria-label="Campo da busca" className="flex flex-wrap items-center gap-1">
             {(
               [
                 { id: 'all', label: 'Tudo' },
@@ -315,7 +315,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                   type="button"
                   onClick={() => setSearchTarget(tab.id)}
                   aria-pressed={isActive}
-                  className={`min-h-9 px-2.5 rounded-lg font-medium cursor-pointer transition-colors ${
+                  className={`min-h-11 px-2.5 rounded-lg font-medium cursor-pointer transition-colors ${
                     isActive
                       ? 'bg-black/[0.07] dark:bg-white/[0.12] text-[var(--text-fg)]'
                       : 'ink-secondary hover:text-[var(--text-fg)]'
@@ -326,12 +326,12 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               );
             })}
           </div>
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex flex-wrap items-center gap-2 ml-auto max-w-full">
             <select
               value={selectedLevel}
               onChange={(e) => setSelectedLevel(e.target.value)}
               aria-label="Filtrar por nível HSK"
-              className="min-h-9 px-2 rounded-lg bg-transparent ink-secondary font-medium cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+              className="min-h-11 px-2 rounded-lg bg-transparent ink-secondary font-medium cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
             >
               <option value="all" className="bg-white dark:bg-neutral-900">Todos os níveis</option>
               {ALL_HSK_LEVELS.map((lvl) => (
@@ -344,14 +344,14 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               value={selectedState}
               onChange={(e) => setSelectedState(e.target.value)}
               aria-label="Filtrar por estado"
-              className="min-h-9 px-2 rounded-lg bg-transparent ink-secondary font-medium cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+              className="min-h-11 px-2 rounded-lg bg-transparent ink-secondary font-medium cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
             >
               <option value="all" className="bg-white dark:bg-neutral-900">Todos os estados</option>
               <option value="0" className="bg-white dark:bg-neutral-900">Novos</option>
               <option value="1" className="bg-white dark:bg-neutral-900">Aprendendo</option>
               <option value="2" className="bg-white dark:bg-neutral-900">Revisão</option>
               <option value="3" className="bg-white dark:bg-neutral-900">Reaprendendo</option>
-              <option value="leech" className="bg-white dark:bg-neutral-900">Leech</option>
+              <option value="leech" className="bg-white dark:bg-neutral-900">Erros frequentes</option>
               <option value="suspended" className="bg-white dark:bg-neutral-900">Suspensos</option>
             </select>
           </div>
@@ -364,7 +364,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               type="button"
               onClick={handleLoadSelectedLevel}
               disabled={isLoadingLevel}
-              className="min-h-10 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium cursor-pointer flex items-center gap-1.5 disabled:opacity-60"
+              className="min-h-11 px-3.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium cursor-pointer flex items-center gap-1.5 disabled:opacity-60"
             >
               {isLoadingLevel && <Loader2 aria-hidden="true" className="w-4 h-4 animate-spin" />}
               <span>Baixar</span>
@@ -387,7 +387,10 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
           className="max-h-[65vh] overflow-y-auto overscroll-contain focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60 focus-visible:ring-inset"
         >
           {filteredCards.length === 0 ? (
-            <p className="px-5 py-10 text-center text-sm ink-secondary">Nenhum vocábulo encontrado</p>
+            <div className="px-5 py-10 text-center text-sm ink-secondary" role="status">
+              <p>Nenhum vocábulo encontrado</p>
+              <button type="button" className="mt-3 min-h-11 px-4 rounded-xl glass-field font-semibold cursor-pointer" onClick={() => { setSearch(''); setSearchTarget('all'); setSelectedLevel('all'); setSelectedState('all'); }}>Limpar busca e filtros</button>
+            </div>
           ) : (
             <ul className="ledger border-t border-[var(--separator)]">
               {filteredCards.slice(0, 150).map((card, idx) => {
@@ -427,7 +430,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                     </div>
                     {(leech || card.suspended) && (
                       <span className="text-xs font-medium shrink-0 pointer-events-none text-amber-700 dark:text-amber-300">
-                        {card.suspended ? 'Suspenso' : 'Leech'}
+                        {card.suspended ? 'Suspenso' : 'Erros frequentes'}
                       </span>
                     )}
                     <button
@@ -493,11 +496,12 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
               </div>
 
               <div className="w-full space-y-2">
-                <label className="flex items-center gap-1.5 text-xs font-semibold opacity-80">
+                <label htmlFor="card-mnemonic" className="flex items-center gap-1.5 text-xs font-semibold opacity-80">
                   <Lightbulb className="w-3.5 h-3.5 text-amber-500" />
                   Dica mnemônica
                 </label>
                 <textarea
+                  id="card-mnemonic"
                   rows={2}
                   value={mnemonicDraft}
                   onChange={(e) => setMnemonicDraft(e.target.value)}
@@ -533,7 +537,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                       min={today}
                       value={dueDraft}
                       onChange={(e) => setDueDraft(e.target.value)}
-                      className="glass-field min-h-10 flex-1 px-3 text-xs"
+                      className="glass-field min-h-11 flex-1 px-3 text-xs"
                     />
                     <button
                       type="button"
@@ -543,7 +547,7 @@ export const CardBrowser: React.FC<CardBrowserProps> = ({
                         dueDraft < today ||
                         dueDraft === studyDayKey(new Date(previewCard.due), studyDayStartHour)
                       }
-                      className="min-h-10 px-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="min-h-11 px-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       Aplicar
                     </button>

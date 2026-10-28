@@ -55,7 +55,7 @@
   /* Paleta do Sistema e Materiais Translúcidos (Modo Claro) */
   --text: #1d1d1f;
   --text-secondary: rgba(60, 60, 67, 0.78);
-  --text-tertiary: rgba(60, 60, 67, 0.55);
+  --text-tertiary: rgba(60, 60, 67, 0.85);
   --separator: rgba(60, 60, 67, 0.18);
 
   /* Cor de destaque única da superfície (System Red) */
@@ -126,7 +126,7 @@
   color-scheme: dark;
   --text: #ffffff;
   --text-secondary: rgba(235, 235, 245, 0.78);
-  --text-tertiary: rgba(235, 235, 245, 0.55);
+  --text-tertiary: rgba(235, 235, 245, 0.78);
   --separator: rgba(84, 84, 88, 0.65);
 
   --glass-surface: rgba(36, 18, 20, 0.58);
