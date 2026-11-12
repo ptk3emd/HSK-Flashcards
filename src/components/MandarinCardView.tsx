@@ -24,14 +24,20 @@ export const MandarinCardView = React.memo(function MandarinCardView({
   const [pinyinHidden, setPinyinHidden] = useState(true);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
   const hanziRef = useRef<HTMLDivElement>(null);
+  const pinyinRef = useRef<HTMLDivElement>(null);
+  const translationRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  async function copyWord(e: React.MouseEvent<HTMLButtonElement>) {
+  async function copyCard(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
     const word = hanziRef.current?.innerText.trim();
     if (!word) return;
+    const pinyin = pinyinRef.current?.textContent?.trim();
+    const translation = card.ptbr ? translationRef.current?.textContent?.trim() : undefined;
+    const text = [word, pinyin, translation].filter(Boolean).join('\n');
+
     try {
-      await navigator.clipboard.writeText(word);
+      await navigator.clipboard.writeText(text);
       setCopyStatus('copied');
     } catch {
       setCopyStatus('error');
@@ -128,10 +134,10 @@ export const MandarinCardView = React.memo(function MandarinCardView({
               <>
                 <button
                   type="button"
-                  onClick={copyWord}
+                  onClick={copyCard}
                   className="grid min-h-11 min-w-11 place-items-center rounded-full opacity-70 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 focus-visible:opacity-100 focus-visible:outline-2 transition-colors cursor-pointer"
-                  title="Copiar palavra"
-                  aria-label="Copiar palavra"
+                  title="Copiar conteúdo do cartão"
+                  aria-label="Copiar conteúdo do cartão"
                 >
                   {copyStatus === 'copied'
                     ? <Check className="w-5 h-5" aria-hidden="true" />
@@ -188,6 +194,7 @@ export const MandarinCardView = React.memo(function MandarinCardView({
 
           {card.pinyin && (
             <div
+              ref={pinyinRef}
               className={`pinying ${stableLayout ? 'pinyin-stable' : ''} ${!isFlipped ? 'pinyin-delayed' : ''} ${!isFlipped && pinyinHidden ? (stableLayout ? 'pinyin-pending' : 'hidden') : ''}`}
               dangerouslySetInnerHTML={{ __html: card.pinyin }}
             />
@@ -202,6 +209,7 @@ export const MandarinCardView = React.memo(function MandarinCardView({
           aria-hidden={!isFlipped}
         >
           <div
+            ref={translationRef}
             className="ptbr"
             dangerouslySetInnerHTML={{ __html: card.ptbr || 'Significado em Português' }}
           />
