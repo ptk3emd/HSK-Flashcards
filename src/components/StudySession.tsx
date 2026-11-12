@@ -897,6 +897,7 @@ export const StudySession: React.FC<StudySessionProps> = ({
             >
               <MandarinCardView
                 stableLayout
+                canCopy
                 card={currentCard}
                 isFlipped={isFlipped}
               />

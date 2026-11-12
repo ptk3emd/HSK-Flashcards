@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { Card } from '../types/card';
-import { Volume2, PenTool, AlertTriangle, Lightbulb } from 'lucide-react';
+import { Volume2, PenTool, AlertTriangle, Lightbulb, Copy, Check } from 'lucide-react';
 import { isLeech } from '../lib/fsrs';
 import { COURSE } from '../lib/course';
 
@@ -8,6 +8,7 @@ interface MandarinCardViewProps {
   card: Card;
   isFlipped: boolean;
   stableLayout?: boolean;
+  canCopy?: boolean;
   onSpeak?: () => void;
   onOpenWriting?: () => void;
 }
@@ -16,12 +17,32 @@ export const MandarinCardView = React.memo(function MandarinCardView({
   card,
   isFlipped,
   stableLayout = false,
+  canCopy = false,
   onSpeak,
   onOpenWriting,
 }: MandarinCardViewProps) {
   const [pinyinHidden, setPinyinHidden] = useState(true);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
   const hanziRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  async function copyWord(e: React.MouseEvent<HTMLButtonElement>) {
+    e.stopPropagation();
+    const word = hanziRef.current?.innerText.trim();
+    if (!word) return;
+    try {
+      await navigator.clipboard.writeText(word);
+      setCopyStatus('copied');
+    } catch {
+      setCopyStatus('error');
+    }
+  }
+
+  useEffect(() => {
+    if (copyStatus === 'idle') return;
+    const timer = setTimeout(() => setCopyStatus('idle'), 2500);
+    return () => clearTimeout(timer);
+  }, [copyStatus]);
 
   // Clean characters for length calculation
   const cleanHanzi = (card.hanzi || '').replace(/\s+/g, '');
@@ -103,6 +124,28 @@ export const MandarinCardView = React.memo(function MandarinCardView({
           )}
 
           <div className="absolute top-3.5 right-3.5 flex items-center gap-1 z-10">
+            {canCopy && (
+              <>
+                <button
+                  type="button"
+                  onClick={copyWord}
+                  className="grid min-h-11 min-w-11 place-items-center rounded-full opacity-70 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 focus-visible:opacity-100 focus-visible:outline-2 transition-colors cursor-pointer"
+                  title="Copiar palavra"
+                  aria-label="Copiar palavra"
+                >
+                  {copyStatus === 'copied'
+                    ? <Check className="w-5 h-5" aria-hidden="true" />
+                    : <Copy className="w-5 h-5" aria-hidden="true" />}
+                </button>
+                <div
+                  role="status"
+                  className="pointer-events-none absolute top-full right-0 whitespace-nowrap text-xs"
+                >
+                  {copyStatus === 'copied' && 'Copiado!'}
+                  {copyStatus === 'error' && 'Não foi possível copiar'}
+                </div>
+              </>
+            )}
             {onOpenWriting && COURSE.hasCharacters && (
               <button
                 type="button"

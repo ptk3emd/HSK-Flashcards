@@ -199,7 +199,7 @@ export function saveSyncOutbox(entries: OutboxEntry[]): void {
  * 3: vocabulary replaced by the official HSK syllabus list (11,000 words, new levels and ids).
  * 4: French deck: repeated fronts within a level differentiated per Chinese word.
  */
-const CONTENT_VERSION = 4;
+const CONTENT_VERSION = 5;
 
 export { loadNativeLevelCards };
 
